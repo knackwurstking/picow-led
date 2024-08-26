@@ -54,6 +54,8 @@ func (f *Flags) Read() {
 
 	flag.Parse()
 	f.Args = flag.Args()
+
+	// TODO: Add subcommands to help page
 }
 
 func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, error) {
