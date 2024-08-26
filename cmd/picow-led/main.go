@@ -30,7 +30,8 @@ var serverCache = &ServerCache{}
 func main() {
 	defer serverCache.Close()
 
-	flags := NewFlags().Read()
+	flags := NewFlags()
+	flags.Read()
 
 	level := slog.LevelInfo
 	if flags.Debug {
@@ -61,7 +62,7 @@ func main() {
 		// parse args for sub
 		switch SubCommand(sub[0]) {
 		case SubCommand_Run:
-			subFlags, err := flags.ReadSubCommand_Run(sub[1:])
+			subFlags, err := flags.ReadSubCommand(sub[1:])
 			if err != nil {
 				slog.Error("Parse ARGS failed", "command", sub[0], "err", err)
 				os.Exit(ErrorArgs)
@@ -123,7 +124,7 @@ func newRequestFromARGS(args []string) (req *picow.Request) {
 
 func handleSubCommand_Run(
 	addrList AddrList,
-	flags *FlagsSubCommand_Run,
+	flags *FlagsSubCommand,
 	request *picow.Request,
 ) *sync.WaitGroup {
 	wg := sync.WaitGroup{}

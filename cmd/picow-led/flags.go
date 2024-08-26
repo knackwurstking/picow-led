@@ -17,8 +17,7 @@ const (
 // Sub defines subcommands
 type SubCommand string
 
-// FlagsRun subcommand flags
-type FlagsSubCommand_Run struct {
+type FlagsSubCommand struct {
 	Args        []string // Args containing all commandline args besides these already parsed
 	ID          int      // ID changes the default command id (the motion id is not allowed)
 	PrettyPrint bool     // PrettyPrint enables indentation for response data
@@ -58,21 +57,10 @@ func NewFlags() *Flags {
 	}
 }
 
-// Read flags from args
-func (flags *Flags) Read() *Flags {
-	flag.Var(&flags.Addr, "addr", "picow device address (ip[:port] or hostname[:port])")
-	flag.BoolVar(&flags.Debug, "debug", flags.Debug, "enable debug messages")
-
-	flag.Parse()
-	flags.Args = flag.Args()
-
-	return flags
-}
-
-func (flags *Flags) GetSubCommandArgs() ([][]string, error) {
+func (f *Flags) GetSubCommandArgs() ([][]string, error) {
 	subsArgs := make([][]string, 0)
 
-	for _, arg := range flags.Args {
+	for _, arg := range f.Args {
 		if SubCommand(arg) == SubCommand_Run {
 			subsArgs = append(subsArgs, []string{arg})
 			continue
@@ -88,22 +76,30 @@ func (flags *Flags) GetSubCommandArgs() ([][]string, error) {
 	return subsArgs, nil
 }
 
-func (*Flags) ReadSubCommand_Run(args []string) (*FlagsSubCommand_Run, error) {
-	cmd := flag.NewFlagSet("run", flag.ExitOnError)
-	runFlags := &FlagsSubCommand_Run{}
+// Read flags from args
+func (f *Flags) Read() {
+	flag.Var(&f.Addr, "addr", "picow device address (ip[:port] or hostname[:port])")
+	flag.BoolVar(&f.Debug, "debug", f.Debug, "enable debug messages")
 
-	cmd.IntVar(&runFlags.ID, "id", runFlags.ID, "changes the default id in use")
-	cmd.BoolVar(&runFlags.PrettyPrint, "pretty-print", runFlags.PrettyPrint, "pretty prints response data")
+	flag.Parse()
+	f.Args = flag.Args()
+}
+
+func (f *Flags) ReadSubCommand(args []string) (*FlagsSubCommand, error) {
+	cmd := flag.NewFlagSet("set", flag.ExitOnError)
+	flags := &FlagsSubCommand{}
+
+	cmd.IntVar(&flags.ID, "id", flags.ID, "changes the default id in use")
+	cmd.BoolVar(&flags.PrettyPrint, "pretty-print", flags.PrettyPrint, "pretty prints response data")
 
 	err := cmd.Parse(args)
 
-	// TODO: Simplify get/set, remove from args and set based on given args
-	runFlags.Args = cmd.Args()
-	slog.Debug("", "runFlags.Args", runFlags.Args)
+	flags.Args = cmd.Args()
+	slog.Debug("", "flags.Args", flags.Args)
 
-	if runFlags.ID == int(picow.IDMotionEvent) && err == nil {
+	if flags.ID == int(picow.IDMotionEvent) && err == nil {
 		err = fmt.Errorf("id \"%d\" not allowed", picow.IDMotionEvent)
 	}
 
-	return runFlags, err
+	return flags, err
 }
