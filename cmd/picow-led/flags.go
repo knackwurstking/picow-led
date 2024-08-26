@@ -57,25 +57,6 @@ func NewFlags() *Flags {
 	}
 }
 
-func (f *Flags) GetSubCommandArgs() ([][]string, error) {
-	subsArgs := make([][]string, 0)
-
-	for _, arg := range f.Args {
-		if SubCommand(arg) == SubCommand_Run {
-			subsArgs = append(subsArgs, []string{arg})
-			continue
-		}
-
-		if len(subsArgs) == 0 {
-			return subsArgs, fmt.Errorf("no sub command found")
-		}
-
-		subsArgs[len(subsArgs)-1] = append(subsArgs[len(subsArgs)-1], arg)
-	}
-
-	return subsArgs, nil
-}
-
 // Read flags from args
 func (f *Flags) Read() {
 	flag.Var(&f.Addr, "addr", "picow device address (ip[:port] or hostname[:port])")
@@ -102,4 +83,23 @@ func (f *Flags) ReadSubCommand(args []string) (*FlagsSubCommand, error) {
 	}
 
 	return flags, err
+}
+
+func (f *Flags) GetSubCommandArgs() ([][]string, error) {
+	subsArgs := make([][]string, 0)
+
+	for _, arg := range f.Args {
+		if SubCommand(arg) == SubCommand_Run {
+			subsArgs = append(subsArgs, []string{arg})
+			continue
+		}
+
+		if len(subsArgs) == 0 {
+			return subsArgs, fmt.Errorf("no sub command found")
+		}
+
+		subsArgs[len(subsArgs)-1] = append(subsArgs[len(subsArgs)-1], arg)
+	}
+
+	return subsArgs, nil
 }
