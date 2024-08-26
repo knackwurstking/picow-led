@@ -65,23 +65,21 @@ func (f *Flags) Read() {
 }
 
 func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, error) {
-	flagSet := flag.NewFlagSet(name, flag.ExitOnError)
+	flags := NewFlagsSubCommand(flag.NewFlagSet(name, flag.ExitOnError), f.serverCache)
 
-	flags := NewFlagsSubCommand(flagSet, f.serverCache)
+	flags.Flag.IntVar(&flags.ID, "id", flags.ID, "changes the default id in use")
+	flags.Flag.BoolVar(&flags.PrettyPrint, "pretty-print", flags.PrettyPrint, "pretty prints response data")
 
-	flagSet.IntVar(&flags.ID, "id", flags.ID, "changes the default id in use")
-	flagSet.BoolVar(&flags.PrettyPrint, "pretty-print", flags.PrettyPrint, "pretty prints response data")
-
-	flagSet.Usage = func() {
+	flags.Flag.Usage = func() {
 		f.printCommands()
 		fmt.Fprintf(os.Stderr, "\n")
 		fmt.Fprintf(os.Stderr, "Options\n")
-		flagSet.PrintDefaults()
+		flags.Flag.PrintDefaults()
 	}
 
-	err := flagSet.Parse(args)
+	err := flags.Flag.Parse(args)
 
-	flags.Args = flagSet.Args()
+	flags.Args = flags.Flag.Args()
 	slog.Debug("", "flags.Args", flags.Args)
 
 	if flags.ID == int(picow.IDMotionEvent) && err == nil {

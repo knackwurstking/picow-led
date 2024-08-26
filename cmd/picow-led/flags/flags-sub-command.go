@@ -15,7 +15,7 @@ import (
 
 type FlagsSubCommand struct {
 	serverCache *cache.ServerCache
-	flag        *flag.FlagSet
+	Flag        *flag.FlagSet
 	Args        []string
 	ID          int
 	PrettyPrint bool
@@ -24,12 +24,12 @@ type FlagsSubCommand struct {
 func NewFlagsSubCommand(flagSet *flag.FlagSet, sc *cache.ServerCache) *FlagsSubCommand {
 	return &FlagsSubCommand{
 		serverCache: sc,
-		flag:        flagSet,
+		Flag:        flagSet,
 	}
 }
 
 func (fsc *FlagsSubCommand) Run(flags *Flags) error {
-	switch picow.Type(fsc.flag.Name()) {
+	switch picow.Type(fsc.Flag.Name()) {
 	case picow.TypeGet:
 		return fsc.get(flags)
 	case picow.TypeSet:
@@ -69,7 +69,7 @@ func (fsc *FlagsSubCommand) set(flags *Flags) error {
 
 func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
 	if len(fsc.Args) < 2 {
-		fsc.flag.Usage()
+		fsc.Flag.Usage()
 		os.Exit(errorcodes.Args)
 	}
 
