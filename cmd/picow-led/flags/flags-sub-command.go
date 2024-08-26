@@ -1,4 +1,4 @@
-package main
+package flags
 
 import (
 	"encoding/json"
@@ -7,19 +7,23 @@ import (
 	"os"
 	"sync"
 
+	"github.com/knackwurstking/picow-led/cmd/picow-led/cache"
+	"github.com/knackwurstking/picow-led/cmd/picow-led/errorcodes"
 	"github.com/knackwurstking/picow-led/picow"
 )
 
 type FlagsSubCommand struct {
+	serverCache *cache.ServerCache
 	Name        string
 	Args        []string
 	ID          int
 	PrettyPrint bool
 }
 
-func NewFlagsSubCommand(name string) *FlagsSubCommand {
+func NewFlagsSubCommand(name string, sc *cache.ServerCache) *FlagsSubCommand {
 	return &FlagsSubCommand{
-		Name: name,
+		Name:        name,
+		serverCache: sc,
 	}
 }
 
@@ -63,9 +67,9 @@ func (fsc *FlagsSubCommand) set(flags *Flags) error {
 }
 
 func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
-	if len(fsc.Args) < 3 {
+	if len(fsc.Args) < 2 {
 		slog.Error("Missing ARGS: <group> <command> [<args> ...]")
-		os.Exit(ErrorArgs)
+		os.Exit(errorcodes.Args)
 	}
 
 	group := picow.Group("")
@@ -78,7 +82,7 @@ func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
 
 	if group == "" {
 		slog.Error("Group not exists!", "group", group)
-		os.Exit(ErrorArgs)
+		os.Exit(errorcodes.Args)
 	}
 
 	return &picow.Request{
@@ -93,7 +97,7 @@ func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
 func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGroup) error {
 	defer wg.Done()
 
-	server, err := serverCache.Get(addr)
+	server, err := fsc.serverCache.Get(addr)
 	if err != nil {
 		return err
 	}
@@ -140,7 +144,7 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 				"server", server.GetAddr(),
 				"resp.data", resp.Data,
 			)
-			os.Exit(ErrorServerError)
+			os.Exit(errorcodes.ServerError)
 		}
 
 		slog.Debug("", "resp", resp)

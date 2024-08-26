@@ -1,23 +1,49 @@
-package main
+package flags
 
 import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"regexp"
+	"strings"
 
+	"github.com/knackwurstking/picow-led/cmd/picow-led/cache"
 	"github.com/knackwurstking/picow-led/picow"
 )
 
-// Flags holds all flag values
-type Flags struct {
-	Args  []string // Args containing all commandline args besides these already parsed
-	Addr  AddrList // Addr containing the picow server addresses
-	Debug bool     // Debug enables debugging messages
+// AddrList contains strings "<ip/hostname>:<port>" for the picow devices to connect to
+type AddrList []string
+
+// String returns a string with all addresses
+func (a AddrList) String() string {
+	return strings.Join(a, ",")
 }
 
-func NewFlags() *Flags {
+// Set adds a new server
+func (a *AddrList) Set(value string) error {
+	matched, _ := regexp.MatchString("^.+:[0-9]+$", value)
+	if !matched {
+		// no match means we have to add the default port here
+		value = fmt.Sprintf("%s:%d", strings.TrimRight(value, ":"), picow.DefaultPort)
+	}
+
+	*a = append(*a, value)
+
+	return nil
+}
+
+// Flags holds all flag values
+type Flags struct {
+	serverCache *cache.ServerCache
+	Args        []string
+	Addr        AddrList
+	Debug       bool
+}
+
+func NewFlags(sc *cache.ServerCache) *Flags {
 	return &Flags{
-		Args: make([]string, 0),
+		Args:        make([]string, 0),
+		serverCache: sc,
 	}
 }
 
@@ -32,7 +58,7 @@ func (f *Flags) Read() {
 
 func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, error) {
 	cmd := flag.NewFlagSet(name, flag.ExitOnError)
-	flags := NewFlagsSubCommand(name)
+	flags := NewFlagsSubCommand(name, f.serverCache)
 
 	cmd.IntVar(&flags.ID, "id", flags.ID, "changes the default id in use")
 	cmd.BoolVar(&flags.PrettyPrint, "pretty-print", flags.PrettyPrint, "pretty prints response data")
