@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"os"
 	"regexp"
 	"strings"
 
@@ -52,22 +53,35 @@ func (f *Flags) Read() {
 	flag.Var(&f.Addr, "addr", "picow device address (ip[:port] or hostname[:port])")
 	flag.BoolVar(&f.Debug, "debug", f.Debug, "enable debug messages")
 
+	flag.Usage = func() {
+		f.printCommands()
+		fmt.Fprintf(os.Stderr, "\n")
+		fmt.Fprintf(os.Stderr, "Options\n")
+		flag.PrintDefaults()
+	}
+
 	flag.Parse()
 	f.Args = flag.Args()
-
-	// TODO: Add subcommands to help page
 }
 
 func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, error) {
-	cmd := flag.NewFlagSet(name, flag.ExitOnError)
-	flags := NewFlagsSubCommand(name, f.serverCache)
+	flagSet := flag.NewFlagSet(name, flag.ExitOnError)
 
-	cmd.IntVar(&flags.ID, "id", flags.ID, "changes the default id in use")
-	cmd.BoolVar(&flags.PrettyPrint, "pretty-print", flags.PrettyPrint, "pretty prints response data")
+	flags := NewFlagsSubCommand(flagSet, f.serverCache)
 
-	err := cmd.Parse(args)
+	flagSet.IntVar(&flags.ID, "id", flags.ID, "changes the default id in use")
+	flagSet.BoolVar(&flags.PrettyPrint, "pretty-print", flags.PrettyPrint, "pretty prints response data")
 
-	flags.Args = cmd.Args()
+	flagSet.Usage = func() {
+		f.printCommands()
+		fmt.Fprintf(os.Stderr, "\n")
+		fmt.Fprintf(os.Stderr, "Options\n")
+		flagSet.PrintDefaults()
+	}
+
+	err := flagSet.Parse(args)
+
+	flags.Args = flagSet.Args()
 	slog.Debug("", "flags.Args", flags.Args)
 
 	if flags.ID == int(picow.IDMotionEvent) && err == nil {
@@ -94,4 +108,10 @@ func (f *Flags) GetSubCommandArgs() ([][]string, error) {
 	}
 
 	return subsArgs, nil
+}
+
+func (f *Flags) printCommands() {
+	fmt.Fprintf(os.Stderr, "Commands\n")
+	fmt.Fprintf(os.Stderr, "  get [OPTIONS] <group> <command>\n")
+	fmt.Fprintf(os.Stderr, "  set [OPTIONS] <group> <command> <args...>\n")
 }

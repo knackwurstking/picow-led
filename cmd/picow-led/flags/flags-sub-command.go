@@ -2,6 +2,7 @@ package flags
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log/slog"
 	"os"
@@ -14,21 +15,21 @@ import (
 
 type FlagsSubCommand struct {
 	serverCache *cache.ServerCache
-	Name        string
+	flag        *flag.FlagSet
 	Args        []string
 	ID          int
 	PrettyPrint bool
 }
 
-func NewFlagsSubCommand(name string, sc *cache.ServerCache) *FlagsSubCommand {
+func NewFlagsSubCommand(flagSet *flag.FlagSet, sc *cache.ServerCache) *FlagsSubCommand {
 	return &FlagsSubCommand{
-		Name:        name,
 		serverCache: sc,
+		flag:        flagSet,
 	}
 }
 
 func (fsc *FlagsSubCommand) Run(flags *Flags) error {
-	switch picow.Type(fsc.Name) {
+	switch picow.Type(fsc.flag.Name()) {
 	case picow.TypeGet:
 		return fsc.get(flags)
 	case picow.TypeSet:
@@ -68,7 +69,7 @@ func (fsc *FlagsSubCommand) set(flags *Flags) error {
 
 func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
 	if len(fsc.Args) < 2 {
-		slog.Error("Missing ARGS: <group> <command> [<args> ...]")
+		fsc.flag.Usage()
 		os.Exit(errorcodes.Args)
 	}
 
