@@ -4,45 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
-	"regexp"
-	"strings"
 
 	"github.com/knackwurstking/picow-led/picow"
 )
-
-const (
-	SubCommand_Run = SubCommand("run")
-)
-
-// Sub defines subcommands
-type SubCommand string
-
-type FlagsSubCommand struct {
-	Args        []string // Args containing all commandline args besides these already parsed
-	ID          int      // ID changes the default command id (the motion id is not allowed)
-	PrettyPrint bool     // PrettyPrint enables indentation for response data
-}
-
-// AddrList contains strings "<ip/hostname>:<port>" for the picow devices to connect to
-type AddrList []string
-
-// String returns a string with all addresses
-func (a AddrList) String() string {
-	return strings.Join(a, ",")
-}
-
-// Set adds a new server
-func (a *AddrList) Set(value string) error {
-	matched, _ := regexp.MatchString("^.+:[0-9]+$", value)
-	if !matched {
-		// no match means we have to add the default port here
-		value = fmt.Sprintf("%s:%d", strings.TrimRight(value, ":"), picow.DefaultPort)
-	}
-
-	*a = append(*a, value)
-
-	return nil
-}
 
 // Flags holds all flag values
 type Flags struct {
@@ -66,9 +30,9 @@ func (f *Flags) Read() {
 	f.Args = flag.Args()
 }
 
-func (f *Flags) ReadSubCommand(args []string) (*FlagsSubCommand, error) {
-	cmd := flag.NewFlagSet("set", flag.ExitOnError)
-	flags := &FlagsSubCommand{}
+func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, error) {
+	cmd := flag.NewFlagSet(name, flag.ExitOnError)
+	flags := NewFlagsSubCommand(name)
 
 	cmd.IntVar(&flags.ID, "id", flags.ID, "changes the default id in use")
 	cmd.BoolVar(&flags.PrettyPrint, "pretty-print", flags.PrettyPrint, "pretty prints response data")
@@ -89,16 +53,16 @@ func (f *Flags) GetSubCommandArgs() ([][]string, error) {
 	subsArgs := make([][]string, 0)
 
 	for _, arg := range f.Args {
-		if SubCommand(arg) == SubCommand_Run {
+		switch arg {
+		case "get", "set":
 			subsArgs = append(subsArgs, []string{arg})
-			continue
-		}
+		default:
+			if len(subsArgs) == 0 {
+				return subsArgs, fmt.Errorf("no sub command found")
+			}
 
-		if len(subsArgs) == 0 {
-			return subsArgs, fmt.Errorf("no sub command found")
+			subsArgs[len(subsArgs)-1] = append(subsArgs[len(subsArgs)-1], arg)
 		}
-
-		subsArgs[len(subsArgs)-1] = append(subsArgs[len(subsArgs)-1], arg)
 	}
 
 	return subsArgs, nil
