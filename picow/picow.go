@@ -189,7 +189,6 @@ func (s *Server) Send(req *Request) error {
 	}
 
 	// write data to client
-	// TODO: Add some timeout handler, if the target crashes
 	n, err := s.conn.Write(append(data, DefaultEndByte))
 	if err != nil {
 		return err
