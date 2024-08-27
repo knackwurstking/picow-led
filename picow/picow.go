@@ -4,11 +4,9 @@ const (
 	GroupConfig = Group("config")
 	GroupInfo   = Group("info")
 	GroupLED    = Group("led")
-	GroupMotion = Group("motion")
 
-	TypeSet   = Type("set")
-	TypeGet   = Type("get")
-	TypeEvent = Type("event")
+	TypeSet = Type("set")
+	TypeGet = Type("get")
 
 	IDNoResponse = ID(-1)
 
@@ -21,13 +19,11 @@ var (
 		GroupConfig,
 		GroupInfo,
 		GroupLED,
-		GroupMotion,
 	}
 
 	Types = []Type{
 		TypeSet,
 		TypeGet,
-		TypeEvent,
 	}
 	Events = []string{
 		"motion",
