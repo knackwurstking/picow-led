@@ -84,10 +84,6 @@ func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, er
 
 	flags.Args = flags.Flag.Args()
 
-	if flags.ID == int(picow.IDMotionEvent) && err == nil {
-		err = fmt.Errorf("id \"%d\" not allowed", picow.IDMotionEvent)
-	}
-
 	return flags, err
 }
 
