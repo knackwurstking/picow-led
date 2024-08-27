@@ -2,8 +2,6 @@ module github.com/knackwurstking/picow-led
 
 go 1.22
 
-require github.com/lmittmann/tint v1.0.5
-
 require (
 	github.com/fatih/color v1.17.0
 	github.com/mattn/go-colorable v0.1.13 // indirect
