@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/knackwurstking/picow-led/cmd/picow-led/cache"
@@ -36,8 +38,6 @@ func main() {
 		),
 	)
 
-	slog.Debug("", "flags", flags)
-
 	subs, err := flags.GetSubCommandArgs()
 	if err != nil {
 		slog.Error("Pasrsing flags failed ", "err", err)
@@ -51,6 +51,14 @@ func main() {
 			os.Exit(errorcodes.Args)
 		}
 
-		subFlags.Run(flags)
+		err = subFlags.Run(flags)
+		if err != nil {
+			slog.Error(
+				fmt.Sprintf(
+					"Failed to run %s",
+					strings.Join(flags.Args, " "),
+				),
+			)
+		}
 	}
 }

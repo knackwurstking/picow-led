@@ -29,6 +29,8 @@ func NewFlagsSubCommand(flagSet *flag.FlagSet, sc *cache.ServerCache) *FlagsSubC
 }
 
 func (fsc *FlagsSubCommand) Run(flags *Flags) error {
+	slog.Debug("run sub command", "flags", flags)
+
 	switch picow.Type(fsc.Flag.Name()) {
 	case picow.TypeGet:
 		return fsc.get(flags)
@@ -45,7 +47,6 @@ func (fsc *FlagsSubCommand) get(flags *Flags) error {
 	r.ID = fsc.ID
 
 	for _, a := range flags.Addr {
-		slog.Debug("", "request", r, "address", a)
 		wg.Add(1)
 		fsc.send(a, r, &wg)
 	}
@@ -59,7 +60,6 @@ func (fsc *FlagsSubCommand) set(flags *Flags) error {
 	r.ID = fsc.ID
 
 	for _, a := range flags.Addr {
-		slog.Debug("", "request", r, "address", a)
 		wg.Add(1)
 		fsc.send(a, r, &wg)
 	}
@@ -96,6 +96,7 @@ func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
 }
 
 func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGroup) error {
+	slog.Debug("send request", "request", r, "address", addr)
 	defer wg.Done()
 
 	server, err := fsc.serverCache.Get(addr)
@@ -148,7 +149,6 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 			os.Exit(errorcodes.ServerError)
 		}
 
-		slog.Debug("", "resp", resp)
 		fmt.Printf("%s\n", string(data))
 	}
 

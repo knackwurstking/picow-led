@@ -3,7 +3,6 @@ package flags
 import (
 	"flag"
 	"fmt"
-	"log/slog"
 	"os"
 	"regexp"
 	"strings"
@@ -80,7 +79,6 @@ func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, er
 	err := flags.Flag.Parse(args)
 
 	flags.Args = flags.Flag.Args()
-	slog.Debug("", "flags.Args", flags.Args)
 
 	if flags.ID == int(picow.IDMotionEvent) && err == nil {
 		err = fmt.Errorf("id \"%d\" not allowed", picow.IDMotionEvent)
