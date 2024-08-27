@@ -11,6 +11,10 @@ type ServerCache struct {
 	Data []*picow.Server
 }
 
+func (sc *ServerCache) Add(addr string) {
+	sc.Data = append(sc.Data, picow.NewServer(addr))
+}
+
 func (sc *ServerCache) Get(addr string) (*picow.Server, error) {
 	for _, server := range sc.Data {
 		if server.GetAddr() == addr {

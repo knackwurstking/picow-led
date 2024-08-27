@@ -2,8 +2,7 @@ package errorcodes
 
 const (
 	Generic           = 1
-	Args              = 2
-	Internal          = 10
-	ServerError       = 15
-	UnderConstruction = 100
+	ReadSubCommand    = 10
+	Run               = 15
+	GetSubCommandArgs = 20
 )

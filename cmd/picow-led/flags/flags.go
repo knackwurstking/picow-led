@@ -61,6 +61,10 @@ func (f *Flags) Read() {
 
 	flag.Parse()
 	f.Args = flag.Args()
+
+	for _, s := range f.Addr {
+		f.serverCache.Add(s)
+	}
 }
 
 func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, error) {

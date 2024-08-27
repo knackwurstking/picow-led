@@ -2,18 +2,22 @@ package main
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 	"strings"
-	"time"
+	"sync"
 
+	"github.com/fatih/color"
 	"github.com/knackwurstking/picow-led/cmd/picow-led/cache"
 	"github.com/knackwurstking/picow-led/cmd/picow-led/errorcodes"
 	"github.com/knackwurstking/picow-led/cmd/picow-led/flags"
-	"github.com/lmittmann/tint"
+	"github.com/knackwurstking/picow-led/picow"
 )
 
-var serverCache = &cache.ServerCache{}
+var (
+	serverCache = &cache.ServerCache{}
+	prefixError = color.New(color.Bold, color.FgRed).Sprint("ERROR")
+	prefixDebug = color.New(color.Bold, color.BgWhite, color.FgBlack).Sprint("DEBUG")
+)
 
 func main() {
 	defer serverCache.Close()
@@ -21,44 +25,46 @@ func main() {
 	flags := flags.NewFlags(serverCache)
 	flags.Read()
 
-	level := slog.LevelInfo
-	if flags.Debug {
-		level = slog.LevelDebug
-	}
-	slog.SetDefault(
-		slog.New(
-			tint.NewHandler(
-				os.Stderr,
-				&tint.Options{
-					AddSource:  true,
-					TimeFormat: time.DateTime,
-					Level:      level,
-				},
-			),
-		),
-	)
-
 	subs, err := flags.GetSubCommandArgs()
 	if err != nil {
-		slog.Error("Pasrsing flags failed ", "err", err)
-		os.Exit(errorcodes.Args)
+		fmt.Fprintf(os.Stderr, "%s Parse sub commands failed: %s", prefixError, err)
+		os.Exit(errorcodes.GetSubCommandArgs)
 	}
 
 	for _, sub := range subs {
 		subFlags, err := flags.ReadSubCommand(sub[0], sub[1:])
 		if err != nil {
-			slog.Error("Parse ARGS failed", "command", sub[0], "err", err)
-			os.Exit(errorcodes.Args)
+			fmt.Fprintf(os.Stderr,
+				"%s Parse sub command \"%s\" line flags failed: %s",
+				prefixError, sub[0], err)
+			os.Exit(errorcodes.ReadSubCommand)
 		}
 
-		err = subFlags.Run(flags)
-		if err != nil {
-			slog.Error(
-				fmt.Sprintf(
-					"Failed to run %s",
-					strings.Join(flags.Args, " "),
-				),
-			)
+		wg := sync.WaitGroup{}
+		for _, server := range serverCache.Data {
+			wg.Add(1)
+			go func(server *picow.Server) {
+				defer wg.Done()
+
+				if flags.Debug {
+					fmt.Fprintf(os.Stderr,
+						"%s Run \"%s %s\" Address %s",
+						prefixDebug,
+						subFlags.Flag.Name(), strings.Join(subFlags.Args, " "),
+						server.GetAddr(),
+					)
+				}
+
+				err := subFlags.Run(flags)
+				if err != nil {
+					fmt.Fprintf(os.Stderr,
+						"%s Failed to run \"%s\": %s",
+						prefixError, strings.Join(flags.Args, " "), err,
+					)
+					os.Exit(errorcodes.Run)
+				}
+			}(server)
 		}
+		wg.Wait()
 	}
 }

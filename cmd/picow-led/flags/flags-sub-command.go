@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log/slog"
-	"os"
+	"strings"
 	"sync"
 
 	"github.com/knackwurstking/picow-led/cmd/picow-led/cache"
-	"github.com/knackwurstking/picow-led/cmd/picow-led/errorcodes"
 	"github.com/knackwurstking/picow-led/picow"
 )
 
@@ -29,8 +27,6 @@ func NewFlagsSubCommand(flagSet *flag.FlagSet, sc *cache.ServerCache) *FlagsSubC
 }
 
 func (fsc *FlagsSubCommand) Run(flags *Flags) error {
-	slog.Debug("run sub command", "flags", flags)
-
 	switch picow.Type(fsc.Flag.Name()) {
 	case picow.TypeGet:
 		return fsc.get(flags)
@@ -42,35 +38,48 @@ func (fsc *FlagsSubCommand) Run(flags *Flags) error {
 }
 
 func (fsc *FlagsSubCommand) get(flags *Flags) error {
-	r := fsc.request(picow.TypeGet)
+	r, err := fsc.request(picow.TypeGet)
+	if err != nil {
+		return err
+	}
+
 	wg := sync.WaitGroup{}
 	r.ID = fsc.ID
 
 	for _, a := range flags.Addr {
 		wg.Add(1)
-		fsc.send(a, r, &wg)
+		err = fsc.send(a, r, &wg)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
 func (fsc *FlagsSubCommand) set(flags *Flags) error {
-	r := fsc.request(picow.TypeSet)
+	r, err := fsc.request(picow.TypeSet)
+	if err != nil {
+		return err
+	}
+
 	wg := sync.WaitGroup{}
 	r.ID = fsc.ID
 
 	for _, a := range flags.Addr {
 		wg.Add(1)
-		fsc.send(a, r, &wg)
+		err = fsc.send(a, r, &wg)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
+func (fsc *FlagsSubCommand) request(t picow.Type) (*picow.Request, error) {
 	if len(fsc.Args) < 2 {
-		fsc.Flag.Usage()
-		os.Exit(errorcodes.Args)
+		return nil, fmt.Errorf("don't know about this command: \"%s\"", strings.Join(fsc.Args, " "))
 	}
 
 	group := picow.Group("")
@@ -82,8 +91,7 @@ func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
 	}
 
 	if group == "" {
-		slog.Error("Group not exists!", "group", group)
-		os.Exit(errorcodes.Args)
+		return nil, fmt.Errorf("sub command group \"%s\" not exists", group)
 	}
 
 	return &picow.Request{
@@ -92,11 +100,10 @@ func (fsc *FlagsSubCommand) request(t picow.Type) *picow.Request {
 		Type:    t,
 		Command: fsc.Args[1],
 		Args:    make([]string, 0),
-	}
+	}, nil
 }
 
 func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGroup) error {
-	slog.Debug("send request", "request", r, "address", addr)
 	defer wg.Done()
 
 	server, err := fsc.serverCache.Get(addr)
@@ -141,12 +148,7 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 			data, err = json.Marshal(resp.Data)
 		}
 		if err != nil {
-			slog.Error(
-				"Invalid json data from server",
-				"server", server.GetAddr(),
-				"resp.data", resp.Data,
-			)
-			os.Exit(errorcodes.ServerError)
+			return fmt.Errorf("Invalid json data from server \"%s\": %+v", server.GetAddr(), resp.Data)
 		}
 
 		fmt.Printf("%s\n", string(data))
