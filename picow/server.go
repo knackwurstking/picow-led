@@ -76,7 +76,10 @@ func (s *Server) Close() error {
 func (s *Server) GetResponse() (*Response, error) {
 	// check connection to the picow device
 	if !s.isConnected {
-		return nil, fmt.Errorf("not connected to server, run connect method first")
+		return nil,
+			fmt.Errorf(
+				"not connected to server, run connect method first",
+			)
 	}
 
 	// read data from client
@@ -121,7 +124,9 @@ func (s *Server) GetResponse() (*Response, error) {
 func (s *Server) Send(req *Request) error {
 	// Check connection to picow device
 	if !s.isConnected {
-		return fmt.Errorf("not connected to server, run connect method first")
+		return fmt.Errorf(
+			"not connected to server, run connect method first",
+		)
 	}
 
 	// Convert request to data

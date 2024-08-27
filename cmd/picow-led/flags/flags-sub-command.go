@@ -149,7 +149,7 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 		}
 		if err != nil {
 			return fmt.Errorf(
-				"invalid json data from server \"%s\": resp.Data=%+v",
+				"invalid JSON data from server \"%s\": resp.Data=%+v",
 				server.GetAddr(), resp.Data,
 			)
 		}

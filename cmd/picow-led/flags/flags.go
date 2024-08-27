@@ -24,7 +24,8 @@ func (a *AddrList) Set(value string) error {
 	matched, _ := regexp.MatchString("^.+:[0-9]+$", value)
 	if !matched {
 		// no match means we have to add the default port here
-		value = fmt.Sprintf("%s:%d", strings.TrimRight(value, ":"), picow.DefaultPort)
+		value = fmt.Sprintf("%s:%d",
+			strings.TrimRight(value, ":"), picow.DefaultPort)
 	}
 
 	*a = append(*a, value)
@@ -49,8 +50,14 @@ func NewFlags(sc *cache.ServerCache) *Flags {
 
 // Read flags from args
 func (f *Flags) Read() {
-	flag.Var(&f.Addr, "addr", "picow device address (ip[:port] or hostname[:port])")
-	flag.BoolVar(&f.Debug, "debug", f.Debug, "enable debug messages")
+	flag.Var(
+		&f.Addr, "addr",
+		"picow device address (ip[:port] or hostname[:port])",
+	)
+	flag.BoolVar(
+		&f.Debug, "debug", f.Debug,
+		"enable debug messages",
+	)
 
 	flag.Usage = func() {
 		f.printCommands()
@@ -67,11 +74,22 @@ func (f *Flags) Read() {
 	}
 }
 
-func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, error) {
-	flags := NewFlagsSubCommand(flag.NewFlagSet(name, flag.ExitOnError), f.serverCache)
+func (f *Flags) ReadSubCommand(
+	name string, args []string,
+) (*FlagsSubCommand, error) {
+	flags := NewFlagsSubCommand(
+		flag.NewFlagSet(name, flag.ExitOnError),
+		f.serverCache,
+	)
 
-	flags.Flag.IntVar(&flags.ID, "id", flags.ID, "changes the default id in use")
-	flags.Flag.BoolVar(&flags.PrettyPrint, "pretty-print", flags.PrettyPrint, "pretty prints response data")
+	flags.Flag.IntVar(
+		&flags.ID, "id", flags.ID,
+		"changes the default id in use",
+	)
+	flags.Flag.BoolVar(
+		&flags.PrettyPrint, "pretty-print", flags.PrettyPrint,
+		"pretty prints response data",
+	)
 
 	flags.Flag.Usage = func() {
 		f.printCommands()
@@ -81,7 +99,6 @@ func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, er
 	}
 
 	err := flags.Flag.Parse(args)
-
 	flags.Args = flags.Flag.Args()
 
 	return flags, err

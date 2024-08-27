@@ -38,7 +38,13 @@ func (sc *ServerCache) Close() {
 	for _, server := range sc.Data {
 		err = server.Close()
 		if err != nil {
-			slog.Warn(fmt.Sprintf("Close \"%s\" failed", server.GetAddr()), "err", err)
+			slog.Warn(
+				fmt.Sprintf(
+					"Close \"%s\" failed",
+					server.GetAddr(),
+				),
+				"err", err,
+			)
 		}
 	}
 }

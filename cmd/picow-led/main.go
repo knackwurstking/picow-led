@@ -16,7 +16,9 @@ import (
 var (
 	serverCache = &cache.ServerCache{}
 	prefixError = color.New(color.Bold, color.FgRed).Sprint("ERROR")
-	prefixDebug = color.New(color.Bold, color.BgWhite, color.FgBlack).Sprint("DEBUG")
+	prefixDebug = color.New(
+		color.Bold, color.BgWhite, color.FgBlack,
+	).Sprint("DEBUG")
 )
 
 func main() {
@@ -27,7 +29,9 @@ func main() {
 
 	subs, err := flags.GetSubCommandArgs()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s Parse sub commands failed: %s", prefixError, err)
+		fmt.Fprintf(os.Stderr,
+			"%s Parse sub commands failed: %s",
+			prefixError, err)
 		os.Exit(errorcodes.GetSubCommandArgs)
 	}
 
