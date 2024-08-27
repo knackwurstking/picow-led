@@ -56,7 +56,7 @@ func (f *Flags) Read() {
 	flag.Usage = func() {
 		f.printCommands()
 		fmt.Fprintf(os.Stderr, "\n")
-		colorHeader.Fprintf(os.Stderr, "Options\n")
+		fmtHeader.Fprintf(os.Stderr, "Options\n")
 		flag.PrintDefaults()
 	}
 
@@ -73,7 +73,7 @@ func (f *Flags) ReadSubCommand(name string, args []string) (*FlagsSubCommand, er
 	flags.Flag.Usage = func() {
 		f.printCommands()
 		fmt.Fprintf(os.Stderr, "\n")
-		colorHeader.Fprintf(os.Stderr, "Options\n")
+		fmtHeader.Fprintf(os.Stderr, "Options\n")
 		flags.Flag.PrintDefaults()
 	}
 
@@ -109,16 +109,16 @@ func (f *Flags) GetSubCommandArgs() ([][]string, error) {
 }
 
 func (f *Flags) printCommands() {
-	colorHeader.Fprintf(os.Stderr, "Commands\n")
-	colorItalic.Fprintf(os.Stderr, "  get [OPTIONS] <group> <command>\n")
-	colorItalic.Fprintf(os.Stderr, "    config led\n")
-	colorItalic.Fprintf(os.Stderr, "    config pwm-range\n")
-	colorItalic.Fprintf(os.Stderr, "    info temp\n")
-	colorItalic.Fprintf(os.Stderr, "    info disk-usage\n")
-	colorItalic.Fprintf(os.Stderr, "    info version\n")
-	colorItalic.Fprintf(os.Stderr, "    led duty\n")
-	colorItalic.Fprintf(os.Stderr, "  set [OPTIONS] <group> <command> <args...>\n")
-	colorItalic.Fprintf(os.Stderr, "    config led <pin>\n")
-	colorItalic.Fprintf(os.Stderr, "    config pwm-range <min> <max>\n")
-	colorItalic.Fprintf(os.Stderr, "    led duty <number> ...\n")
+	fmtHeader.Fprintf(os.Stderr, "Commands\n")
+	fmt.Fprintf(os.Stderr, "  get [OPTIONS] <group> <command>\n")
+	fmt.Fprintf(os.Stderr, "    config led\n")
+	fmt.Fprintf(os.Stderr, "    config pwm-range\n")
+	fmt.Fprintf(os.Stderr, "    info temp\n")
+	fmt.Fprintf(os.Stderr, "    info disk-usage\n")
+	fmt.Fprintf(os.Stderr, "    info version\n")
+	fmt.Fprintf(os.Stderr, "    led duty\n")
+	fmt.Fprintf(os.Stderr, "  set [OPTIONS] <group> <command> <args...>\n")
+	fmt.Fprintf(os.Stderr, "    config led <pin>\n")
+	fmt.Fprintf(os.Stderr, "    config pwm-range <min> <max>\n")
+	fmt.Fprintf(os.Stderr, "    led duty <number> ...\n")
 }
