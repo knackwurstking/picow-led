@@ -23,4 +23,3 @@ test-off:
 	    set -id 1 led duty 0 0 0 0
 	go run ./cmd/picow-led -debug -addr ${ADDR} \
 	    get -id 2 led duty
-
