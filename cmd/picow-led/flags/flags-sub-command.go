@@ -122,10 +122,7 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 
 	resp, err := server.GetResponse()
 	if err != nil {
-		return fmt.Errorf(
-			"get response from \"%s\" failed: %s",
-			server.GetAddr(), err.Error(),
-		)
+		return fmt.Errorf("\"%s\": %s", server.GetAddr(), err.Error())
 	}
 
 	if resp.Error != "" {

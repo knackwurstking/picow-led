@@ -30,7 +30,7 @@ func main() {
 	subs, err := flags.GetSubCommandArgs()
 	if err != nil {
 		fmt.Fprintf(os.Stderr,
-			"%s Parse sub commands failed: %s",
+			"%s Parse sub commands failed: %s\n",
 			prefixError, err)
 		os.Exit(errorcodes.GetSubCommandArgs)
 	}
@@ -39,7 +39,7 @@ func main() {
 		subFlags, err := flags.ReadSubCommand(sub[0], sub[1:])
 		if err != nil {
 			fmt.Fprintf(os.Stderr,
-				"%s Parse sub command \"%s\" line flags failed: %s",
+				"%s Parse sub command \"%s\" line flags failed: %s\n",
 				prefixError, sub[0], err)
 			os.Exit(errorcodes.ReadSubCommand)
 		}
@@ -52,7 +52,7 @@ func main() {
 
 				if flags.Debug {
 					fmt.Fprintf(os.Stderr,
-						"%s Run \"%s %s\" Address %s",
+						"%s Run \"%s %s\" Address %s\n",
 						prefixDebug,
 						subFlags.Flag.Name(), strings.Join(subFlags.Args, " "),
 						server.GetAddr(),
@@ -62,7 +62,7 @@ func main() {
 				err := subFlags.Run(flags)
 				if err != nil {
 					fmt.Fprintf(os.Stderr,
-						"%s Failed to run \"%s\": %s",
+						"%s Failed to run \"%s\": %s\n",
 						prefixError, strings.Join(flags.Args, " "), err,
 					)
 					os.Exit(errorcodes.Run)

@@ -40,7 +40,7 @@ func (sc *ServerCache) Close() {
 		if err != nil {
 			slog.Warn(
 				fmt.Sprintf(
-					"Close \"%s\" failed",
+					"Close \"%s\" failed\n",
 					server.GetAddr(),
 				),
 				"err", err,
