@@ -84,11 +84,15 @@ func (f *Flags) ReadSubCommand(
 
 	flags.Flag.IntVar(
 		&flags.ID, "id", flags.ID,
-		"changes the default id in use",
+		"Change the default request/response id",
 	)
 	flags.Flag.BoolVar(
 		&flags.PrettyPrint, "pretty-print", flags.PrettyPrint,
-		"pretty prints response data",
+		"Pretty prints response data",
+	)
+	flags.Flag.BoolVar(
+		&flags.FullResponse, "full-response", flags.FullResponse,
+		"Print out the full response object",
 	)
 
 	flags.Flag.Usage = func() {

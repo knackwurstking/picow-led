@@ -12,11 +12,12 @@ import (
 )
 
 type FlagsSubCommand struct {
-	serverCache *cache.ServerCache
-	Flag        *flag.FlagSet
-	Args        []string
-	ID          int
-	PrettyPrint bool
+	serverCache  *cache.ServerCache
+	Flag         *flag.FlagSet
+	Args         []string
+	ID           int
+	PrettyPrint  bool
+	FullResponse bool
 }
 
 func NewFlagsSubCommand(flagSet *flag.FlagSet, sc *cache.ServerCache) *FlagsSubCommand {
@@ -136,16 +137,24 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 		return err
 	}
 
-	if resp.Data != nil {
+	rd := resp.Data
+	if fsc.FullResponse {
+		rd = resp
+	}
+
+	if rd != nil {
 		var data []byte
 		if fsc.PrettyPrint {
-			data, err = json.MarshalIndent(resp.Data, "", "    ")
+			data, err = json.MarshalIndent(rd, "", "    ")
 		} else {
-			data, err = json.Marshal(resp.Data)
+			data, err = json.Marshal(rd)
 		}
+
 		if err != nil {
-			return fmt.Errorf("invalid JSON data from server \"%s\": resp.Data=%+v",
-				server.GetAddr(), resp.Data)
+			return fmt.Errorf(
+				"invalid JSON data from server \"%s\": resp.Data=%+v",
+				server.GetAddr(), resp.Data,
+			)
 		}
 
 		fmt.Printf("%s\n", string(data))
