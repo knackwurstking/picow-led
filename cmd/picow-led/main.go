@@ -62,9 +62,7 @@ func main() {
 				err := subFlags.Run(flags)
 				if err != nil {
 					fmt.Fprintf(os.Stderr,
-						"%s Failed to run \"%s\": %s\n",
-						prefixError, strings.Join(flags.Args, " "), err,
-					)
+						"%s %s\n", prefixError, err)
 					os.Exit(errorcodes.Run)
 				}
 			}(server)
