@@ -9,17 +9,17 @@ build:
 
 test-setup:
 	go run ./cmd/picow-led -debug -addr ${ADDR} \
-		set -id 1 config led ${PIN1} ${PIN2} ${PIN3} ${PIN4} \
-		get -id 2 config led | jq
+		set -id 1 -full-response config led ${PIN1} ${PIN2} ${PIN3} ${PIN4} \
+		get -id 2 -full-response config led | jq
 
 test-on:
 	go run ./cmd/picow-led -debug -addr ${ADDR} \
-	    set -id 1 led duty 100 100 100 100
+	    set -id 1 -full-response led duty 100 100 100 100
 	go run ./cmd/picow-led -debug -addr ${ADDR} \
-	    get -id 2 led duty | jq
+	    get -id 2 -full-response led duty | jq
 
 test-off:
 	go run ./cmd/picow-led -debug -addr ${ADDR} \
-	    set -id 1 led duty 0 0 0 0
+	    set -id 1 -full-response led duty 0 0 0 0
 	go run ./cmd/picow-led -debug -addr ${ADDR} \
-	    get -id 2 led duty | jq
+	    get -id 2 -full-response led duty | jq
