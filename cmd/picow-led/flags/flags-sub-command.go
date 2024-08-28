@@ -79,7 +79,8 @@ func (fsc *FlagsSubCommand) set(flags *Flags) error {
 
 func (fsc *FlagsSubCommand) request(t picow.Type) (*picow.Request, error) {
 	if len(fsc.Args) < 2 {
-		return nil, fmt.Errorf("don't know about this command: \"%s\"", strings.Join(fsc.Args, " "))
+		return nil, fmt.Errorf("don't know about this command: \"%s\"",
+			strings.Join(fsc.Args, " "))
 	}
 
 	group := picow.Group("")
@@ -127,10 +128,8 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 
 	if resp.Error != "" {
 		if resp.ID != 0 {
-			err = fmt.Errorf(
-				"id %d: %s: %s",
-				resp.ID, server.GetAddr(), resp.Error,
-			)
+			err = fmt.Errorf("id %d: %s: %s",
+				resp.ID, server.GetAddr(), resp.Error)
 		} else {
 			err = fmt.Errorf("%s: %s", server.GetAddr(), resp.Error)
 		}
@@ -145,10 +144,8 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 			data, err = json.Marshal(resp.Data)
 		}
 		if err != nil {
-			return fmt.Errorf(
-				"invalid JSON data from server \"%s\": resp.Data=%+v",
-				server.GetAddr(), resp.Data,
-			)
+			return fmt.Errorf("invalid JSON data from server \"%s\": resp.Data=%+v",
+				server.GetAddr(), resp.Data)
 		}
 
 		fmt.Printf("%s\n", string(data))
