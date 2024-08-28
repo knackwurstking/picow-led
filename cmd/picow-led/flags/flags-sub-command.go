@@ -99,7 +99,7 @@ func (fsc *FlagsSubCommand) request(t picow.Type) (*picow.Request, error) {
 		Group:   picow.Group(fsc.Args[0]),
 		Type:    t,
 		Command: fsc.Args[1],
-		Args:    make([]string, 0),
+		Args:    fsc.Args[2:],
 	}, nil
 }
 
