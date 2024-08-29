@@ -45,12 +45,12 @@ type Request struct {
 	Type    Type     `json:"type"`
 	Command string   `json:"command"`
 	Args    []string `json:"args"`
-	ID      int      `json:"id"`
+	ID      ID       `json:"id"`
 }
 
 // Response object the picow device will respond with
 type Response struct {
 	Data  any    `json:"data"`
 	Error string `json:"error"`
-	ID    int    `json:"id"`
+	ID    ID     `json:"id"`
 }

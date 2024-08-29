@@ -45,7 +45,7 @@ func (fsc *FlagsSubCommand) get(flags *Flags) error {
 	}
 
 	wg := sync.WaitGroup{}
-	r.ID = fsc.ID
+	r.ID = picow.ID(fsc.ID)
 
 	for _, a := range flags.Addr {
 		wg.Add(1)
@@ -65,7 +65,7 @@ func (fsc *FlagsSubCommand) set(flags *Flags) error {
 	}
 
 	wg := sync.WaitGroup{}
-	r.ID = fsc.ID
+	r.ID = picow.ID(fsc.ID)
 
 	for _, a := range flags.Addr {
 		wg.Add(1)
@@ -118,7 +118,7 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 		return err
 	}
 
-	if r.ID == int(picow.IDNoResponse) {
+	if r.ID == picow.IDNoResponse {
 		return nil
 	}
 
