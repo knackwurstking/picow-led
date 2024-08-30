@@ -5,7 +5,7 @@ PIN3="2"
 PIN4="3"
 
 build:
-	go build -o build/ ./cmd/picow-led/
+	go build -o ./build/ ./cmd/picow-led/
 
 test-setup:
 	go run ./cmd/picow-led -debug -addr ${ADDR} \

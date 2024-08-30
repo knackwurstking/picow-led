@@ -17,7 +17,7 @@ func (sc *ServerCache) Add(addr string) {
 
 func (sc *ServerCache) Get(addr string) (*picow.Server, error) {
 	for _, server := range sc.Data {
-		if server.GetAddr() == addr {
+		if server.Addr == addr {
 			if server.IsConnected() {
 				return server, nil
 			} else {
@@ -41,7 +41,7 @@ func (sc *ServerCache) Close() {
 			slog.Warn(
 				fmt.Sprintf(
 					"Close \"%s\" failed\n",
-					server.GetAddr(),
+					server.Addr,
 				),
 				"err", err,
 			)

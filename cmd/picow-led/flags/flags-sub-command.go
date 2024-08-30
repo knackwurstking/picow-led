@@ -120,15 +120,15 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 
 	resp, err := server.GetResponse()
 	if err != nil {
-		return fmt.Errorf("\"%s\": %s", server.GetAddr(), err.Error())
+		return fmt.Errorf("\"%s\": %s", server.Addr, err.Error())
 	}
 
 	if resp.Error != "" {
 		if resp.ID != 0 {
 			err = fmt.Errorf("id %d: %s: %s",
-				resp.ID, server.GetAddr(), resp.Error)
+				resp.ID, server.Addr, resp.Error)
 		} else {
-			err = fmt.Errorf("%s: %s", server.GetAddr(), resp.Error)
+			err = fmt.Errorf("%s: %s", server.Addr, resp.Error)
 		}
 		return err
 	}
@@ -149,7 +149,7 @@ func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGro
 		if err != nil {
 			return fmt.Errorf(
 				"invalid JSON data from server \"%s\": resp.Data=%+v",
-				server.GetAddr(), resp.Data,
+				server.Addr, resp.Data,
 			)
 		}
 

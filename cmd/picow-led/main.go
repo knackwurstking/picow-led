@@ -54,7 +54,7 @@ func main() {
 						prefixDebug,
 						subFlags.Flag.Name(),
 						strings.Join(subFlags.Args, " "),
-						server.GetAddr(),
+						server.Addr,
 					)
 				}
 
