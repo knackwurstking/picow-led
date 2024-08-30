@@ -54,7 +54,8 @@ func main() {
 					fmt.Fprintf(os.Stderr,
 						"%s Run \"%s %s\" Address %s\n",
 						prefixDebug,
-						subFlags.Flag.Name(), strings.Join(subFlags.Args, " "),
+						subFlags.Flag.Name(),
+						strings.Join(subFlags.Args, " "),
 						server.GetAddr(),
 					)
 				}
@@ -62,7 +63,12 @@ func main() {
 				err := subFlags.Run(flags)
 				if err != nil {
 					fmt.Fprintf(os.Stderr,
-						"%s %s\n", prefixError, err)
+						"%s Failed to run \"%s %s\": %s\n",
+						prefixError,
+						subFlags.Flag.Name(),
+						strings.Join(subFlags.Args, " "),
+						err,
+					)
 					os.Exit(errorcodes.Run)
 				}
 			}(server)
