@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/knackwurstking/picow-led/picow"
+	"github.com/knackwurstking/picow-led-server/pkg/picow"
 )
 
 type ServerCache struct {

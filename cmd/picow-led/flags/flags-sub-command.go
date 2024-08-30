@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/knackwurstking/picow-led-server/pkg/picow"
 	"github.com/knackwurstking/picow-led/cmd/picow-led/cache"
-	"github.com/knackwurstking/picow-led/picow"
 )
 
 type FlagsSubCommand struct {
@@ -96,13 +96,9 @@ func (fsc *FlagsSubCommand) request(t picow.Type) (*picow.Request, error) {
 		return nil, fmt.Errorf("sub command group \"%s\" not exists", group)
 	}
 
-	return &picow.Request{
-		ID:      0,
-		Group:   picow.Group(fsc.Args[0]),
-		Type:    t,
-		Command: fsc.Args[1],
-		Args:    fsc.Args[2:],
-	}, nil
+	return picow.NewRequeset(
+		0, t, picow.Group(fsc.Args[0]), fsc.Args[1], fsc.Args[2:]...,
+	), nil
 }
 
 func (fsc *FlagsSubCommand) send(addr string, r *picow.Request, wg *sync.WaitGroup) error {

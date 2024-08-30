@@ -7,10 +7,10 @@ import (
 	"sync"
 
 	"github.com/fatih/color"
+	"github.com/knackwurstking/picow-led-server/pkg/picow"
 	"github.com/knackwurstking/picow-led/cmd/picow-led/cache"
 	"github.com/knackwurstking/picow-led/cmd/picow-led/errorcodes"
 	"github.com/knackwurstking/picow-led/cmd/picow-led/flags"
-	"github.com/knackwurstking/picow-led/picow"
 )
 
 var (

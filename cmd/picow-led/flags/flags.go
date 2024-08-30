@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/knackwurstking/picow-led-server/pkg/picow"
 	"github.com/knackwurstking/picow-led/cmd/picow-led/cache"
-	"github.com/knackwurstking/picow-led/picow"
 )
 
 // AddrList contains strings "<ip/hostname>:<port>" for the picow devices to connect to
@@ -25,7 +25,7 @@ func (a *AddrList) Set(value string) error {
 	if !matched {
 		// no match means we have to add the default port here
 		value = fmt.Sprintf("%s:%d",
-			strings.TrimRight(value, ":"), picow.DefaultPort)
+			strings.TrimRight(value, ":"), picow.Port)
 	}
 
 	*a = append(*a, value)
