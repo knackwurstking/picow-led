@@ -16,9 +16,7 @@ import (
 var (
 	serverCache = &cache.ServerCache{}
 	prefixError = color.New(color.Bold, color.FgRed).Sprint("ERROR")
-	prefixDebug = color.New(
-		color.Bold, color.BgWhite, color.FgBlack,
-	).Sprint("DEBUG")
+	prefixDebug = color.New(color.Bold, color.FgWhite).Sprint("DEBUG")
 )
 
 func main() {
