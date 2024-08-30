@@ -61,7 +61,7 @@ func main() {
 				err := subFlags.Run(flags)
 				if err != nil {
 					fmt.Fprintf(os.Stderr,
-						"%s Failed to run \"%s %s\": %s\n",
+						"%s Run \"%s %s\" failed: %s\n",
 						prefixError,
 						subFlags.Flag.Name(),
 						strings.Join(subFlags.Args, " "),
