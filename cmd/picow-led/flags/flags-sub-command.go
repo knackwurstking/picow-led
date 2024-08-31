@@ -96,7 +96,7 @@ func (fsc *FlagsSubCommand) request(t picow.Type) (*picow.Request, error) {
 		return nil, fmt.Errorf("sub command group \"%s\" not exists", group)
 	}
 
-	return picow.NewRequeset(
+	return picow.NewRequest(
 		0, t, picow.Group(fsc.Args[0]), fsc.Args[1], fsc.Args[2:]...,
 	), nil
 }
