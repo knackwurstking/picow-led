@@ -5,7 +5,8 @@
 - [x] Test build, current platform (macos)
 - [ ] Test ios build
 - [x] Test android build
-- [ ] Add and use custom fonts "Recursive"
+- [x] Add and use custom fonts "Recursive"
+- [ ] Set theme colors from my [ui lib](https://github.com/knackwurstking/ui)
 
 ## Build for android
 
