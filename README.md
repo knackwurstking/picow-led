@@ -6,7 +6,10 @@
 - [ ] Test ios build
 - [x] Test android build
 - [x] Add and use custom fonts "Recursive"
-- [ ] Set theme colors from my [ui lib](https://github.com/knackwurstking/ui)
+- [x] Set theme colors from my [ui lib](https://github.com/knackwurstking/ui)
+  - [x] Background
+  - [x] Foreground
+- [ ] Change app icon, needs more padding
 
 ## Build for android
 
