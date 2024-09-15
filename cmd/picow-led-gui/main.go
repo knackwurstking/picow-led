@@ -7,6 +7,9 @@ import (
 
 func main() {
 	a := app.New()
+
+	a.Settings().SetTheme(&customTheme{})
+
 	w := a.NewWindow("PicoW LED")
 
 	w.SetContent(NewContent())
