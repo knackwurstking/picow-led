@@ -9,7 +9,7 @@
 - [x] Set theme colors from my [ui lib](https://github.com/knackwurstking/ui)
   - [x] Background
   - [x] Foreground
-- [ ] Change app icon, needs more padding
+- [x] Change app icon resolution
 
 ## Build for android
 
