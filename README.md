@@ -2,11 +2,19 @@
 
 ## TODOs
 
-- [x] Test macos build
-- [ ] Test android build
+- [x] Test build, current platform (macos)
 - [ ] Test ios build
+- [x] Test android build
+- [ ] Add and use custom fonts "Recursive"
 
 ## Build for android
+
+**Current** Platform:
+
+```bash
+cd cmd/picow-led-gui
+fyne package -icon ./icon.png
+```
 
 Platform **MacOS**:
 
