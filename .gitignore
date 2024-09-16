@@ -3,3 +3,4 @@ build/
 *.apk
 *.app
 *.ipa
+/cmd/picow-led-gui/Payload
