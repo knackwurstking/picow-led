@@ -8,12 +8,26 @@ import (
 )
 
 func newContent() *fyne.Container {
-	l := widget.NewLabel("Hello World!")
+	toolbar := widget.NewToolbar()
+
+	aside := container.NewBorder(
+		nil, nil, nil, nil,
+		// ...
+	)
+
+	pages := container.NewBorder(
+		nil, nil, nil, nil,
+		// ...
+	)
+
+	// TODO: Limit drag to resize width somehow
+	drawer := container.NewHSplit(aside, pages)
+	drawer.SetOffset(0.75)
 
 	return container.New(
 		layout.NewBorderLayout(
-			nil, nil, nil, nil,
+			toolbar, nil, nil, nil,
 		),
-		container.NewCenter(l),
+		drawer,
 	)
 }

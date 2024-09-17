@@ -2,6 +2,7 @@ package main
 
 import (
 	"image/color"
+	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/theme"
@@ -10,12 +11,14 @@ import (
 type customTheme struct {
 	background customColor
 	foreground customColor
+	shadow     customColor
 }
 
 func newCustomTheme() fyne.Theme {
 	return &customTheme{
 		background: &customColorBackground{},
 		foreground: &customColorForeground{},
+		shadow:     &customColorShadow{},
 	}
 }
 
@@ -40,7 +43,7 @@ func (c *customTheme) Font(s fyne.TextStyle) fyne.Resource {
 }
 
 func (c *customTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
-	//log.Printf("[DEBUG][*customTheme.Color] %s (%d)", n, v)
+	log.Printf("[DEBUG][*customTheme.Color] %s (%d)", n, v)
 
 	switch n {
 	case "background":
@@ -49,6 +52,9 @@ func (c *customTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Co
 	case "foreground":
 		c.foreground.SetVariant(v)
 		return c.foreground
+	case "shadow":
+		c.shadow.SetVariant(v)
+		return c.shadow
 	default:
 		return theme.DefaultTheme().Color(n, v)
 	}

@@ -48,3 +48,17 @@ func (c *customColorForeground) RGBA() (r, g, b, a uint32) {
 
 	return color.RGBA{23, 23, 28, 255}.RGBA() // NOTE: hsla(240, 10%, 10%, 1)
 }
+
+type customColorShadow struct {
+	customColorBase
+}
+
+func (c *customColorShadow) RGBA() (r, g, b, a uint32) {
+	if c.Variant() == theme.VariantDark {
+		return color.RGBA{41, 41, 50, 255}.RGBA() // NOTE: hsla(240, 10%, 18%, 1)
+	}
+
+	return color.RGBA{205, 205, 214, 255}.RGBA() // NOTE: hsla(240, 10%, 82%, 1)
+}
+
+// TODO: Add color for "hover"
