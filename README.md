@@ -9,17 +9,17 @@
 
 **Routing**:
 
-| Endpoint           | GET | POST | PUT | DELETE |
-| ------------------ | :-: | :--: | :-: | :----: |
-| /events/device     | [x] | [ ]  | [ ] |  [ ]   |
-| /events/devices    | [x] | [ ]  | [ ] |  [ ]   |
-| /api               | [x] | [ ]  | [ ] |  [ ]   |
-| /api/devices       | [x] | [ ]  | [ ] |  [ ]   |
-| /api/device        | [x] | [x]  | [x] |  [x]   |
-| /api/device/pins   | [x] | [x]  | [ ] |  [ ]   |
-| api/device/color  | [x] | [x]  | [ ] |  [ ]   |
-| /api/colors        | [x] | [ ]  | [ ] |  [ ]   |
-| /api/colors/:name  | [x] | [x]  | [x] |  [x]   |
+| Endpoint          | GET | POST | PUT | DELETE |
+| ----------------- | :-: | :--: | :-: | :----: |
+| /events/device    |  x  |      |     |        |
+| /events/devices   |  x  |      |     |        |
+| /api              |  x  |      |     |        |
+| /api/devices      |  x  |      |     |        |
+| /api/device       |  x  |  x   |  x  |   x    |
+| /api/device/pins  |  x  |  x   |     |        |
+| api/device/color  |  x  |  x   |     |        |
+| /api/colors       |  x  |      |     |        |
+| /api/colors/:name |  x  |  x   |  x  |   x    |
 
 **API**:
 
