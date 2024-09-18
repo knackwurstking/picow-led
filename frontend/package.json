@@ -1,0 +1,23 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "preview": "vite preview --host",
+    "build": "vite build --minify -c vite.config.js --emptyOutDir"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.1.2",
+    "vite": "^5.4.1",
+    "vite-plugin-pwa": "^0.20.5"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/ios": "^6.1.2",
+    "ui": "knackwurstking/ui#v0.3.0"
+  }
+}
