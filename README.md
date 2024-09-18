@@ -48,6 +48,11 @@
 
 ## TODOs
 
+- [x] Devices page
+- [ ] Groups page
+- [ ] Scenes page
+- [x] Settings page
+- [ ] Colors page - add, remove or change api colors
 - [x] Need to add protocol select to settings (ssl checkbox)
 - [x] Find an capacitor option to allow unsecure http connections for webscokets
 - [x] Adding android app icons
