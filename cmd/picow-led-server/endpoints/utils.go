@@ -1,10 +1,11 @@
-package main
+package endpoints
 
 import (
 	"encoding/json"
 	"io"
 	"log/slog"
 	"net/http"
+	"sync"
 
 	"github.com/labstack/echo/v4"
 )
@@ -23,7 +24,7 @@ func readBodyData(c echo.Context, data any) (status int, err error) {
 	return http.StatusOK, nil
 }
 
-func saveConfig() {
+func saveConfig(config *Config, wg *sync.WaitGroup) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

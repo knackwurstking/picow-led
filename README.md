@@ -25,22 +25,22 @@
 
 ```json
 {
-  "devices": [
-    {
-      "server": {
-        "name": "Picow Test Device",
-        "addr": "192.168.178.58:3000"
-      },
-      "pins": [0, 1, 2, 3],
-      "color": [0, 0, 0, 0]
-    },
-  ],
-  "colors": {
-    "red": [255, 0, 0, 0],
-    "green": [0, 255, 0, 0],
-    "blue": [0, 0, 255, 0],
-    "white": [255, 255, 255, 255]
-  }
+    "devices": [
+        {
+            "server": {
+                "name": "Picow Test Device",
+                "addr": "192.168.178.58:3000"
+            },
+            "pins": [0, 1, 2, 3],
+            "color": [0, 0, 0, 0]
+        }
+    ],
+    "colors": {
+        "red": [255, 0, 0, 0],
+        "green": [0, 255, 0, 0],
+        "blue": [0, 0, 255, 0],
+        "white": [255, 255, 255, 255]
+    }
 }
 ```
 
@@ -48,8 +48,13 @@
 
 ## TODOs
 
+- [x] Devices page
+- [ ] Groups page
+- [ ] Scenes page
+- [x] Settings page
+- [ ] Colors page - add, remove or change api colors
 - [x] Need to add protocol select to settings (ssl checkbox)
-- [x] Find an capacitor option to allow unsecure http connections for webscokets
+- [x] Find an capacitor option to allow unsecure http connections for websockets
 - [x] Adding android app icons
 - [ ] Adding android app icons for dark mode "icon-dark.png"
 - [x] Adding ios app icons

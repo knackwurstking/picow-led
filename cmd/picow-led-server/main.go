@@ -4,22 +4,17 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"sync"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	slogecho "github.com/samber/slog-echo"
 
-	_api "github.com/knackwurstking/picow-led-server/pkg/api"
+	"github.com/knackwurstking/picow-led-server/cmd/picow-led-server/endpoints"
 )
 
 var (
-	api                = _api.NewAPI()
-	e       *echo.Echo = echo.New()
-	clients            = NewClients()
-	config             = NewConfig()
-	flags              = NewFlags(Port)
-	wg                 = &sync.WaitGroup{}
+	e     *echo.Echo = echo.New()
+	flags            = NewFlags(Port)
 )
 
 func main() {
@@ -32,14 +27,6 @@ func main() {
 		os.Exit(ErrorCodeOK)
 	}
 
-	// Handle config
-
-	slog.Debug("Try to load API configuration", "config.Path", config.Path)
-	if err := config.load(); err != nil {
-		slog.Error("Loading API configuration", "config.Path", config.Path, "err", err)
-		os.Exit(ErrorCodeConfiguration)
-	}
-
 	// Set middleware
 
 	e.Use(
@@ -48,16 +35,14 @@ func main() {
 		middleware.CORS(),
 	)
 
-	// Create endpoints
-
-	endpointsStatic()
-	endpointsEvents()
-	endpointsApi()
-
 	// Echo server configuration
 
 	e.HideBanner = true
 	e.HidePort = true
+
+	// Create endpoints
+
+	endpoints.Create(e)
 
 	// Start server
 

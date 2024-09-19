@@ -26,8 +26,7 @@ func (ad *APIDevices) Add(device *Device) error {
 	}
 
 	*ad = append(*ad, device)
-	go device.Sync()
-	return nil
+	return device.Sync()
 }
 
 func (ad APIDevices) Update(device *Device) error {
@@ -37,8 +36,7 @@ func (ad APIDevices) Update(device *Device) error {
 	for i, d := range ad {
 		if d.Server.Addr == device.Server.Addr {
 			ad[i] = device
-			go device.Sync()
-			return nil
+			return device.Sync()
 		}
 	}
 
