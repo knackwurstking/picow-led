@@ -10,17 +10,16 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	slogecho "github.com/samber/slog-echo"
 
+	"github.com/knackwurstking/picow-led-server/cmd/picow-led-server/endpoints"
 	_api "github.com/knackwurstking/picow-led-server/pkg/api"
-	_clients "github.com/knackwurstking/picow-led-server/pkg/clients"
 )
 
 var (
-	api                = _api.NewAPI()
-	e       *echo.Echo = echo.New()
-	clients            = _clients.NewClients()
-	config             = NewConfig()
-	flags              = NewFlags(Port)
-	wg                 = &sync.WaitGroup{}
+	api               = _api.NewAPI()
+	e      *echo.Echo = echo.New()
+	config            = NewConfig()
+	flags             = NewFlags(Port)
+	wg                = &sync.WaitGroup{}
 )
 
 func main() {
@@ -49,16 +48,14 @@ func main() {
 		middleware.CORS(),
 	)
 
-	// Create endpoints
-
-	endpointsStatic()
-	endpointsEvents()
-	endpointsApi()
-
 	// Echo server configuration
 
 	e.HideBanner = true
 	e.HidePort = true
+
+	// Create endpoints
+
+	endpoints.Create(e)
 
 	// Start server
 

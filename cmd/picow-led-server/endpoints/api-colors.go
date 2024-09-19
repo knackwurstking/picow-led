@@ -1,14 +1,15 @@
-package main
+package endpoints
 
 import (
 	"fmt"
 	"net/http"
 
-	_api "github.com/knackwurstking/picow-led-server/pkg/api"
 	"github.com/labstack/echo/v4"
+
+	_api "github.com/knackwurstking/picow-led-server/pkg/api"
 )
 
-func setupEndpointApiColors(g *echo.Group) {
+func createApiColorsEndpoints(g *echo.Group, api *_api.API) {
 	g.GET("/colors", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, api.Colors)
 	})

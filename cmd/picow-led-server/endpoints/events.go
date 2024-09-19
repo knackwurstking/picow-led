@@ -1,4 +1,4 @@
-package main
+package endpoints
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	_clients "github.com/knackwurstking/picow-led-server/pkg/clients"
 )
 
-func endpointsEvents() {
+func createEventsEndpoints(e *echo.Echo, clients *_clients.Clients) {
 	upgrader := websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			return true
