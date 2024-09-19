@@ -59,3 +59,4 @@
 - [ ] Adding android app icons for dark mode "icon-dark.png"
 - [x] Adding ios app icons
 - [ ] Adding ios app icons for dark mode "icon-dark.png"
+- [ ] Update ui to version v0.4.0 and use the new alert components (warning, error, info) [@todo: v0.4.0]
