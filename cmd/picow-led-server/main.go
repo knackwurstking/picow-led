@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"sync"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -16,7 +15,6 @@ import (
 var (
 	e     *echo.Echo = echo.New()
 	flags            = NewFlags(Port)
-	wg               = &sync.WaitGroup{}
 )
 
 func main() {
