@@ -11,12 +11,13 @@ import (
 	slogecho "github.com/samber/slog-echo"
 
 	_api "github.com/knackwurstking/picow-led-server/pkg/api"
+	_clients "github.com/knackwurstking/picow-led-server/pkg/clients"
 )
 
 var (
 	api                = _api.NewAPI()
 	e       *echo.Echo = echo.New()
-	clients            = NewClients()
+	clients            = _clients.NewClients()
 	config             = NewConfig()
 	flags              = NewFlags(Port)
 	wg                 = &sync.WaitGroup{}

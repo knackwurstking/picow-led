@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	_api "github.com/knackwurstking/picow-led-server/pkg/api"
 	"github.com/labstack/echo/v4"
+
+	_api "github.com/knackwurstking/picow-led-server/pkg/api"
+	_clients "github.com/knackwurstking/picow-led-server/pkg/clients"
 )
 
 func setupEndpointApiDevices(g *echo.Group) {
@@ -35,7 +37,7 @@ func setupEndpointApiDevices(g *echo.Group) {
 		}
 
 		err := api.Devices.Add(&rD)
-		go clients.Emit(EventTypeDevices, api.Devices)
+		go clients.Emit(_clients.EventTypeDevices, api.Devices)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
@@ -51,7 +53,7 @@ func setupEndpointApiDevices(g *echo.Group) {
 		}
 
 		err := api.Devices.Update(&rD)
-		go clients.Emit(EventTypeDevices, api.Devices)
+		go clients.Emit(_clients.EventTypeDevices, api.Devices)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
@@ -67,7 +69,7 @@ func setupEndpointApiDevices(g *echo.Group) {
 		}
 
 		api.Devices.Remove(rD.Server.Addr)
-		go clients.Emit(EventTypeDevices, api.Devices)
+		go clients.Emit(_clients.EventTypeDevices, api.Devices)
 
 		saveConfig()
 		return c.JSON(http.StatusOK, nil)
@@ -100,7 +102,7 @@ func setupEndpointApiDevices(g *echo.Group) {
 		for _, d := range api.Devices {
 			if d.Server.Addr == rD.Server.Addr {
 				err := d.SetPins(rD.Pins)
-				go clients.Emit(EventTypeDevice, d)
+				go clients.Emit(_clients.EventTypeDevice, d)
 				if err != nil {
 					return c.JSON(http.StatusInternalServerError, err.Error())
 				}
@@ -143,7 +145,7 @@ func setupEndpointApiDevices(g *echo.Group) {
 		for _, d := range api.Devices {
 			if d.Server.Addr == rD.Server.Addr {
 				err := d.SetColor(rD.Color)
-				go clients.Emit(EventTypeDevice, d)
+				go clients.Emit(_clients.EventTypeDevice, d)
 				if err != nil {
 					return c.JSON(http.StatusInternalServerError, err.Error())
 				}

@@ -8,6 +8,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
+
+	_clients "github.com/knackwurstking/picow-led-server/pkg/clients"
 )
 
 func endpointsEvents() {
@@ -22,10 +24,10 @@ func endpointsEvents() {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
-		client := clients.Add(EventTypeDevices, conn)
+		client := clients.Add(_clients.EventTypeDevices, conn)
 
 		defer func() {
-			clients.Remove(EventTypeDevices, conn)
+			clients.Remove(_clients.EventTypeDevices, conn)
 		}()
 
 		exit := client.StartHeartBeat()
@@ -59,10 +61,10 @@ func endpointsEvents() {
 			)
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
-		client := clients.Add(EventTypeDevice, conn)
+		client := clients.Add(_clients.EventTypeDevice, conn)
 
 		defer func() {
-			clients.Remove(EventTypeDevice, conn)
+			clients.Remove(_clients.EventTypeDevice, conn)
 		}()
 
 		exit := client.StartHeartBeat()
