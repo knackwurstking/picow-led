@@ -11,15 +11,12 @@ import (
 	slogecho "github.com/samber/slog-echo"
 
 	"github.com/knackwurstking/picow-led-server/cmd/picow-led-server/endpoints"
-	_api "github.com/knackwurstking/picow-led-server/pkg/api"
 )
 
 var (
-	api               = _api.NewAPI()
-	e      *echo.Echo = echo.New()
-	config            = NewConfig()
-	flags             = NewFlags(Port)
-	wg                = &sync.WaitGroup{}
+	e     *echo.Echo = echo.New()
+	flags            = NewFlags(Port)
+	wg               = &sync.WaitGroup{}
 )
 
 func main() {
@@ -30,14 +27,6 @@ func main() {
 	if flags.Version {
 		fmt.Printf("picow-led-server %s\n", Version)
 		os.Exit(ErrorCodeOK)
-	}
-
-	// Handle config
-
-	slog.Debug("Try to load API configuration", "config.Path", config.Path)
-	if err := config.load(); err != nil {
-		slog.Error("Loading API configuration", "config.Path", config.Path, "err", err)
-		os.Exit(ErrorCodeConfiguration)
 	}
 
 	// Set middleware
