@@ -23,13 +23,10 @@ export class PicowApp extends HTMLElement {
 
         /** @type {PicowStore} */
         this.uiStore;
-
         /** @type {PicowStackLayout} */
         this.uiLayout;
-
         /** @type {import("../picow-app-bar").PicowAppBar} */
         this.picowAppBar;
-
         /** @type {import("../picow-drawer").PicowDrawer} */
         this.picowDrawer;
 
@@ -51,6 +48,8 @@ export class PicowApp extends HTMLElement {
             >
                 <ui-stack-layout></ui-stack-layout>
             </ui-container>
+
+            <ui-alerts></ui-alerts>
         `;
 
         this.uiStore = this.querySelector("ui-store");
@@ -79,8 +78,8 @@ export class PicowApp extends HTMLElement {
                     deviceEvents.server = server;
                     devicesEvents.server = server;
                 },
-                true,
-            ),
+                true
+            )
         );
     }
 
@@ -101,7 +100,7 @@ export class PicowApp extends HTMLElement {
                 host: location.hostname,
                 port: location.port,
             },
-            true,
+            true
         );
 
         if (!Object.hasOwn(this.uiStore.ui.get("server"), "ssl")) {
