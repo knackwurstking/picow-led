@@ -46,26 +46,32 @@ export class DevicesPage extends UIStackLayoutPage {
             });
 
             dialog.ui.events.on("submit", async (device) => {
-                const s = this.uiStore.ui.get("server");
-                const addr = !s.port ? s.host : `${s.host}:${s.port}`;
-                const url = `${s.ssl ? "https:" : "http:"}//${addr}/api/device`;
-                const r = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(device),
-                });
-
-                if (!r.ok) {
-                    r.text().then((r) => {
-                        utils.throwAlert({ message: r });
-                        console.error(r);
+                try {
+                    const s = this.uiStore.ui.get("server");
+                    const addr = !s.port ? s.host : `${s.host}:${s.port}`;
+                    const url = `${
+                        s.ssl ? "https:" : "http:"
+                    }//${addr}/api/device`;
+                    const r = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(device),
                     });
 
-                    const message = `Fetch from "${url}" with status code ${r.status}`;
-                    console.error(message);
-                    utils.throwAlert({ message });
+                    if (!r.ok) {
+                        r.text().then((r) => {
+                            utils.throwAlert("error", { message: r });
+                            console.error(r);
+                        });
+
+                        const message = `Fetch from "${url}" with status code ${r.status}`;
+                        console.error(message);
+                        utils.throwAlert("error", { message });
+                    }
+                } catch (ex) {
+                    utils.throwAlert("error", { message: ex });
                 }
             });
 
@@ -110,24 +116,28 @@ export class DevicesPage extends UIStackLayoutPage {
     }
 
     async fetchDevices() {
-        const s = this.uiStore.ui.get("server");
-        const addr = !s.port ? s.host : `${s.host}:${s.port}`;
-        const url = `${s.ssl ? "https:" : "http:"}//${addr}/api/devices`;
-        const r = await fetch(url, {
-            method: "GET",
-        });
-        if (!r.ok) {
-            r.text().then((r) => {
-                utils.throwAlert({ message: r });
-                console.error(r);
+        try {
+            const s = this.uiStore.ui.get("server");
+            const addr = !s.port ? s.host : `${s.host}:${s.port}`;
+            const url = `${s.ssl ? "https:" : "http:"}//${addr}/api/devices`;
+            const r = await fetch(url, {
+                method: "GET",
             });
+            if (!r.ok) {
+                r.text().then((r) => {
+                    utils.throwAlert("error", { message: r });
+                    console.error(r);
+                });
 
-            const message = `Fetch from "${url}" with status code ${r.status}`;
-            console.error(message);
-            utils.throwAlert({ message });
-            return;
+                const message = `Fetch from "${url}" with status code ${r.status}`;
+                console.error(message);
+                utils.throwAlert("error", { message });
+                return;
+            }
+
+            this.uiStore.ui.set("devices", await r.json());
+        } catch (ex) {
+            utils.throwAlert("error", { message: ex });
         }
-
-        this.uiStore.ui.set("devices", await r.json());
     }
 }
