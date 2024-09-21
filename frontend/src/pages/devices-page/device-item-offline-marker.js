@@ -4,13 +4,12 @@ export class DeviceItemOfflineMarker extends HTMLElement {
     static register = () => {
         customElements.define(
             "device-item-offline-marker",
-            DeviceItemOfflineMarker,
+            DeviceItemOfflineMarker
         );
     };
 
     constructor() {
         super();
-        this.shadowRender();
 
         this.picow = {
             root: this,
@@ -32,7 +31,7 @@ export class DeviceItemOfflineMarker extends HTMLElement {
         this.render();
     }
 
-    shadowRender() {
+    render() {
         this.attachShadow({ mode: "open" });
         this.shadowRoot.innerHTML = html`
             <style>
@@ -53,9 +52,7 @@ export class DeviceItemOfflineMarker extends HTMLElement {
 
             <slot></slot>
         `;
-    }
 
-    render() {
         this.innerHTML = html`
             <ui-secondary style="text-wrap: nowrap;"
                 >Device Marked Offline</ui-secondary

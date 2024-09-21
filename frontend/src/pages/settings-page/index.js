@@ -14,8 +14,7 @@ export class SettingsPage extends UIStackLayoutPage {
         this.render();
     }
 
-    shadowRender() {
-        super.shadowRender();
+    render() {
         this.classList.add("no-scrollbar");
         this.shadowRoot.innerHTML += html`
             <style>
@@ -25,9 +24,7 @@ export class SettingsPage extends UIStackLayoutPage {
                 }
             </style>
         `;
-    }
 
-    render() {
         this.innerHTML = html`
             <ui-flex-grid gap="0.25rem">
                 <ui-flex-grid-item>

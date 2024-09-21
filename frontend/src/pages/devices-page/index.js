@@ -25,8 +25,7 @@ export class DevicesPage extends UIStackLayoutPage {
         this.render();
     }
 
-    shadowRender() {
-        super.shadowRender();
+    render() {
         this.classList.add("no-scrollbar");
         this.shadowRoot.innerHTML += html`
             <style>
@@ -36,9 +35,7 @@ export class DevicesPage extends UIStackLayoutPage {
                 }
             </style>
         `;
-    }
 
-    render() {
         this.innerHTML = html` <ul></ul> `;
 
         this.picowAppBar.picow.events.on("add", () => {
@@ -61,9 +58,10 @@ export class DevicesPage extends UIStackLayoutPage {
                 });
 
                 if (!r.ok) {
+                    // TODO: Add and "error" alert
                     r.text().then((r) => console.error(r));
                     console.error(
-                        `Fetch from "${url}" with status code ${r.status}`,
+                        `Fetch from "${url}" with status code ${r.status}`
                     );
                 }
             });
@@ -88,7 +86,7 @@ export class DevicesPage extends UIStackLayoutPage {
                         ul.appendChild(new DeviceItem(d));
                     }
                 },
-                true,
+                true
             ),
 
             devicesEvents.events.on("open", () => {
@@ -97,7 +95,7 @@ export class DevicesPage extends UIStackLayoutPage {
 
             devicesEvents.events.on("message", (devices) => {
                 this.uiStore.ui.set("devices", devices);
-            }),
+            })
         );
 
         this.fetchDevices();
@@ -116,6 +114,7 @@ export class DevicesPage extends UIStackLayoutPage {
             method: "GET",
         });
         if (!r.ok) {
+            // TODO: Add and "error" alert
             r.text().then((r) => console.error(r));
             console.error(`Fetch from "${url}" with status code ${r.status}`);
             return;

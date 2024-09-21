@@ -15,10 +15,10 @@ export class StatusLED extends HTMLElement {
 
     constructor() {
         super();
-        this.shadowRender();
+        this.render();
     }
 
-    shadowRender() {
+    render() {
         this.attachShadow({ mode: "open" });
         this.shadowRoot.innerHTML = html`
             <style>

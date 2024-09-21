@@ -29,8 +29,9 @@ export class DeviceItemOptions extends UIIconButton {
         this.data = device;
     }
 
-    shadowRender() {
-        super.shadowRender();
+    render() {
+        this.ui.ghost = true;
+
         this.shadowRoot.innerHTML += html`
             <style>
                 :host {
@@ -38,10 +39,7 @@ export class DeviceItemOptions extends UIIconButton {
                 }
             </style>
         `;
-    }
 
-    render() {
-        this.ui.ghost = true;
         this.innerHTML = svgOptions;
 
         this.ui.events.on("click", () => {
@@ -67,9 +65,10 @@ export class DeviceItemOptions extends UIIconButton {
                 });
 
                 if (!r.ok) {
+                    // TODO: Add an "error" alert
                     r.text().then((r) => console.error(r));
                     console.error(
-                        `Fetch from "${url}" with status code ${r.status}`,
+                        `Fetch from "${url}" with status code ${r.status}`
                     );
                 }
             });
@@ -85,9 +84,10 @@ export class DeviceItemOptions extends UIIconButton {
                 });
 
                 if (!r.ok) {
+                    // TODO: Add an "error" alert
                     r.text().then((r) => console.error(r));
                     console.error(
-                        `Fetch from "${url}" with status code ${r.status}`,
+                        `Fetch from "${url}" with status code ${r.status}`
                     );
                 }
             });

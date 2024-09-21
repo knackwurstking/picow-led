@@ -18,7 +18,6 @@ export class DeviceItem extends HTMLElement {
      */
     constructor(data = null) {
         super();
-        this.shadowRender();
 
         this.cleanup = new CleanUp();
 
@@ -50,7 +49,7 @@ export class DeviceItem extends HTMLElement {
         this.render();
     }
 
-    shadowRender() {
+    render() {
         this.attachShadow({ mode: "open" });
         this.classList.add("no-user-select");
         this.shadowRoot.innerHTML = html`
@@ -62,9 +61,7 @@ export class DeviceItem extends HTMLElement {
 
             <slot></slot>
         `;
-    }
 
-    render() {
         this.innerHTML = html`
             <li class="is-card">
                 <device-item-offline-marker></device-item-offline-marker>
@@ -91,7 +88,7 @@ export class DeviceItem extends HTMLElement {
             deviceEvents.events.on("message", (d) => {
                 if (d.server.addr !== this.data.server.addr) return;
                 this.picow.set(d);
-            }),
+            })
         );
     }
 
