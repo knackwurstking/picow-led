@@ -60,4 +60,4 @@
 - [x] Adding ios app icons
 - [ ] Adding ios app icons for dark mode "icon-dark.png"
 - [x] Update ui to version v0.4.0 and use the new alert components (info, error) [@todo: v0.4.0] [work-in-progress]
-- [ ] Maybe catch fetch exceptions and throw and alert?
+- [x] Maybe catch fetch exceptions and throw and alert?
