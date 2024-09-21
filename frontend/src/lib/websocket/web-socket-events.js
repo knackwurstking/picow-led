@@ -75,7 +75,7 @@ export class WebSocketEvents {
 
     async onOpen() {
         console.debug(
-            `websocket connection established "${this.origin}${this.path}"`,
+            `websocket connection established "${this.origin}${this.path}"`
         );
     }
 
@@ -85,13 +85,13 @@ export class WebSocketEvents {
     async onError(ev) {
         console.error(
             `websocket connection error "${this.origin}${this.path}"`,
-            ev,
+            ev
         );
     }
 
     async onClose() {
         console.warn(
-            `websocket connection closed "${this.origin}${this.path}"`,
+            `websocket connection closed "${this.origin}${this.path}"`
         );
 
         this.timeout = setTimeout(async () => {

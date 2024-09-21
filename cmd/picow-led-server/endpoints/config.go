@@ -11,7 +11,6 @@ import (
 	"github.com/knackwurstking/picow-led-server/pkg/api"
 )
 
-// TODO: Move the whole config stuff to "./endpoints/endpoints.go"
 type Config struct {
 	Path string
 	API  *api.API

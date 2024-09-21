@@ -2,6 +2,7 @@ import svgOptions from "ui/src/svg/smoothie-line-icons/more-vertical";
 
 import { html, UIIconButton } from "ui";
 import { DialogDeviceSetup } from "../../components";
+import { utils } from "../../lib";
 
 export class DeviceItemOptions extends UIIconButton {
     static register = () => {
@@ -29,8 +30,9 @@ export class DeviceItemOptions extends UIIconButton {
         this.data = device;
     }
 
-    shadowRender() {
-        super.shadowRender();
+    render() {
+        this.ui.ghost = true;
+
         this.shadowRoot.innerHTML += html`
             <style>
                 :host {
@@ -38,10 +40,7 @@ export class DeviceItemOptions extends UIIconButton {
                 }
             </style>
         `;
-    }
 
-    render() {
-        this.ui.ghost = true;
         this.innerHTML = svgOptions;
 
         this.ui.events.on("click", () => {
@@ -57,38 +56,58 @@ export class DeviceItemOptions extends UIIconButton {
             });
 
             dialog.ui.events.on("delete", async (device) => {
-                const s = this.uiStore.ui.get("server");
-                const addr = !s.port ? s.host : `${s.host}:${s.port}`;
-                const url = `${s.ssl ? "https:" : "http:"}//${addr}/api/device`;
-                const r = await fetch(url, {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(device),
-                });
+                try {
+                    const s = this.uiStore.ui.get("server");
+                    const addr = !s.port ? s.host : `${s.host}:${s.port}`;
+                    const url = `${
+                        s.ssl ? "https:" : "http:"
+                    }//${addr}/api/device`;
+                    const r = await fetch(url, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(device),
+                    });
 
-                if (!r.ok) {
-                    r.text().then((r) => console.error(r));
-                    console.error(
-                        `Fetch from "${url}" with status code ${r.status}`,
-                    );
+                    if (!r.ok) {
+                        r.text().then((r) => {
+                            utils.throwAlert({ message: r, variant: "error" });
+                            console.error(r);
+                        });
+
+                        const message = `Fetch from "${url}" with status code ${r.status}`;
+                        console.error(message);
+                        utils.throwAlert({ message, variant: "error" });
+                    }
+                } catch (ex) {
+                    utils.throwAlert({ message: ex, variant: "error" });
                 }
             });
 
             dialog.ui.events.on("submit", async (device) => {
-                const s = this.uiStore.ui.get("server");
-                const addr = !s.port ? s.host : `${s.host}:${s.port}`;
-                const url = `${s.ssl ? "https:" : "http:"}//${addr}/api/device`;
-                const r = await fetch(url, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(device),
-                });
+                try {
+                    const s = this.uiStore.ui.get("server");
+                    const addr = !s.port ? s.host : `${s.host}:${s.port}`;
+                    const url = `${
+                        s.ssl ? "https:" : "http:"
+                    }//${addr}/api/device`;
+                    const r = await fetch(url, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(device),
+                    });
 
-                if (!r.ok) {
-                    r.text().then((r) => console.error(r));
-                    console.error(
-                        `Fetch from "${url}" with status code ${r.status}`,
-                    );
+                    if (!r.ok) {
+                        r.text().then((r) => {
+                            utils.throwAlert({ message: r, variant: "error" });
+                            console.error(r);
+                        });
+
+                        const message = `Fetch from "${url}" with status code ${r.status}`;
+                        console.error(message);
+                        utils.throwAlert({ message, variant: "error" });
+                    }
+                } catch (ex) {
+                    utils.throwAlert({ message: ex, variant: "error" });
                 }
             });
 
