@@ -1,6 +1,7 @@
 import svgPower from "ui/src/svg/smoothie-line-icons/power";
 
 import { html, UIIconButton } from "ui";
+import { utils } from "../../lib";
 
 /**
  * HTML: `device-item-power-button`
@@ -111,11 +112,14 @@ export class DeviceItemPowerButton extends UIIconButton {
                 if (r.ok) {
                     this.data.color = newColor;
                 } else {
-                    // TODO: Add a "error" alert
-                    r.text().then((r) => console.error(r));
-                    console.error(
-                        `Fetch from "${url}" with status code ${r.status}`
-                    );
+                    r.text().then((r) => {
+                        utils.throwAlert({ message: r });
+                        console.error(r);
+                    });
+
+                    const message = `Fetch from "${url}" with status code ${r.status}`;
+                    console.error(message);
+                    utils.throwAlert({ message });
                 }
             } finally {
                 this.picow.state = prevState;

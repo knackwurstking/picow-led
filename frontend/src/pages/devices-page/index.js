@@ -1,6 +1,6 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
 import { DialogDeviceSetup } from "../../components";
-import { devicesEvents } from "../../lib";
+import { devicesEvents, utils } from "../../lib";
 import { DeviceItem } from "./device-item";
 
 export class DevicesPage extends UIStackLayoutPage {
@@ -58,11 +58,14 @@ export class DevicesPage extends UIStackLayoutPage {
                 });
 
                 if (!r.ok) {
-                    // TODO: Add and "error" alert
-                    r.text().then((r) => console.error(r));
-                    console.error(
-                        `Fetch from "${url}" with status code ${r.status}`
-                    );
+                    r.text().then((r) => {
+                        utils.throwAlert({ message: r });
+                        console.error(r);
+                    });
+
+                    const message = `Fetch from "${url}" with status code ${r.status}`;
+                    console.error(message);
+                    utils.throwAlert({ message });
                 }
             });
 
@@ -114,9 +117,14 @@ export class DevicesPage extends UIStackLayoutPage {
             method: "GET",
         });
         if (!r.ok) {
-            // TODO: Add and "error" alert
-            r.text().then((r) => console.error(r));
-            console.error(`Fetch from "${url}" with status code ${r.status}`);
+            r.text().then((r) => {
+                utils.throwAlert({ message: r });
+                console.error(r);
+            });
+
+            const message = `Fetch from "${url}" with status code ${r.status}`;
+            console.error(message);
+            utils.throwAlert({ message });
             return;
         }
 

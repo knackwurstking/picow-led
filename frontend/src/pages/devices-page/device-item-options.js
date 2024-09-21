@@ -2,6 +2,7 @@ import svgOptions from "ui/src/svg/smoothie-line-icons/more-vertical";
 
 import { html, UIIconButton } from "ui";
 import { DialogDeviceSetup } from "../../components";
+import { utils } from "../../lib";
 
 export class DeviceItemOptions extends UIIconButton {
     static register = () => {
@@ -65,11 +66,14 @@ export class DeviceItemOptions extends UIIconButton {
                 });
 
                 if (!r.ok) {
-                    // TODO: Add an "error" alert
-                    r.text().then((r) => console.error(r));
-                    console.error(
-                        `Fetch from "${url}" with status code ${r.status}`
-                    );
+                    r.text().then((r) => {
+                        utils.throwAlert({ message: r });
+                        console.error(r);
+                    });
+
+                    const message = `Fetch from "${url}" with status code ${r.status}`;
+                    console.error(message);
+                    utils.throwAlert({ message });
                 }
             });
 
@@ -84,11 +88,14 @@ export class DeviceItemOptions extends UIIconButton {
                 });
 
                 if (!r.ok) {
-                    // TODO: Add an "error" alert
-                    r.text().then((r) => console.error(r));
-                    console.error(
-                        `Fetch from "${url}" with status code ${r.status}`
-                    );
+                    r.text().then((r) => {
+                        utils.throwAlert({ message: r });
+                        console.error(r);
+                    });
+
+                    const message = `Fetch from "${url}" with status code ${r.status}`;
+                    console.error(message);
+                    utils.throwAlert({ message });
                 }
             });
 
