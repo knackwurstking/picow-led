@@ -57,7 +57,5 @@
 - [x] Find an capacitor option to allow unsecure http connections for websockets
 - [x] Adding android app icons
 - [ ] Adding android app icons for dark mode "icon-dark.png"
-- [x] Adding ios app icons
-- [ ] Adding ios app icons for dark mode "icon-dark.png"
 - [x] Update ui to version v0.4.0 and use the new alert components (info, error) [@todo: v0.4.0] [work-in-progress]
 - [x] Maybe catch fetch exceptions and throw and alert?
