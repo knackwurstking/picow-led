@@ -70,16 +70,16 @@ export class DeviceItemOptions extends UIIconButton {
 
                     if (!r.ok) {
                         r.text().then((r) => {
-                            utils.throwAlert("error", { message: r });
+                            utils.throwAlert({ message: r, variant: "error" });
                             console.error(r);
                         });
 
                         const message = `Fetch from "${url}" with status code ${r.status}`;
                         console.error(message);
-                        utils.throwAlert("error", { message });
+                        utils.throwAlert({ message, variant: "error" });
                     }
                 } catch (ex) {
-                    utils.throwAlert("error", { message: ex });
+                    utils.throwAlert({ message: ex, variant: "error" });
                 }
             });
 
@@ -98,16 +98,16 @@ export class DeviceItemOptions extends UIIconButton {
 
                     if (!r.ok) {
                         r.text().then((r) => {
-                            utils.throwAlert("error", { message: r });
+                            utils.throwAlert({ message: r, variant: "error" });
                             console.error(r);
                         });
 
                         const message = `Fetch from "${url}" with status code ${r.status}`;
                         console.error(message);
-                        utils.throwAlert("error", { message });
+                        utils.throwAlert({ message, variant: "error" });
                     }
                 } catch (ex) {
-                    utils.throwAlert("error", { message: ex });
+                    utils.throwAlert({ message: ex, variant: "error" });
                 }
             });
 

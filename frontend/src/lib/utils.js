@@ -1,19 +1,16 @@
 import { UIAlert } from "ui";
 
 /**
- * @param {"error" | "info"} variant
- * @param {object} options
- * @param {string} options.message
+ * @param {import("ui").UIAlert_Options} options
  */
-export function throwAlert(variant, { message }) {
+export function throwAlert(options) {
     /**
      * @type {import("ui").UIAlerts}
      */
     const alerts = document.querySelector(`ui-alerts`);
     if (!alerts) return;
 
-    const alert = new UIAlert({ message });
-    alert.ui.variant = variant;
+    const alert = new UIAlert(options);
     alert.style.cursor = "pointer";
 
     const remove = alerts.ui.add(alert);
