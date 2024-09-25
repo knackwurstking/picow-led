@@ -14,7 +14,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 	g.GET("/device", func(ctx echo.Context) error {
 		rD := api.Device{}
 		if status, err := readBodyData(ctx, &rD); status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		for _, d := range a.Devices {
@@ -23,19 +23,19 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 			}
 		}
 
-		return ctx.JSON(http.StatusBadRequest, fmt.Sprintf("device \"%s\" not found", rD.Server.Addr))
+		return ctx.String(http.StatusBadRequest, fmt.Sprintf("device \"%s\" not found", rD.Server.Addr))
 	})
 
 	g.POST("/device", func(ctx echo.Context) error {
 		rD := api.Device{}
 		if status, err := readBodyData(ctx, &rD); status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		err := a.Devices.Add(&rD)
 		go c.Emit(clients.EventTypeDevices, a.Devices)
 		if err != nil {
-			return ctx.JSON(http.StatusBadRequest, err.Error())
+			return ctx.String(http.StatusBadRequest, err.Error())
 		}
 
 		defer apiChangeCallback()
@@ -45,13 +45,13 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 	g.PUT("/device", func(ctx echo.Context) error {
 		rD := api.Device{}
 		if status, err := readBodyData(ctx, &rD); status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		err := a.Devices.Update(&rD)
 		go c.Emit(clients.EventTypeDevices, a.Devices)
 		if err != nil {
-			return ctx.JSON(http.StatusBadRequest, err.Error())
+			return ctx.String(http.StatusBadRequest, err.Error())
 		}
 
 		defer apiChangeCallback()
@@ -61,7 +61,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 	g.DELETE("/device", func(ctx echo.Context) error {
 		rD := api.Device{}
 		if status, err := readBodyData(ctx, &rD); status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		a.Devices.Remove(rD.Server.Addr)
@@ -74,7 +74,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 	g.GET("/device/pins", func(ctx echo.Context) error {
 		rD := api.Device{}
 		if status, err := readBodyData(ctx, &rD); status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		for _, d := range a.Devices {
@@ -83,7 +83,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 			}
 		}
 
-		return ctx.JSON(
+		return ctx.String(
 			http.StatusBadRequest,
 			fmt.Sprintf("device \"%s\" not found", rD.Server.Addr),
 		)
@@ -93,7 +93,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 
 		rD := api.Device{}
 		if status, err := readBodyData(ctx, &rD); status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		for _, d := range a.Devices {
@@ -101,7 +101,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 				err := d.SetPins(rD.Pins)
 				go c.Emit(clients.EventTypeDevice, d)
 				if err != nil {
-					return ctx.JSON(http.StatusInternalServerError, err.Error())
+					return ctx.String(http.StatusInternalServerError, err.Error())
 				}
 
 				defer apiChangeCallback()
@@ -109,7 +109,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 			}
 		}
 
-		return ctx.JSON(
+		return ctx.String(
 			http.StatusBadRequest,
 			fmt.Sprintf("device \"%s\" not found", rD.Server.Addr),
 		)
@@ -118,7 +118,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 	g.GET("/device/color", func(ctx echo.Context) error {
 		rD := api.Device{}
 		if status, err := readBodyData(ctx, &rD); status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		for _, d := range a.Devices {
@@ -127,7 +127,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 			}
 		}
 
-		return ctx.JSON(
+		return ctx.String(
 			http.StatusBadRequest,
 			fmt.Sprintf("device \"%s\" not found", rD.Server.Addr),
 		)
@@ -136,7 +136,7 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 	g.POST("/device/color", func(ctx echo.Context) error {
 		rD := api.Device{}
 		if status, err := readBodyData(ctx, &rD); status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		for _, d := range a.Devices {
@@ -144,14 +144,14 @@ func createApiDeviceEndpoints(g *echo.Group, c *clients.Clients, a *api.API, api
 				err := d.SetColor(rD.Color)
 				go c.Emit(clients.EventTypeDevice, d)
 				if err != nil {
-					return ctx.JSON(http.StatusInternalServerError, err.Error())
+					return ctx.String(http.StatusInternalServerError, err.Error())
 				}
 
 				return ctx.JSON(http.StatusOK, nil)
 			}
 		}
 
-		return ctx.JSON(
+		return ctx.String(
 			http.StatusBadRequest,
 			fmt.Sprintf("device \"%s\" not found", rD.Server.Addr),
 		)

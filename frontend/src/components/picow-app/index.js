@@ -1,9 +1,8 @@
-import { html, styles } from "ui";
+import { CleanUp, html, styles } from "ui";
+import { deviceEvents, devicesEvents } from "../../lib";
 import { DevicesPage, SettingsPage } from "../../pages";
 import { PicowAppBar } from "../picow-app-bar";
 import { PicowDrawer } from "../picow-drawer";
-import { CleanUp } from "ui";
-import { deviceEvents, devicesEvents } from "../../lib";
 
 export class PicowApp extends HTMLElement {
     static register = () => {
@@ -34,8 +33,19 @@ export class PicowApp extends HTMLElement {
     }
 
     render() {
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = html`
+            <style>
+                :host {
+                    display: block;
+                }
+            </style>
+
+            <slot></slot>
+        `;
+
         this.innerHTML = html`
-            <ui-theme-handler auto></ui-theme-handler>
+            <ui-theme-handler mode="dark"></ui-theme-handler>
             <ui-store storageprefix="picow:" storage></ui-store>
 
             <picow-app-bar position="top"></picow-app-bar>
@@ -92,7 +102,7 @@ export class PicowApp extends HTMLElement {
     /** @private */
     createStore() {
         this.uiStore.ui.set("devices", [], true);
-        this.uiStore.ui.set("currentPage", "", true);
+        this.uiStore.ui.set("currentPage", null, true);
         this.uiStore.ui.set(
             "server",
             {
@@ -128,6 +138,12 @@ export class PicowApp extends HTMLElement {
 
         this.uiLayout.ui.events.on("change", ({ newPage }) => {
             this.resetLayout();
+
+            if (!newPage) {
+                this.picowDrawer.ui.open = true;
+                return;
+            }
+
             switch (newPage.ui.name) {
                 case "devices":
                     this.uiStore.ui.set("currentPage", newPage.ui.name);

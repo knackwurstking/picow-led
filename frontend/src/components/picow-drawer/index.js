@@ -97,6 +97,7 @@ export class PicowDrawer extends UIDrawer {
          */
         const devicesButton = this.querySelector(`ui-button[name="devices"]`);
         devicesButton.ui.events.on("click", () => {
+            this.uiLayout.ui.clear();
             this.uiLayout.ui.set("devices");
             this.ui.open = false;
         });
@@ -108,6 +109,7 @@ export class PicowDrawer extends UIDrawer {
          */
         const settingsButton = this.querySelector(`ui-button[name="settings"]`);
         settingsButton.ui.events.on("click", () => {
+            this.uiLayout.ui.clear();
             this.uiLayout.ui.set("settings");
             this.ui.open = false;
         });
@@ -122,7 +124,7 @@ export class PicowDrawer extends UIDrawer {
              * @type {import("../status-led").StatusLED}
              */
             const deviceStatusLED = this.querySelector(
-                `status-led[name="device"]`,
+                `status-led[name="device"]`
             );
 
             deviceEvents.events.on("server", async () => {
@@ -150,7 +152,7 @@ export class PicowDrawer extends UIDrawer {
              * @type {import("../status-led").StatusLED}
              */
             const devicesStatusLED = this.querySelector(
-                `status-led[name="devices"]`,
+                `status-led[name="devices"]`
             );
 
             devicesEvents.events.on("server", async () => {

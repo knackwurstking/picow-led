@@ -43,6 +43,15 @@ export class DeviceItem extends HTMLElement {
                 this.root.setOptionsButton();
                 this.root.setOfflineMarker();
                 this.root.setText();
+
+                if (!!device.color) {
+                    this.root.style.setProperty(
+                        "--current-color",
+                        `rgb(${device.color[0] || 0}, ${
+                            device.color[1] || 0
+                        }, ${device.color[2] || 0})`
+                    );
+                }
             },
         };
 
@@ -55,10 +64,24 @@ export class DeviceItem extends HTMLElement {
         this.shadowRoot.innerHTML = html`
             <style>
                 :host {
-                    display: block;
+                    display: block !important;
+                    position: relative;
+                    border-radius: var(--ui-radius) !important;
+                }
+
+                div {
+                    position: absolute;
+                    top: var(--ui-spacing);
+                    right: var(--ui-spacing);
+                    bottom: var(--ui-spacing);
+                    left: var(--ui-spacing);
+                    border-radius: var(--ui-radius);
+                    box-shadow: 0 0 8px 1px var(--current-color, transparent);
+                    transition: box-shadow 0.35s linear;
                 }
             </style>
 
+            <div></div>
             <slot></slot>
         `;
 

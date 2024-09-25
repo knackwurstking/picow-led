@@ -70,8 +70,9 @@ export class DeviceItemOptions extends UIIconButton {
 
                     if (!r.ok) {
                         r.text().then((r) => {
-                            utils.throwAlert({ message: r, variant: "error" });
-                            console.error(r);
+                            const message = `Server response to ${url}: ${r}`;
+                            utils.throwAlert({ message, variant: "error" });
+                            console.error(message);
                         });
 
                         const message = `Fetch from "${url}" with status code ${r.status}`;
@@ -98,8 +99,9 @@ export class DeviceItemOptions extends UIIconButton {
 
                     if (!r.ok) {
                         r.text().then((r) => {
-                            utils.throwAlert({ message: r, variant: "error" });
-                            console.error(r);
+                            const message = `Server response to ${url}: ${r}`;
+                            utils.throwAlert({ message, variant: "error" });
+                            console.error(message);
                         });
 
                         const message = `Fetch from "${url}" with status code ${r.status}`;

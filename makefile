@@ -3,13 +3,15 @@ TEST_SETUP_DEVICE='{ "server": { "name": "Kitchen", "addr": "192.168.178.58:3000
 TEST_SETUP_COLOR_WHITE='[255, 255, 255, 255]'
 
 build:
-	cd frontend && npm install
-	cd frontend && npm run build
-	go build -o ./build/ ./cmd/picow-led-server/
-	cp ./cmd/picow-led-server/picow-led-server.service ./build/
+	cd frontend && \
+		npm install && \
+		npm run build && \
+		cd .. && \
+		go build -v -o ./build/ ./cmd/picow-led-server/ && \
+		cp ./cmd/picow-led-server/picow-led-server.service ./build/
 
 run:
-	go run ./cmd/picow-led-server -debug
+	go run -v ./cmd/picow-led-server -debug
 
 setup:
 	curl -X POST \

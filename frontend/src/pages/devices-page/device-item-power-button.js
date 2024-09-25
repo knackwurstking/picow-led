@@ -113,8 +113,9 @@ export class DeviceItemPowerButton extends UIIconButton {
                     this.data.color = newColor;
                 } else {
                     r.text().then((r) => {
-                        utils.throwAlert({ message: r, variant: "error" });
-                        console.error(r);
+                        const message = `Server response to ${url}: ${r}`;
+                        utils.throwAlert({ message, variant: "error" });
+                        console.error(message);
                     });
 
                     const message = `Fetch from "${url}" with status code ${r.status}`;

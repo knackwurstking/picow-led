@@ -23,7 +23,7 @@ func createApiColorsEndpoints(g *echo.Group, a *api.API, apiChangeCallback func(
 			}
 		}
 
-		return ctx.JSON(http.StatusBadRequest, fmt.Sprintf("color \"%s\" not found", name))
+		return ctx.String(http.StatusBadRequest, fmt.Sprintf("color \"%s\" not found", name))
 	})
 
 	g.POST("/colors/:name", func(ctx echo.Context) error {
@@ -32,12 +32,12 @@ func createApiColorsEndpoints(g *echo.Group, a *api.API, apiChangeCallback func(
 		r := make(api.Color, 0)
 		status, err := readBodyData(ctx, &r)
 		if status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		err = a.Colors.Add(name, r)
 		if err != nil {
-			return ctx.JSON(http.StatusInternalServerError, err.Error())
+			return ctx.String(http.StatusInternalServerError, err.Error())
 		}
 
 		defer apiChangeCallback()
@@ -50,12 +50,12 @@ func createApiColorsEndpoints(g *echo.Group, a *api.API, apiChangeCallback func(
 		r := make(api.Color, 0)
 		status, err := readBodyData(ctx, &r)
 		if status != http.StatusOK {
-			return ctx.JSON(status, err.Error())
+			return ctx.String(status, err.Error())
 		}
 
 		err = a.Colors.Replace(name, r)
 		if err != nil {
-			return ctx.JSON(http.StatusInternalServerError, err.Error())
+			return ctx.String(http.StatusInternalServerError, err.Error())
 		}
 
 		defer apiChangeCallback()
