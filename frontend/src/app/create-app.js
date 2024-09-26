@@ -1,5 +1,6 @@
 import { html, styles } from "ui";
 import createAppBar from "./create-app-bar";
+import createDrawer from "./create-drawer";
 
 /**
  * @typedef {{
@@ -35,7 +36,6 @@ export default function () {
     const appBar = createAppBar();
     el.querySelector(`div.app-bar`).replaceWith(appBar.element);
 
-    // TODO: Create the drawer
     const drawer = createDrawer();
     el.querySelector(`div.drawer`).replaceWith(drawer.element);
 
