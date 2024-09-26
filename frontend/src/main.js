@@ -2,7 +2,7 @@ import "../node_modules/ui/css/main.css";
 
 import { register } from "ui";
 import { registerSW } from "virtual:pwa-register";
-import { PicowApp } from "./components";
+import { createApp } from "./components";
 
 registerSW({
     onRegistered(r) {
@@ -21,4 +21,6 @@ registerSW({
 });
 
 register();
-PicowApp.register();
+
+const app = createApp();
+document.querySelector(`div#app`).replaceWith(app.element);
