@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" href="/icons/favicon.ico" sizes="any" />
+        <link
+            rel="apple-touch-icon"
+            href="/icons/apple-touch-icon-180x180.png"
+        />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
+        />
+        <title>PicoW LED</title>
+        <style>
+            html,
+            body {
+                overscroll-behavior: none !important;
+                width: 100%;
+                height: 100%;
+            }
+
+            picow-app {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <picow-app></picow-app>
+        <div id="app"></div>
+        <script type="module" src="/src/main.js"></script>
+    </body>
+</html>
