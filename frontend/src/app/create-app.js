@@ -14,6 +14,9 @@ import createDrawer from "./create-drawer";
 export default function () {
     const el = document.createElement("div");
 
+    el.style.width = "100%";
+    el.style.height = "100%";
+
     el.innerHTML = html`
         <ui-theme-handler mode="dark"></ui-theme-handler>
         <ui-store storageprefix="picow:" storage></ui-store>
