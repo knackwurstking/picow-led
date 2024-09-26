@@ -2,7 +2,7 @@ import "../node_modules/ui/css/main.css";
 
 import { register } from "ui";
 import { registerSW } from "virtual:pwa-register";
-import { createApp } from "./components";
+import { createApp } from "./app";
 
 registerSW({
     onRegistered(r) {
