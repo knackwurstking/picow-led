@@ -19,9 +19,9 @@ import { Events, UIAppBar, html } from "ui";
  */
 
 /**
- * @returns {AppBar}
+ * @returns {Promise<AppBar>}
  */
-export default function () {
+export default async function () {
     const el = new UIAppBar();
     el.ui.position = "top";
 
@@ -46,8 +46,8 @@ export default function () {
      * @type {import("ui").UIAppBarItem<import("ui").UIIconButton>}
      */
     const menu = el.querySelector(`ui-app-bar-item[name="menu"]`);
-    menu.ui.child.ui.events.on("click", (button) => {
-        events.dispatch("menu", button);
+    menu.ui.child.ui.events.on("click", (ev) => {
+        events.dispatch("menu", ev.currentTarget);
     });
 
     /**
@@ -59,8 +59,8 @@ export default function () {
      * @type {import("ui").UIAppBarItem<import("ui").UIIconButton>}
      */
     const add = el.querySelector(`ui-app-bar-item[name="add"]`);
-    add.ui.child.ui.events.on("click", (button) => {
-        events.dispatch("add", button);
+    add.ui.child.ui.events.on("click", (ev) => {
+        events.dispatch("add", ev.currentTarget);
     });
 
     return {

@@ -24,5 +24,6 @@ registerSW({
 register();
 StatusLED.register();
 
-const app = createApp();
-document.querySelector(`div#app`).replaceWith(app.element);
+createApp().then((app) => {
+    document.querySelector(`div#app`).replaceWith(app.element);
+});

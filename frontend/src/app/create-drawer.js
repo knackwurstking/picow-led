@@ -10,9 +10,9 @@ import { deviceEvents, devicesEvents } from "../lib";
  */
 
 /**
- * @returns {Drawer}
+ * @returns {Promise<Drawer>}
  */
-export default function () {
+export default async function () {
     const el = new UIDrawer();
 
     el.innerHTML = html`
@@ -159,6 +159,12 @@ export default function () {
     devicesEvents.events.on("close", () =>
         devicesStatusLED.removeAttribute("active")
     );
+
+    /**
+     * @type {PicowStore}
+     */
+    const store = document.querySelector(`ui-store`);
+    store.ui.events.dispatch("server", store.ui.get("server"));
 
     return {
         element: el,
