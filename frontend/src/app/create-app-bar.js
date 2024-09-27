@@ -31,7 +31,7 @@ export default async function () {
         </ui-app-bar-item>
 
         <ui-app-bar-item name="title" slot="center">
-            <h4 style="white-space: nowrap;"></h4>
+            <h4 style="white-space: nowrap;">PicoW LED</h4>
         </ui-app-bar-item>
 
         <ui-app-bar-item name="add" slot="right">
@@ -62,6 +62,7 @@ export default async function () {
     add.ui.child.ui.events.on("click", (ev) => {
         events.dispatch("add", ev.currentTarget);
     });
+    add.ui.hide();
 
     return {
         element: el,
