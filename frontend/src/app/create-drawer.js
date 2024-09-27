@@ -10,9 +10,11 @@ import { deviceEvents, devicesEvents } from "../lib";
  */
 
 /**
+ * @param {object} options
+ * @param {import("ui").UIStackLayout<PicowStackLayout_Pages>} options.stackLayout
  * @returns {Promise<Drawer>}
  */
-export default async function () {
+export default async function ({ stackLayout }) {
     const el = new UIDrawer();
 
     el.innerHTML = html`
@@ -79,11 +81,6 @@ export default async function () {
         </ui-drawer-group>
     `;
 
-    /**
-     * @type {import("ui").UIStackLayout<PicowStackLayout_Pages>}
-     */
-    const stackLayout = document.querySelector(`ui-stack-layout`);
-
     // -------------- //
     // Devices Button //
     // -------------- //
@@ -116,55 +113,59 @@ export default async function () {
     // Setup "/events/device" event handler for the status led //
     // ------------------------------------------------------- //
 
-    /**
-     * @type {import("../components").StatusLED}
-     */
-    const deviceStatusLED = el.querySelector(`status-led[name="device"]`);
+    {
+        /**
+         * @type {import("../components").StatusLED}
+         */
+        const statusLED = el.querySelector(`status-led[name="device"]`);
 
-    deviceEvents.events.on("server", async () => {
         /**
          * @type {import("ui").UILabel}
          */
         const label = el.querySelector(`ui-label[name="device"]`);
         label.ui.primary = deviceEvents.path;
         label.ui.secondary = deviceEvents.origin;
-    });
-    deviceEvents.events.on("close", () =>
-        deviceStatusLED.removeAttribute("active")
-    );
-    deviceEvents.events.on("open", () =>
-        deviceStatusLED.setAttribute("active", "")
-    );
+
+        deviceEvents.events.on("server", async () => {
+            label.ui.primary = deviceEvents.path;
+            label.ui.secondary = deviceEvents.origin;
+        });
+        deviceEvents.events.on("close", () =>
+            statusLED.removeAttribute("active")
+        );
+        deviceEvents.events.on("open", () =>
+            statusLED.setAttribute("active", "")
+        );
+    }
 
     // -------------------------------------------------------- //
     // Setup "/events/devices" event handler for the status led //
-    // -------------------------------------------------------- //
+    // -------------------------------------------------------- / -------------------------------------------------------- ///
 
-    /**
-     * @type {import("../components").StatusLED}
-     */
-    const devicesStatusLED = el.querySelector(`status-led[name="devices"]`);
+    {
+        /**
+         * @type {import("../components").StatusLED}
+         */
+        const statusLED = el.querySelector(`status-led[name="devices"]`);
 
-    devicesEvents.events.on("server", async () => {
         /**
          * @type {import("ui").UILabel}
          */
         const label = el.querySelector(`ui-label[name="devices"]`);
         label.ui.primary = devicesEvents.path;
         label.ui.secondary = devicesEvents.origin;
-    });
-    devicesEvents.events.on("open", () =>
-        devicesStatusLED.setAttribute("active", "")
-    );
-    devicesEvents.events.on("close", () =>
-        devicesStatusLED.removeAttribute("active")
-    );
 
-    /**
-     * @type {PicowStore}
-     */
-    const store = document.querySelector(`ui-store`);
-    store.ui.events.dispatch("server", store.ui.get("server"));
+        devicesEvents.events.on("server", async () => {
+            label.ui.primary = devicesEvents.path;
+            label.ui.secondary = devicesEvents.origin;
+        });
+        devicesEvents.events.on("open", () =>
+            statusLED.setAttribute("active", "")
+        );
+        devicesEvents.events.on("close", () =>
+            statusLED.removeAttribute("active")
+        );
+    }
 
     return {
         element: el,

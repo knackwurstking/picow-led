@@ -72,6 +72,11 @@ export default async function () {
     // Create the StackLayout //
     // ---------------------- //
 
+    /**
+     * @type {import("ui").UIStackLayout<PicowStackLayout_Pages>}
+     */
+    const stackLayout = el.querySelector(`ui-stack-layout`);
+
     // TODO: Initialize the layout
     //          - Register pages
     //          - Handle the stack layout "change" event and setup drawer items, title, ...
@@ -87,7 +92,7 @@ export default async function () {
     // Create the Drawer //
     // ----------------- //
 
-    const drawer = await createDrawer();
+    const drawer = await createDrawer({ stackLayout });
     el.querySelector(`div.drawer`).replaceWith(drawer.element);
 
     appBar.buttons.menu.ui.events.on("click", () => drawer.open());
