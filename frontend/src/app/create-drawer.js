@@ -84,9 +84,9 @@ export default async function () {
      */
     const stackLayout = document.querySelector(`ui-stack-layout`);
 
-    //
-    // Devices Button
-    //
+    // -------------- //
+    // Devices Button //
+    // -------------- //
 
     /**
      * @type {import("ui").UIButton}
@@ -98,9 +98,9 @@ export default async function () {
         el.ui.open = false;
     });
 
-    //
-    // Settings Button
-    //
+    // --------------- //
+    // Settings Button //
+    // --------------- //
 
     /**
      * @type {import("ui").UIButton}
@@ -112,9 +112,9 @@ export default async function () {
         el.ui.open = false;
     });
 
-    //
-    // Setup "/events/device" event handler for the status led
-    //
+    // ------------------------------------------------------- //
+    // Setup "/events/device" event handler for the status led //
+    // ------------------------------------------------------- //
 
     /**
      * @type {import("../components").StatusLED}
@@ -136,9 +136,9 @@ export default async function () {
         deviceStatusLED.setAttribute("active", "")
     );
 
-    //
-    // Setup "/events/devices" event handler for the status led
-    //
+    // -------------------------------------------------------- //
+    // Setup "/events/devices" event handler for the status led //
+    // -------------------------------------------------------- //
 
     /**
      * @type {import("../components").StatusLED}

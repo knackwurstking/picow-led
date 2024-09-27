@@ -36,9 +36,9 @@ export default async function () {
         <ui-alerts></ui-alerts>
     `;
 
-    //
-    // Create the Store
-    //
+    // ---------------- //
+    // Create the Store //
+    // ---------------- //
 
     /**
      * @type {PicowStore}
@@ -68,24 +68,24 @@ export default async function () {
         });
     }
 
-    //
-    // Create the StackLayout
-    //
+    // ---------------------- //
+    // Create the StackLayout //
+    // ---------------------- //
 
     // TODO: Initialize the layout
     //          - Register pages
     //          - Handle the stack layout "change" event and setup drawer items, title, ...
 
-    //
-    // Create the AppBar
-    //
+    // ----------------- //
+    // Create the AppBar //
+    // ----------------- //
 
     const appBar = await createAppBar();
     el.querySelector(`div.app-bar`).replaceWith(appBar.element);
 
-    //
-    // Create the Drawer
-    //
+    // ----------------- //
+    // Create the Drawer //
+    // ----------------- //
 
     const drawer = await createDrawer();
     el.querySelector(`div.drawer`).replaceWith(drawer.element);
