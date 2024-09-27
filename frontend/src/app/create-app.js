@@ -77,9 +77,20 @@ export default async function () {
      */
     const stackLayout = el.querySelector(`ui-stack-layout`);
 
+    stackLayout.ui.register("devices", () => {
+        return null; // TODO: Create "devices" page here
+    });
+
+    stackLayout.ui.register("settings", () => {
+        return null; // TODO: Create "devices" page here
+    });
+
     // TODO: Initialize the layout
-    //          - Register pages
     //          - Handle the stack layout "change" event and setup drawer items, title, ...
+    stackLayout.ui.events.on("change", ({ newPage }) => {
+        // TODO: Reset all layouts (AppBar buttons and title)
+        // ...
+    });
 
     // ----------------- //
     // Create the AppBar //
