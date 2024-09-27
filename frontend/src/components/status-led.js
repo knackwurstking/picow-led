@@ -4,7 +4,7 @@ import { html } from "ui";
  * HTML: `status-led`
  *
  * Attributes:
- *   - active: boolean
+ *   - __active__: *boolean*
  */
 export class StatusLED extends HTMLElement {
     static register = () => {
@@ -15,10 +15,10 @@ export class StatusLED extends HTMLElement {
 
     constructor() {
         super();
-        this.render();
+        this.#renderStatusLED();
     }
 
-    render() {
+    #renderStatusLED() {
         this.attachShadow({ mode: "open" });
         this.shadowRoot.innerHTML = html`
             <style>
