@@ -44,6 +44,11 @@ export default function () {
 
     appBar.buttons.menu.ui.events.on("click", () => drawer.open());
 
+    // TODO: Initialize the store and set "server" to `deviceEvents` and `devicesEvents`
+    // TODO: Initialize the layout
+    //          - Register pages
+    //          - Handle the stack layout "change" event and setup drawer items, title, ...
+
     return {
         element: el,
     };
