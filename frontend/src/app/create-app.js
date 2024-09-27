@@ -42,6 +42,8 @@ export default function () {
     const drawer = createDrawer();
     el.querySelector(`div.drawer`).replaceWith(drawer.element);
 
+    appBar.buttons.menu.ui.events.on("click", () => drawer.open());
+
     return {
         element: el,
     };
