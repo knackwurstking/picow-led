@@ -1,6 +1,4 @@
-import svgMenu from "ui/src/svg/smoothie-line-icons/menu";
-import svgAdd from "ui/src/svg/smoothie-line-icons/plus";
-
+import { menu as svgMenu, plus as svgAdd } from "ui/svg/smoothie-line-icons";
 import { Events, UIAppBar, html } from "ui";
 
 /**
@@ -25,6 +23,7 @@ import { Events, UIAppBar, html } from "ui";
  */
 export default function () {
     const el = new UIAppBar();
+    el.ui.position = "top";
 
     el.innerHTML = html`
         <ui-app-bar-item name="menu" slot="left">
