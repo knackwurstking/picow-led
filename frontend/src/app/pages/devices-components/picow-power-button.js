@@ -140,4 +140,5 @@ export default class PicowPowerButton extends UIIconButton {
     }
 }
 
+console.debug(`Register the "picow-power-button"`);
 customElements.define("picow-power-button", PicowPowerButton);
