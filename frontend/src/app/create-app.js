@@ -2,6 +2,7 @@ import { html, styles } from "ui";
 import { deviceEvents, devicesEvents } from "../lib";
 import createAppBar from "./create-app-bar";
 import createDrawer from "./create-drawer";
+import createSettingsPage from "./pages/create-settings-page";
 
 /**
  * @typedef {{
@@ -82,8 +83,8 @@ export default async function () {
         return null; // TODO: Create "devices" page here
     });
 
-    stackLayout.ui.register("settings", () => {
-        return null; // TODO: Create "devices" page here
+    stackLayout.ui.register("settings", async () => {
+        return (await createSettingsPage({ store })).element;
     });
 
     stackLayout.ui.events.on("change", ({ newPage }) => {
@@ -121,14 +122,14 @@ export default async function () {
     const appBar = await createAppBar();
     el.querySelector(`div.app-bar`).replaceWith(appBar.element);
 
+    appBar.events.on("menu", () => drawer.open());
+
     // ----------------- //
     // Create the Drawer //
     // ----------------- //
 
     const drawer = await createDrawer({ stackLayout });
     el.querySelector(`div.drawer`).replaceWith(drawer.element);
-
-    appBar.buttons.menu.ui.events.on("click", () => drawer.open());
 
     // ---------------- //
     // Lets get started //
