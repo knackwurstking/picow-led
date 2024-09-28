@@ -81,7 +81,7 @@ export default async function () {
     const stackLayout = el.querySelector(`ui-stack-layout`);
 
     stackLayout.ui.register("devices", async () => {
-        return new PicowDevicesPage({ store });
+        return new PicowDevicesPage({ store, appBar });
     });
 
     stackLayout.ui.register("settings", async () => {

@@ -5,11 +5,13 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
     /**
      * @param {object} options
      * @param {PicowStore} options.store
+     * @param {import("../create-app-bar").AppBar} options.appBar
      */
-    constructor({ store }) {
+    constructor({ store, appBar }) {
         super("devices");
 
         this.store = store;
+        this.appBar = appBar;
         this.cleanup = new CleanUp();
 
         this.#render();
