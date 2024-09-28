@@ -1,4 +1,6 @@
-import "./picow-power-button"; // NOTE: This will register component
+import "./picow-power-button";
+import "./picow-options-button";
+
 import { CleanUp, globalStylesToShadowRoot, html } from "ui";
 import { deviceEvents } from "../../../lib";
 

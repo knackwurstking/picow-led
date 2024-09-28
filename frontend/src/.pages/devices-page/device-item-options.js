@@ -6,6 +6,7 @@ import { utils } from "../../lib";
 
 export class DeviceItemOptions extends UIIconButton {
     static register = () => {
+        console.debug(`Register "device-item-options" component`);
         customElements.define("device-item-options", DeviceItemOptions);
     };
 
@@ -120,3 +121,5 @@ export class DeviceItemOptions extends UIIconButton {
         };
     }
 }
+
+DeviceItemOptions.register();

@@ -7,7 +7,9 @@ export default class PicowOptionsButton extends UIIconButton {
         this.#render();
     }
 
-    #render() {}
+    #render() {
+        // TODO: Continue here...
+    }
 }
 
 console.debug(`Register the "picow-options-button"`);

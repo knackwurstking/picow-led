@@ -1,13 +1,9 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
-import { DialogDeviceSetup } from "../../components";
 import { devicesEvents, utils } from "../../lib";
 import { DeviceItem } from "./device-item";
 
 export class DevicesPage extends UIStackLayoutPage {
     static register = () => {
-        DeviceItem.register();
-        DialogDeviceSetup.register();
-
         customElements.define("devices-page", DevicesPage);
     };
 
@@ -145,3 +141,5 @@ export class DevicesPage extends UIStackLayoutPage {
         }
     }
 }
+
+DevicesPage.register();

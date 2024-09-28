@@ -11,6 +11,7 @@ import { utils } from "../../lib";
  */
 export class DeviceItemPowerButton extends UIIconButton {
     static register = () => {
+        console.debug(`Register "device-item-power-button" component`);
         customElements.define(
             "device-item-power-button",
             DeviceItemPowerButton
@@ -144,3 +145,5 @@ export class DeviceItemPowerButton extends UIIconButton {
         }
     }
 }
+
+DeviceItemPowerButton.register();

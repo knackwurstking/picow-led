@@ -2,6 +2,7 @@ import { html } from "ui";
 
 export class DeviceItemOfflineMarker extends HTMLElement {
     static register = () => {
+        console.debug(`Register "device-item-offline-marker" component`);
         customElements.define(
             "device-item-offline-marker",
             DeviceItemOfflineMarker
@@ -60,3 +61,5 @@ export class DeviceItemOfflineMarker extends HTMLElement {
         `;
     }
 }
+
+DeviceItemOfflineMarker.register();

@@ -6,10 +6,7 @@ import { DeviceItemPowerButton } from "./device-item-power-button";
 
 export class DeviceItem extends HTMLElement {
     static register = () => {
-        DeviceItemOfflineMarker.register();
-        DeviceItemOptions.register();
-        DeviceItemPowerButton.register();
-
+        console.debug(`Register "device-item" component`);
         customElements.define("device-item", DeviceItem);
     };
 
@@ -165,3 +162,5 @@ export class DeviceItem extends HTMLElement {
         uiLabel.ui.secondary = secondary;
     }
 }
+
+DeviceItem.register();
