@@ -1,4 +1,5 @@
 import { html, styles } from "ui";
+import { deviceEvents, devicesEvents } from "../lib";
 import createAppBar from "./create-app-bar";
 import createDrawer from "./create-drawer";
 
@@ -128,6 +129,29 @@ export default async function () {
     el.querySelector(`div.drawer`).replaceWith(drawer.element);
 
     appBar.buttons.menu.ui.events.on("click", () => drawer.open());
+
+    // ---------------- //
+    // Lets get started //
+    // ---------------- //
+
+    setTimeout(() => {
+        // Set the start page
+        if (!!store.ui.get("currentPage")) {
+            stackLayout.ui.set(store.ui.get("currentPage"));
+        } else {
+            drawer.open();
+        }
+
+        // Handler server changes
+        store.ui.on(
+            "server",
+            async (server) => {
+                deviceEvents.server = server;
+                devicesEvents.server = server;
+            },
+            true
+        );
+    });
 
     return {
         element: el,
