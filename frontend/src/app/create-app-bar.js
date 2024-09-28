@@ -47,7 +47,7 @@ export default async function () {
      */
     const menu = el.querySelector(`ui-app-bar-item[name="menu"]`);
     menu.ui.child.ui.events.on("click", (ev) => {
-        events.dispatch("menu", ev.currentTarget);
+        events.dispatch("menu", ev);
     });
 
     /**
@@ -60,7 +60,7 @@ export default async function () {
      */
     const add = el.querySelector(`ui-app-bar-item[name="add"]`);
     add.ui.child.ui.events.on("click", (ev) => {
-        events.dispatch("add", ev.currentTarget);
+        events.dispatch("add", ev);
     });
     add.ui.hide();
 

@@ -1,4 +1,4 @@
 interface PicowAppBar_Events {
-    menu: import("ui").UIIconButton;
-    add: import("ui").UIIconButton;
+    menu: MouseEvent & { currentTarget: import("ui").UIIconButton };
+    add: MouseEvent & { currentTarget: import("ui").UIIconButton };
 }
