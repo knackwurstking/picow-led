@@ -5,15 +5,18 @@ import { deviceEvents } from "../../../lib";
 export default class PicowDeviceItem extends HTMLElement {
     /**
      * @param {object} options
+     * @param {PicowStore} options.store
      * @param {Device | null} [options.device]
      */
-    constructor({ device = null }) {
+    constructor({ store, device = null }) {
         super();
 
+        this.store = store;
         /**
          * @type {Device | null}
          */
         this.device = device;
+
         this.cleanup = new CleanUp();
 
         this.picow = {
@@ -66,6 +69,7 @@ export default class PicowDeviceItem extends HTMLElement {
                      * @type {import("./picow-power-button").default}
                      */
                     const power = this.root.querySelector(`picow-power-button`);
+                    power.store = this.root.store;
                     power.picow.set(device);
                 }
 
@@ -151,8 +155,7 @@ export default class PicowDeviceItem extends HTMLElement {
                         </ui-flex-grid-item>
 
                         <ui-flex-grid-item>
-                            <!-- TODO: I need a "PicowOptionsIconButton" -->
-                            <device-item-options></device-item-options>
+                            <picow-options-button></picow-options-button>
                         </ui-flex-grid-item>
                     </ui-flex-grid-row>
                 </ui-label>
