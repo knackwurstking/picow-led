@@ -23,5 +23,6 @@ registerSW({
 register();
 
 createApp().then((app) => {
+    // TODO: Maybe append the app to the DOM inside the createApp function?
     document.querySelector(`div#app`).replaceWith(app.element);
 });
