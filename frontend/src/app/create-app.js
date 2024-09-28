@@ -85,11 +85,32 @@ export default async function () {
         return null; // TODO: Create "devices" page here
     });
 
-    // TODO: Initialize the layout
-    //          - Handle the stack layout "change" event and setup drawer items, title, ...
     stackLayout.ui.events.on("change", ({ newPage }) => {
-        // TODO: Reset all layouts (AppBar buttons and title)
-        // ...
+        // Reset all layouts (AppBar buttons and title)
+        appBar.title = "PicoW LED";
+        appBar.items.add.ui.hide();
+
+        if (!newPage) {
+            drawer.open();
+            return;
+        }
+
+        switch (newPage.ui.name) {
+            case "devices":
+                store.ui.set("currentPage", newPage.ui.name);
+                appBar.title = "Devices";
+                appBar.items.add.ui.show();
+                break;
+
+            case "settings":
+                store.ui.set("currentPage", newPage.ui.name);
+                appBar.title = "Settings";
+                break;
+
+            default:
+                appBar.title = newPage.ui.name;
+                break;
+        }
     });
 
     // ----------------- //
