@@ -3,7 +3,6 @@ import "../node_modules/ui/css/main.css";
 import { register } from "ui";
 import { registerSW } from "virtual:pwa-register";
 import { createApp } from "./app";
-import { StatusLED } from "./components";
 
 registerSW({
     onRegistered(r) {
@@ -22,7 +21,6 @@ registerSW({
 });
 
 register();
-StatusLED.register();
 
 createApp().then((app) => {
     document.querySelector(`div#app`).replaceWith(app.element);

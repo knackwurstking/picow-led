@@ -1,3 +1,4 @@
+import "../components/status-led"; // NOTE: This will register component
 import { UIDrawer, html } from "ui";
 import { deviceEvents, devicesEvents } from "../lib";
 

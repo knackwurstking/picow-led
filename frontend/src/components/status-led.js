@@ -6,13 +6,7 @@ import { html } from "ui";
  * Attributes:
  *   - __active__: *boolean*
  */
-export class StatusLED extends HTMLElement {
-    static register = () => {
-        if (!customElements.get("status-led")) {
-            customElements.define("status-led", StatusLED);
-        }
-    };
-
+export default class StatusLED extends HTMLElement {
     constructor() {
         super();
         this.#renderStatusLED();
@@ -54,3 +48,6 @@ export class StatusLED extends HTMLElement {
         `;
     }
 }
+
+console.debug(`Register the "status-led"`);
+customElements.define("status-led", StatusLED);
