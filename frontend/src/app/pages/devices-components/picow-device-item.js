@@ -72,7 +72,6 @@ export default class PicowDeviceItem extends HTMLElement {
                      * @type {import("./picow-power-button").default}
                      */
                     const power = this.root.querySelector(`picow-power-button`);
-                    power.store = this.root.store;
                     power.picow.set(device);
                 }
 
