@@ -3,6 +3,7 @@ import { deviceEvents, devicesEvents } from "../lib";
 import createAppBar from "./create-app-bar";
 import createDrawer from "./create-drawer";
 import createSettingsPage from "./pages/create-settings-page";
+import createDevicesPage from "./pages/create-devices-page";
 
 /**
  * @typedef {{
@@ -79,8 +80,8 @@ export default async function () {
      */
     const stackLayout = el.querySelector(`ui-stack-layout`);
 
-    stackLayout.ui.register("devices", () => {
-        return null; // TODO: Create "devices" page here
+    stackLayout.ui.register("devices", async () => {
+        return (await createDevicesPage({ store })).element;
     });
 
     stackLayout.ui.register("settings", async () => {
