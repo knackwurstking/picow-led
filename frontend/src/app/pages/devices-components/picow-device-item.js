@@ -1,3 +1,4 @@
+import "./picow-power-button"; // NOTE: This will register component
 import { CleanUp, globalStylesToShadowRoot, html } from "ui";
 import { deviceEvents } from "../../../lib";
 
@@ -61,7 +62,11 @@ export default class PicowDeviceItem extends HTMLElement {
                 // ------------------- //
 
                 {
-                    // TODO: Pass device data to the power button
+                    /**
+                     * @type {import("./picow-power-button").default}
+                     */
+                    const power = this.root.querySelector(`picow-power-button`);
+                    power.picow.set(device);
                 }
 
                 // --------------------- //
@@ -142,8 +147,7 @@ export default class PicowDeviceItem extends HTMLElement {
                 <ui-label>
                     <ui-flex-grid-row gap="0.25rem">
                         <ui-flex-grid-item>
-                            <!-- TODO: I need a "PicowPowerIconButton" -->
-                            <device-item-power-button></device-item-power-button>
+                            <picow-power-button></picow-power-button>
                         </ui-flex-grid-item>
 
                         <ui-flex-grid-item>
@@ -180,4 +184,5 @@ export default class PicowDeviceItem extends HTMLElement {
     }
 }
 
+console.debug(`Register the "picow-device-item"`);
 customElements.define("picow-device-item", PicowDeviceItem);
