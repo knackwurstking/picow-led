@@ -1,6 +1,6 @@
 import "../node_modules/ui/css/main.css";
 
-import { html, register } from "ui";
+import { html } from "ui";
 import { registerSW } from "virtual:pwa-register";
 import createAppBar from "./app/create-app-bar";
 import createDrawer from "./app/create-drawer";
@@ -23,8 +23,6 @@ registerSW({
         });
     },
 });
-
-register();
 
 async function main() {
     const el = document.createElement("div");
