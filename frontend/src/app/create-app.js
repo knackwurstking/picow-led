@@ -2,8 +2,8 @@ import { html, styles } from "ui";
 import { deviceEvents, devicesEvents } from "../lib";
 import createAppBar from "./create-app-bar";
 import createDrawer from "./create-drawer";
-import createSettingsPage from "./pages/create-settings-page";
-import createDevicesPage from "./pages/create-devices-page";
+import PicowDevicesPage from "./pages/picow-devices-page";
+import PicowSettingsPage from "./pages/picow-settings-page";
 
 /**
  * @typedef {{
@@ -81,11 +81,11 @@ export default async function () {
     const stackLayout = el.querySelector(`ui-stack-layout`);
 
     stackLayout.ui.register("devices", async () => {
-        return (await createDevicesPage({ store })).element;
+        return new PicowDevicesPage({ store });
     });
 
     stackLayout.ui.register("settings", async () => {
-        return (await createSettingsPage({ store })).element;
+        return new PicowSettingsPage({ store });
     });
 
     stackLayout.ui.events.on("change", ({ newPage }) => {

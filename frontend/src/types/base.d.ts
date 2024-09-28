@@ -3,7 +3,7 @@
 interface Server {
     ssl: boolean;
     host: string;
-    port: number;
+    port: string;
 }
 
 interface Device {
