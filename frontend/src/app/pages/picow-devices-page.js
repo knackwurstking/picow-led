@@ -4,13 +4,15 @@ import { devicesEvents, utils } from "../../lib";
 export default class PicowDevicesPage extends UIStackLayoutPage {
     /**
      * @param {object} options
-     * @param {PicowStore} options.store
      * @param {import("../create-app-bar").AppBar} options.appBar
      */
-    constructor({ store, appBar }) {
+    constructor({ appBar }) {
         super("devices");
 
-        this.store = store;
+        /**
+         * @type {PicowStore}
+         */
+        this.store = document.querySelector(`ui-store`);
         this.appBar = appBar;
         this.cleanup = new CleanUp();
 

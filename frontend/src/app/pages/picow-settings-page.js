@@ -2,14 +2,13 @@ import { CleanUp } from "ui";
 import { html, UIStackLayoutPage } from "ui";
 
 export default class PicowSettingsPage extends UIStackLayoutPage {
-    /**
-     * @param {object} options
-     * @param {PicowStore} options.store
-     */
-    constructor({ store }) {
+    constructor() {
         super("devices");
 
-        this.store = store;
+        /**
+         * @type {PicowStore}
+         */
+        this.store = document.querySelector(`ui-store`);
         this.cleanup = new CleanUp();
 
         this.#render();

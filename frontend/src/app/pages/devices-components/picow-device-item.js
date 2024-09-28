@@ -5,13 +5,16 @@ import { deviceEvents } from "../../../lib";
 export default class PicowDeviceItem extends HTMLElement {
     /**
      * @param {object} options
-     * @param {PicowStore} options.store
      * @param {Device | null} [options.device]
      */
-    constructor({ store, device = null }) {
+    constructor({ device = null }) {
         super();
 
-        this.store = store;
+        /**
+         * @type {PicowStore}
+         */
+        this.store = document.querySelector(`ui-store`);
+
         /**
          * @type {Device | null}
          */

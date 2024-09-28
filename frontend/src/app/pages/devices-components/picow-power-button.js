@@ -3,14 +3,13 @@ import { html, UIIconButton } from "ui";
 import { utils } from "../../../lib";
 
 export default class PicowPowerButton extends UIIconButton {
-    /**
-     * @param {object} options
-     * @param {PicowStore} options.store
-     */
-    constructor({ store }) {
+    constructor() {
         super();
 
-        this.store = store;
+        /**
+         * @type {PicowStore}
+         */
+        this.store = document.querySelector(`ui-store`);
 
         /**
          * @type {Device | null}

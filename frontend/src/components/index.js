@@ -1,1 +1,1 @@
-export * from "./status-led";
+export { default as StatusLED } from "./status-led";
