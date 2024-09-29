@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">PicoW LED</string>
-    <string name="title_activity_main">PicoW LED</string>
-    <string name="package_name">picow_led.knackwurstking.com</string>
-    <string name="custom_url_scheme">picow_led.knackwurstking.com</string>
-</resources>

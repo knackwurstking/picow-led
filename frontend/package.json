@@ -8,7 +8,6 @@
         "preview": "vite preview --host",
         "build": "vite build --minify -c vite.config.js --emptyOutDir",
         "generate-assets": "npx pwa-assets-generator",
-        "android-generate-assets": "npx capacitor-assets generate --android",
         "io-generate-assets": "npx capacitor-assets generate --ios"
     },
     "devDependencies": {
