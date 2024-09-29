@@ -100,7 +100,7 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                 /**
                  * @type {import("ui").UIInput}
                  */
-                const input = this.querySelector(`ui-check[name="host"]`);
+                const input = this.querySelector(`ui-input[name="host"]`);
                 input.ui.events.on("input", async (host) => {
                     resetInputEventTimeout();
 
@@ -121,7 +121,7 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                 /**
                  * @type {import("ui").UIInput}
                  */
-                const input = this.querySelector(`ui-check[name="port"]`);
+                const input = this.querySelector(`ui-input[name="port"]`);
                 input.ui.events.on("input", async (port) => {
                     resetInputEventTimeout();
 
