@@ -83,41 +83,20 @@ export default class PicowPowerButton extends UIIconButton {
             const prevStateBackup = this.picow.state;
             this.picow.state = "pending";
 
-            const url = await api.url(this.store, "/api/device/color");
-
             try {
-                // TODO: Using the device color here, this field is currently missing
+                // TODO: Using the device color here, this field
+                //       is currently missing
                 const color = this.picow.isOn()
                     ? this.device.color.map(() => 0)
                     : [255, 255, 255, 255];
 
-                const resp = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        server: {
-                            addr: this.device.server.addr,
-                        },
-                        color,
-                    }),
+                const ok = await api.Post(this.store, "/api/device/color", {
+                    server: {
+                        addr: this.device.server.addr,
+                    },
+                    color,
                 });
-
-                if (resp.ok) {
-                    this.device.color = color;
-                } else {
-                    resp.text().then((r) => {
-                        const m = `Server response to ${url}: ${r}`;
-                        utils.throwAlert({ message: m, variant: "error" });
-                        console.error(m);
-                    });
-
-                    const m = `Fetch from ${url} with status code ${resp.status}`;
-                    console.error(m);
-                    utils.throwAlert({ message: m, variant: "error" });
-                }
-            } catch (err) {
-                utils.throwAlert({ message: err, variant: "error" });
-                console.error(err);
+                if (ok) this.device.color = color;
             } finally {
                 this.picow.state = prevStateBackup;
             }

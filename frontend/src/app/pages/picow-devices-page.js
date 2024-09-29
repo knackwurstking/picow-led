@@ -50,31 +50,7 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
                 });
 
                 setupDialog.events.on("submit", async (deviceToSubmit) => {
-                    const url = await api.url(this.store, "/api/device");
-
-                    try {
-                        const resp = await fetch(url, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(deviceToSubmit),
-                        });
-
-                        if (!resp.ok) {
-                            resp.text().then((e) => {
-                                const message = `Server response to ${url}: ${e}`;
-                                utils.throwAlert({ message, variant: "error" });
-                                console.error(message);
-                            });
-
-                            const message = `Fetch from "${url}" with status code ${resp.status}`;
-                            console.error(message);
-                            utils.throwAlert({ message, variant: "error" });
-                        }
-                    } catch (err) {
-                        utils.throwAlert({ message: err, variant: "error" });
-                    }
+                    await api.Post(this.store, "/api/device", deviceToSubmit);
                 });
 
                 setupDialog.open();
