@@ -1,10 +1,36 @@
 import { moreVertical as svgOptions } from "ui/svg/smoothie-line-icons";
 import { html, UIIconButton } from "ui";
+import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
+import { utils } from "../../../lib";
 
 export default class PicowOptionsButton extends UIIconButton {
-    constructor() {
+    /**
+     * @param {Device | null} [device]
+     */
+    constructor(device = null) {
         super();
-        this.picow = {};
+
+        /**
+         * @type {Device | null}
+         */
+        this.device = device;
+
+        /**
+         * @type {PicowStore}
+         */
+        this.store = document.querySelector(`ui-store`);
+
+        this.picow = {
+            root: this,
+
+            /**
+             * @param {Device} device
+             */
+            set(device) {
+                this.root.device = device;
+            },
+        };
+
         this.#render();
     }
 
@@ -24,7 +50,78 @@ export default class PicowOptionsButton extends UIIconButton {
         this.onclick = async (ev) => {
             ev.stopPropagation();
 
-            // TODO: Open the device setup dialog
+            const setupDialog = await createDeviceSetupDialog({
+                name: this.device.server.name,
+                addr: this.device.server.addr,
+                pins: this.device.pins,
+                allowDeletion: true,
+            });
+
+            setupDialog.events.on("delete", async (deviceToDelete) => {
+                const server = this.store.ui.get("server");
+                const addr = !server.port
+                    ? server.host
+                    : `${server.host}:${server.port}`;
+                const url = `${
+                    server.ssl ? "https:" : "http:"
+                }//${addr}/api/device`;
+
+                try {
+                    const resp = await fetch(url, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(deviceToDelete),
+                    });
+
+                    if (!resp.ok) {
+                        resp.text().then((e) => {
+                            const message = `Server response to ${url}: ${e}`;
+                            utils.throwAlert({ message, variant: "error" });
+                            console.error(message);
+                        });
+
+                        const message = `Fetch from "${url}" with status code ${resp.status}`;
+                        console.error(message);
+                        utils.throwAlert({ message, variant: "error" });
+                    }
+                } catch (err) {
+                    utils.throwAlert({ message: err, variant: "error" });
+                }
+            });
+
+            setupDialog.events.on("submit", async (deviceToSubmit) => {
+                const server = this.store.ui.get("server");
+                const addr = !server.port
+                    ? server.host
+                    : `${server.host}:${server.port}`;
+                const url = `${
+                    server.ssl ? "https:" : "http:"
+                }//${addr}/api/device`;
+
+                try {
+                    const resp = await fetch(url, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(deviceToSubmit),
+                    });
+
+                    if (!resp.ok) {
+                        resp.text().then((e) => {
+                            const message = `Server response to ${url}: ${e}`;
+                            utils.throwAlert({ message, variant: "error" });
+                            console.error(message);
+                        });
+
+                        const message = `Fetch from "${url}" with status code ${resp.status}`;
+                        console.error(message);
+                        utils.throwAlert({ message, variant: "error" });
+                    }
+                } catch (err) {
+                    utils.throwAlert({ message: err, variant: "error" });
+                }
+            });
+
+            setupDialog.open();
         };
     }
 }
