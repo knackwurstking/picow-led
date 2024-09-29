@@ -1,5 +1,6 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
 import { devicesEvents, utils } from "../../lib";
+import PicowDeviceItem from "./devices-components/picow-device-item";
 
 export default class PicowDevicesPage extends UIStackLayoutPage {
     /**
@@ -54,7 +55,9 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
                 const list = this.querySelector("ul");
                 while (!!list.firstChild) list.removeChild(list.firstChild);
                 for (const device of devices) {
-                    // TODO: Create and append the device item
+                    setTimeout(() => {
+                        list.appendChild(new PicowDeviceItem({ device }));
+                    });
                 }
             }),
 
