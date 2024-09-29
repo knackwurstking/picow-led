@@ -1,7 +1,7 @@
 import { moreVertical as svgOptions } from "ui/svg/smoothie-line-icons";
 import { html, UIIconButton } from "ui";
 import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
-import { utils } from "../../../lib";
+import { utils, api } from "../../../lib";
 
 export default class PicowOptionsButton extends UIIconButton {
     /**
@@ -58,13 +58,7 @@ export default class PicowOptionsButton extends UIIconButton {
             });
 
             setupDialog.events.on("delete", async (deviceToDelete) => {
-                const server = this.store.ui.get("server");
-                const addr = !server.port
-                    ? server.host
-                    : `${server.host}:${server.port}`;
-                const url = `${
-                    server.ssl ? "https:" : "http:"
-                }//${addr}/api/device`;
+                const url = await api.url(this.store, "/api/device");
 
                 try {
                     const resp = await fetch(url, {
@@ -90,13 +84,7 @@ export default class PicowOptionsButton extends UIIconButton {
             });
 
             setupDialog.events.on("submit", async (deviceToSubmit) => {
-                const server = this.store.ui.get("server");
-                const addr = !server.port
-                    ? server.host
-                    : `${server.host}:${server.port}`;
-                const url = `${
-                    server.ssl ? "https:" : "http:"
-                }//${addr}/api/device`;
+                const url = await api.url(this.store, "/api/device");
 
                 try {
                     const resp = await fetch(url, {

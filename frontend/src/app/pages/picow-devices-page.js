@@ -1,5 +1,5 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
-import { devicesEvents, utils } from "../../lib";
+import { api, devicesEvents, utils } from "../../lib";
 import PicowDeviceItem from "./devices-components/picow-device-item";
 import createDeviceSetupDialog from "../dialogs/createDeviceSetupDialog";
 
@@ -50,13 +50,7 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
                 });
 
                 setupDialog.events.on("submit", async (deviceToSubmit) => {
-                    const server = this.store.ui.get("server");
-                    const addr = !server.port
-                        ? server.host
-                        : `${server.host}:${server.port}`;
-                    const url = `${
-                        server.ssl ? "https:" : "http:"
-                    }:${addr}/api/device`;
+                    const url = await api.url(this.store, "/api/device");
 
                     try {
                         const resp = await fetch(url, {

@@ -1,6 +1,6 @@
 import { power as svgPower } from "ui/svg/smoothie-line-icons";
 import { html, UIIconButton } from "ui";
-import { utils } from "../../../lib";
+import { api, utils } from "../../../lib";
 
 export default class PicowPowerButton extends UIIconButton {
     constructor() {
@@ -83,13 +83,7 @@ export default class PicowPowerButton extends UIIconButton {
             const prevStateBackup = this.picow.state;
             this.picow.state = "pending";
 
-            const server = this.store.ui.get("server");
-            const addr = !server.port
-                ? server.host
-                : `${server.host}:${server.port}`;
-            const url = `${
-                server.ssl ? "https:" : "http:"
-            }//${addr}/device/color`;
+            const url = await api.url(this.store, "/api/device/color");
 
             try {
                 // TODO: Using the device color here, this field is currently missing
