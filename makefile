@@ -10,7 +10,7 @@ build:
 		cp ./cmd/picow-led-server/picow-led-server.service ./build/
 
 run:
-	@cd frontend && npm run build
+	@cd frontend && npm install && npm run build
 	@go run -v ./cmd/picow-led-server -debug
 
 setup:
