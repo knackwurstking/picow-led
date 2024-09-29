@@ -5,7 +5,7 @@ import { html, UIDialog } from "ui";
  */
 export class DialogDeviceSetup extends UIDialog {
     static register = () => {
-        customElements.define("dialog-deivce-setup", DialogDeviceSetup);
+        customElements.define("dialog-device-setup", DialogDeviceSetup);
     };
 
     /**
@@ -150,7 +150,7 @@ export class DialogDeviceSetup extends UIDialog {
             onClick: () => {
                 /** @type {import("ui").UIInput} */
                 let addrInput = this.querySelector(
-                    `ui-input[name="server.addr"]`,
+                    `ui-input[name="server.addr"]`
                 );
                 if (!this.data.server.addr) {
                     addrInput.ui.invalid = true;
