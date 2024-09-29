@@ -1,5 +1,6 @@
-import { html, UIIconButton } from "ui";
 import { power as svgPower } from "ui/svg/smoothie-line-icons";
+
+import { html, UIIconButton } from "ui";
 import { api } from "../../../lib";
 
 export default class PicowPowerButton extends UIIconButton {

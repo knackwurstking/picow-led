@@ -1,4 +1,5 @@
-import { menu as svgMenu, plus as svgAdd } from "ui/svg/smoothie-line-icons";
+import { plus as svgAdd, menu as svgMenu } from "ui/svg/smoothie-line-icons";
+
 import { Events, UIAppBar, html } from "ui";
 
 /**

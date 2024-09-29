@@ -1,5 +1,4 @@
-import { CleanUp } from "ui";
-import { html, UIStackLayoutPage } from "ui";
+import { CleanUp, html, UIStackLayoutPage } from "ui";
 
 export default class PicowSettingsPage extends UIStackLayoutPage {
     constructor() {

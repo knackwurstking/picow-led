@@ -1,7 +1,7 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
 import { api, devicesEvents, utils } from "../../lib";
-import PicowDeviceItem from "./devices-components/picow-device-item";
 import createDeviceSetupDialog from "../dialogs/createDeviceSetupDialog";
+import PicowDeviceItem from "./devices-components/picow-device-item";
 
 export default class PicowDevicesPage extends UIStackLayoutPage {
     /**

@@ -1,5 +1,6 @@
-import { html, UIIconButton } from "ui";
 import { moreVertical as svgOptions } from "ui/svg/smoothie-line-icons";
+
+import { html, UIIconButton } from "ui";
 import { api } from "../../../lib";
 import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
 
