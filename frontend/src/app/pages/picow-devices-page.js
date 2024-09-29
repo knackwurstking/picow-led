@@ -1,6 +1,7 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
 import { devicesEvents, utils } from "../../lib";
 import PicowDeviceItem from "./devices-components/picow-device-item";
+import createDeviceSetupDialog from "../dialogs/createDeviceSetupDialog";
 
 export default class PicowDevicesPage extends UIStackLayoutPage {
     /**
@@ -43,8 +44,46 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
             // Handle AppBar events //
             // -------------------- //
 
-            this.appBar.events.on("add", () => {
-                // TODO: Create device setup dialog
+            this.appBar.events.on("add", async () => {
+                const setupDialog = await createDeviceSetupDialog({
+                    allowDeletion: false,
+                });
+
+                setupDialog.events.on("submit", async (device) => {
+                    const server = this.store.ui.get("server");
+                    const addr = !server.port
+                        ? server.host
+                        : `${server.host}:${server.port}`;
+                    const url = `${
+                        server.ssl ? "https:" : "http:"
+                    }:${addr}/api/device`;
+
+                    try {
+                        const resp = await fetch(url, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(device),
+                        });
+
+                        if (!resp.ok) {
+                            resp.text().then((e) => {
+                                const message = `Server response to ${url}: ${e}`;
+                                utils.throwAlert({ message, variant: "error" });
+                                console.error(message);
+                            });
+
+                            const message = `Fetch from "${url}" with status code ${resp.status}`;
+                            console.error(message);
+                            utils.throwAlert({ message, variant: "error" });
+                        }
+                    } catch (err) {
+                        utils.throwAlert({ message: err, variant: "error" });
+                    }
+                });
+
+                setupDialog.open();
             }),
 
             // ------------------- //
