@@ -106,27 +106,7 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
      * @returns {Promise<Device[]>}
      */
     async fetchApiDevices() {
-        const server = this.store.ui.get("server");
-        const addr = !server.port
-            ? server.host
-            : `${server.host}:${server.port}`;
-        const url = `${server.ssl ? "https:" : "http:"}//${addr}/api/devices`;
-
-        const resp = await fetch(url, { method: "GET" });
-        if (!resp.ok) {
-            resp.text().then((r) => {
-                const m = `Server response to ${url}: ${r}`;
-                utils.throwAlert({ message: m, variant: "error" });
-                console.error(m);
-            });
-
-            const m = `Fetch from "${url}" with status code ${resp.status}`;
-            utils.throwAlert({ message: m, variant: "error" });
-            console.error(m);
-            return;
-        }
-
-        return await resp.json();
+        return await api.Get(this.store, "/api/devices");
     }
 }
 
