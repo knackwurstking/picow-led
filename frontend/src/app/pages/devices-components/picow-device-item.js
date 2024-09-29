@@ -6,10 +6,9 @@ import { deviceEvents } from "../../../lib";
 
 export default class PicowDeviceItem extends HTMLElement {
     /**
-     * @param {object} options
-     * @param {Device | null} [options.device]
+     * @param {Device | null} [device]
      */
-    constructor({ device = null }) {
+    constructor(device = null) {
         super();
 
         /**
@@ -82,7 +81,13 @@ export default class PicowDeviceItem extends HTMLElement {
                 // --------------------- //
 
                 {
-                    // TODO: Pass device data to the options button
+                    /**
+                     * @type {import("./picow-options-button").default}
+                     */
+                    const options =
+                        this.root.querySelector(`picow-options-button`);
+
+                    options.picow.set(device);
                 }
 
                 // --------------------- //
