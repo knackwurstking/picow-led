@@ -1,6 +1,6 @@
-import { power as svgPower } from "ui/svg/smoothie-line-icons";
 import { html, UIIconButton } from "ui";
-import { api, utils } from "../../../lib";
+import { power as svgPower } from "ui/svg/smoothie-line-icons";
+import { api } from "../../../lib";
 
 export default class PicowPowerButton extends UIIconButton {
     constructor() {
@@ -74,7 +74,7 @@ export default class PicowPowerButton extends UIIconButton {
             </style>
         `;
 
-        this.inneHTML = svgPower;
+        this.innerHTML = svgPower;
 
         this.ui.events.on("click", async (ev) => {
             ev.stopPropagation();
