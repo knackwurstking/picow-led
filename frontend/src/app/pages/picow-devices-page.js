@@ -49,7 +49,7 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
                     allowDeletion: false,
                 });
 
-                setupDialog.events.on("submit", async (device) => {
+                setupDialog.events.on("submit", async (deviceToSubmit) => {
                     const server = this.store.ui.get("server");
                     const addr = !server.port
                         ? server.host
@@ -64,7 +64,7 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
                             headers: {
                                 "Content-Type": "application/json",
                             },
-                            body: JSON.stringify(device),
+                            body: JSON.stringify(deviceToSubmit),
                         });
 
                         if (!resp.ok) {
@@ -95,7 +95,7 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
                 while (!!list.firstChild) list.removeChild(list.firstChild);
                 for (const device of devices) {
                     setTimeout(() => {
-                        list.appendChild(new PicowDeviceItem({ device }));
+                        list.appendChild(new PicowDeviceItem(device));
                     });
                 }
             }),
