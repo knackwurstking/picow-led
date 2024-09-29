@@ -58,55 +58,11 @@ export default class PicowOptionsButton extends UIIconButton {
             });
 
             setupDialog.events.on("delete", async (deviceToDelete) => {
-                const url = await api.url(this.store, "/api/device");
-
-                try {
-                    const resp = await fetch(url, {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(deviceToDelete),
-                    });
-
-                    if (!resp.ok) {
-                        resp.text().then((e) => {
-                            const message = `Server response to ${url}: ${e}`;
-                            utils.throwAlert({ message, variant: "error" });
-                            console.error(message);
-                        });
-
-                        const message = `Fetch from "${url}" with status code ${resp.status}`;
-                        console.error(message);
-                        utils.throwAlert({ message, variant: "error" });
-                    }
-                } catch (err) {
-                    utils.throwAlert({ message: err, variant: "error" });
-                }
+                await api.Delete(this.store, "/api/device", deviceToDelete);
             });
 
             setupDialog.events.on("submit", async (deviceToSubmit) => {
-                const url = await api.url(this.store, "/api/device");
-
-                try {
-                    const resp = await fetch(url, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(deviceToSubmit),
-                    });
-
-                    if (!resp.ok) {
-                        resp.text().then((e) => {
-                            const message = `Server response to ${url}: ${e}`;
-                            utils.throwAlert({ message, variant: "error" });
-                            console.error(message);
-                        });
-
-                        const message = `Fetch from "${url}" with status code ${resp.status}`;
-                        console.error(message);
-                        utils.throwAlert({ message, variant: "error" });
-                    }
-                } catch (err) {
-                    utils.throwAlert({ message: err, variant: "error" });
-                }
+                await api.Put(this.store, "/api/device", deviceToSubmit);
             });
 
             setupDialog.open();

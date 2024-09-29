@@ -43,9 +43,25 @@ export async function Post(store, path) {
 /**
  * @param {PicowStore} store
  * @param {string} path
+ * @param {any} data
+ * @returns {Promise<boolean>} ok
  */
-export async function Put(store, path) {
-    // TODO: ...
+export async function Put(store, path, data) {
+    try {
+        const resp = await fetch(await url(store, path), {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        await handleResponseError(resp);
+    } catch (err) {
+        console.error(err);
+        utils.throwAlert({ message: err, variant: "error" });
+        return false;
+    }
+
+    return true;
 }
 
 /**
