@@ -83,7 +83,6 @@ export default class PicowPowerButton extends UIIconButton {
             const prevStateBackup = this.picow.state;
             this.picow.state = "pending";
 
-            // TODO: ...
             const server = this.store.ui.get("server");
             const addr = !server.port
                 ? server.host
