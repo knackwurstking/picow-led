@@ -22,6 +22,6 @@
         "@capacitor/android": "^6.1.2",
         "@capacitor/core": "^6.1.2",
         "@capacitor/ios": "^6.1.2",
-        "ui": "file:../../ui"
+        "ui": "knackwurstking/ui#v0.7.0"
     }
 }
