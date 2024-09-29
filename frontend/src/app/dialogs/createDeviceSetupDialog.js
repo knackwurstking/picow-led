@@ -198,6 +198,11 @@ export default async function ({
         render();
     }
 
+    document.body.appendChild(dialog);
+    dialog.ui.events.on("close", () => {
+        document.body.removeChild(dialog);
+    });
+
     return {
         element: dialog,
 
