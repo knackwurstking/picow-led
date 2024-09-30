@@ -117,9 +117,7 @@ export default async function ({
         // Render Delete Action //
         // --------------------- //
 
-        {
-            if (!allowDeletion) return;
-
+        if (allowDeletion) {
             const el = UIDialog.createAction({
                 variant: "full",
                 color: "destructive",
@@ -198,6 +196,7 @@ export default async function ({
         render();
     }
 
+    set({ name, addr, pins, allowDeletion });
     document.body.appendChild(dialog);
     dialog.ui.events.on("close", () => {
         document.body.removeChild(dialog);
