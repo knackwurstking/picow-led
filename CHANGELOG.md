@@ -1,6 +1,14 @@
 # CHANGELOG
 
-## v0.6.1 - 2024-09-30
+## v0.6.2 — 2024-09-30
+
+**Fixed**:
+
+- [frontend] Fix missing setup-device-dialog content
+- [frontend] Fix missing setup-device-dialog action buttons if
+    `allowDeletion` was set to false
+
+## v0.6.1 — 2024-09-30
 
 **Added**:
 

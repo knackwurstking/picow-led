@@ -3,7 +3,7 @@ package main
 const (
 	Host    = "0.0.0.0"
 	Port    = 50833
-	Version = "v0.6.1"
+	Version = "v0.6.2"
 
 	ErrorCodeOK            = 0
 	ErrorCodeConfiguration = 2
