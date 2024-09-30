@@ -7,12 +7,6 @@ import (
 	"github.com/knackwurstking/picow-led-server/pkg/picow"
 )
 
-type Pins []uint
-
-func NewPins() Pins {
-	return make(Pins, 0)
-}
-
 type Device struct {
 	Server *picow.Server `json:"server"`
 	Pins   Pins          `json:"pins"`

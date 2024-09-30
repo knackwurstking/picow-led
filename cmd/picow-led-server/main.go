@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	slogecho "github.com/samber/slog-echo"
 
-	"github.com/knackwurstking/picow-led-server/cmd/picow-led-server/endpoints"
+	"github.com/knackwurstking/picow-led-server/internal/endpoints"
 )
 
 var (
@@ -46,10 +46,10 @@ func main() {
 
 	// Start server
 
-	slog.Info("HTTP server started", "Host", Host, "Port", flags.Port)
+	slog.Info("HTTP server started", "host", Host, "port", flags.Port)
 	addr := fmt.Sprintf("%s:%d", Host, flags.Port)
 	if err := e.Start(addr); err != nil {
-		slog.Error("Server start", "err", err)
+		slog.Error("Server start", "error", err)
 		os.Exit(ErrorCodeServerStart)
 	}
 }

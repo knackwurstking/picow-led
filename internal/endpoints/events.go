@@ -10,6 +10,7 @@ import (
 	"github.com/knackwurstking/picow-led-server/pkg/clients"
 )
 
+// TODO: Add paths: "/events/color", "/events/colors"
 func createEventsEndpoints(e *echo.Echo, c *clients.Clients) {
 	upgrader := websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
@@ -22,10 +23,10 @@ func createEventsEndpoints(e *echo.Echo, c *clients.Clients) {
 		if err != nil {
 			return ctx.String(http.StatusInternalServerError, err.Error())
 		}
-		client := c.Add(clients.EventTypeDevices, conn)
+		client := c.Add(ClientsEmitTypeDevices, conn)
 
 		defer func() {
-			c.Remove(clients.EventTypeDevices, conn)
+			c.Remove(ClientsEmitTypeDevices, conn)
 		}()
 
 		exit := client.StartHeartBeat()
@@ -53,10 +54,10 @@ func createEventsEndpoints(e *echo.Echo, c *clients.Clients) {
 		if err != nil {
 			return ctx.String(http.StatusInternalServerError, err.Error())
 		}
-		client := c.Add(clients.EventTypeDevice, conn)
+		client := c.Add(ClientsEmitTypeDevice, conn)
 
 		defer func() {
-			c.Remove(clients.EventTypeDevice, conn)
+			c.Remove(ClientsEmitTypeDevice, conn)
 		}()
 
 		exit := client.StartHeartBeat()

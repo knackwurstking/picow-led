@@ -7,19 +7,19 @@ import (
 )
 
 type Client struct {
-	EventType EventType
-	Conn      *websocket.Conn
-	Chan      chan any
+	EmitType EmitType
+	Conn     *websocket.Conn
+	Chan     chan any
 
 	done chan any
 }
 
-func NewClient(eventType EventType, conn *websocket.Conn) *Client {
+func NewClient(eventType EmitType, conn *websocket.Conn) *Client {
 	return &Client{
-		EventType: eventType,
-		Conn:      conn,
-		Chan:      make(chan any, 2),
-		done:      make(chan any, 2),
+		EmitType: eventType,
+		Conn:     conn,
+		Chan:     make(chan any, 2),
+		done:     make(chan any, 2),
 	}
 }
 

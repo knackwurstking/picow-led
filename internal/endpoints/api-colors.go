@@ -9,7 +9,7 @@ import (
 	"github.com/knackwurstking/picow-led-server/pkg/api"
 )
 
-func createApiColorsEndpoints(g *echo.Group, a *api.API, apiChangeCallback func()) {
+func createApiColorsEndpoints(g *echo.Group, a *api.API, changeCallback func()) {
 	g.GET("/colors", func(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, a.Colors)
 	})
@@ -28,44 +28,39 @@ func createApiColorsEndpoints(g *echo.Group, a *api.API, apiChangeCallback func(
 
 	g.POST("/colors/:name", func(ctx echo.Context) error {
 		name := ctx.Param("name")
-
-		r := make(api.Color, 0)
-		status, err := readBodyData(ctx, &r)
-		if status != http.StatusOK {
+		reqData := make(api.Color, 0)
+		if status, err := readBodyData(ctx, &reqData); err != nil {
 			return ctx.String(status, err.Error())
 		}
 
-		err = a.Colors.Add(name, r)
-		if err != nil {
+		if err := a.AddColor(name, reqData); err != nil {
 			return ctx.String(http.StatusInternalServerError, err.Error())
 		}
 
-		defer apiChangeCallback()
+		defer changeCallback()
 		return ctx.JSON(http.StatusOK, nil)
 	})
 
 	g.PUT("/colors/:name", func(ctx echo.Context) error {
 		name := ctx.Param("name")
 
-		r := make(api.Color, 0)
-		status, err := readBodyData(ctx, &r)
-		if status != http.StatusOK {
+		reqData := make(api.Color, 0)
+		if status, err := readBodyData(ctx, &reqData); err != nil {
 			return ctx.String(status, err.Error())
 		}
 
-		err = a.Colors.Replace(name, r)
-		if err != nil {
+		if err := a.ReplaceColor(name, reqData); err != nil {
 			return ctx.String(http.StatusInternalServerError, err.Error())
 		}
 
-		defer apiChangeCallback()
+		defer changeCallback()
 		return ctx.JSON(http.StatusOK, nil)
 	})
 
 	g.DELETE("/colors/:name", func(ctx echo.Context) error {
 		name := ctx.Param("name")
-		a.Colors.Remove(name)
-		defer apiChangeCallback()
+		a.DeleteColor(name)
+		defer changeCallback()
 		return ctx.JSON(http.StatusOK, nil)
 	})
 }

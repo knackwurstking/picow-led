@@ -6,17 +6,16 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/knackwurstking/picow-led-server/pkg/api"
-	"github.com/knackwurstking/picow-led-server/pkg/clients"
 )
 
-func createApiEndpoints(e *echo.Echo, c *clients.Clients, a *api.API, apiChangeCallback func()) {
+func createApiEndpoints(e *echo.Echo, a *api.API, changeCallback func()) {
 	g := e.Group("/api")
 
 	g.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, a)
 	})
 
-	createApiColorsEndpoints(g, a, apiChangeCallback)
+	createApiColorsEndpoints(g, a, changeCallback)
 	createApiDevicesEndpoints(g, a)
-	createApiDeviceEndpoints(g, c, a, apiChangeCallback)
+	createApiDeviceEndpoints(g, a, changeCallback)
 }

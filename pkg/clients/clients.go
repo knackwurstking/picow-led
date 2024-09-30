@@ -7,12 +7,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const (
-	EventTypeDevice  = EventType("device")
-	EventTypeDevices = EventType("devices")
-)
-
-type EventType string
+type EmitType string
 
 type Clients struct {
 	Connections []*Client
@@ -27,44 +22,43 @@ func NewClients() *Clients {
 	}
 }
 
-func (clients *Clients) Add(eventType EventType, conn *websocket.Conn) *Client {
+func (clients *Clients) Add(emitType EmitType, conn *websocket.Conn) *Client {
 	defer clients.mutex.Unlock()
 	clients.mutex.Lock()
 
 	for _, client := range clients.Connections {
-		if client.Conn == conn && client.EventType == eventType {
+		if client.Conn == conn && client.EmitType == emitType {
 			return client
 		}
 	}
 
-	client := NewClient(eventType, conn)
+	client := NewClient(emitType, conn)
 	clients.Connections = append(clients.Connections, client)
 	slog.Debug(
-		"Added a client",
-		"client.Conn.RemoveAddr()", client.Conn.RemoteAddr(),
-		"len(clients)", len(clients.Connections),
+		"Added a client", "address", client.Conn.RemoteAddr(),
+		"connections", len(clients.Connections),
 	)
 
 	return client
 }
 
-func (clients *Clients) Remove(eventType EventType, conn *websocket.Conn) {
+func (clients *Clients) Remove(emitType EmitType, conn *websocket.Conn) {
 	defer clients.mutex.Unlock()
 	clients.mutex.Lock()
 
 	for _, client := range clients.Connections {
-		if client.Conn == conn && client.EventType == eventType {
+		if client.Conn == conn && client.EmitType == emitType {
 			clients.removeClient(client)
 			return
 		}
 	}
 }
 
-func (clients *Clients) Emit(eventType EventType, data any) {
-	slog.Debug("Emit a new event", "eventType", eventType)
+func (clients *Clients) Emit(emitType EmitType, data any) {
+	slog.Debug("Emit a new event", "event", emitType)
 
 	for _, client := range clients.Connections {
-		if client.EventType != eventType {
+		if client.EmitType != emitType {
 			continue
 		}
 
@@ -79,15 +73,14 @@ func (clients *Clients) removeClient(client *Client) {
 
 	newConnections := make([]*Client, 0)
 	for _, c := range clients.Connections {
-		if c.Conn != client.Conn || c.EventType != client.EventType {
+		if c.Conn != client.Conn || c.EmitType != client.EmitType {
 			newConnections = append(newConnections, c)
 		}
 	}
 	clients.Connections = newConnections
 
 	slog.Debug(
-		"Removed a client",
-		"client.Conn.RemoteAddr()", client.Conn.RemoteAddr(),
-		"len(clients.Connections)", len(clients.Connections),
+		"Removed a client", "address", client.Conn.RemoteAddr(),
+		"connections", len(clients.Connections),
 	)
 }

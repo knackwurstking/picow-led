@@ -1,7 +1,7 @@
 {
     "name": "frontend",
     "private": true,
-    "version": "0.6.0",
+    "version": "0.6.1",
     "type": "module",
     "scripts": {
         "dev": "vite --host",
@@ -21,6 +21,6 @@
         "@capacitor/android": "^6.1.2",
         "@capacitor/core": "^6.1.2",
         "@capacitor/ios": "^6.1.2",
-        "ui": "knackwurstking/ui#v0.7.0"
+        "ui": "knackwurstking/ui#v0.7.1"
     }
 }

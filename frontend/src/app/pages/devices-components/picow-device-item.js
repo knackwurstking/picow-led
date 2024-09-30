@@ -158,7 +158,7 @@ export default class PicowDeviceItem extends HTMLElement {
         this.innerHTML = html`
             <li class="is-card" style="cursor: pointer;">
                 <ui-label>
-                    <ui-flex-grid-row gap="0.25rem">
+                    <ui-flex-grid-row gap="0.25rem" align="center">
                         <ui-flex-grid-item>
                             <picow-power-button></picow-power-button>
                         </ui-flex-grid-item>

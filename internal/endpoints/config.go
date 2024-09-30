@@ -62,7 +62,7 @@ func (c *Config) load() error {
 		go func(d *api.Device) {
 			defer wg.Done()
 			if err := d.SyncUp(); err != nil {
-				slog.Error("Sync device", "err", err.Error())
+				slog.Error("Sync device", "error", err.Error())
 			}
 		}(d)
 	}

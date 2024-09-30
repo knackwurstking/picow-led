@@ -16,8 +16,7 @@ func readBodyData(c echo.Context, data any) (status int, err error) {
 		return http.StatusBadRequest, err
 	}
 
-	err = json.Unmarshal(d, data)
-	if err != nil {
+	if err := json.Unmarshal(d, data); err != nil {
 		return http.StatusBadRequest, err
 	}
 
@@ -29,7 +28,7 @@ func saveConfig(config *Config, wg *sync.WaitGroup) {
 	go func() {
 		defer wg.Done()
 		if err := config.save(); err != nil {
-			slog.Warn("Save config", "config.Path", config.Path, "err", err)
+			slog.Warn("Save config", "path", config.Path, "error", err)
 		}
 	}()
 	go config.save()
