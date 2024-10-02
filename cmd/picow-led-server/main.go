@@ -63,7 +63,6 @@ func main() {
 				})
 
 				// TODO: Init (gorilla) websocket server
-				// TODO: Start all of this
 
 				return e.Start(fmt.Sprintf("%s:%d", host, port))
 			}
