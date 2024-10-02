@@ -42,7 +42,9 @@ func main() {
 
 				slog.SetDefault(
 					slog.New(
-						slogcolor.NewHandler(os.Stderr, slogcolor.DefaultOptions),
+						slogcolor.NewHandler(
+							os.Stderr, slogcolor.DefaultOptions,
+						),
 					),
 				)
 
