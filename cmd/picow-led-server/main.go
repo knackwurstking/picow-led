@@ -8,6 +8,8 @@ import (
 
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
+	socketio "github.com/googollee/go-socket.io"
+	"github.com/googollee/go-socket.io/engineio"
 	"github.com/knackwurstking/picow-led-server/frontend"
 )
 
@@ -45,14 +47,14 @@ func main() {
 				http.Handle("/", http.FileServerFS(public))
 
 				// TODO: Init SocketIO Server...
-				// ioServer := socketio.NewServer(&engineio.Options{})
+				ioServer := socketio.NewServer(&engineio.Options{})
 
-				// ...
+				// TODO: Add `OnConnect`, `OnEvent`, `OnError` and `OnDisconnect` callbacks
 
-				// ioServer.Serve()
-				// defer ioServer.Close()
+				ioServer.Serve()
+				defer ioServer.Close()
 
-				// http.Handle("/socket.io", ioServer)
+				http.Handle("/socket.io", ioServer)
 
 				return http.ListenAndServe(
 					fmt.Sprintf("%s:%d", host, port),
