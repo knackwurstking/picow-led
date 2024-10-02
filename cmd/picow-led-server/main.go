@@ -33,8 +33,12 @@ func main() {
 			)
 
 			return func(cmd *cli.Command) error {
-				log.Printf("Flags: debug=%+v, host=%+v, port=%+v", debug, host, port)
+				// TODO: Init logger
+				// TODO: Init static file server
+				// TODO: Init socket io server
+				// TODO: Start all of this
 
+				log.Printf("Flags: debug=%+v, host=%+v, port=%+v", debug, host, port)
 				return nil
 			}
 		}),
