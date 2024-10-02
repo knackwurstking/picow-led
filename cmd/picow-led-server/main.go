@@ -58,7 +58,11 @@ func main() {
 					fmt.Sprintf("%s:%d", host, port),
 					// NOTE: Request Logger
 					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-						// TODO: Recover from a panic here?
+						defer func() {
+							if r := recover(); r != nil {
+								slog.Error("Recovered", "r", r)
+							}
+						}()
 
 						crw := &customResponseWriter{
 							ResponseWriter: w,
