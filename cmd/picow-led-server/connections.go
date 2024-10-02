@@ -19,7 +19,7 @@ func NewConnections() *Connections {
 }
 
 func (ws *Connections) Add(conn *websocket.Conn) *Client {
-	slog.Debug("Add a new connection",
+	slog.Debug("Add a connection",
 		"remoteAddr", conn.RemoteAddr(),
 		"localAddr", conn.LocalAddr(),
 	)
@@ -30,6 +30,11 @@ func (ws *Connections) Add(conn *websocket.Conn) *Client {
 }
 
 func (ws *Connections) Delete(conn *websocket.Conn) {
+	slog.Debug("Delete a connection",
+		"remoteAddr", conn.RemoteAddr(),
+		"localAddr", conn.LocalAddr(),
+	)
+
 	ws.mutex.Lock()
 	defer ws.mutex.Unlock()
 
