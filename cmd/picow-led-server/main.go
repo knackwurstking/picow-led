@@ -8,18 +8,7 @@ import (
 
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
-	"github.com/gorilla/websocket"
 	"github.com/knackwurstking/picow-led-server/frontend"
-	"github.com/labstack/echo/v4"
-)
-
-var (
-	wsUpgrader = websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
-	}
-	connections = NewConnections()
 )
 
 func main() {
@@ -51,41 +40,31 @@ func main() {
 			return func(cmd *cli.Command) error {
 				initLogger(debug, host, port)
 
-				e := echo.New()
-
 				// Init static file server
-				e.StaticFS("/", frontend.GetFS())
-				e.GET("/", func(c echo.Context) error {
-					return c.Redirect(http.StatusSeeOther, "/index.html")
-				})
+				public := frontend.GetFS()
+				http.Handle("/", http.FileServerFS(public))
 
-				// Init (gorilla) websocket server
-				e.GET("/api/ws", func(c echo.Context) error {
-					conn, err := wsUpgrader.Upgrade(c.Response().Writer, c.Request(), nil)
-					if err != nil {
-						return c.String(http.StatusInternalServerError, err.Error())
-					}
+				// TODO: Init SocketIO Server...
+				// ioServer := socketio.NewServer(&engineio.Options{})
 
-					// Add ws connection to connections struct (old clients struct)
-					client := connections.Add(conn)
-					defer connections.Delete(client.Conn)
+				// ...
 
-					for {
-						select {
-						case data := <-client.Chan:
-							client.Conn.SetWriteDeadline(client.WriteTimeout)
-							if err := client.Conn.WriteJSON(data); err != nil {
-								return c.String(http.StatusInternalServerError, err.Error())
-							}
-						case <-c.Request().Context().Done():
-							return c.JSON(http.StatusOK, nil)
-						case <-client.Done():
-							return c.JSON(http.StatusOK, nil)
-						}
-					}
-				})
+				// ioServer.Serve()
+				// defer ioServer.Close()
 
-				return e.Start(fmt.Sprintf("%s:%d", host, port))
+				// http.Handle("/socket.io", ioServer)
+
+				return http.ListenAndServe(
+					fmt.Sprintf("%s:%d", host, port),
+					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+						// TODO: Recover from a paninc here?
+
+						http.DefaultServeMux.ServeHTTP(w, r)
+
+						// TODO: How to log the status code
+						slog.Debug("Request", "addr", r.RemoteAddr, "method", r.Method, "url", r.URL)
+					}),
+				)
 			}
 		}),
 		CommandFlags: []cli.CommandFlag{
