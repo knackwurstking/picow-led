@@ -8,8 +8,18 @@ import (
 
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
+	"github.com/gorilla/websocket"
 	"github.com/knackwurstking/picow-led-server/frontend"
 	"github.com/labstack/echo/v4"
+)
+
+var (
+	wsUpgrader = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+	connections = NewConnections()
 )
 
 func main() {
@@ -39,20 +49,7 @@ func main() {
 			)
 
 			return func(cmd *cli.Command) error {
-				// Init logger
-				if debug {
-					slogcolor.DefaultOptions.Level = slog.LevelDebug
-				}
-
-				slog.SetDefault(
-					slog.New(
-						slogcolor.NewHandler(
-							os.Stderr, slogcolor.DefaultOptions,
-						),
-					),
-				)
-
-				slog.Debug("Flags", "debug", debug, "host", host, "port", port)
+				initLogger(debug, host, port)
 
 				e := echo.New()
 
@@ -62,7 +59,31 @@ func main() {
 					return c.Redirect(http.StatusSeeOther, "/index.html")
 				})
 
-				// TODO: Init (gorilla) websocket server
+				// Init (gorilla) websocket server
+				e.GET("/api/ws", func(c echo.Context) error {
+					conn, err := wsUpgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+					if err != nil {
+						return c.String(http.StatusInternalServerError, err.Error())
+					}
+
+					// Add ws connection to connections struct (old clients struct)
+					client := connections.Add(conn)
+					defer connections.Delete(client.Conn)
+
+					for {
+						select {
+						case data := <-client.Chan:
+							client.Conn.SetWriteDeadline(client.WriteTimeout)
+							if err := client.Conn.WriteJSON(data); err != nil {
+								return c.String(http.StatusInternalServerError, err.Error())
+							}
+						case <-c.Request().Context().Done():
+							return c.JSON(http.StatusOK, nil)
+						case <-client.Done():
+							return c.JSON(http.StatusOK, nil)
+						}
+					}
+				})
 
 				return e.Start(fmt.Sprintf("%s:%d", host, port))
 			}
@@ -74,4 +95,20 @@ func main() {
 	}
 
 	app.HandleError(app.Run())
+}
+
+func initLogger(debug bool, host string, port uint) {
+	if debug {
+		slogcolor.DefaultOptions.Level = slog.LevelDebug
+	}
+
+	slog.SetDefault(
+		slog.New(
+			slogcolor.NewHandler(
+				os.Stderr, slogcolor.DefaultOptions,
+			),
+		),
+	)
+
+	slog.Debug("Flags", "debug", debug, "host", host, "port", port)
 }
