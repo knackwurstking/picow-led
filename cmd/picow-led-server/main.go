@@ -57,7 +57,7 @@ func main() {
 				return http.ListenAndServe(
 					fmt.Sprintf("%s:%d", host, port),
 					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-						// TODO: Recover from a paninc here?
+						// TODO: Recover from a panic here?
 
 						http.DefaultServeMux.ServeHTTP(w, r)
 
