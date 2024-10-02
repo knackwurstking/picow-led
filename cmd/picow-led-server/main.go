@@ -59,10 +59,25 @@ func main() {
 					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 						// TODO: Recover from a panic here?
 
-						http.DefaultServeMux.ServeHTTP(w, r)
+						crw := &customResponseWriter{
+							ResponseWriter: w,
+						}
 
-						// TODO: How to log the status code
-						slog.Debug("Request", "addr", r.RemoteAddr, "method", r.Method, "url", r.URL)
+						http.DefaultServeMux.ServeHTTP(crw, r)
+
+						log := slog.Warn
+						if crw.status >= 200 && crw.status < 300 {
+							log = slog.Info
+						} else if crw.status >= 500 || crw.status == 0 {
+							log = slog.Error
+						}
+
+						log("Request",
+							"status", crw.status,
+							"addr", r.RemoteAddr,
+							"method", r.Method,
+							"url", r.URL,
+						)
 					}),
 				)
 			}
@@ -74,6 +89,16 @@ func main() {
 	}
 
 	app.HandleError(app.Run())
+}
+
+type customResponseWriter struct {
+	http.ResponseWriter
+	status int
+}
+
+func (crw *customResponseWriter) WriteHeader(statusCode int) {
+	crw.status = statusCode
+	crw.ResponseWriter.WriteHeader(statusCode)
 }
 
 func initLogger(debug bool, host string, port uint) {
