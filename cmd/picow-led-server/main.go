@@ -56,7 +56,6 @@ func main() {
 
 				return http.ListenAndServe(
 					fmt.Sprintf("%s:%d", host, port),
-					// NOTE: Request Logger
 					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 						defer func() {
 							if r := recover(); r != nil {
