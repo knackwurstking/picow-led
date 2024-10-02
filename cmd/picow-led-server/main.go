@@ -56,6 +56,7 @@ func main() {
 
 				return http.ListenAndServe(
 					fmt.Sprintf("%s:%d", host, port),
+					// NOTE: Request Logger
 					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 						// TODO: Recover from a panic here?
 
@@ -91,16 +92,6 @@ func main() {
 	app.HandleError(app.Run())
 }
 
-type customResponseWriter struct {
-	http.ResponseWriter
-	status int
-}
-
-func (crw *customResponseWriter) WriteHeader(statusCode int) {
-	crw.status = statusCode
-	crw.ResponseWriter.WriteHeader(statusCode)
-}
-
 func initLogger(debug bool, host string, port uint) {
 	if debug {
 		slogcolor.DefaultOptions.Level = slog.LevelDebug
@@ -115,4 +106,14 @@ func initLogger(debug bool, host string, port uint) {
 	)
 
 	slog.Debug("Flags", "debug", debug, "host", host, "port", port)
+}
+
+type customResponseWriter struct {
+	http.ResponseWriter
+	status int
+}
+
+func (crw *customResponseWriter) WriteHeader(statusCode int) {
+	crw.status = statusCode
+	crw.ResponseWriter.WriteHeader(statusCode)
 }
