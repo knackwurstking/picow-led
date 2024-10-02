@@ -5,6 +5,9 @@ go 1.23
 require github.com/SuperPaintman/nice v0.0.0-20211001214957-a29cd3367b17
 
 require (
-	github.com/mattn/go-isatty v0.0.13 // indirect
-	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
+	github.com/MatusOllah/slogcolor v1.3.0 // indirect
+	github.com/fatih/color v1.17.0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 )

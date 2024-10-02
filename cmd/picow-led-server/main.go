@@ -1,8 +1,10 @@
 package main
 
 import (
-	"log"
+	"log/slog"
+	"os"
 
+	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
 )
 
@@ -33,12 +35,23 @@ func main() {
 			)
 
 			return func(cmd *cli.Command) error {
-				// TODO: Init logger
+				// Init logger
+				if debug {
+					slogcolor.DefaultOptions.Level = slog.LevelDebug
+				}
+
+				slog.SetDefault(
+					slog.New(
+						slogcolor.NewHandler(os.Stderr, slogcolor.DefaultOptions),
+					),
+				)
+
+				slog.Debug("Flags", "debug", debug, "host", host, "port", port)
+
 				// TODO: Init static file server
 				// TODO: Init socket io server
 				// TODO: Start all of this
 
-				log.Printf("Flags: debug=%+v, host=%+v, port=%+v", debug, host, port)
 				return nil
 			}
 		}),
