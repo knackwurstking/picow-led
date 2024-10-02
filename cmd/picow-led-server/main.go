@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
+	"github.com/knackwurstking/picow-led-server/frontend"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -50,11 +54,18 @@ func main() {
 
 				slog.Debug("Flags", "debug", debug, "host", host, "port", port)
 
-				// TODO: Init static file server
-				// TODO: Init socket io server
+				e := echo.New()
+
+				// Init static file server
+				e.StaticFS("/", frontend.GetFS())
+				e.GET("/", func(c echo.Context) error {
+					return c.Redirect(http.StatusSeeOther, "/index.html")
+				})
+
+				// TODO: Init (gorilla) websocket server
 				// TODO: Start all of this
 
-				return nil
+				return e.Start(fmt.Sprintf("%s:%d", host, port))
 			}
 		}),
 		CommandFlags: []cli.CommandFlag{
