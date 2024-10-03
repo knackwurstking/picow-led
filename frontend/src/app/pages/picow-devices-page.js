@@ -77,7 +77,8 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
 
             ws.events.on("open", async () => {
                 try {
-                    this.store.ui.set("devices", await this.fetchApiDevices());
+                    const devices = await this.fetchApiDevices();
+                    if (!!devices) this.store.ui.set("devices", devices);
                 } catch (err) {
                     utils.throwAlert({ message: err, variant: "error" });
                 }
@@ -89,13 +90,9 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
             })
         );
 
-        this.fetchApiDevices()
-            .then((devices) => {
-                this.store.ui.set("devices", devices);
-            })
-            .catch((err) =>
-                utils.throwAlert({ message: err, variant: "error" })
-            );
+        this.fetchApiDevices().then((devices) => {
+            if (!!devices) this.store.ui.set("devices", devices);
+        });
     }
 
     disconnectedCallback() {
