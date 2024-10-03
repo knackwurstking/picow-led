@@ -42,21 +42,21 @@ export default async function (): Promise<AppBar> {
 
     const events = new Events<AppBar_Events>();
 
-    const menu = el.querySelector(
+    const menu = el.querySelector<UIAppBarItem<UIIconButton>>(
         `ui-app-bar-item[name="menu"]`
-    ) as UIAppBarItem<UIIconButton>;
+    );
 
     menu.ui.child.ui.events.on("click", (ev) => {
         events.dispatch("menu", ev);
     });
 
-    const title = el.querySelector(
+    const title = el.querySelector<UIAppBarItem<HTMLElement>>(
         `ui-app-bar-item[name="title"]`
-    ) as UIAppBarItem<HTMLElement>;
+    );
 
-    const add = el.querySelector(
+    const add = el.querySelector<UIAppBarItem<UIIconButton>>(
         `ui-app-bar-item[name="add"]`
-    ) as UIAppBarItem<UIIconButton>;
+    );
 
     add.ui.child.ui.events.on("click", (ev) => {
         events.dispatch("add", ev);

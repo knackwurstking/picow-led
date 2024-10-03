@@ -46,7 +46,7 @@ class PicowDeviceItem_Picow {
                 secondary = "&nbsp;";
             }
 
-            const label = this.root.querySelector(`ui-label`) as UILabel;
+            const label = this.root.querySelector<UILabel>(`ui-label`);
 
             label.ui.primary = primary;
             label.ui.secondary = secondary;
@@ -57,9 +57,8 @@ class PicowDeviceItem_Picow {
         // ------------------- //
 
         {
-            const power = this.root.querySelector(
-                `picow-power-button`
-            ) as PicowPowerButton;
+            const power =
+                this.root.querySelector<PicowPowerButton>(`picow-power-button`);
 
             power.picow.set(device);
         }
@@ -69,9 +68,10 @@ class PicowDeviceItem_Picow {
         // --------------------- //
 
         {
-            const options = this.root.querySelector(
-                `picow-options-button`
-            ) as PicowOptionsButton;
+            const options =
+                this.root.querySelector<PicowOptionsButton>(
+                    `picow-options-button`
+                );
 
             options.picow.set(device);
         }
@@ -81,9 +81,9 @@ class PicowDeviceItem_Picow {
         // --------------------- //
 
         {
-            const marker = this.root.shadowRoot.querySelector(
+            const marker = this.root.shadowRoot.querySelector<UISecondary>(
                 `ui-secondary.offline-marker`
-            ) as UISecondary;
+            );
 
             if (device.server.isOffline) marker.removeAttribute("hide");
             else marker.setAttribute("hide", "");
@@ -172,7 +172,7 @@ export default class PicowDeviceItem extends HTMLElement {
             </li>
         `;
 
-        const card = this.querySelector("li.is-card") as HTMLLIElement;
+        const card = this.querySelector<HTMLLIElement>("li.is-card");
         card.onclick = async () => {
             // TODO: Open a color picker dialog to select a color
         };

@@ -50,7 +50,7 @@ async function main() {
     // Create the Store //
     // ---------------- //
 
-    const store = el.querySelector(`ui-store`) as PicowStore;
+    const store = el.querySelector<PicowStore>(`ui-store`);
     store.ui.set("devices", [], true);
     store.ui.set("currentPage", null, true);
     store.ui.set(
@@ -67,7 +67,7 @@ async function main() {
     // Create the StackLayout //
     // ---------------------- //
 
-    const stackLayout = el.querySelector(`ui-stack-layout`) as PicowStackLayout;
+    const stackLayout = el.querySelector<PicowStackLayout>(`ui-stack-layout`);
 
     stackLayout.ui.register("devices", async () => {
         return new PicowDevicesPage(appBar);

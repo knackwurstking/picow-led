@@ -71,9 +71,8 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             // ------------ //
 
             {
-                const input = this.querySelector(
-                    `ui-check[name="ssl"]`
-                ) as UICheck;
+                const input =
+                    this.querySelector<UICheck>(`ui-check[name="ssl"]`);
 
                 input.ui.checked = this.store.ui.get("server").ssl;
                 input.ui.events.on("input", async (state) => {
@@ -93,9 +92,9 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             // ---------- //
 
             {
-                const input = this.querySelector(
+                const input = this.querySelector<UIInput>(
                     `ui-input[name="host"]`
-                ) as UIInput;
+                );
 
                 input.ui.events.on("input", async (host) => {
                     resetInputEventTimeout();
@@ -114,9 +113,9 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             // ---------- //
 
             {
-                const input = this.querySelector(
+                const input = this.querySelector<UIInput>(
                     `ui-input[name="port"]`
-                ) as UIInput;
+                );
 
                 input.ui.events.on("input", async (port) => {
                     resetInputEventTimeout();

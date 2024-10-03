@@ -11,9 +11,8 @@ export interface Drawer {
 }
 
 export default async function (): Promise<Drawer> {
-    const stackLayout = document.querySelector(
-        "ui-stack-layout"
-    ) as PicowStackLayout;
+    const stackLayout =
+        document.querySelector<PicowStackLayout>("ui-stack-layout");
 
     const el = new UIDrawer();
 
@@ -79,9 +78,9 @@ export default async function (): Promise<Drawer> {
     // Devices Button //
     // -------------- //
 
-    const devicesButton = el.querySelector(
+    const devicesButton = el.querySelector<UIButton>(
         `ui-button[name="devices"]`
-    ) as UIButton;
+    );
 
     devicesButton.ui.events.on("click", () => {
         stackLayout.ui.clear();
@@ -93,9 +92,9 @@ export default async function (): Promise<Drawer> {
     // Settings Button //
     // --------------- //
 
-    const settingsButton = el.querySelector(
+    const settingsButton = el.querySelector<UIButton>(
         `ui-button[name="settings"]`
-    ) as UIButton;
+    );
 
     settingsButton.ui.events.on("click", () => {
         stackLayout.ui.clear();
@@ -108,11 +107,9 @@ export default async function (): Promise<Drawer> {
     // -------------------------------------------- //
 
     {
-        const statusLED = el.querySelector(
-            `status-led[name="/ws"]`
-        ) as StatusLED;
+        const statusLED = el.querySelector<StatusLED>(`status-led[name="/ws"]`);
 
-        const label = el.querySelector(`ui-label[name="/ws"]`) as UILabel;
+        const label = el.querySelector<UILabel>(`ui-label[name="/ws"]`);
         label.ui.primary = ws.path;
         label.ui.secondary = ws.origin;
 
