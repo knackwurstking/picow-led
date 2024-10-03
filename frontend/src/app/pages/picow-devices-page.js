@@ -1,5 +1,6 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
-import { api, devicesEvents, utils } from "../../lib";
+import { api, utils } from "../../lib";
+import ws from "../../lib/websocket";
 import createDeviceSetupDialog from "../dialogs/createDeviceSetupDialog";
 import PicowDeviceItem from "./devices-components/picow-device-item";
 
@@ -74,7 +75,7 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
             // Handle WebSocket events //
             // ----------------------- //
 
-            devicesEvents.events.on("open", async () => {
+            ws.events.on("open", async () => {
                 try {
                     this.store.ui.set("devices", await this.fetchApiDevices());
                 } catch (err) {
@@ -82,9 +83,10 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
                 }
             }),
 
-            devicesEvents.events.on("message", async (devices) =>
-                this.store.ui.set("devices", devices)
-            )
+            ws.events.on("message", async (data) => {
+                // TODO: Need `[]Device` type like data from the websocket
+                //this.store.ui.set("devices", devices)
+            })
         );
 
         this.fetchApiDevices()
