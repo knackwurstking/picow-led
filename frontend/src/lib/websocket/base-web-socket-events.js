@@ -1,12 +1,33 @@
-export class WebSocketEvents {
+export class BaseWebSocketEvents {
     /**
      * @type {Server | null}
      */
     #server = null;
+
+    /**
+     * @param {MessageEvent} ev
+     */
+    #messageHandler = async (ev) => {
+        await this.handleMessageEvent(ev);
+    };
+
+    #openHandler = async () => {
+        await this.handleOpenEvent();
+    };
+
+    /**
+     * @param {Event} ev
+     */
+    #errorHandler = async (ev) => {
+        await this.handleErrorEvent(ev);
+    };
+
     /**
      * @type {() => Promise<void>}
      */
-    #closeHandler;
+    #closeHandler = async () => {
+        await this.handleCloseEvent();
+    };
 
     /**
      * @param {string} path
@@ -21,10 +42,6 @@ export class WebSocketEvents {
 
         /** @type {WebSocket | null} */
         this.ws = null;
-
-        this.#closeHandler = async () => {
-            await this.onClose();
-        };
     }
 
     get server() {
@@ -43,7 +60,6 @@ export class WebSocketEvents {
         }
 
         this.connect();
-
         this.#server = value;
     }
 
@@ -56,9 +72,9 @@ export class WebSocketEvents {
         if (this.ws) this.close();
         this.ws = new WebSocket(this.origin + this.path);
 
-        this.ws.addEventListener("message", this.onMessage.bind(this));
-        this.ws.addEventListener("open", this.onOpen.bind(this));
-        this.ws.addEventListener("error", this.onError.bind(this));
+        this.ws.addEventListener("message", this.#messageHandler);
+        this.ws.addEventListener("open", this.#openHandler);
+        this.ws.addEventListener("error", this.#errorHandler);
         this.ws.addEventListener("close", this.#closeHandler);
     }
 
@@ -71,9 +87,9 @@ export class WebSocketEvents {
     /**
      * @param {MessageEvent} ev
      */
-    async onMessage(ev) {}
+    async handleMessageEvent(ev) {}
 
-    async onOpen() {
+    async handleOpenEvent() {
         console.debug(
             `websocket connection established "${this.origin}${this.path}"`
         );
@@ -82,14 +98,14 @@ export class WebSocketEvents {
     /**
      * @param {Event} ev
      */
-    async onError(ev) {
+    async handleErrorEvent(ev) {
         console.error(
             `websocket connection error "${this.origin}${this.path}"`,
             ev
         );
     }
 
-    async onClose() {
+    async handleCloseEvent() {
         console.warn(
             `websocket connection closed "${this.origin}${this.path}"`
         );

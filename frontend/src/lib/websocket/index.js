@@ -1,5 +1,5 @@
-import { DeviceEvents } from "./device-events";
-import { DevicesEvents } from "./devices-events";
+import { WSEvents } from "./ws-events";
 
-export const deviceEvents = new DeviceEvents();
-export const devicesEvents = new DevicesEvents();
+export const events = {
+    ws: new WSEvents(),
+};
