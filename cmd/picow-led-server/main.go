@@ -46,10 +46,14 @@ func main() {
 				public := frontend.GetFS()
 				http.Handle("/", http.FileServerFS(public))
 
-				// TODO: Init SocketIO Server...
+				// Init SocketIO Server
 				ioServer := socketio.NewServer(&engineio.Options{})
 
 				// TODO: Add `OnConnect`, `OnEvent`, `OnError` and `OnDisconnect` callbacks
+				ioServer.OnConnect("/", func(c socketio.Conn) error {
+					// ...
+					return nil
+				})
 
 				ioServer.Serve()
 				defer ioServer.Close()
