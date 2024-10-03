@@ -2,19 +2,17 @@ import { Events } from "ui";
 import { BaseWebSocketEvents } from "./base-web-socket-events";
 
 export class WSEvents extends BaseWebSocketEvents {
+    events: Events<{
+        server: Server | null;
+        open: null;
+        close: null;
+        message: any;
+        "message-device": Device;
+        "message-devices": Device[];
+    }>;
+
     constructor() {
         super("/ws");
-
-        /**
-         * @type {Events<{
-         *  "server": Server | null;
-         *  "open": null;
-         *  "close": null;
-         *  "message": any;
-         *  "message-device": Device;
-         *  "message-devices": Device[];
-         *  }>}
-         */
         this.events = new Events();
     }
 
@@ -27,8 +25,7 @@ export class WSEvents extends BaseWebSocketEvents {
         this.events.dispatch("server", value);
     }
 
-    /** @param {MessageEvent} ev */
-    async handleMessageEvent(ev) {
+    async handleMessageEvent(ev: MessageEvent) {
         super.handleMessageEvent(ev);
         console.debug("[ws] event:", ev);
         console.debug("[ws] data:", ev.data);

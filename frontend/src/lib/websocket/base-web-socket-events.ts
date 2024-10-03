@@ -1,46 +1,34 @@
 export class BaseWebSocketEvents {
-    /**
-     * @type {Server | null}
-     */
-    #server = null;
+    #server: Server | null;
 
-    /**
-     * @param {MessageEvent} ev
-     */
-    #messageHandler = async (ev) => {
+    #messageHandler = async (ev: MessageEvent) => {
         await this.handleMessageEvent(ev);
     };
-
     #openHandler = async () => {
         await this.handleOpenEvent();
     };
-
-    /**
-     * @param {Event} ev
-     */
-    #errorHandler = async (ev) => {
+    #errorHandler = async (ev: Event) => {
         await this.handleErrorEvent(ev);
     };
-
-    /**
-     * @type {() => Promise<void>}
-     */
     #closeHandler = async () => {
         await this.handleCloseEvent();
     };
 
-    /**
-     * @param {string} path
-     */
-    constructor(path) {
+    path: string;
+    origin: string;
+
+    timeout: NodeJS.Timeout | null;
+    timeoutDuration: number;
+
+    ws: WebSocket | null;
+
+    constructor(path: string) {
         this.path = path;
         this.origin = "";
 
-        /** @type {NodeJS.Timeout} */
-        this.timeout;
+        this.timeout = null;
         this.timeoutDuration = 1000;
 
-        /** @type {WebSocket | null} */
         this.ws = null;
     }
 
@@ -80,14 +68,16 @@ export class BaseWebSocketEvents {
 
     close() {
         this.ws.removeEventListener("close", this.#closeHandler);
-        if (!!this.timeout) clearTimeout(this.timeout);
+
+        if (!!this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+
         if (this.isOpen()) this.ws.close();
     }
 
-    /**
-     * @param {MessageEvent} ev
-     */
-    async handleMessageEvent(ev) {}
+    async handleMessageEvent(ev: MessageEvent) {}
 
     async handleOpenEvent() {
         console.debug(
@@ -95,10 +85,7 @@ export class BaseWebSocketEvents {
         );
     }
 
-    /**
-     * @param {Event} ev
-     */
-    async handleErrorEvent(ev) {
+    async handleErrorEvent(ev: Event) {
         console.error(
             `websocket connection error "${this.origin}${this.path}"`,
             ev

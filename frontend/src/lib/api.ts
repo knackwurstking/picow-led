@@ -1,12 +1,10 @@
 import * as utils from "./utils";
 
-/**
- * @param {PicowStore} store
- * @param {string} path
- * @param {any} data
- * @returns {Promise<boolean>} ok
- */
-export async function Delete(store, path, data) {
+export async function Delete(
+    store: PicowStore,
+    path: string,
+    data: any
+): Promise<boolean> {
     const url = await getURL(store, path);
 
     try {
@@ -25,12 +23,10 @@ export async function Delete(store, path, data) {
     }
 }
 
-/**
- * @param {PicowStore} store
- * @param {string} path
- * @returns {Promise<any>} data - Returns `undefined` on error
- */
-export async function Get(store, path) {
+export async function Get(
+    store: PicowStore,
+    path: string
+): Promise<any | undefined> {
     const url = await getURL(store, path);
 
     try {
@@ -47,13 +43,11 @@ export async function Get(store, path) {
     }
 }
 
-/**
- * @param {PicowStore} store
- * @param {string} path
- * @param {any} data
- * @returns {Promise<boolean>} ok
- */
-export async function Post(store, path, data) {
+export async function Post(
+    store: PicowStore,
+    path: string,
+    data: any
+): Promise<boolean> {
     const url = await getURL(store, path);
 
     try {
@@ -72,13 +66,11 @@ export async function Post(store, path, data) {
     }
 }
 
-/**
- * @param {PicowStore} store
- * @param {string} path
- * @param {any} data
- * @returns {Promise<boolean>} ok
- */
-export async function Put(store, path, data) {
+export async function Put(
+    store: PicowStore,
+    path: string,
+    data: any
+): Promise<boolean> {
     const url = await getURL(store, path);
 
     try {
@@ -97,22 +89,13 @@ export async function Put(store, path, data) {
     }
 }
 
-/**
- * @param {PicowStore} store
- * @param {string} path
- * @returns {Promise<string>}
- */
-export async function getURL(store, path) {
+export async function getURL(store: PicowStore, path: string): Promise<string> {
     const server = store.ui.get("server");
     const addr = !server.port ? server.host : `${server.host}:${server.port}`;
     return `${server.ssl ? "https:" : "http:"}//${addr}${path}`;
 }
 
-/**
- * @param {Response} resp
- * @returns {Promise<boolean>} ok
- */
-export async function handleResponseError(resp) {
+export async function handleResponseError(resp: Response): Promise<boolean> {
     if (resp.ok) return true;
 
     resp.text().then((e) => {
