@@ -1,28 +1,23 @@
 import { plus as svgAdd, menu as svgMenu } from "ui/svg/smoothie-line-icons";
 
-import { Events, UIAppBar, html } from "ui";
+import { Events, UIAppBar, UIAppBarItem, UIIconButton, html } from "ui";
 
-/**
- * @typedef {{
- *  element: UIAppBar;
- *  events: Events<PicowAppBar_Events>;
- *  items: {
- *      menu: import("ui").UIAppBarItem<import("ui").UIIconButton>;
- *      title: import("ui").UIAppBarItem<HTMLElement>;
- *      add: import("ui").UIAppBarItem<import("ui").UIIconButton>;
- *  };
- *  buttons: {
- *      menu: import("ui").UIIconButton;
- *      add: import("ui").UIIconButton;
- *  };
- *  title: string;
- * }} AppBar
- */
+interface AppBar {
+    element: UIAppBar;
+    events: Events<PicowAppBar_Events>;
+    items: {
+        menu: UIAppBarItem<UIIconButton>;
+        title: UIAppBarItem<HTMLElement>;
+        add: UIAppBarItem<UIIconButton>;
+    };
+    buttons: {
+        menu: UIIconButton;
+        add: UIIconButton;
+    };
+    title: string;
+}
 
-/**
- * @returns {Promise<AppBar>}
- */
-export default async function () {
+export default async function (): Promise<AppBar> {
     const el = new UIAppBar();
     el.ui.position = "top";
 
@@ -40,26 +35,24 @@ export default async function () {
         </ui-app-bar-item>
     `;
 
-    /** @type {Events<PicowAppBar_Events>} */
-    const events = new Events();
+    const events = new Events<PicowAppBar_Events>();
 
-    /**
-     * @type {import("ui").UIAppBarItem<import("ui").UIIconButton>}
-     */
-    const menu = el.querySelector(`ui-app-bar-item[name="menu"]`);
+    const menu = el.querySelector(
+        `ui-app-bar-item[name="menu"]`
+    ) as UIAppBarItem<UIIconButton>;
+
     menu.ui.child.ui.events.on("click", (ev) => {
         events.dispatch("menu", ev);
     });
 
-    /**
-     * @type {import("ui").UIAppBarItem<HTMLElement>}
-     */
-    const title = el.querySelector(`ui-app-bar-item[name="title"]`);
+    const title = el.querySelector(
+        `ui-app-bar-item[name="title"]`
+    ) as UIAppBarItem<HTMLElement>;
 
-    /**
-     * @type {import("ui").UIAppBarItem<import("ui").UIIconButton>}
-     */
-    const add = el.querySelector(`ui-app-bar-item[name="add"]`);
+    const add = el.querySelector(
+        `ui-app-bar-item[name="add"]`
+    ) as UIAppBarItem<UIIconButton>;
+
     add.ui.child.ui.events.on("click", (ev) => {
         events.dispatch("add", ev);
     });

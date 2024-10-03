@@ -1,4 +1,4 @@
-import { utils } from ".";
+import * as utils from "./utils";
 
 /**
  * @param {PicowStore} store

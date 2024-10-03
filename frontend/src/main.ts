@@ -2,6 +2,7 @@ import "../node_modules/ui/css/main.css";
 
 import { html } from "ui";
 import { registerSW } from "virtual:pwa-register";
+
 import createAppBar from "./app/create-app-bar";
 import createDrawer from "./app/create-drawer";
 import PicowDevicesPage from "./app/pages/picow-devices-page";
@@ -49,10 +50,7 @@ async function main() {
     // Create the Store //
     // ---------------- //
 
-    /**
-     * @type {PicowStore}
-     */
-    const store = el.querySelector(`ui-store`);
+    const store = el.querySelector(`ui-store`) as PicowStore;
     store.ui.set("devices", [], true);
     store.ui.set("currentPage", null, true);
     store.ui.set(
@@ -65,26 +63,11 @@ async function main() {
         true
     );
 
-    if (!Object.hasOwn(store.ui.get("server"), "ssl")) {
-        store.ui.update("server", (server) => {
-            // @ts-ignore
-            if (Object.hasOwn(server, "protocol")) delete server.protocol;
-
-            return {
-                ...server,
-                ssl: !!location.protocol.match(/(https)/),
-            };
-        });
-    }
-
     // ---------------------- //
     // Create the StackLayout //
     // ---------------------- //
 
-    /**
-     * @type {import("ui").UIStackLayout<PicowStackLayout_Pages>}
-     */
-    const stackLayout = el.querySelector(`ui-stack-layout`);
+    const stackLayout = el.querySelector(`ui-stack-layout`) as PicowStackLayout;
 
     stackLayout.ui.register("devices", async () => {
         return new PicowDevicesPage({ appBar });
