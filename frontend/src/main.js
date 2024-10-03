@@ -6,7 +6,7 @@ import createAppBar from "./app/create-app-bar";
 import createDrawer from "./app/create-drawer";
 import PicowDevicesPage from "./app/pages/picow-devices-page";
 import PicowSettingsPage from "./app/pages/picow-settings-page";
-import { deviceEvents, devicesEvents } from "./lib";
+import ws from "./lib/websocket";
 
 registerSW({
     onRegistered(r) {
@@ -154,8 +154,7 @@ async function main() {
         store.ui.on(
             "server",
             async (server) => {
-                deviceEvents.server = server;
-                devicesEvents.server = server;
+                ws.server = server;
             },
             true
         );
