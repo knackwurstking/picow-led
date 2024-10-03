@@ -8,8 +8,6 @@ import (
 
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
-	socketio "github.com/googollee/go-socket.io"
-	"github.com/googollee/go-socket.io/engineio"
 	"github.com/knackwurstking/picow-led-server/frontend"
 )
 
@@ -46,22 +44,16 @@ func main() {
 				public := frontend.GetFS()
 				http.Handle("/", http.FileServerFS(public))
 
-				// Init SocketIO Server
-				ioServer := socketio.NewServer(&engineio.Options{})
+				// Init websocket handler
+				room := newRoom()
+				http.Handle("/ws", room)
 
-				// TODO: Add `OnConnect`, `OnEvent`, `OnError` and `OnDisconnect` callbacks
-				ioServer.OnConnect("/", func(c socketio.Conn) error {
-					// ...
-					return nil
-				})
+				go room.run()
 
-				ioServer.Serve()
-				defer ioServer.Close()
-
-				http.Handle("/socket.io", ioServer)
-
+				addr := fmt.Sprintf("%s:%d", host, port)
+				slog.Info("Started server", "address", addr)
 				return http.ListenAndServe(
-					fmt.Sprintf("%s:%d", host, port),
+					addr,
 					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 						defer func() {
 							if r := recover(); r != nil {
