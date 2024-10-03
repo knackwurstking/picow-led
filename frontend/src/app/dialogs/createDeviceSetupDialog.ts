@@ -1,43 +1,32 @@
-import { Events, html, UIDialog } from "ui";
+import { html, UIDialog, UIInput, type Events, type UIDialog_Events } from "ui";
 
-/**
- * @typedef DeviceSetupDialog_Events
- * @type {import("ui").UIDialog_Events & {
- *  "submit": Device;
- *  "delete": Device;
- *  }}
- *
- * @typedef DeviceSetupDialog_Options
- * @type {{
- *  name?: string;
- *  addr?: string;
- *  pins?: number[];
- *  allowDeletion?: boolean;
- * }}
- *
- * @typedef {{
- *  element: UIDialog;
- *  get events(): Events<DeviceSetupDialog_Events>;
- *  set(options: DeviceSetupDialog_Options): void;
- *  open(): void;
- *  close(): void;
- * }} DeviceSetupDialog
- */
+export type DeviceSetupDialog_Events = {
+    submit: Device;
+    delete: Device;
+} & UIDialog_Events;
 
-/**
- * @param {DeviceSetupDialog_Options} options
- * @returns {Promise<DeviceSetupDialog>}
- */
+export interface DeviceSetupDialog_Options {
+    name?: string;
+    addr?: string;
+    pins?: number[];
+    allowDeletion?: boolean;
+}
+
+export interface DeviceSetupDialog {
+    element: UIDialog;
+    get events(): Events<DeviceSetupDialog_Events>;
+    set(options: DeviceSetupDialog_Options): void;
+    open(): void;
+    close(): void;
+}
+
 export default async function ({
     name = "",
     addr = "",
     pins = [],
     allowDeletion = false,
-}) {
-    /**
-     * @type {UIDialog<DeviceSetupDialog_Events>}
-     */
-    const dialog = new UIDialog("Device Setup");
+}: DeviceSetupDialog_Options): Promise<DeviceSetupDialog> {
+    const dialog = new UIDialog<DeviceSetupDialog_Events>("Device Setup");
 
     const device = {
         server: {
@@ -90,8 +79,8 @@ export default async function ({
         // --------------------- //
 
         {
-            const inputs = dialog.querySelectorAll(`ui-input`);
-            inputs.forEach((/** @type {import("ui").UIInput} */ input) => {
+            const inputs = dialog.querySelectorAll<UIInput>(`ui-input`);
+            inputs.forEach((input) => {
                 input.ui.events.on("input", (value) => {
                     switch (input.getAttribute("name")) {
                         case "server.name":
@@ -156,24 +145,26 @@ export default async function ({
                 variant: "full",
                 color: "primary",
                 onClick: () => {
-                    /** @type {import("ui").UIInput} */
-                    let addrInput = dialog.querySelector(
+                    let addrInput = dialog.querySelector<UIInput>(
                         `ui-input[name="server.addr"]`
                     );
+
                     if (!device.server.addr) {
                         addrInput.ui.invalid = true;
                         return;
                     }
+
                     addrInput.ui.invalid = false;
 
-                    /** @type {import("ui").UIInput} */
-                    let pinsInput = dialog.querySelector(
+                    let pinsInput = dialog.querySelector<UIInput>(
                         `ui-input[name="pins"]`
                     );
+
                     if (!device.pins.length) {
                         pinsInput.ui.invalid = true;
                         return;
                     }
+
                     pinsInput.ui.invalid = false;
 
                     dialog.ui.events.dispatch("submit", device);
@@ -185,10 +176,12 @@ export default async function ({
         }
     }
 
-    /**
-     * @param {DeviceSetupDialog_Options} options
-     */
-    function set({ name = "", addr = "", pins = [], allowDeletion = false }) {
+    function set({
+        name = "",
+        addr = "",
+        pins = [],
+        allowDeletion = false,
+    }: DeviceSetupDialog_Options) {
         device.server.name = name;
         device.server.addr = addr;
         device.pins = pins;
