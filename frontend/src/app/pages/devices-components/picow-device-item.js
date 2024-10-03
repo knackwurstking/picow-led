@@ -1,8 +1,8 @@
-import "./picow-power-button";
 import "./picow-options-button";
+import "./picow-power-button";
 
 import { CleanUp, globalStylesToShadowRoot, html } from "ui";
-import { deviceEvents } from "../../../lib";
+import ws from "../../../lib/websocket";
 
 export default class PicowDeviceItem extends HTMLElement {
     /**
@@ -184,9 +184,10 @@ export default class PicowDeviceItem extends HTMLElement {
 
     connectedCallback() {
         this.cleanup.add(
-            deviceEvents.events.on("message", (device) => {
-                if (device.server.addr !== this.device.server.addr) return;
-                this.picow.set(device);
+            ws.events.on("message", (_data) => {
+                // TODO: Need data from type `Device` here
+                //if (data.server.addr !== this.device.server.addr) return;
+                //this.picow.set(data);
             })
         );
     }
