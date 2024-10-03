@@ -43,7 +43,7 @@ func (r *room) run() {
 			r.clients[client] = true
 
 			slog.Info(
-				"Add new client to room",
+				"Add a new client to the websocket room",
 				"client.address", client.socket.RemoteAddr(),
 				"clients", len(r.clients),
 			)
@@ -52,18 +52,22 @@ func (r *room) run() {
 			client.close()
 
 			slog.Info(
-				"Remove client from room",
+				"Remove a client from the websocket room",
 				"client.address", client.socket.RemoteAddr(),
 				"clients", len(r.clients),
 			)
 		case msg := <-r.forward:
-			slog.Debug("Forward message to clients",
-				"clients", len(r.clients))
+			slog.Debug("Parse and handle a new command",
+				"msg", string(msg))
 
 			// TODO: Parse message (ex.: "GET api.devices"), start handler
 			resp := msg // placeholder
 
 			// TODO: Send response to (all) client(s?)
+			slog.Debug("Forward a message to all clients",
+				"clients", len(r.clients),
+			)
+
 			for client := range r.clients {
 				client.receive <- resp
 			}
