@@ -66,6 +66,8 @@ func main() {
 							Hijacker:       w.(http.Hijacker),
 						}
 
+						// TODO: Adding CORS before ServeHTTP
+
 						http.DefaultServeMux.ServeHTTP(crw, r)
 
 						log := slog.Warn
