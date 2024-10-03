@@ -1,6 +1,10 @@
 import { Events } from "ui";
 import { BaseWebSocketEvents } from "./base-web-socket-events";
 
+type WSEvents_T = {
+    "/api/devices": Device[];
+};
+
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
         server: Server | null;
@@ -23,6 +27,16 @@ export class WSEvents extends BaseWebSocketEvents {
     set server(value) {
         super.server = value;
         this.events.dispatch("server", value);
+    }
+
+    async get<T extends keyof WSEvents_T>(path: T): Promise<WSEvents_T[T]> {
+        switch (path) {
+            case "/api/devices":
+                // TODO: Send a "GET /api/devices" to the server
+                break;
+        }
+
+        throw new Error(`unknown path ${path}`);
     }
 
     async handleMessageEvent(ev: MessageEvent) {
