@@ -1,9 +1,7 @@
 import { Events } from "ui";
 import { BaseWebSocketEvents } from "./base-web-socket-events";
 
-type WSEvents_T = {
-    "api.devices": Device[];
-};
+type WSEvents_Paths = "api.devices";
 
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
@@ -29,13 +27,13 @@ export class WSEvents extends BaseWebSocketEvents {
         this.events.dispatch("server", value);
     }
 
-    async get<T extends keyof WSEvents_T>(path: T): Promise<WSEvents_T[T]> {
+    async request(path: WSEvents_Paths) {
         switch (path) {
             case "api.devices":
                 if (!this.isOpen()) return;
                 console.debug(`[ws] Send "GET api.devices"`, this.server);
                 this.ws.send(`GET api.devices`);
-                break;
+                return;
         }
 
         throw new Error(`unknown path ${path}`);
@@ -43,17 +41,10 @@ export class WSEvents extends BaseWebSocketEvents {
 
     async handleMessageEvent(ev: MessageEvent) {
         super.handleMessageEvent(ev);
-        console.debug("[ws] event:", ev);
-        console.debug("[ws] data:", ev.data);
+        console.debug("[ws] message.event:", ev);
+
         // TODO: Parsing data and dispatch "message-device" or "message-devices"
 
-        //if (ev.data instanceof Blob) {
-        //    this.ws.send("pong");
-        //    return;
-        //}
-
-        //const device = JSON.parse(ev.data);
-        //this.events.dispatch("message", device);
         this.events.dispatch("message", ev.data);
     }
 
