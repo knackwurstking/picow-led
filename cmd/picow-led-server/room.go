@@ -42,7 +42,7 @@ func (r *room) run() {
 		case client := <-r.join:
 			r.clients[client] = true
 
-			slog.Info(
+			slog.Debug(
 				"Add a new client to the websocket room",
 				"client.address", client.socket.RemoteAddr(),
 				"clients", len(r.clients),
@@ -51,7 +51,7 @@ func (r *room) run() {
 			delete(r.clients, client)
 			client.close()
 
-			slog.Info(
+			slog.Debug(
 				"Remove a client from the websocket room",
 				"client.address", client.socket.RemoteAddr(),
 				"clients", len(r.clients),
