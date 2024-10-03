@@ -7,8 +7,10 @@ import { utils } from ".";
  * @returns {Promise<boolean>} ok
  */
 export async function Delete(store, path, data) {
+    const url = await getURL(store, path);
+
     try {
-        const resp = await fetch(await url(store, path), {
+        const resp = await fetch(url, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -16,8 +18,9 @@ export async function Delete(store, path, data) {
 
         return await handleResponseError(resp);
     } catch (err) {
-        console.error(err);
-        utils.throwAlert({ message: err, variant: "error" });
+        const message = `${url}: ${err}`;
+        console.error(message);
+        utils.throwAlert({ message, variant: "error" });
         return false;
     }
 }
@@ -28,17 +31,18 @@ export async function Delete(store, path, data) {
  * @returns {Promise<any>} data - Returns `undefined` on error
  */
 export async function Get(store, path) {
+    const url = await getURL(store, path);
+
     try {
-        const resp = await fetch(await url(store, path), {
-            method: "GET",
-        });
+        const resp = await fetch(url, { method: "GET" });
 
         const ok = await handleResponseError(resp);
         if (!ok) return undefined;
         return await resp.json();
     } catch (err) {
-        console.error(err);
-        utils.throwAlert({ message: err, variant: "error" });
+        const message = `${url}: ${err}`;
+        console.error(message);
+        utils.throwAlert({ message, variant: "error" });
         return undefined;
     }
 }
@@ -50,8 +54,10 @@ export async function Get(store, path) {
  * @returns {Promise<boolean>} ok
  */
 export async function Post(store, path, data) {
+    const url = await getURL(store, path);
+
     try {
-        const resp = await fetch(await url(store, path), {
+        const resp = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -59,8 +65,9 @@ export async function Post(store, path, data) {
 
         return await handleResponseError(resp);
     } catch (err) {
-        console.error(err);
-        utils.throwAlert({ message: err, variant: "error" });
+        const message = `${url}: ${err}`;
+        console.error(message);
+        utils.throwAlert({ message, variant: "error" });
         return false;
     }
 }
@@ -72,8 +79,10 @@ export async function Post(store, path, data) {
  * @returns {Promise<boolean>} ok
  */
 export async function Put(store, path, data) {
+    const url = await getURL(store, path);
+
     try {
-        const resp = await fetch(await url(store, path), {
+        const resp = await fetch(url, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -81,8 +90,9 @@ export async function Put(store, path, data) {
 
         return await handleResponseError(resp);
     } catch (err) {
-        console.error(err);
-        utils.throwAlert({ message: err, variant: "error" });
+        const message = `${url}: ${err}`;
+        console.error(message);
+        utils.throwAlert({ message, variant: "error" });
         return false;
     }
 }
@@ -92,7 +102,7 @@ export async function Put(store, path, data) {
  * @param {string} path
  * @returns {Promise<string>}
  */
-export async function url(store, path) {
+export async function getURL(store, path) {
     const server = store.ui.get("server");
     const addr = !server.port ? server.host : `${server.host}:${server.port}`;
     return `${server.ssl ? "https:" : "http:"}//${addr}${path}`;
@@ -106,12 +116,12 @@ export async function handleResponseError(resp) {
     if (resp.ok) return true;
 
     resp.text().then((e) => {
-        const message = `Server response to ${url}: ${e}`;
+        const message = `Server response to ${resp.url}: ${e}`;
         utils.throwAlert({ message, variant: "error" });
         console.error(message);
     });
 
-    const message = `Fetch from "${url}" with status code ${resp.status}`;
+    const message = `Fetch from "${resp.url}" with status code ${resp.status}`;
     console.error(message);
     utils.throwAlert({ message, variant: "error" });
 
