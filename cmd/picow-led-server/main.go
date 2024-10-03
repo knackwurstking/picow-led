@@ -63,6 +63,7 @@ func main() {
 
 						crw := &customResponseWriter{
 							ResponseWriter: w,
+							Hijacker:       w.(http.Hijacker),
 						}
 
 						http.DefaultServeMux.ServeHTTP(crw, r)
@@ -111,6 +112,7 @@ func initLogger(debug bool, host string, port uint) {
 
 type customResponseWriter struct {
 	http.ResponseWriter
+	http.Hijacker
 	status int
 }
 
