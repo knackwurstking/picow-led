@@ -1,32 +1,28 @@
 import { moreVertical as svgOptions } from "ui/svg/smoothie-line-icons";
 
 import { html, UIIconButton } from "ui";
-import { api } from "../../../lib";
+import * as api from "../../../lib/api";
 import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
 
+export interface PicowOptionsButton_Picow {
+    root: PicowOptionsButton;
+    set(device: Device): void;
+}
+
 export default class PicowOptionsButton extends UIIconButton {
-    /**
-     * @param {Device | null} [device]
-     */
-    constructor(device = null) {
+    device: Device;
+    store: PicowStore;
+    picow: PicowOptionsButton_Picow;
+
+    constructor(device: Device | null = null) {
         super();
 
-        /**
-         * @type {Device | null}
-         */
         this.device = device;
-
-        /**
-         * @type {PicowStore}
-         */
         this.store = document.querySelector(`ui-store`);
 
         this.picow = {
             root: this,
 
-            /**
-             * @param {Device} device
-             */
             set(device) {
                 this.root.device = device;
             },

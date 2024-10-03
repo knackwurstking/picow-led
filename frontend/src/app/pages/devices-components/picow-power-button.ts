@@ -1,33 +1,36 @@
 import { power as svgPower } from "ui/svg/smoothie-line-icons";
 
 import { html, UIIconButton } from "ui";
-import { api } from "../../../lib";
+import * as api from "../../../lib/api";
+
+export type PicowPowerButton_States = "active" | "pending" | null;
+
+export interface PicowPowerButton_Picow {
+    root: PicowPowerButton;
+    get state(): PicowPowerButton_States;
+    set state(state: PicowPowerButton_States);
+    set(device: Device): void;
+    isOn(): boolean;
+}
 
 export default class PicowPowerButton extends UIIconButton {
+    store: PicowStore;
+    device: Device | null;
+    picow: PicowPowerButton_Picow;
+
     constructor() {
         super();
 
-        /**
-         * @type {PicowStore}
-         */
         this.store = document.querySelector(`ui-store`);
-
-        /**
-         * @type {Device | null}
-         */
         this.device = null;
 
         this.picow = {
             root: this,
 
             get state() {
-                // @ts-expect-error
                 return this.root.getAttribute("active");
             },
 
-            /**
-             * @param {"pending" | "active" | null} state
-             */
             set state(state) {
                 if (!state) {
                     this.root.removeAttribute("state");
@@ -37,16 +40,13 @@ export default class PicowPowerButton extends UIIconButton {
                 this.root.setAttribute("state", state);
             },
 
-            /**
-             * @param {Device} device
-             */
             set(device) {
                 this.root.device = device;
                 this.root.#handleButtonColor();
             },
 
             isOn() {
-                return !!this.root.device?.color?.find((n) => n > 0);
+                return !!this.root.device?.color?.find((n: number) => n > 0);
             },
         };
 

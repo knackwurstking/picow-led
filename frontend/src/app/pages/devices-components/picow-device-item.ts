@@ -1,34 +1,38 @@
 import "./picow-options-button";
 import "./picow-power-button";
 
-import { CleanUp, globalStylesToShadowRoot, html } from "ui";
+import {
+    CleanUp,
+    globalStylesToShadowRoot,
+    html,
+    UILabel,
+    UISecondary,
+} from "ui";
 import ws from "../../../lib/websocket";
+import type PicowOptionsButton from "./picow-options-button";
+import type PicowPowerButton from "./picow-power-button";
+
+export interface PicowDeviceItem_Picow {
+    root: PicowDeviceItem;
+    set(device: Device): void;
+}
 
 export default class PicowDeviceItem extends HTMLElement {
-    /**
-     * @param {Device | null} [device]
-     */
-    constructor(device = null) {
+    store: PicowStore;
+    device: Device;
+    cleanup: CleanUp;
+    picow: PicowDeviceItem_Picow;
+
+    constructor(device: Device | null = null) {
         super();
 
-        /**
-         * @type {PicowStore}
-         */
         this.store = document.querySelector(`ui-store`);
-
-        /**
-         * @type {Device | null}
-         */
         this.device = device;
-
         this.cleanup = new CleanUp();
 
         this.picow = {
             root: this,
 
-            /**
-             * @param {Device} device
-             */
             set(device) {
                 this.root.device = device;
 
@@ -56,10 +60,10 @@ export default class PicowDeviceItem extends HTMLElement {
                         secondary = "&nbsp;";
                     }
 
-                    /**
-                     * @type {import("ui").UILabel}
-                     */
-                    const label = this.root.querySelector(`ui-label`);
+                    const label = this.root.querySelector(
+                        `ui-label`
+                    ) as UILabel;
+
                     label.ui.primary = primary;
                     label.ui.secondary = secondary;
                 }
@@ -69,10 +73,10 @@ export default class PicowDeviceItem extends HTMLElement {
                 // ------------------- //
 
                 {
-                    /**
-                     * @type {import("./picow-power-button").default}
-                     */
-                    const power = this.root.querySelector(`picow-power-button`);
+                    const power = this.root.querySelector(
+                        `picow-power-button`
+                    ) as PicowPowerButton;
+
                     power.picow.set(device);
                 }
 
@@ -81,11 +85,9 @@ export default class PicowDeviceItem extends HTMLElement {
                 // --------------------- //
 
                 {
-                    /**
-                     * @type {import("./picow-options-button").default}
-                     */
-                    const options =
-                        this.root.querySelector(`picow-options-button`);
+                    const options = this.root.querySelector(
+                        `picow-options-button`
+                    ) as PicowOptionsButton;
 
                     options.picow.set(device);
                 }
@@ -95,8 +97,9 @@ export default class PicowDeviceItem extends HTMLElement {
                 // --------------------- //
 
                 {
-                    const marker =
-                        this.root.shadowRoot.querySelector(`.offline-marker`);
+                    const marker = this.root.shadowRoot.querySelector(
+                        `ui-secondary.offline-marker`
+                    ) as UISecondary;
 
                     if (device.server.isOffline) marker.removeAttribute("hide");
                     else marker.setAttribute("hide", "");
@@ -171,10 +174,7 @@ export default class PicowDeviceItem extends HTMLElement {
             </li>
         `;
 
-        /**
-         * @type {HTMLLIElement}
-         */
-        const card = this.querySelector("li.is-card");
+        const card = this.querySelector("li.is-card") as HTMLLIElement;
         card.onclick = async () => {
             // TODO: Open a color picker dialog to select a color
         };

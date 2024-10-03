@@ -2,6 +2,7 @@ import { CleanUp, html, UIStackLayoutPage } from "ui";
 import * as api from "../../lib/api";
 import * as utils from "../../lib/utils";
 import ws from "../../lib/websocket";
+import type { AppBar } from "../create-app-bar";
 import createDeviceSetupDialog from "../dialogs/createDeviceSetupDialog";
 import PicowDeviceItem from "./devices-components/picow-device-item";
 

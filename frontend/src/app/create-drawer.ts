@@ -4,7 +4,7 @@ import { UIButton, UIDrawer, UILabel, html } from "ui";
 import type StatusLED from "../components/status-led";
 import ws from "../lib/websocket";
 
-interface Drawer {
+export interface Drawer {
     element: UIDrawer;
     open(): void;
     close(): void;

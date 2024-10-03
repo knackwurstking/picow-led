@@ -2,6 +2,26 @@ import { plus as svgAdd, menu as svgMenu } from "ui/svg/smoothie-line-icons";
 
 import { Events, UIAppBar, UIAppBarItem, UIIconButton, html } from "ui";
 
+export interface AppBar {
+    element: import("ui").UIAppBar;
+    events: import("ui").Events<AppBar_Events>;
+    items: {
+        menu: import("ui").UIAppBarItem<import("ui").UIIconButton>;
+        title: import("ui").UIAppBarItem<HTMLElement>;
+        add: import("ui").UIAppBarItem<import("ui").UIIconButton>;
+    };
+    buttons: {
+        menu: import("ui").UIIconButton;
+        add: import("ui").UIIconButton;
+    };
+    title: string;
+}
+
+export interface AppBar_Events {
+    menu: MouseEvent & { currentTarget: import("ui").UIIconButton };
+    add: MouseEvent & { currentTarget: import("ui").UIIconButton };
+}
+
 export default async function (): Promise<AppBar> {
     const el = new UIAppBar();
     el.ui.position = "top";
