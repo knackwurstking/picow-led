@@ -87,6 +87,7 @@ async function main() {
             return;
         }
 
+        store.ui.set("currentPage", newPage.ui.name as PicowStackLayout_Pages);
         switch (newPage.ui.name) {
             case "devices":
                 store.ui.set("currentPage", newPage.ui.name);

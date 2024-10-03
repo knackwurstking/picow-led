@@ -5,7 +5,7 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
     cleanup: CleanUp;
 
     constructor() {
-        super("devices");
+        super("settings");
 
         this.store = document.querySelector(`ui-store`);
         this.cleanup = new CleanUp();

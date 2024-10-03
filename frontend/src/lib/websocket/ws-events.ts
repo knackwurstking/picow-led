@@ -32,6 +32,7 @@ export class WSEvents extends BaseWebSocketEvents {
     async get<T extends keyof WSEvents_T>(path: T): Promise<WSEvents_T[T]> {
         switch (path) {
             case "api.devices":
+                console.debug(`[ws] Send "GET api.devices"`, this.server);
                 // TODO: Send a "GET api.devices" to the server
                 break;
         }

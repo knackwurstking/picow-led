@@ -74,15 +74,6 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
             // Handle WebSocket events //
             // ----------------------- //
 
-            //ws.events.on("open", async () => {
-            //    try {
-            //        // ...
-            //        //this.store.ui.set("devices", devices);
-            //    } catch (err) {
-            //        utils.throwAlert({ message: err, variant: "error" });
-            //    }
-            //}),
-
             ws.events.on("messageDevices", async (data) => {
                 this.store.ui.set("devices", data);
             })
