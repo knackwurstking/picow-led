@@ -60,8 +60,12 @@ func (r *room) run() {
 			slog.Debug("Forward message to clients",
 				"clients", len(r.clients))
 
+			// TODO: Parse message (ex.: "GET api.devices"), start handler
+			resp := msg // placeholder
+
+			// TODO: Send response to (all) client(s?)
 			for client := range r.clients {
-				client.receive <- msg
+				client.receive <- resp
 			}
 		}
 	}
@@ -86,5 +90,5 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}()
 
 	go client.read()
-	client.read()
+	client.write()
 }
