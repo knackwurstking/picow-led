@@ -16,7 +16,7 @@ func (c *client) read() {
 	defer c.socket.Close()
 
 	for {
-		_, msg, err := c.socket.ReadMessage()
+		mt, msg, err := c.socket.ReadMessage()
 		if err != nil {
 			slog.Debug(
 				"Error while reading a message from a client",
@@ -25,6 +25,12 @@ func (c *client) read() {
 			)
 			return
 		}
+
+		slog.Debug(
+			"Got a message from a client",
+			"client.address", c.socket.RemoteAddr(),
+			"message.type", mt,
+		)
 
 		c.room.forward <- msg
 	}

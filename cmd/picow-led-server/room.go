@@ -57,17 +57,10 @@ func (r *room) run() {
 				"clients", len(r.clients),
 			)
 		case msg := <-r.forward:
-			slog.Debug("Parse and handle a new command",
-				"msg", string(msg))
-
 			// TODO: Parse message (ex.: "GET api.devices"), start handler
 			resp := msg // placeholder
 
 			// TODO: Send response to (all) client(s?)
-			slog.Debug("Forward a message to all clients",
-				"clients", len(r.clients),
-			)
-
 			for client := range r.clients {
 				client.receive <- resp
 			}
