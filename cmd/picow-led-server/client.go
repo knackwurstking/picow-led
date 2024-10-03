@@ -13,7 +13,7 @@ type client struct {
 }
 
 func (c *client) read() {
-	defer c.close()
+	defer c.socket.Close()
 
 	for {
 		_, msg, err := c.socket.ReadMessage()
@@ -31,7 +31,7 @@ func (c *client) read() {
 }
 
 func (c *client) write() {
-	defer c.close()
+	defer c.socket.Close()
 
 	for msg := range c.receive {
 		err := c.socket.WriteMessage(websocket.TextMessage, msg)
@@ -42,12 +42,5 @@ func (c *client) write() {
 }
 
 func (c *client) close() {
-	defer func() {
-		if r := recover(); r != nil {
-			return
-		}
-	}()
-
-	c.socket.Close()
 	close(c.receive)
 }
