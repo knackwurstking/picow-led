@@ -118,7 +118,7 @@ async function main() {
     // Create the Drawer //
     // ----------------- //
 
-    const drawer = await createDrawer({ stackLayout });
+    const drawer = await createDrawer();
     el.querySelector(`div.drawer`).replaceWith(drawer.element);
 
     // ---------------- //
