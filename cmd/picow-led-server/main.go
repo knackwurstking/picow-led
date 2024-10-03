@@ -52,39 +52,7 @@ func main() {
 
 				addr := fmt.Sprintf("%s:%d", host, port)
 				slog.Info("Started server", "address", addr)
-				return http.ListenAndServe(
-					addr,
-					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-						defer func() {
-							if r := recover(); r != nil {
-								slog.Error("Recovered", "r", r)
-							}
-						}()
-
-						crw := &customResponseWriter{
-							ResponseWriter: w,
-							Hijacker:       w.(http.Hijacker),
-						}
-
-						// TODO: Adding CORS before ServeHTTP
-
-						http.DefaultServeMux.ServeHTTP(crw, r)
-
-						log := slog.Warn
-						if crw.status >= 200 && crw.status < 300 {
-							log = slog.Info
-						} else if crw.status >= 500 || crw.status == 0 {
-							log = slog.Error
-						}
-
-						log("Request",
-							"status", crw.status,
-							"addr", r.RemoteAddr,
-							"method", r.Method,
-							"url", r.URL,
-						)
-					}),
-				)
+				return http.ListenAndServe(addr, &serverHandler{})
 			}
 		}),
 		CommandFlags: []cli.CommandFlag{
@@ -112,13 +80,51 @@ func initLogger(debug bool, host string, port uint) {
 	slog.Debug("Flags", "debug", debug, "host", host, "port", port)
 }
 
-type customResponseWriter struct {
+type serverHandler struct{}
+
+func (*serverHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		if r := recover(); r != nil {
+			slog.Error("Recovered", "r", r)
+		}
+	}()
+
+	crw := &serverResponseWriter{
+		ResponseWriter: w,
+		Hijacker:       w.(http.Hijacker),
+	}
+
+	crw.Header().Set("Access-Control-Allow-Origin", "*")
+	crw.Header().Set("Content-Type", "text/plain")
+	http.DefaultServeMux.ServeHTTP(crw, r)
+
+	log := slog.Warn
+
+	if crw.status >= 200 && crw.status < 300 {
+		if crw.Header().Get("Content-Type") == "" {
+			crw.Header().Set("Content-Type", "application/json")
+		}
+
+		log = slog.Info
+	} else if crw.status >= 500 || crw.status == 0 {
+		log = slog.Error
+	}
+
+	log("Request",
+		"status", crw.status,
+		"addr", r.RemoteAddr,
+		"method", r.Method,
+		"url", r.URL,
+	)
+}
+
+type serverResponseWriter struct {
 	http.ResponseWriter
 	http.Hijacker
 	status int
 }
 
-func (crw *customResponseWriter) WriteHeader(statusCode int) {
+func (crw *serverResponseWriter) WriteHeader(statusCode int) {
 	crw.status = statusCode
 	crw.ResponseWriter.WriteHeader(statusCode)
 }
