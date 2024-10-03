@@ -1,20 +1,18 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
-import { api, utils } from "../../lib";
+import * as api from "../../lib/api";
+import * as utils from "../../lib/utils";
 import ws from "../../lib/websocket";
 import createDeviceSetupDialog from "../dialogs/createDeviceSetupDialog";
 import PicowDeviceItem from "./devices-components/picow-device-item";
 
 export default class PicowDevicesPage extends UIStackLayoutPage {
-    /**
-     * @param {object} options
-     * @param {import("../create-app-bar").AppBar} options.appBar
-     */
-    constructor({ appBar }) {
+    store: PicowStore;
+    appBar: AppBar;
+    cleanup: CleanUp;
+
+    constructor(appBar: AppBar) {
         super("devices");
 
-        /**
-         * @type {PicowStore}
-         */
         this.store = document.querySelector(`ui-store`);
         this.appBar = appBar;
         this.cleanup = new CleanUp();
@@ -100,11 +98,7 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
         this.cleanup.run();
     }
 
-    /**
-     * @private
-     * @returns {Promise<Device[]>}
-     */
-    async fetchApiDevices() {
+    async fetchApiDevices(): Promise<Device[]> {
         return await api.Get(this.store, "/api/devices");
     }
 }

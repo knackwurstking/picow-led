@@ -1,12 +1,12 @@
-import { CleanUp, html, UIStackLayoutPage } from "ui";
+import { CleanUp, html, UICheck, UIInput, UIStackLayoutPage } from "ui";
 
 export default class PicowSettingsPage extends UIStackLayoutPage {
+    store: PicowStore;
+    cleanup: CleanUp;
+
     constructor() {
         super("devices");
 
-        /**
-         * @type {PicowStore}
-         */
         this.store = document.querySelector(`ui-store`);
         this.cleanup = new CleanUp();
 
@@ -59,10 +59,7 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
         // ------------- //
 
         {
-            /**
-             * @type {NodeJS.Timeout | null}
-             */
-            let inputEventTimeout = null;
+            let inputEventTimeout: NodeJS.Timeout | null = null;
             const resetInputEventTimeout = () => {
                 if (!inputEventTimeout) return;
                 clearTimeout(inputEventTimeout);
@@ -74,10 +71,10 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             // ------------ //
 
             {
-                /**
-                 * @type {import("ui").UICheck}
-                 */
-                const input = this.querySelector(`ui-check[name="ssl"]`);
+                const input = this.querySelector(
+                    `ui-check[name="ssl"]`
+                ) as UICheck;
+
                 input.ui.checked = this.store.ui.get("server").ssl;
                 input.ui.events.on("input", async (state) => {
                     resetInputEventTimeout();
@@ -96,10 +93,10 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             // ---------- //
 
             {
-                /**
-                 * @type {import("ui").UIInput}
-                 */
-                const input = this.querySelector(`ui-input[name="host"]`);
+                const input = this.querySelector(
+                    `ui-input[name="host"]`
+                ) as UIInput;
+
                 input.ui.events.on("input", async (host) => {
                     resetInputEventTimeout();
 
@@ -117,10 +114,10 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             // ---------- //
 
             {
-                /**
-                 * @type {import("ui").UIInput}
-                 */
-                const input = this.querySelector(`ui-input[name="port"]`);
+                const input = this.querySelector(
+                    `ui-input[name="port"]`
+                ) as UIInput;
+
                 input.ui.events.on("input", async (port) => {
                     resetInputEventTimeout();
 

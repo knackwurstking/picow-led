@@ -2,21 +2,6 @@ import { plus as svgAdd, menu as svgMenu } from "ui/svg/smoothie-line-icons";
 
 import { Events, UIAppBar, UIAppBarItem, UIIconButton, html } from "ui";
 
-interface AppBar {
-    element: UIAppBar;
-    events: Events<PicowAppBar_Events>;
-    items: {
-        menu: UIAppBarItem<UIIconButton>;
-        title: UIAppBarItem<HTMLElement>;
-        add: UIAppBarItem<UIIconButton>;
-    };
-    buttons: {
-        menu: UIIconButton;
-        add: UIIconButton;
-    };
-    title: string;
-}
-
 export default async function (): Promise<AppBar> {
     const el = new UIAppBar();
     el.ui.position = "top";
@@ -35,7 +20,7 @@ export default async function (): Promise<AppBar> {
         </ui-app-bar-item>
     `;
 
-    const events = new Events<PicowAppBar_Events>();
+    const events = new Events<AppBar_Events>();
 
     const menu = el.querySelector(
         `ui-app-bar-item[name="menu"]`

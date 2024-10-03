@@ -70,7 +70,7 @@ async function main() {
     const stackLayout = el.querySelector(`ui-stack-layout`) as PicowStackLayout;
 
     stackLayout.ui.register("devices", async () => {
-        return new PicowDevicesPage({ appBar });
+        return new PicowDevicesPage(appBar);
     });
 
     stackLayout.ui.register("settings", async () => {
