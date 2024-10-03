@@ -1,7 +1,7 @@
 import "../components/status-led";
 
 import { UIDrawer, html } from "ui";
-import { deviceEvents, devicesEvents } from "../lib";
+import ws from "../lib/websocket";
 
 /**
  * @typedef {{
@@ -22,14 +22,8 @@ export default async function ({ stackLayout }) {
     el.innerHTML = html`
         <ui-drawer-group nofold>
             <ui-drawer-group-item style="column">
-                <ui-label name="device" style="width: 100%;">
-                    <status-led name="device"></status-led>
-                </ui-label>
-            </ui-drawer-group-item>
-
-            <ui-drawer-group-item style="column">
-                <ui-label name="devices" style="width: 100%;">
-                    <status-led name="devices"></status-led>
+                <ui-label name="/ws" style="width: 100%;">
+                    <status-led name="/ws"></status-led>
                 </ui-label>
             </ui-drawer-group-item>
         </ui-drawer-group>
@@ -111,62 +105,29 @@ export default async function ({ stackLayout }) {
         el.ui.open = false;
     });
 
-    // ------------------------------------------------------- //
-    // Setup "/events/device" event handler for the status led //
-    // ------------------------------------------------------- //
+    // -------------------------------------------- //
+    // Setup "/ws" event handler for the status led //
+    // -------------------------------------------- //
 
     {
         /**
          * @type {import("../components").StatusLED}
          */
-        const statusLED = el.querySelector(`status-led[name="device"]`);
+        const statusLED = el.querySelector(`status-led[name="/ws"]`);
 
         /**
          * @type {import("ui").UILabel}
          */
-        const label = el.querySelector(`ui-label[name="device"]`);
-        label.ui.primary = deviceEvents.path;
-        label.ui.secondary = deviceEvents.origin;
+        const label = el.querySelector(`ui-label[name="/ws"]`);
+        label.ui.primary = ws.path;
+        label.ui.secondary = ws.origin;
 
-        deviceEvents.events.on("server", async () => {
-            label.ui.primary = deviceEvents.path;
-            label.ui.secondary = deviceEvents.origin;
+        ws.events.on("server", async () => {
+            label.ui.primary = ws.path;
+            label.ui.secondary = ws.origin;
         });
-        deviceEvents.events.on("close", () =>
-            statusLED.removeAttribute("active")
-        );
-        deviceEvents.events.on("open", () =>
-            statusLED.setAttribute("active", "")
-        );
-    }
-
-    // -------------------------------------------------------- //
-    // Setup "/events/devices" event handler for the status led //
-    // -------------------------------------------------------- / -------------------------------------------------------- ///
-
-    {
-        /**
-         * @type {import("../components").StatusLED}
-         */
-        const statusLED = el.querySelector(`status-led[name="devices"]`);
-
-        /**
-         * @type {import("ui").UILabel}
-         */
-        const label = el.querySelector(`ui-label[name="devices"]`);
-        label.ui.primary = devicesEvents.path;
-        label.ui.secondary = devicesEvents.origin;
-
-        devicesEvents.events.on("server", async () => {
-            label.ui.primary = devicesEvents.path;
-            label.ui.secondary = devicesEvents.origin;
-        });
-        devicesEvents.events.on("open", () =>
-            statusLED.setAttribute("active", "")
-        );
-        devicesEvents.events.on("close", () =>
-            statusLED.removeAttribute("active")
-        );
+        ws.events.on("close", () => statusLED.removeAttribute("active"));
+        ws.events.on("open", () => statusLED.setAttribute("active", ""));
     }
 
     return {
