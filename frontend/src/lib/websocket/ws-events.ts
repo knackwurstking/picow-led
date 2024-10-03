@@ -2,7 +2,7 @@ import { Events } from "ui";
 import { BaseWebSocketEvents } from "./base-web-socket-events";
 
 type WSEvents_T = {
-    "/api/devices": Device[];
+    "api.devices": Device[];
 };
 
 export class WSEvents extends BaseWebSocketEvents {
@@ -31,8 +31,8 @@ export class WSEvents extends BaseWebSocketEvents {
 
     async get<T extends keyof WSEvents_T>(path: T): Promise<WSEvents_T[T]> {
         switch (path) {
-            case "/api/devices":
-                // TODO: Send a "GET /api/devices" to the server
+            case "api.devices":
+                // TODO: Send a "GET api.devices" to the server
                 break;
         }
 
