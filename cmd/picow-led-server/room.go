@@ -93,6 +93,6 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		r.leave <- client
 	}()
 
-	go client.read()
-	client.write()
+	go client.write()
+	client.read()
 }
