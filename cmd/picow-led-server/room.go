@@ -40,11 +40,20 @@ func (r *room) run() {
 	for {
 		select {
 		case client := <-r.join:
+			slog.Info("Add new client to room",
+				"client.address", client.socket.RemoteAddr(), "clients", len(r.clients))
+
 			r.clients[client] = true
 		case client := <-r.leave:
+			slog.Info("Remove client from room",
+				"client.address", client.socket.RemoteAddr(), "clients", len(r.clients))
+
 			delete(r.clients, client)
 			client.close()
 		case msg := <-r.forward:
+			slog.Debug("Forward message to clients",
+				"clients", len(r.clients))
+
 			for client := range r.clients {
 				client.receive <- msg
 			}
