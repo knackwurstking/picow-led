@@ -1,22 +1,20 @@
 import "../components/status-led";
 
-import { UIDrawer, html } from "ui";
+import { UIButton, UIDrawer, UILabel, html } from "ui";
+import type StatusLED from "../components/status-led";
 import ws from "../lib/websocket";
 
-/**
- * @typedef {{
- *  element: UIDrawer;
- *  open(): void;
- *  close(): void;
- * }} Drawer
- */
+interface Drawer {
+    element: UIDrawer;
+    open(): void;
+    close(): void;
+}
 
-/**
- * @param {object} options
- * @param {import("ui").UIStackLayout<PicowStackLayout_Pages>} options.stackLayout
- * @returns {Promise<Drawer>}
- */
-export default async function ({ stackLayout }) {
+export default async function (): Promise<Drawer> {
+    const stackLayout = document.querySelector(
+        "ui-stack-layout"
+    ) as PicowStackLayout;
+
     const el = new UIDrawer();
 
     el.innerHTML = html`
@@ -81,10 +79,10 @@ export default async function ({ stackLayout }) {
     // Devices Button //
     // -------------- //
 
-    /**
-     * @type {import("ui").UIButton}
-     */
-    const devicesButton = el.querySelector(`ui-button[name="devices"]`);
+    const devicesButton = el.querySelector(
+        `ui-button[name="devices"]`
+    ) as UIButton;
+
     devicesButton.ui.events.on("click", () => {
         stackLayout.ui.clear();
         stackLayout.ui.set("devices");
@@ -95,10 +93,10 @@ export default async function ({ stackLayout }) {
     // Settings Button //
     // --------------- //
 
-    /**
-     * @type {import("ui").UIButton}
-     */
-    const settingsButton = el.querySelector(`ui-button[name="settings"]`);
+    const settingsButton = el.querySelector(
+        `ui-button[name="settings"]`
+    ) as UIButton;
+
     settingsButton.ui.events.on("click", () => {
         stackLayout.ui.clear();
         stackLayout.ui.set("settings");
@@ -110,15 +108,11 @@ export default async function ({ stackLayout }) {
     // -------------------------------------------- //
 
     {
-        /**
-         * @type {import("../components").StatusLED}
-         */
-        const statusLED = el.querySelector(`status-led[name="/ws"]`);
+        const statusLED = el.querySelector(
+            `status-led[name="/ws"]`
+        ) as StatusLED;
 
-        /**
-         * @type {import("ui").UILabel}
-         */
-        const label = el.querySelector(`ui-label[name="/ws"]`);
+        const label = el.querySelector(`ui-label[name="/ws"]`) as UILabel;
         label.ui.primary = ws.path;
         label.ui.secondary = ws.origin;
 
@@ -126,6 +120,7 @@ export default async function ({ stackLayout }) {
             label.ui.primary = ws.path;
             label.ui.secondary = ws.origin;
         });
+
         ws.events.on("close", () => statusLED.removeAttribute("active"));
         ws.events.on("open", () => statusLED.setAttribute("active", ""));
     }
