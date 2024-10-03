@@ -81,9 +81,9 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
 
         const getDevicesFromWS = async () => {
             try {
-                const devices = await ws.get("api.devices");
-                this.store.ui.set("devices", devices);
+                await ws.request("api.devices");
             } catch (err) {
+                console.error(err);
                 utils.throwAlert({
                     message: err,
                     variant: "error",
