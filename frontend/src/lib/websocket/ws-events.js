@@ -11,9 +11,12 @@ export class WSEvents extends BaseWebSocketEvents {
          *  "open": null;
          *  "close": null;
          *  "message": any;
+         *  "message-device": Device;
+         *  "message-devices": Device[];
          *  }>}
          */
         this.events = new Events();
+        // TODO: Dispatch "message-device" and "message-devices" events
     }
 
     get server() {
@@ -28,6 +31,8 @@ export class WSEvents extends BaseWebSocketEvents {
     /** @param {MessageEvent} ev */
     async handleMessageEvent(ev) {
         super.handleMessageEvent(ev);
+        // TODO: Parsing data and dispatch "message-device" or "message-devices"
+
         //if (ev.data instanceof Blob) {
         //    this.ws.send("pong");
         //    return;
