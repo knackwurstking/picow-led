@@ -7,8 +7,8 @@ export class WSEvents extends BaseWebSocketEvents {
         open: null;
         close: null;
         message: any;
-        "message-device": Device;
-        "message-devices": Device[];
+        messageDevice: Device;
+        messageDevices: Device[];
     }>;
 
     constructor() {

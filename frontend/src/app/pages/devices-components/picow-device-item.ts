@@ -182,10 +182,9 @@ export default class PicowDeviceItem extends HTMLElement {
 
     connectedCallback() {
         this.cleanup.add(
-            ws.events.on("message", (_data) => {
-                // TODO: Need data from type `Device` here
-                //if (data.server.addr !== this.device.server.addr) return;
-                //this.picow.set(data);
+            ws.events.on("messageDevice", (data) => {
+                if (data.server.addr !== this.device.server.addr) return;
+                this.picow.set(data);
             })
         );
     }

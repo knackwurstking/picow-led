@@ -74,33 +74,25 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
             // Handle WebSocket events //
             // ----------------------- //
 
+            // TODO: Request "devices" data...
             ws.events.on("open", async () => {
                 try {
-                    const devices = await this.fetchApiDevices();
-                    if (!!devices) this.store.ui.set("devices", devices);
+                    // ...
+                    //this.store.ui.set("devices", devices);
                 } catch (err) {
                     utils.throwAlert({ message: err, variant: "error" });
                 }
             }),
 
-            ws.events.on("message", async (data) => {
-                // TODO: Need `[]Device` type like data from the websocket
-                //this.store.ui.set("devices", devices)
+            ws.events.on("messageDevices", async (data) => {
+                this.store.ui.set("devices", data);
             })
         );
-
-        this.fetchApiDevices().then((devices) => {
-            if (!!devices) this.store.ui.set("devices", devices);
-        });
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
         this.cleanup.run();
-    }
-
-    async fetchApiDevices(): Promise<Device[]> {
-        return await api.Get(this.store, "/api/devices");
     }
 }
 
