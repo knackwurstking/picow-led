@@ -4,9 +4,16 @@ import { html, UIIconButton } from "ui";
 import * as api from "../../../lib/api";
 import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
 
-export interface PicowOptionsButton_Picow {
+class PicowOptionsButton_Picow {
     root: PicowOptionsButton;
-    set(device: Device): void;
+
+    constructor(root: PicowOptionsButton) {
+        this.root = root;
+    }
+
+    set(device: Device) {
+        this.root.device = device;
+    }
 }
 
 export default class PicowOptionsButton extends UIIconButton {
@@ -19,14 +26,7 @@ export default class PicowOptionsButton extends UIIconButton {
 
         this.device = device;
         this.store = document.querySelector(`ui-store`);
-
-        this.picow = {
-            root: this,
-
-            set(device) {
-                this.root.device = device;
-            },
-        };
+        this.picow = new PicowOptionsButton_Picow(this);
 
         this.#render();
     }

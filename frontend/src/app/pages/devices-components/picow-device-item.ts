@@ -12,9 +12,83 @@ import ws from "../../../lib/websocket";
 import type PicowOptionsButton from "./picow-options-button";
 import type PicowPowerButton from "./picow-power-button";
 
-export interface PicowDeviceItem_Picow {
+class PicowDeviceItem_Picow {
     root: PicowDeviceItem;
-    set(device: Device): void;
+
+    constructor(root: PicowDeviceItem) {
+        this.root = root;
+    }
+
+    set(device: Device) {
+        this.root.device = device;
+
+        const list = this.root.querySelector(`li.is-card`);
+        list.setAttribute("data-server-addr", device.server.addr);
+
+        if (!!device.color) {
+            this.root.style.setProperty(
+                "--current-color",
+                `rgb(${device.color[0] || 0}, ${device.color[1] || 0}, ${
+                    device.color[2] || 0
+                })`
+            );
+        }
+
+        // ------------ //
+        // Update Label //
+        // ------------ //
+
+        {
+            let primary = device.server.name || "";
+            let secondary = device.server.addr;
+            if (!primary) {
+                primary = device.server.addr;
+                secondary = "&nbsp;";
+            }
+
+            const label = this.root.querySelector(`ui-label`) as UILabel;
+
+            label.ui.primary = primary;
+            label.ui.secondary = secondary;
+        }
+
+        // ------------------- //
+        // Update Power Button //
+        // ------------------- //
+
+        {
+            const power = this.root.querySelector(
+                `picow-power-button`
+            ) as PicowPowerButton;
+
+            power.picow.set(device);
+        }
+
+        // --------------------- //
+        // Update Options Button //
+        // --------------------- //
+
+        {
+            const options = this.root.querySelector(
+                `picow-options-button`
+            ) as PicowOptionsButton;
+
+            options.picow.set(device);
+        }
+
+        // --------------------- //
+        // Update Offline Marker //
+        // --------------------- //
+
+        {
+            const marker = this.root.shadowRoot.querySelector(
+                `ui-secondary.offline-marker`
+            ) as UISecondary;
+
+            if (device.server.isOffline) marker.removeAttribute("hide");
+            else marker.setAttribute("hide", "");
+        }
+    }
 }
 
 export default class PicowDeviceItem extends HTMLElement {
@@ -29,83 +103,7 @@ export default class PicowDeviceItem extends HTMLElement {
         this.store = document.querySelector(`ui-store`);
         this.device = device;
         this.cleanup = new CleanUp();
-
-        this.picow = {
-            root: this,
-
-            set(device) {
-                this.root.device = device;
-
-                const list = this.root.querySelector(`li.is-card`);
-                list.setAttribute("data-server-addr", device.server.addr);
-
-                if (!!device.color) {
-                    this.root.style.setProperty(
-                        "--current-color",
-                        `rgb(${device.color[0] || 0}, ${
-                            device.color[1] || 0
-                        }, ${device.color[2] || 0})`
-                    );
-                }
-
-                // ------------ //
-                // Update Label //
-                // ------------ //
-
-                {
-                    let primary = device.server.name || "";
-                    let secondary = device.server.addr;
-                    if (!primary) {
-                        primary = device.server.addr;
-                        secondary = "&nbsp;";
-                    }
-
-                    const label = this.root.querySelector(
-                        `ui-label`
-                    ) as UILabel;
-
-                    label.ui.primary = primary;
-                    label.ui.secondary = secondary;
-                }
-
-                // ------------------- //
-                // Update Power Button //
-                // ------------------- //
-
-                {
-                    const power = this.root.querySelector(
-                        `picow-power-button`
-                    ) as PicowPowerButton;
-
-                    power.picow.set(device);
-                }
-
-                // --------------------- //
-                // Update Options Button //
-                // --------------------- //
-
-                {
-                    const options = this.root.querySelector(
-                        `picow-options-button`
-                    ) as PicowOptionsButton;
-
-                    options.picow.set(device);
-                }
-
-                // --------------------- //
-                // Update Offline Marker //
-                // --------------------- //
-
-                {
-                    const marker = this.root.shadowRoot.querySelector(
-                        `ui-secondary.offline-marker`
-                    ) as UISecondary;
-
-                    if (device.server.isOffline) marker.removeAttribute("hide");
-                    else marker.setAttribute("hide", "");
-                }
-            },
-        };
+        this.picow = new PicowDeviceItem_Picow(this);
 
         this.#render();
     }

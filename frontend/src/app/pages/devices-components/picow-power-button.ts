@@ -5,12 +5,34 @@ import * as api from "../../../lib/api";
 
 export type PicowPowerButton_States = "active" | "pending" | null;
 
-export interface PicowPowerButton_Picow {
+class PicowPowerButton_Picow {
     root: PicowPowerButton;
-    get state(): PicowPowerButton_States;
-    set state(state: PicowPowerButton_States);
-    set(device: Device): void;
-    isOn(): boolean;
+
+    constructor(root: PicowPowerButton) {
+        this.root = root;
+    }
+
+    get state(): PicowPowerButton_States {
+        return this.root.getAttribute("active") as PicowPowerButton_States;
+    }
+
+    set state(state: PicowPowerButton_States) {
+        if (!state) {
+            this.root.removeAttribute("state");
+            return;
+        }
+
+        this.root.setAttribute("state", state);
+    }
+
+    set(device: Device) {
+        this.root.device = device;
+        this.root.updateColor();
+    }
+
+    isOn() {
+        return !!this.root.device?.color?.find((n: number) => n > 0);
+    }
 }
 
 export default class PicowPowerButton extends UIIconButton {
@@ -24,31 +46,7 @@ export default class PicowPowerButton extends UIIconButton {
         this.store = document.querySelector(`ui-store`);
         this.device = null;
 
-        this.picow = {
-            root: this,
-
-            get state() {
-                return this.root.getAttribute("active");
-            },
-
-            set state(state) {
-                if (!state) {
-                    this.root.removeAttribute("state");
-                    return;
-                }
-
-                this.root.setAttribute("state", state);
-            },
-
-            set(device) {
-                this.root.device = device;
-                this.root.#handleButtonColor();
-            },
-
-            isOn() {
-                return !!this.root.device?.color?.find((n: number) => n > 0);
-            },
-        };
+        this.picow = new PicowPowerButton_Picow(this);
 
         this.#render();
     }
@@ -102,11 +100,11 @@ export default class PicowPowerButton extends UIIconButton {
                 this.picow.state = prevStateBackup;
             }
 
-            this.#handleButtonColor();
+            this.updateColor();
         });
     }
 
-    #handleButtonColor() {
+    updateColor() {
         if (this.picow.isOn()) this.picow.state = "active";
         else this.picow.state = null;
     }
