@@ -16,7 +16,6 @@ export class WSEvents extends BaseWebSocketEvents {
          *  }>}
          */
         this.events = new Events();
-        // TODO: Dispatch "message-device" and "message-devices" events
     }
 
     get server() {
@@ -31,6 +30,8 @@ export class WSEvents extends BaseWebSocketEvents {
     /** @param {MessageEvent} ev */
     async handleMessageEvent(ev) {
         super.handleMessageEvent(ev);
+        console.debug("[ws] event:", ev);
+        console.debug("[ws] data:", ev.data);
         // TODO: Parsing data and dispatch "message-device" or "message-devices"
 
         //if (ev.data instanceof Blob) {
