@@ -73,7 +73,7 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	// TODO: Sync device "pins" and "color"
+	// TODO: Set device "pins" and "color"
 
 	return nil
 }
