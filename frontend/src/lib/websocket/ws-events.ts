@@ -37,7 +37,10 @@ export class WSEvents extends BaseWebSocketEvents {
         data: WSEvents_Command[T]["request"] = null
     ) {
         if (!this.isOpen()) return;
-        console.debug(`[ws] Send command: "GET api.devices"`, this.server);
+        console.debug(`[ws] Send command: "${command}"`, {
+            server: this.server,
+            data,
+        });
 
         let request: WSEvents_Request;
         switch (command) {
@@ -67,6 +70,8 @@ export class WSEvents extends BaseWebSocketEvents {
         if (typeof ev.data === "string") {
             try {
                 const resp = JSON.parse(ev.data) as WSEvents_Response;
+                console.debug(`[ws] message:`, resp);
+
                 switch (resp.type) {
                     case "devices":
                     case "device":
