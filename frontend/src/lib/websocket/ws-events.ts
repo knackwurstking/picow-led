@@ -16,10 +16,10 @@ export interface WSEvents_Device {
     server: {
         name: string;
         addr: string;
-        isOffline?: boolean;
+        online: boolean;
     };
-    pins?: number[] | null;
-    color?: number[] | null;
+    pins?: number[];
+    color?: number[];
 }
 
 export interface WSEvents_Request<T extends keyof WSEvents_Command> {
@@ -63,6 +63,7 @@ export class WSEvents extends BaseWebSocketEvents {
         if (!this.isOpen()) return;
         console.debug(`[ws] Send command: "GET api.devices"`, this.server);
 
+        // TODO: Adding more commands here
         switch (command) {
             case "GET api.devices":
                 const request: WSEvents_Request<"GET api.devices"> = {
