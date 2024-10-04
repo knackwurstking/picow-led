@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -25,18 +26,20 @@ var (
 )
 
 type room struct {
-	clients map[*client]bool
-	join    chan *client
-	leave   chan *client
-	handle  chan *Request
+	clients   map[*client]bool
+	join      chan *client
+	leave     chan *client
+	handle    chan *Request
+	broadcast chan *Response
 }
 
 func newRoom() *room {
 	return &room{
-		clients: make(map[*client]bool),
-		join:    make(chan *client),
-		leave:   make(chan *client),
-		handle:  make(chan *Request),
+		clients:   make(map[*client]bool),
+		join:      make(chan *client),
+		leave:     make(chan *client),
+		handle:    make(chan *Request),
+		broadcast: make(chan *Response),
 	}
 }
 
@@ -76,6 +79,16 @@ func (r *room) run() {
 					}
 				}(req)
 			}
+		case resp := <-r.broadcast:
+			wg := &sync.WaitGroup{}
+			for c := range r.clients {
+				wg.Add(1)
+				go func(c *client) {
+					defer wg.Done()
+					c.response <- resp
+				}(c)
+			}
+			wg.Wait()
 		}
 	}
 }
