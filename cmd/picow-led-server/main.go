@@ -60,7 +60,12 @@ func main() {
 				)
 
 				if err := api.LoadFromPath(path); err != nil {
-					slog.Warn("Loading api configuration failed", "error", err)
+					// Fallback path
+					if err2 := api.LoadFromPath("api.json"); err2 != nil {
+						slog.Warn(
+							"Loading api configuration failed", "error", err,
+						)
+					}
 				}
 
 				// Init static file server
