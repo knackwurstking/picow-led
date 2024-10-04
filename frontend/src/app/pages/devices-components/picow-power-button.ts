@@ -85,8 +85,7 @@ export default class PicowPowerButton extends UIIconButton {
             this.picow.state = "pending";
 
             try {
-                // TODO: Using the device color here, this field
-                //       is currently missing
+                // TODO: Using the (stored) device color here
                 const color = this.picow.isOn()
                     ? this.device.color.map(() => 0)
                     : [255, 255, 255, 255];
