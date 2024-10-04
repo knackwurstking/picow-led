@@ -14,7 +14,7 @@
 **General**:
 
 - [backend] Completely rewritten, using only websockets now
-- [frontend] Converted the whole frontend to typescript
+- [frontend] Converted to typescript
 
 ## v0.6.2 — [2024-09-30]
 
