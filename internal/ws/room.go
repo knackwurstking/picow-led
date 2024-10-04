@@ -12,7 +12,6 @@ import (
 
 const (
 	socketBufferSize = 1024
-	// messageBufferSize = 1024
 )
 
 var upgrader = &websocket.Upgrader{
@@ -69,11 +68,14 @@ func (r *Room) Run() {
 		case req := <-r.Handle:
 			switch req.Command {
 
-			case "GET api.devices":
+			case CommandGetApiDevices:
 				go r.getApiDevices(req)
 
-			case "POST api.device.color":
-				go r.setApiDeviceColor(req)
+			case CommandPostApiDevice:
+				go r.postApiDeviceColor(req)
+
+			case CommandDeleteApiDevice:
+				// TODO: ... go deleteApiDevice(req)
 			}
 
 		case resp := <-r.Broadcast:
@@ -110,7 +112,7 @@ func (r *Room) getApiDevices(req *Request) {
 	}
 }
 
-func (r *Room) setApiDeviceColor(req *Request) {
+func (r *Room) postApiDeviceColor(req *Request) {
 	if req.Data == "" {
 		return
 	}
