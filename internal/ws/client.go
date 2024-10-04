@@ -61,7 +61,8 @@ func (c *Client) Write() {
 				"client.address", c.Socket.RemoteAddr(),
 				"error", err,
 			)
-			continue
+			resp.SetError(err)
+			data, _ = json.Marshal(resp)
 		}
 
 		if err := c.Socket.WriteMessage(
