@@ -15,8 +15,8 @@ type (
 
 	DeviceData struct {
 		Server DeviceDataServer `json:"server"`
-		Pins   []uint           `json:"pins"`
-		Color  []uint           `json:"color"`
+		Pins   Pins             `json:"pins"`
+		Color  Color            `json:"color"`
 	}
 )
 
