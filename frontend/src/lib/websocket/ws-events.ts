@@ -1,7 +1,7 @@
 import { Events } from "ui";
 import { BaseWebSocketEvents } from "./base-web-socket-events";
 
-type WSEvents_Paths = "api.devices";
+type WSEvents_Command = "GET api.devices";
 
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
@@ -27,16 +27,18 @@ export class WSEvents extends BaseWebSocketEvents {
         this.events.dispatch("server", value);
     }
 
-    async request(path: WSEvents_Paths) {
-        switch (path) {
-            case "api.devices":
-                if (!this.isOpen()) return;
-                console.debug(`[ws] Send "GET api.devices"`, this.server);
-                this.ws.send(`GET api.devices`);
-                return;
-        }
+    async request(command: WSEvents_Command, data: any = null) {
+        if (!this.isOpen()) return;
+        console.debug(`[ws] Send command: "GET api.devices"`, this.server);
 
-        throw new Error(`unknown path ${path}`);
+        switch (command) {
+            case "GET api.devices":
+                // TODO: Need request type data here `{ command: string; data: any }`
+                this.ws.send(`GET api.devices`);
+                break;
+            default:
+                throw new Error(`unknown path ${command}`);
+        }
     }
 
     async handleMessageEvent(ev: MessageEvent) {
