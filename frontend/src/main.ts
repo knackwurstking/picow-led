@@ -139,6 +139,8 @@ async function main() {
             drawer.open();
         }
 
+        // TODO: Handle ws "message-error" events, throw alerts
+
         // Handler server changes
         store.ui.on(
             "server",
