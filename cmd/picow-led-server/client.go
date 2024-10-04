@@ -44,7 +44,7 @@ func (c *client) write() {
 	defer c.socket.Close()
 
 	for resp := range c.response {
-		err := c.socket.WriteMessage(websocket.TextMessage, resp.Data)
+		err := c.socket.WriteMessage(websocket.TextMessage, resp.JSON())
 		if err != nil {
 			return
 		}
