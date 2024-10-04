@@ -5,11 +5,13 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/knackwurstking/picow-led-server/frontend"
 	"github.com/knackwurstking/picow-led-server/internal/ws"
+	"github.com/knackwurstking/picow-led-server/pkg/picow"
 )
 
 func main() {
@@ -38,15 +40,35 @@ func main() {
 				cli.Optional,
 			)
 
+			var config *string
+			cli.StringVar(cmd, config, "config",
+				cli.Usage("Load api data from local json file"),
+				cli.WithShort("c"),
+				cli.Optional,
+			)
+
 			return func(cmd *cli.Command) error {
+				// Initialize logger
 				initLogger(debug, host, port)
+
+				// Initialize api
+				api := picow.NewApi()
+
+				configPath, _ := os.UserConfigDir()
+				path := filepath.Join(
+					configPath, "picow-led-server", "api.json",
+				)
+
+				if err := api.LoadFromPath(path); err != nil {
+					slog.Warn("Loading api configuration failed", "error", err)
+				}
 
 				// Init static file server
 				public := frontend.GetFS()
 				http.Handle("/", http.FileServerFS(public))
 
 				// Init websocket handler
-				room := ws.NewRoom()
+				room := ws.NewRoom(api)
 				http.Handle("/ws", room)
 
 				go room.Run()

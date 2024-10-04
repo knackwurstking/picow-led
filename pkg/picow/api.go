@@ -24,7 +24,7 @@ func (a *Api) LoadFromPath(path string) error {
 	}
 
 	if i.IsDir() {
-		return fmt.Errorf("%s: destination hav to be a file", path)
+		return fmt.Errorf("%s: destination have to be a file", path)
 	}
 
 	f, err := os.Open(path)
