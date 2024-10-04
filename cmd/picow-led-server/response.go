@@ -10,9 +10,8 @@ const (
 type ResponseType string
 
 type Response struct {
-	Data   any          `json:"data"`
-	Client *client      `json:"-"`
-	Type   ResponseType `json:"type"`
+	Data any          `json:"data"`
+	Type ResponseType `json:"type"`
 }
 
 func (r *Response) JSON() []byte {

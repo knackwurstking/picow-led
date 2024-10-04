@@ -66,9 +66,8 @@ func (r *room) run() {
 			case "GET api.devices":
 				go func(req *Request) {
 					req.Client.response <- &Response{
-						Client: req.Client,
-						Type:   ResponseTypeDevices,
-						Data:   api.Devices,
+						Type: ResponseTypeDevices,
+						Data: api.Devices,
 					}
 				}(req)
 			}
