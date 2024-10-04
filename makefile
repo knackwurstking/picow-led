@@ -1,3 +1,6 @@
+clean:
+	git clean -f -x -d
+
 build:
 	@go mod -v tidy && \
 		cd frontend && \
