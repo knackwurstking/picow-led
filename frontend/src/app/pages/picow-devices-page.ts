@@ -1,5 +1,4 @@
 import { CleanUp, html, UIStackLayoutPage } from "ui";
-import * as api from "../../lib/api";
 import * as utils from "../../lib/utils";
 import ws from "../../lib/websocket";
 import type { PicowStore } from "../../types";
