@@ -57,6 +57,11 @@ func main() {
 
 			return runCommand
 		}),
+		// NOTE: Only "zsh" seems to be supported, maybe i should fork this
+		//       repo and add some completions for "fish" and "zsh"?
+		// Commands: []cli.Command{
+		// 	cli.CompletionCommand(),
+		// },
 		CommandFlags: []cli.CommandFlag{
 			cli.HelpCommandFlag(),
 			cli.VersionCommandFlag("0.7.0.dev"),
