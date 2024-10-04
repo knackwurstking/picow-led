@@ -58,6 +58,10 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (d *Device) Socket() net.Conn {
+	return d.socket
+}
+
 func (d *Device) Connect() error {
 	dialer := net.Dialer{
 		Timeout: time.Duration(time.Second * 5),
@@ -72,32 +76,6 @@ func (d *Device) Connect() error {
 	d.connected = true
 	d.data.Server.Online = true
 	d.socket = conn
-
-	return nil
-}
-
-func (d *Device) Send() error {
-	if !d.IsConnected() {
-		if err := d.Connect(); err != nil {
-			return err
-		}
-		defer d.Close()
-	}
-
-	// TODO: ...
-
-	return nil
-}
-
-func (d *Device) Read() error {
-	if !d.IsConnected() {
-		if err := d.Connect(); err != nil {
-			return err
-		}
-		defer d.Close()
-	}
-
-	// TODO: ...
 
 	return nil
 }
