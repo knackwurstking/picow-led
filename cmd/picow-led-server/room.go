@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"log/slog"
 	"net/http"
-	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -67,28 +65,19 @@ func (r *room) run() {
 			switch req.Data {
 			case "GET api.devices":
 				go func(req *Request) {
-					data, err := json.Marshal(api.Devices)
-					if err != nil {
-						return
-					}
-
 					req.Client.response <- &Response{
 						Client: req.Client,
 						Type:   ResponseTypeDevices,
-						Data:   data,
+						Data:   api.Devices,
 					}
 				}(req)
 			}
 		case resp := <-r.broadcast:
-			wg := &sync.WaitGroup{}
 			for c := range r.clients {
-				wg.Add(1)
 				go func(c *client) {
-					defer wg.Done()
 					c.response <- resp
 				}(c)
 			}
-			wg.Wait()
 		}
 	}
 }
