@@ -13,18 +13,16 @@ const (
 	// messageBufferSize = 1024
 )
 
-var (
-	api      = picow.NewApi()
-	upgrader = &websocket.Upgrader{
-		ReadBufferSize:  socketBufferSize,
-		WriteBufferSize: socketBufferSize,
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
-	}
-)
+var upgrader = &websocket.Upgrader{
+	ReadBufferSize:  socketBufferSize,
+	WriteBufferSize: socketBufferSize,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 type Room struct {
+	Api       *picow.Api
 	clients   map[*Client]bool
 	Join      chan *Client
 	Leave     chan *Client
@@ -32,8 +30,9 @@ type Room struct {
 	Broadcast chan *Response
 }
 
-func NewRoom() *Room {
+func NewRoom(api *picow.Api) *Room {
 	return &Room{
+		Api:       api,
 		clients:   make(map[*Client]bool),
 		Join:      make(chan *Client),
 		Leave:     make(chan *Client),
@@ -69,7 +68,7 @@ func (r *Room) Run() {
 				go func(req *Request) {
 					req.Client.Response <- &Response{
 						Type: ResponseTypeDevices,
-						Data: api.Devices,
+						Data: r.Api.Devices,
 					}
 				}(req)
 			case "POST api.device":
