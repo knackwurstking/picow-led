@@ -45,7 +45,7 @@ func main() {
 				http.Handle("/", http.FileServerFS(public))
 
 				// Init websocket handler
-				room := newRoom()
+				room := NewRoom()
 				http.Handle("/ws", room)
 
 				go room.run()

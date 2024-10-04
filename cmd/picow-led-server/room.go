@@ -23,82 +23,77 @@ var (
 	}
 )
 
-type room struct {
-	clients   map[*client]bool
-	join      chan *client
-	leave     chan *client
-	handle    chan *Request
-	broadcast chan *Response
+type Room struct {
+	clients   map[*Client]bool
+	Join      chan *Client
+	Leave     chan *Client
+	Handle    chan *Request
+	Broadcast chan *Response
 }
 
-func newRoom() *room {
-	return &room{
-		clients:   make(map[*client]bool),
-		join:      make(chan *client),
-		leave:     make(chan *client),
-		handle:    make(chan *Request),
-		broadcast: make(chan *Response),
+func NewRoom() *Room {
+	return &Room{
+		clients:   make(map[*Client]bool),
+		Join:      make(chan *Client),
+		Leave:     make(chan *Client),
+		Handle:    make(chan *Request),
+		Broadcast: make(chan *Response),
 	}
 }
 
-func (r *room) run() {
+func (r *Room) run() {
 	for {
 		select {
-		case client := <-r.join:
+		case client := <-r.Join:
 			r.clients[client] = true
 
 			slog.Debug(
 				"Add a new client to the websocket room",
-				"client.address", client.socket.RemoteAddr(),
+				"client.address", client.Socket.RemoteAddr(),
 				"clients", len(r.clients),
 			)
-		case client := <-r.leave:
+		case client := <-r.Leave:
 			delete(r.clients, client)
-			client.close()
+			client.Close()
 
 			slog.Debug(
 				"Remove a client from the websocket room",
-				"client.address", client.socket.RemoteAddr(),
+				"client.address", client.Socket.RemoteAddr(),
 				"clients", len(r.clients),
 			)
-		case req := <-r.handle:
+		case req := <-r.Handle:
 			switch req.Data {
 			case "GET api.devices":
 				go func(req *Request) {
-					req.Client.response <- &Response{
+					req.Client.Response <- &Response{
 						Type: ResponseTypeDevices,
 						Data: api.Devices,
 					}
 				}(req)
 			}
-		case resp := <-r.broadcast:
+		case resp := <-r.Broadcast:
 			for c := range r.clients {
-				go func(c *client) {
-					c.response <- resp
+				go func(c *Client) {
+					c.Response <- resp
 				}(c)
 			}
 		}
 	}
 }
 
-func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (r *Room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	socket, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		slog.Error("ServeHTTP", "error", err)
 		return
 	}
 
-	client := &client{
-		socket:   socket,
-		response: make(chan *Response),
-		room:     r,
-	}
-
-	r.join <- client
+	client := NewClient(socket, r)
+	r.Join <- client
 	defer func() {
-		r.leave <- client
+		r.Leave <- client
 	}()
 
-	go client.write()
-	client.read()
+	go client.Write()
+	client.Read()
 }

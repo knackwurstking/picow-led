@@ -6,21 +6,29 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type client struct {
-	socket   *websocket.Conn
-	response chan *Response
-	room     *room
+type Client struct {
+	Socket   *websocket.Conn
+	Response chan *Response
+	Room     *Room
 }
 
-func (c *client) read() {
-	defer c.socket.Close()
+func NewClient(s *websocket.Conn, r *Room) *Client {
+	return &Client{
+		Socket:   s,
+		Response: make(chan *Response),
+		Room:     r,
+	}
+}
+
+func (c *Client) Read() {
+	defer c.Socket.Close()
 
 	for {
-		mt, msg, err := c.socket.ReadMessage()
+		mt, msg, err := c.Socket.ReadMessage()
 		if err != nil {
 			slog.Debug(
 				"Error while reading a message from a client",
-				"client.address", c.socket.RemoteAddr(),
+				"client.address", c.Socket.RemoteAddr(),
 				"error", err,
 			)
 			return
@@ -28,7 +36,7 @@ func (c *client) read() {
 
 		slog.Debug(
 			"Got a message from a client",
-			"client.address", c.socket.RemoteAddr(),
+			"client.address", c.Socket.RemoteAddr(),
 			"message.type", mt,
 		)
 
@@ -37,21 +45,34 @@ func (c *client) read() {
 			slog.Warn("Parsing request failed", "error", err)
 			continue
 		}
-		c.room.handle <- req
+		c.Room.Handle <- req
 	}
 }
 
-func (c *client) write() {
-	defer c.socket.Close()
+func (c *Client) Write() {
+	defer c.Socket.Close()
 
-	for resp := range c.response {
-		err := c.socket.WriteMessage(websocket.TextMessage, resp.JSON())
-		if err != nil {
+	for resp := range c.Response {
+		if err := c.Socket.WriteMessage(
+			websocket.TextMessage,
+			resp.JSON(),
+		); err != nil {
 			return
 		}
 	}
 }
 
-func (c *client) close() {
-	close(c.response)
+func (c *Client) Close() {
+	defer func() {
+		if r := recover(); r != nil {
+			slog.Debug(
+				"Recovered while closing a client",
+				"client.address", c.Socket.RemoteAddr(),
+				"error", r,
+			)
+		}
+	}()
+
+	c.Socket.Close()
+	close(c.Response)
 }

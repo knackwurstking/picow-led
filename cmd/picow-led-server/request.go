@@ -4,11 +4,11 @@ import "encoding/json"
 
 type Request struct {
 	Data    any     `json:"data"`
-	Client  *client `json:"-"`
+	Client  *Client `json:"-"`
 	Command string  `json:"command"`
 }
 
-func NewRequest(c *client, msg []byte) (*Request, error) {
+func NewRequest(c *Client, msg []byte) (*Request, error) {
 	req := &Request{
 		Client: c,
 	}
