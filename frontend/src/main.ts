@@ -8,6 +8,11 @@ import createDrawer from "./app/create-drawer";
 import PicowDevicesPage from "./app/pages/picow-devices-page";
 import PicowSettingsPage from "./app/pages/picow-settings-page";
 import ws from "./lib/websocket";
+import type {
+    PicowStackLayout,
+    PicowStackLayout_Pages,
+    PicowStore,
+} from "./types";
 
 registerSW({
     onRegistered(r) {

@@ -1,8 +1,9 @@
 import { html, UIDialog, UIInput, type Events, type UIDialog_Events } from "ui";
+import type { WSEvents_Device } from "../../lib/websocket/ws-events";
 
 export type DeviceSetupDialog_Events = {
-    submit: Device;
-    delete: Device;
+    submit: WSEvents_Device;
+    delete: WSEvents_Device;
 } & UIDialog_Events;
 
 export interface DeviceSetupDialog_Options {

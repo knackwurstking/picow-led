@@ -2,6 +2,8 @@ import { power as svgPower } from "ui/svg/smoothie-line-icons";
 
 import { html, UIIconButton } from "ui";
 import * as api from "../../../lib/api";
+import type { WSEvents_Device } from "../../../lib/websocket/ws-events";
+import type { PicowStore } from "../../../types";
 
 export type PicowPowerButton_States = "active" | "pending" | null;
 
@@ -25,7 +27,7 @@ class PicowPowerButton_Picow {
         this.root.setAttribute("state", state);
     }
 
-    set(device: Device) {
+    set(device: WSEvents_Device) {
         this.root.device = device;
         this.root.updateColor();
     }
@@ -37,7 +39,7 @@ class PicowPowerButton_Picow {
 
 export default class PicowPowerButton extends UIIconButton {
     store: PicowStore;
-    device: Device | null;
+    device: WSEvents_Device | null;
     picow: PicowPowerButton_Picow;
 
     constructor() {

@@ -2,6 +2,8 @@ import { moreVertical as svgOptions } from "ui/svg/smoothie-line-icons";
 
 import { html, UIIconButton } from "ui";
 import * as api from "../../../lib/api";
+import type { WSEvents_Device } from "../../../lib/websocket/ws-events";
+import type { PicowStore } from "../../../types";
 import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
 
 class PicowOptionsButton_Picow {
@@ -11,17 +13,17 @@ class PicowOptionsButton_Picow {
         this.root = root;
     }
 
-    set(device: Device) {
+    set(device: WSEvents_Device) {
         this.root.device = device;
     }
 }
 
 export default class PicowOptionsButton extends UIIconButton {
-    device: Device;
+    device: WSEvents_Device;
     store: PicowStore;
     picow: PicowOptionsButton_Picow;
 
-    constructor(device: Device | null = null) {
+    constructor(device: WSEvents_Device | null = null) {
         super();
 
         this.device = device;

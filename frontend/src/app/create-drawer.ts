@@ -3,6 +3,7 @@ import "../components/status-led";
 import { UIButton, UIDrawer, UILabel, html } from "ui";
 import type StatusLED from "../components/status-led";
 import ws from "../lib/websocket";
+import type { PicowStackLayout } from "../types";
 
 export interface Drawer {
     element: UIDrawer;

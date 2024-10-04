@@ -2,6 +2,7 @@ import { CleanUp, html, UIStackLayoutPage } from "ui";
 import * as api from "../../lib/api";
 import * as utils from "../../lib/utils";
 import ws from "../../lib/websocket";
+import type { PicowStore } from "../../types";
 import type { AppBar } from "../create-app-bar";
 import createDeviceSetupDialog from "../dialogs/createDeviceSetupDialog";
 import PicowDeviceItem from "./devices-components/picow-device-item";
@@ -74,14 +75,14 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
             // Handle WebSocket events //
             // ----------------------- //
 
-            ws.events.on("messageDevices", async (data) => {
+            ws.events.on("message-devices", async (data) => {
                 this.store.ui.set("devices", data);
             })
         );
 
         const getDevicesFromWS = async () => {
             try {
-                await ws.request("api.devices");
+                await ws.request("GET api.devices");
             } catch (err) {
                 console.error(err);
                 utils.throwAlert({

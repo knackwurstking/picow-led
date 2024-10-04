@@ -1,3 +1,4 @@
+import type { PicowStore } from "../types";
 import * as utils from "./utils";
 
 export async function Delete(

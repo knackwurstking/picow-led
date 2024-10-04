@@ -1,5 +1,11 @@
+export interface WSServer {
+    ssl: boolean;
+    host: string;
+    port: string;
+}
+
 export class BaseWebSocketEvents {
-    #server: Server | null;
+    #server: WSServer | null;
 
     #messageHandler = async (ev: MessageEvent) => {
         await this.handleMessageEvent(ev);

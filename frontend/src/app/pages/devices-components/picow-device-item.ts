@@ -9,6 +9,8 @@ import {
     UISecondary,
 } from "ui";
 import ws from "../../../lib/websocket";
+import type { WSEvents_Device } from "../../../lib/websocket/ws-events";
+import type { PicowStore } from "../../../types";
 import type PicowOptionsButton from "./picow-options-button";
 import type PicowPowerButton from "./picow-power-button";
 
@@ -19,7 +21,7 @@ class PicowDeviceItem_Picow {
         this.root = root;
     }
 
-    set(device: Device) {
+    set(device: WSEvents_Device) {
         this.root.device = device;
 
         const list = this.root.querySelector(`li.is-card`);
@@ -93,11 +95,11 @@ class PicowDeviceItem_Picow {
 
 export default class PicowDeviceItem extends HTMLElement {
     store: PicowStore;
-    device: Device;
+    device: WSEvents_Device;
     cleanup: CleanUp;
     picow: PicowDeviceItem_Picow;
 
-    constructor(device: Device | null = null) {
+    constructor(device: WSEvents_Device | null = null) {
         super();
 
         this.store = document.querySelector(`ui-store`);
@@ -182,7 +184,7 @@ export default class PicowDeviceItem extends HTMLElement {
 
     connectedCallback() {
         this.cleanup.add(
-            ws.events.on("messageDevice", (data) => {
+            ws.events.on("message-device", (data) => {
                 if (data.server.addr !== this.device.server.addr) return;
                 this.picow.set(data);
             })

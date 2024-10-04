@@ -1,4 +1,5 @@
 import { CleanUp, html, UICheck, UIInput, UIStackLayoutPage } from "ui";
+import type { PicowStore } from "../../types";
 
 export default class PicowSettingsPage extends UIStackLayoutPage {
     store: PicowStore;

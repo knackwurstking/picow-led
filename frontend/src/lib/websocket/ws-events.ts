@@ -1,16 +1,45 @@
 import { Events } from "ui";
-import { BaseWebSocketEvents } from "./base-web-socket-events";
+import { BaseWebSocketEvents, type WSServer } from "./base-web-socket-events";
 
-type WSEvents_Command = "GET api.devices";
+export type WSEvents_Command = {
+    "GET api.devices": {
+        request: null;
+        response: WSEvents_Device[];
+    };
+    "GET api.device": {
+        request: null;
+        response: WSEvents_Device;
+    };
+};
+
+export interface WSEvents_Device {
+    server: {
+        name: string;
+        addr: string;
+        isOffline?: boolean;
+    };
+    pins?: number[] | null;
+    color?: number[] | null;
+}
+
+export interface WSEvents_Request<T extends keyof WSEvents_Command> {
+    command: string;
+    data: WSEvents_Command[T]["request"];
+}
+
+export interface WSEvents_Response {
+    data: any;
+    type: "devices" | "device";
+}
 
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
-        server: Server | null;
+        server: WSServer | null;
         open: null;
         close: null;
         message: any;
-        messageDevice: Device;
-        messageDevices: Device[];
+        "message-devices": WSEvents_Command["GET api.devices"]["response"];
+        "message-device": WSEvents_Command["GET api.device"]["response"];
     }>;
 
     constructor() {
@@ -27,14 +56,20 @@ export class WSEvents extends BaseWebSocketEvents {
         this.events.dispatch("server", value);
     }
 
-    async request(command: WSEvents_Command, data: any = null) {
+    async request<T extends keyof WSEvents_Command>(
+        command: T,
+        data: WSEvents_Command[T]["request"] = null
+    ) {
         if (!this.isOpen()) return;
         console.debug(`[ws] Send command: "GET api.devices"`, this.server);
 
         switch (command) {
             case "GET api.devices":
-                // TODO: Need request type data here `{ command: string; data: any }`
-                this.ws.send(`GET api.devices`);
+                const request: WSEvents_Request<"GET api.devices"> = {
+                    command: command,
+                    data: null,
+                };
+                this.ws.send(JSON.stringify(request));
                 break;
             default:
                 throw new Error(`unknown path ${command}`);
@@ -45,7 +80,17 @@ export class WSEvents extends BaseWebSocketEvents {
         super.handleMessageEvent(ev);
         console.debug("[ws] message.event:", ev);
 
-        // TODO: Parsing data and dispatch "message-device" or "message-devices"
+        if (typeof ev.data === "string") {
+            try {
+                const req = JSON.parse(ev.data) as WSEvents_Response;
+                if (["devices", "device"].includes(req.type)) {
+                    this.events.dispatch(`message-${req.type}`, req.data);
+                    return;
+                }
+            } catch (err) {
+                console.warn("[ws] Parsing JSON:", err);
+            }
+        }
 
         this.events.dispatch("message", ev.data);
     }
