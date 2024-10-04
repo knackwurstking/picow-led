@@ -5,7 +5,7 @@ import "encoding/json"
 type Request struct {
 	Client  *Client `json:"-"`
 	Command string  `json:"command"`
-	Data    []byte  `json:"data"`
+	Data    string  `json:"data"`
 }
 
 func NewRequest(c *Client, msg []byte) (*Request, error) {

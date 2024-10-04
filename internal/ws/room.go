@@ -111,7 +111,7 @@ func (r *Room) getApiDevices(req *Request) {
 }
 
 func (r *Room) setApiDeviceColor(req *Request) {
-	if req.Data == nil {
+	if req.Data == "" {
 		return
 	}
 
@@ -122,9 +122,7 @@ func (r *Room) setApiDeviceColor(req *Request) {
 
 	resp := &Response{}
 
-	if err := json.Unmarshal(
-		req.Data, &data,
-	); err != nil {
+	if err := json.Unmarshal([]byte(req.Data), &data); err != nil {
 		resp.SetError(err)
 		req.Client.Response <- resp
 		return

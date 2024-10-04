@@ -45,6 +45,7 @@ func (c *Client) Read() {
 			"Got a message from a client",
 			"client.address", c.Socket.RemoteAddr(),
 			"request.command", req.Command,
+			"request.data.length", len(req.Data),
 		)
 
 		c.Room.Handle <- req
