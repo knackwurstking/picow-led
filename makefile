@@ -1,7 +1,7 @@
 build:
-	@go mod tidy && \
+	@go mod -v tidy && \
 		cd frontend && \
 		npm install && \
 		npm run build && \
 		cd .. && \
-		go build -o build/picow-led-server ./cmd/picow-led-server
+		go build -v -o build/picow-led-server ./cmd/picow-led-server
