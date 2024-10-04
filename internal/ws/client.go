@@ -25,7 +25,7 @@ func (c *Client) Read() {
 	defer c.Socket.Close()
 
 	for {
-		mt, msg, err := c.Socket.ReadMessage()
+		_, msg, err := c.Socket.ReadMessage()
 		if err != nil {
 			slog.Debug(
 				"Error while reading a message from a client",
@@ -35,17 +35,18 @@ func (c *Client) Read() {
 			return
 		}
 
-		slog.Debug(
-			"Got a message from a client",
-			"client.address", c.Socket.RemoteAddr(),
-			"message.type", mt,
-		)
-
 		req, err := NewRequest(c, msg)
 		if err != nil {
 			slog.Warn("Parsing request failed", "error", err)
 			continue
 		}
+
+		slog.Debug(
+			"Got a message from a client",
+			"client.address", c.Socket.RemoteAddr(),
+			"request.command", req.Command,
+		)
+
 		c.Room.Handle <- req
 	}
 }
