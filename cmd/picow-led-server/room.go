@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log/slog"
 	"net/http"
 
@@ -8,23 +9,26 @@ import (
 )
 
 const (
-	socketBufferSize  = 1024
-	messageBufferSize = 256
+	socketBufferSize = 1024
+	// messageBufferSize = 1024
 )
 
-var upgrader = &websocket.Upgrader{
-	ReadBufferSize:  socketBufferSize,
-	WriteBufferSize: socketBufferSize,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
+var (
+	api      = NewApi()
+	upgrader = &websocket.Upgrader{
+		ReadBufferSize:  socketBufferSize,
+		WriteBufferSize: socketBufferSize,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+)
 
 type room struct {
 	clients map[*client]bool
 	join    chan *client
 	leave   chan *client
-	forward chan []byte
+	handle  chan *Request
 }
 
 func newRoom() *room {
@@ -32,7 +36,7 @@ func newRoom() *room {
 		clients: make(map[*client]bool),
 		join:    make(chan *client),
 		leave:   make(chan *client),
-		forward: make(chan []byte),
+		handle:  make(chan *Request),
 	}
 }
 
@@ -56,13 +60,21 @@ func (r *room) run() {
 				"client.address", client.socket.RemoteAddr(),
 				"clients", len(r.clients),
 			)
-		case msg := <-r.forward:
-			// TODO: Parse message (ex.: "GET api.devices"), start handler
-			resp := msg // placeholder
+		case req := <-r.handle:
+			switch req.Data {
+			case "GET api.devices":
+				go func(req *Request) {
+					data, err := json.Marshal(api.Devices)
+					if err != nil {
+						return
+					}
 
-			// TODO: Send response to (all) client(s?)
-			for client := range r.clients {
-				client.receive <- resp
+					req.Client.response <- &Response{
+						Client: req.Client,
+						Type:   ResponseTypeDevices,
+						Data:   data,
+					}
+				}(req)
 			}
 		}
 	}
@@ -76,9 +88,9 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	client := &client{
-		socket:  socket,
-		receive: make(chan []byte, messageBufferSize),
-		room:    r,
+		socket:   socket,
+		response: make(chan *Response),
+		room:     r,
 	}
 
 	r.join <- client

@@ -2,14 +2,15 @@ package main
 
 import (
 	"log/slog"
+	"strings"
 
 	"github.com/gorilla/websocket"
 )
 
 type client struct {
-	socket  *websocket.Conn
-	receive chan []byte
-	room    *room
+	socket   *websocket.Conn
+	response chan *Response
+	room     *room
 }
 
 func (c *client) read() {
@@ -32,15 +33,18 @@ func (c *client) read() {
 			"message.type", mt,
 		)
 
-		c.room.forward <- msg
+		c.room.handle <- &Request{
+			Client: c,
+			Data:   strings.Trim(string(msg), "\n\t\r "),
+		}
 	}
 }
 
 func (c *client) write() {
 	defer c.socket.Close()
 
-	for msg := range c.receive {
-		err := c.socket.WriteMessage(websocket.TextMessage, msg)
+	for resp := range c.response {
+		err := c.socket.WriteMessage(websocket.TextMessage, resp.Data)
 		if err != nil {
 			return
 		}
@@ -48,5 +52,5 @@ func (c *client) write() {
 }
 
 func (c *client) close() {
-	close(c.receive)
+	close(c.response)
 }
