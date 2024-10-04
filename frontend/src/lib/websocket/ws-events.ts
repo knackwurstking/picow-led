@@ -5,12 +5,12 @@ import type {
     WSEvents_Device,
     WSEvents_Request,
     WSEvents_Response,
-    WSServer,
+    WSEvents_Server,
 } from "./types";
 
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
-        server: WSServer | null;
+        server: WSEvents_Server | null;
         open: null;
         close: null;
         message: any;

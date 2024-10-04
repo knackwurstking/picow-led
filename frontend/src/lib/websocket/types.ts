@@ -1,9 +1,3 @@
-export interface WSServer {
-    ssl: boolean;
-    host: string;
-    port: string;
-}
-
 export type WSEvents_Command = {
     "GET api.devices": {
         request: null;
@@ -17,6 +11,26 @@ export type WSEvents_Command = {
         response: null;
     };
 };
+
+export type WSEvents_Response =
+    | {
+          data: string;
+          type: "error";
+      }
+    | {
+          data: WSEvents_Device[];
+          type: "devices";
+      }
+    | {
+          data: WSEvents_Device;
+          type: "device";
+      };
+
+export interface WSEvents_Server {
+    ssl: boolean;
+    host: string;
+    port: string;
+}
 
 export interface WSEvents_DeviceServer {
     name?: string;
@@ -34,17 +48,3 @@ export interface WSEvents_Request {
     command: string;
     data: string; // NOTE: JSON string
 }
-
-export type WSEvents_Response =
-    | {
-          data: string;
-          type: "error";
-      }
-    | {
-          data: WSEvents_Device[];
-          type: "devices";
-      }
-    | {
-          data: WSEvents_Device;
-          type: "device";
-      };
