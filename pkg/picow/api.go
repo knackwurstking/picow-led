@@ -9,5 +9,3 @@ func NewApi() *Api {
 		Devices: make([]*Device, 0),
 	}
 }
-
-type Device struct{}
