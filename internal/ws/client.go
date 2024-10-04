@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"encoding/json"
 	"log/slog"
 
 	"github.com/gorilla/websocket"
@@ -53,9 +54,18 @@ func (c *Client) Write() {
 	defer c.Socket.Close()
 
 	for resp := range c.Response {
+		data, err := json.Marshal(resp)
+		if err != nil {
+			slog.Warn(
+				"Marshal response failed",
+				"client.address", c.Socket.RemoteAddr(),
+				"error", err,
+			)
+			continue
+		}
+
 		if err := c.Socket.WriteMessage(
-			websocket.TextMessage,
-			resp.JSON(),
+			websocket.TextMessage, data,
 		); err != nil {
 			return
 		}
