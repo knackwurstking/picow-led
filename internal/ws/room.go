@@ -63,7 +63,8 @@ func (r *Room) Run() {
 				"clients", len(r.clients),
 			)
 		case req := <-r.Handle:
-			switch req.Data {
+			// TODO: Adding more commands here...
+			switch req.Command {
 			case "GET api.devices":
 				go func(req *Request) {
 					req.Client.Response <- &Response{
@@ -71,6 +72,8 @@ func (r *Room) Run() {
 						Data: api.Devices,
 					}
 				}(req)
+			case "POST api.device":
+				// ...
 			}
 		case resp := <-r.Broadcast:
 			for c := range r.clients {
