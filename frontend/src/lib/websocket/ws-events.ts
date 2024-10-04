@@ -82,9 +82,9 @@ export class WSEvents extends BaseWebSocketEvents {
 
         if (typeof ev.data === "string") {
             try {
-                const req = JSON.parse(ev.data) as WSEvents_Response;
-                if (["devices", "device"].includes(req.type)) {
-                    this.events.dispatch(`message-${req.type}`, req.data);
+                const resp = JSON.parse(ev.data) as WSEvents_Response;
+                if (["devices", "device"].includes(resp.type)) {
+                    this.events.dispatch(`message-${resp.type}`, resp.data);
                     return;
                 }
             } catch (err) {
