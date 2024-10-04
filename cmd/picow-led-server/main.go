@@ -21,8 +21,9 @@ var flags = struct {
 	port   uint
 	debug  bool
 }{
-	host: "0.0.0.0",
-	port: uint(50833),
+	config: "api.json",
+	host:   "0.0.0.0",
+	port:   uint(50833),
 }
 
 func main() {
@@ -82,12 +83,10 @@ func runCommand(cmd *cli.Command) error {
 	// Initialize api
 	api := picow.NewApi()
 
-	if flags.config == "" {
-		flags.config = "api.json"
-	}
-
-	if err := api.LoadFromPath(flags.config); err != nil {
-		slog.Warn("Loading api configuration failed", "error", err)
+	if flags.config != "" {
+		if err := api.LoadFromPath(flags.config); err != nil {
+			slog.Warn("Loading api configuration failed", "error", err)
+		}
 	}
 
 	// Init static file server
