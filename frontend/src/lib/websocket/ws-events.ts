@@ -7,17 +7,23 @@ export type WSEvents_Command = {
         response: WSEvents_Device[];
     };
     "GET api.device": {
-        request: null;
+        request: WSEvents_DeviceServer;
         response: WSEvents_Device;
+    };
+    "POST api.device": {
+        request: WSEvents_Device;
+        response: null;
     };
 };
 
+export interface WSEvents_DeviceServer {
+    name?: string;
+    addr: string;
+    online?: boolean;
+}
+
 export interface WSEvents_Device {
-    server: {
-        name: string;
-        addr: string;
-        online: boolean;
-    };
+    server: WSEvents_DeviceServer;
     pins?: number[];
     color?: number[];
 }
@@ -28,8 +34,8 @@ export interface WSEvents_Request<T extends keyof WSEvents_Command> {
 }
 
 export interface WSEvents_Response {
-    data: any;
-    type: "devices" | "device";
+    data: any; // TODO: Do some type masturbation here
+    type: "error" | "devices" | "device";
 }
 
 export class WSEvents extends BaseWebSocketEvents {
@@ -39,6 +45,7 @@ export class WSEvents extends BaseWebSocketEvents {
         close: null;
         message: any;
         "message-devices": WSEvents_Command["GET api.devices"]["response"];
+        "message-error": string;
         "message-device": WSEvents_Command["GET api.device"]["response"];
     }>;
 
@@ -84,9 +91,14 @@ export class WSEvents extends BaseWebSocketEvents {
         if (typeof ev.data === "string") {
             try {
                 const resp = JSON.parse(ev.data) as WSEvents_Response;
-                if (["devices", "device"].includes(resp.type)) {
-                    this.events.dispatch(`message-${resp.type}`, resp.data);
-                    return;
+                switch (resp.type) {
+                    case "devices":
+                    case "device":
+                        this.events.dispatch(`message-${resp.type}`, resp.data);
+                        break;
+                    case "error":
+                        this.events.dispatch(`message-error`, resp.data);
+                        break;
                 }
             } catch (err) {
                 console.warn("[ws] Parsing JSON:", err);
