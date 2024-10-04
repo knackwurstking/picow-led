@@ -1,4 +1,4 @@
-package main
+package picow
 
 type Api struct {
 	Devices []*Device `json:"devices"`

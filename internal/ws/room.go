@@ -1,10 +1,11 @@
-package main
+package ws
 
 import (
 	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/knackwurstking/picow-led-server/pkg/picow"
 )
 
 const (
@@ -13,7 +14,7 @@ const (
 )
 
 var (
-	api      = NewApi()
+	api      = picow.NewApi()
 	upgrader = &websocket.Upgrader{
 		ReadBufferSize:  socketBufferSize,
 		WriteBufferSize: socketBufferSize,
@@ -41,7 +42,7 @@ func NewRoom() *Room {
 	}
 }
 
-func (r *Room) run() {
+func (r *Room) Run() {
 	for {
 		select {
 		case client := <-r.Join:

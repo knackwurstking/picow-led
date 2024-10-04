@@ -9,6 +9,7 @@ import (
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/knackwurstking/picow-led-server/frontend"
+	"github.com/knackwurstking/picow-led-server/internal/ws"
 )
 
 func main() {
@@ -45,10 +46,10 @@ func main() {
 				http.Handle("/", http.FileServerFS(public))
 
 				// Init websocket handler
-				room := NewRoom()
+				room := ws.NewRoom()
 				http.Handle("/ws", room)
 
-				go room.run()
+				go room.Run()
 
 				addr := fmt.Sprintf("%s:%d", host, port)
 				slog.Info("Started server", "address", addr)
