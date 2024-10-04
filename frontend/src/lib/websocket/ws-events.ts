@@ -33,10 +33,19 @@ export interface WSEvents_Request<T extends keyof WSEvents_Command> {
     data: WSEvents_Command[T]["request"];
 }
 
-export interface WSEvents_Response {
-    data: any; // TODO: Do some type masturbation here
-    type: "error" | "devices" | "device";
-}
+export type WSEvents_Response =
+    | {
+          data: string;
+          type: "error";
+      }
+    | {
+          data: WSEvents_Device[];
+          type: "devices";
+      }
+    | {
+          data: WSEvents_Device;
+          type: "device";
+      };
 
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
