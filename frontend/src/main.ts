@@ -7,6 +7,7 @@ import createAppBar from "./app/create-app-bar";
 import createDrawer from "./app/create-drawer";
 import PicowDevicesPage from "./app/pages/picow-devices-page";
 import PicowSettingsPage from "./app/pages/picow-settings-page";
+import { throwAlert } from "./lib/utils";
 import ws from "./lib/websocket";
 import type {
     PicowStackLayout,
@@ -139,7 +140,9 @@ async function main() {
             drawer.open();
         }
 
-        // TODO: Handle ws "message-error" events, throw alerts
+        ws.events.on("message-error", (msg) =>
+            throwAlert({ message: msg, variant: "error" })
+        );
 
         // Handler server changes
         store.ui.on(
