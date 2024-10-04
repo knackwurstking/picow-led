@@ -1,8 +1,4 @@
-export interface WSServer {
-    ssl: boolean;
-    host: string;
-    port: string;
-}
+import type { WSServer } from "./types";
 
 export class BaseWebSocketEvents {
     #server: WSServer | null;

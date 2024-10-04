@@ -1,5 +1,5 @@
 import { html, UIDialog, UIInput, type Events, type UIDialog_Events } from "ui";
-import type { WSEvents_Device } from "../../lib/websocket/ws-events";
+import type { WSEvents_Device } from "../../lib/websocket";
 
 export type DeviceSetupDialog_Events = {
     submit: WSEvents_Device;

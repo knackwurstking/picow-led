@@ -8,8 +8,8 @@ import {
     UILabel,
     UISecondary,
 } from "ui";
+import type { WSEvents_Device } from "../../../lib/websocket";
 import ws from "../../../lib/websocket";
-import type { WSEvents_Device } from "../../../lib/websocket/ws-events";
 import type { PicowStore } from "../../../types";
 import type PicowOptionsButton from "./picow-options-button";
 import type PicowPowerButton from "./picow-power-button";
@@ -87,7 +87,7 @@ class PicowDeviceItem_Picow {
                 `ui-secondary.offline-marker`
             );
 
-            if (device.server.isOffline) marker.removeAttribute("hide");
+            if (!!device.server.online) marker.removeAttribute("hide");
             else marker.setAttribute("hide", "");
         }
     }

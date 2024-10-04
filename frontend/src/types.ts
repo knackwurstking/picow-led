@@ -1,6 +1,5 @@
 import type { UIStackLayout, UIStore } from "ui";
-import type { WSEvents_Device } from "./lib/websocket/ws-events";
-import type { WSServer } from "./lib/websocket/base-web-socket-events";
+import type { WSEvents_Device, WSServer } from "./lib/websocket";
 
 export type PicowStackLayout = UIStackLayout<PicowStackLayout_Pages>;
 export type PicowStackLayout_Pages = null | "devices" | "settings";

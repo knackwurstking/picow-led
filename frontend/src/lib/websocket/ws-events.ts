@@ -1,50 +1,12 @@
 import { Events } from "ui";
-import { BaseWebSocketEvents, type WSServer } from "./base-web-socket-events";
-
-export type WSEvents_Command = {
-    "GET api.devices": {
-        request: null;
-        response: WSEvents_Device[];
-    };
-    "POST api.device.color": {
-        request: {
-            addr: string;
-            color: number[];
-        };
-        response: null;
-    };
-};
-
-export interface WSEvents_DeviceServer {
-    name?: string;
-    addr: string;
-    online?: boolean;
-}
-
-export interface WSEvents_Device {
-    server: WSEvents_DeviceServer;
-    pins?: number[];
-    color?: number[];
-}
-
-export interface WSEvents_Request {
-    command: string;
-    data: string; // NOTE: JSON string
-}
-
-export type WSEvents_Response =
-    | {
-          data: string;
-          type: "error";
-      }
-    | {
-          data: WSEvents_Device[];
-          type: "devices";
-      }
-    | {
-          data: WSEvents_Device;
-          type: "device";
-      };
+import { BaseWebSocketEvents } from "./base-web-socket-events";
+import type {
+    WSEvents_Command,
+    WSEvents_Device,
+    WSEvents_Request,
+    WSEvents_Response,
+    WSServer,
+} from "./types";
 
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
@@ -55,11 +17,10 @@ export class WSEvents extends BaseWebSocketEvents {
         "message-devices": WSEvents_Device[];
         "message-error": string;
         "message-device": WSEvents_Device;
-    }>;
+    }> = new Events();
 
     constructor() {
         super("/ws");
-        this.events = new Events();
     }
 
     get server() {

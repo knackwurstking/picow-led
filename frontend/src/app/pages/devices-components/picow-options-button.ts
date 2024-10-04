@@ -2,7 +2,7 @@ import { moreVertical as svgOptions } from "ui/svg/smoothie-line-icons";
 
 import { html, UIIconButton } from "ui";
 import * as api from "../../../lib/api";
-import type { WSEvents_Device } from "../../../lib/websocket/ws-events";
+import type { WSEvents_Device } from "../../../lib/websocket";
 import type { PicowStore } from "../../../types";
 import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
 
