@@ -2,7 +2,6 @@ package main
 
 import (
 	"log/slog"
-	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -33,10 +32,12 @@ func (c *client) read() {
 			"message.type", mt,
 		)
 
-		c.room.handle <- &Request{
-			Client: c,
-			Data:   strings.Trim(string(msg), "\n\t\r "),
+		req, err := NewRequest(c, msg)
+		if err != nil {
+			slog.Warn("Parsing request failed", "error", err)
+			continue
 		}
+		c.room.handle <- req
 	}
 }
 
