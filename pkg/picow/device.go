@@ -2,6 +2,7 @@ package picow
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net"
 	"time"
 )
@@ -38,6 +39,11 @@ func (d *Device) SetColor(c Color) error {
 		defer d.Close()
 	}
 
+	slog.Debug("Set device color",
+		"device.address", d.socket.RemoteAddr(),
+		"color", c,
+	)
+
 	req := &Request{
 		Type:    "set",
 		Group:   "led",
@@ -48,6 +54,10 @@ func (d *Device) SetColor(c Color) error {
 
 	data, _ := json.Marshal(req)
 	_, err := d.socket.Write(data)
+	if err == nil {
+		d.data.Color = c
+	}
+
 	return err
 }
 
