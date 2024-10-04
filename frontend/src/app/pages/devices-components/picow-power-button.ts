@@ -90,18 +90,10 @@ export default class PicowPowerButton extends UIIconButton {
                     ? this.device.color.map(() => 0)
                     : [255, 255, 255, 255];
 
-                ws.request("POST api.device.color", {
+                await ws.request("POST api.device.color", {
                     addr: this.device.server.addr,
                     color: color,
                 });
-
-                const ok = await api.Post(this.store, "/api/device/color", {
-                    server: {
-                        addr: this.device.server.addr,
-                    },
-                    color,
-                });
-                if (ok) this.device.color = color;
             } finally {
                 this.picow.state = prevStateBackup;
             }
