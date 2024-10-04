@@ -99,6 +99,4 @@ func initLogger(debug bool, host string, port uint) {
 			),
 		),
 	)
-
-	slog.Debug("Flags", "debug", debug, "host", host, "port", port)
 }
