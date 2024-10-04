@@ -96,6 +96,7 @@ func runCommand(cmd *cli.Command) error {
 
 	// Init static file server
 	public := frontend.GetFS()
+	// FIXME: The fileserver is broken, doesn't parse html content
 	http.Handle("/", http.FileServerFS(public))
 
 	// Init websocket handler
