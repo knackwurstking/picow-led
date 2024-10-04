@@ -2,9 +2,9 @@ import { power as svgPower } from "ui/svg/smoothie-line-icons";
 
 import { html, UIIconButton } from "ui";
 import * as api from "../../../lib/api";
+import ws from "../../../lib/websocket";
 import type { WSEvents_Device } from "../../../lib/websocket/ws-events";
 import type { PicowStore } from "../../../types";
-
 export type PicowPowerButton_States = "active" | "pending" | null;
 
 class PicowPowerButton_Picow {
@@ -86,9 +86,14 @@ export default class PicowPowerButton extends UIIconButton {
 
             try {
                 // TODO: Using the (stored) device color here
-                const color = this.picow.isOn()
+                const color: number[] = this.picow.isOn()
                     ? this.device.color.map(() => 0)
                     : [255, 255, 255, 255];
+
+                ws.request("POST api.device.color", {
+                    addr: this.device.server.addr,
+                    color: color,
+                });
 
                 const ok = await api.Post(this.store, "/api/device/color", {
                     server: {

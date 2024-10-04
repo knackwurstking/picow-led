@@ -18,6 +18,16 @@ type Device struct {
 	data DeviceData `json:"-"`
 }
 
+func (d *Device) Addr() string {
+	return d.data.Server.Addr
+}
+
+func (d *Device) SetColor(c []uint) error {
+	// TODO: ...
+
+	return nil
+}
+
 func (d *Device) MarshalJSON() ([]byte, error) {
 	// TODO: Get "pins" and "color" from server
 

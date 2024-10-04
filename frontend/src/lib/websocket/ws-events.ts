@@ -6,8 +6,11 @@ export type WSEvents_Command = {
         request: null;
         response: WSEvents_Device[];
     };
-    "POST api.device": {
-        request: WSEvents_Device;
+    "POST api.device.color": {
+        request: {
+            addr: string;
+            color: number[];
+        };
         response: null;
     };
 };
@@ -24,9 +27,9 @@ export interface WSEvents_Device {
     color?: number[];
 }
 
-export interface WSEvents_Request<T extends keyof WSEvents_Command> {
+export interface WSEvents_Request {
     command: string;
-    data: WSEvents_Command[T]["request"];
+    data: string; // NOTE: JSON string
 }
 
 export type WSEvents_Response =
@@ -75,17 +78,21 @@ export class WSEvents extends BaseWebSocketEvents {
         if (!this.isOpen()) return;
         console.debug(`[ws] Send command: "GET api.devices"`, this.server);
 
-        // TODO: Adding more commands here...
+        let request: WSEvents_Request;
         switch (command) {
             case "GET api.devices":
-                const request: WSEvents_Request<"GET api.devices"> = {
+                request = {
                     command: command,
                     data: null,
                 };
                 this.ws.send(JSON.stringify(request));
                 break;
-            case "POST api.device":
-                // ...
+            case "POST api.device.color":
+                request = {
+                    command: command,
+                    data: JSON.stringify(data),
+                };
+                this.ws.send(JSON.stringify(request));
                 break;
             default:
                 throw new Error(`unknown command ${command}`);

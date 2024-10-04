@@ -3,9 +3,9 @@ package ws
 import "encoding/json"
 
 type Request struct {
-	Data    any     `json:"data"`
 	Client  *Client `json:"-"`
 	Command string  `json:"command"`
+	Data    []byte  `json:"data"`
 }
 
 func NewRequest(c *Client, msg []byte) (*Request, error) {

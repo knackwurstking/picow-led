@@ -1,6 +1,8 @@
 package ws
 
 import (
+	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -44,6 +46,7 @@ func NewRoom(api *picow.Api) *Room {
 func (r *Room) Run() {
 	for {
 		select {
+
 		case client := <-r.Join:
 			r.clients[client] = true
 
@@ -52,6 +55,7 @@ func (r *Room) Run() {
 				"client.address", client.Socket.RemoteAddr(),
 				"clients", len(r.clients),
 			)
+
 		case client := <-r.Leave:
 			delete(r.clients, client)
 			client.Close()
@@ -61,19 +65,17 @@ func (r *Room) Run() {
 				"client.address", client.Socket.RemoteAddr(),
 				"clients", len(r.clients),
 			)
+
 		case req := <-r.Handle:
-			// TODO: Adding more commands here...
 			switch req.Command {
+
 			case "GET api.devices":
-				go func(req *Request) {
-					req.Client.Response <- &Response{
-						Type: ResponseTypeDevices,
-						Data: r.Api.Devices,
-					}
-				}(req)
-			case "POST api.device":
-				// ...
+				go r.getApiDevices(req)
+
+			case "POST api.device.color":
+				go r.setApiDeviceColor(req)
 			}
+
 		case resp := <-r.Broadcast:
 			for c := range r.clients {
 				go func(c *Client) {
@@ -99,4 +101,49 @@ func (r *Room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	go client.Write()
 	client.Read()
+}
+
+func (r *Room) getApiDevices(req *Request) {
+	req.Client.Response <- &Response{
+		Type: ResponseTypeDevices,
+		Data: r.Api.Devices,
+	}
+}
+
+func (r *Room) setApiDeviceColor(req *Request) {
+	if req.Data == nil {
+		return
+	}
+
+	var data struct {
+		Addr  string `json:"addr"`
+		Color []uint `json:"color"`
+	}
+
+	resp := &Response{}
+
+	if err := json.Unmarshal(
+		req.Data, &data,
+	); err != nil {
+		resp.SetError(err)
+		req.Client.Response <- resp
+		return
+	}
+
+	for _, d := range r.Api.Devices {
+		if d.Addr() != data.Addr {
+			continue
+		}
+
+		if err := d.SetColor(data.Color); err != nil {
+			resp.SetError(err)
+		} else {
+			resp.Set(ResponseTypeDevice, d)
+		}
+	}
+
+	if resp.Type == "" {
+		resp.SetError(fmt.Errorf("device %s not found", data.Addr))
+	}
+	r.Broadcast <- resp
 }
