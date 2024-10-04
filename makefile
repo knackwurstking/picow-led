@@ -2,7 +2,7 @@ clean:
 	git clean -f -x -d
 
 build:
-	@go mod -v tidy && \
+	@go mod tidy -v && \
 		cd frontend && \
 		npm install && \
 		npm run build && \
