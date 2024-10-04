@@ -13,11 +13,16 @@ import (
 	"github.com/knackwurstking/picow-led-server/pkg/picow"
 )
 
-type Flags struct {
-	Config *string
-	Host   string
-	Port   uint
-	Debug  bool
+type Flags struct{}
+
+var flags = struct {
+	config string
+	host   string
+	port   uint
+	debug  bool
+}{
+	host: "0.0.0.0",
+	port: uint(50833),
 }
 
 func main() {
@@ -25,36 +30,31 @@ func main() {
 		Name:  "picow-led-server",
 		Usage: cli.Usage("PicoW LED Server"),
 		Action: cli.ActionFunc(func(cmd *cli.Command) cli.ActionRunner {
-			flags := &Flags{
-				Host: "0.0.0.0",
-				Port: uint(50833),
-			}
-
-			cli.BoolVar(cmd, &flags.Debug, "debug",
+			cli.BoolVar(cmd, &flags.debug, "debug",
 				cli.Usage("Enable debug logs"),
 				cli.WithShort("d"),
 				cli.Optional,
 			)
 
-			cli.StringVar(cmd, &flags.Host, "host",
+			cli.StringVar(cmd, &flags.host, "host",
 				cli.Usage("Change the default server host"),
 				cli.WithShort("H"),
 				cli.Optional,
 			)
 
-			cli.UintVar(cmd, &flags.Port, "port",
+			cli.UintVar(cmd, &flags.port, "port",
 				cli.Usage("Change the default server port"),
 				cli.WithShort("p"),
 				cli.Optional,
 			)
 
-			cli.StringVar(cmd, flags.Config, "config",
+			cli.StringVar(cmd, &flags.config, "config",
 				cli.Usage("Load api data from local json file"),
 				cli.WithShort("c"),
 				cli.Optional,
 			)
 
-			return runCommand(flags)
+			return runCommand
 		}),
 		CommandFlags: []cli.CommandFlag{
 			cli.HelpCommandFlag(),
@@ -65,46 +65,42 @@ func main() {
 	app.HandleError(app.Run())
 }
 
-func runCommand(flags *Flags) cli.ActionRunner {
-	return func(cmd *cli.Command) error {
-		// Initialize logger
-		if flags.Debug {
-			slogcolor.DefaultOptions.Level = slog.LevelDebug
-		}
-
-		slog.SetDefault(
-			slog.New(
-				slogcolor.NewHandler(
-					os.Stderr, slogcolor.DefaultOptions,
-				),
-			),
-		)
-
-		// Initialize api
-		api := picow.NewApi()
-
-		if flags.Config != nil {
-			if *flags.Config == "" {
-				*flags.Config = "api.json"
-			}
-
-			if err := api.LoadFromPath(*flags.Config); err != nil {
-				slog.Warn("Loading api configuration failed", "error", err)
-			}
-		}
-
-		// Init static file server
-		public := frontend.GetFS()
-		http.Handle("/", http.FileServerFS(public))
-
-		// Init websocket handler
-		room := ws.NewRoom(api)
-		http.Handle("/ws", room)
-
-		go room.Run()
-
-		addr := fmt.Sprintf("%s:%d", flags.Host, flags.Port)
-		slog.Info("Started server", "address", addr)
-		return http.ListenAndServe(addr, &serverHandler{})
+func runCommand(cmd *cli.Command) error {
+	// Initialize logger
+	if flags.debug {
+		slogcolor.DefaultOptions.Level = slog.LevelDebug
 	}
+
+	slog.SetDefault(
+		slog.New(
+			slogcolor.NewHandler(
+				os.Stderr, slogcolor.DefaultOptions,
+			),
+		),
+	)
+
+	// Initialize api
+	api := picow.NewApi()
+
+	if flags.config == "" {
+		flags.config = "api.json"
+	}
+
+	if err := api.LoadFromPath(flags.config); err != nil {
+		slog.Warn("Loading api configuration failed", "error", err)
+	}
+
+	// Init static file server
+	public := frontend.GetFS()
+	http.Handle("/", http.FileServerFS(public))
+
+	// Init websocket handler
+	room := ws.NewRoom(api)
+	http.Handle("/ws", room)
+
+	go room.Run()
+
+	addr := fmt.Sprintf("%s:%d", flags.host, flags.port)
+	slog.Info("Started server", "address", addr)
+	return http.ListenAndServe(addr, &serverHandler{})
 }
