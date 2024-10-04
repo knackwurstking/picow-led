@@ -1,15 +1,7 @@
 export type WSEvents_Command = {
-    "GET api.devices": {
-        request: null;
-        response: WSEvents_Device[];
-    };
-    "POST api.device.color": {
-        request: {
-            addr: string;
-            color: number[];
-        };
-        response: null;
-    };
+    "GET api.devices": null;
+    "DELETE api.device": { addr: string };
+    "POST api.device.color": { addr: string; color: number[] };
 };
 
 export type WSEvents_Response =

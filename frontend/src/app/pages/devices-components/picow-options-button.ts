@@ -1,10 +1,10 @@
 import { moreVertical as svgOptions } from "ui/svg/smoothie-line-icons";
 
 import { html, UIIconButton } from "ui";
-import * as api from "../../../lib/api";
 import type { WSEvents_Device } from "../../../lib/websocket";
 import type { PicowStore } from "../../../types";
 import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
+import ws from "../../../lib/websocket";
 
 class PicowOptionsButton_Picow {
     root: PicowOptionsButton;
@@ -56,11 +56,12 @@ export default class PicowOptionsButton extends UIIconButton {
                 allowDeletion: true,
             });
 
-            setupDialog.events.on("delete", async (deviceToDelete) => {
-                await api.Delete(this.store, "/api/device", deviceToDelete);
+            setupDialog.events.on("delete", async (device) => {
+                ws.request("DELETE api.device", { addr: device.server.addr });
             });
 
             setupDialog.events.on("submit", async (deviceToSubmit) => {
+                // TODO: Use `ws` here
                 await api.Put(this.store, "/api/device", deviceToSubmit);
             });
 
