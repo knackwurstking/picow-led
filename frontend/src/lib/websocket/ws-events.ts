@@ -6,10 +6,6 @@ export type WSEvents_Command = {
         request: null;
         response: WSEvents_Device[];
     };
-    "GET api.device": {
-        request: WSEvents_DeviceServer;
-        response: WSEvents_Device;
-    };
     "POST api.device": {
         request: WSEvents_Device;
         response: null;
@@ -53,9 +49,9 @@ export class WSEvents extends BaseWebSocketEvents {
         open: null;
         close: null;
         message: any;
-        "message-devices": WSEvents_Command["GET api.devices"]["response"];
+        "message-devices": WSEvents_Device[];
         "message-error": string;
-        "message-device": WSEvents_Command["GET api.device"]["response"];
+        "message-device": WSEvents_Device;
     }>;
 
     constructor() {
@@ -79,7 +75,7 @@ export class WSEvents extends BaseWebSocketEvents {
         if (!this.isOpen()) return;
         console.debug(`[ws] Send command: "GET api.devices"`, this.server);
 
-        // TODO: Adding more commands here
+        // TODO: Adding more commands here...
         switch (command) {
             case "GET api.devices":
                 const request: WSEvents_Request<"GET api.devices"> = {
@@ -88,8 +84,11 @@ export class WSEvents extends BaseWebSocketEvents {
                 };
                 this.ws.send(JSON.stringify(request));
                 break;
+            case "POST api.device":
+                // ...
+                break;
             default:
-                throw new Error(`unknown path ${command}`);
+                throw new Error(`unknown command ${command}`);
         }
     }
 
