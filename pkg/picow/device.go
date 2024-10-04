@@ -6,17 +6,19 @@ import (
 	"time"
 )
 
-type DeviceData_Server struct {
-	Name   string `json:"name"`
-	Addr   string `json:"addr"`
-	Online bool   `json:"online"`
-}
+type (
+	DeviceDataServer struct {
+		Name   string `json:"name"`
+		Addr   string `json:"addr"`
+		Online bool   `json:"online"`
+	}
 
-type DeviceData struct {
-	Server DeviceData_Server `json:"server"`
-	Pins   []uint            `json:"pins"`
-	Color  []uint            `json:"color"`
-}
+	DeviceData struct {
+		Server DeviceDataServer `json:"server"`
+		Pins   []uint           `json:"pins"`
+		Color  []uint           `json:"color"`
+	}
+)
 
 type Device struct {
 	socket    net.Conn   `json:"-"`
@@ -28,7 +30,7 @@ func (d *Device) Addr() string {
 	return d.data.Server.Addr
 }
 
-func (d *Device) SetColor(c []uint) error {
+func (d *Device) SetColor(c Color) error {
 	if !d.IsConnected() {
 		if err := d.Connect(); err != nil {
 			return err
@@ -36,9 +38,17 @@ func (d *Device) SetColor(c []uint) error {
 		defer d.Close()
 	}
 
-	// TODO: ...
+	req := &Request{
+		Type:    "set",
+		Group:   "led",
+		Command: "color",
+		Args:    c.StringArray(),
+		ID:      IDNoResponse,
+	}
 
-	return nil
+	data, _ := json.Marshal(req)
+	_, err := d.socket.Write(data)
+	return err
 }
 
 func (d *Device) MarshalJSON() ([]byte, error) {

@@ -116,8 +116,8 @@ func (r *Room) setApiDeviceColor(req *Request) {
 	}
 
 	var data struct {
-		Addr  string `json:"addr"`
-		Color []uint `json:"color"`
+		Addr  string      `json:"addr"`
+		Color picow.Color `json:"color"`
 	}
 
 	resp := &Response{}
