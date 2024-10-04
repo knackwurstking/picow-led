@@ -3,9 +3,11 @@ package ws
 import "encoding/json"
 
 const (
-	CommandGetApiDevices   = Command("GET api.devices")
-	CommandPostApiDevice   = Command("POST api.device")
-	CommandDeleteApiDevice = Command("DELETE api.device")
+	CommandGetApiDevices      = Command("GET api.devices")
+	CommandPostApiDevice      = Command("POST api.device")
+	CommandPutApiDevice       = Command("PUT api.device")
+	CommandDeleteApiDevice    = Command("DELETE api.device")
+	CommandPostApiDeviceColor = Command("POST api.device.color")
 )
 
 type Command string

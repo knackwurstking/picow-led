@@ -72,10 +72,16 @@ func (r *Room) Run() {
 				go r.getApiDevices(req)
 
 			case CommandPostApiDevice:
-				go r.postApiDeviceColor(req)
+				// TODO: ... go postApiDevice(req)
+
+			case CommandPutApiDevice:
+				// TODO: ... go postApiDevice(req)
 
 			case CommandDeleteApiDevice:
 				// TODO: ... go deleteApiDevice(req)
+
+			case CommandPostApiDeviceColor:
+				go r.postApiDeviceColor(req)
 			}
 
 		case resp := <-r.Broadcast:

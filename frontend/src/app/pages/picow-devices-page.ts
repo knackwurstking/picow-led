@@ -49,8 +49,8 @@ export default class PicowDevicesPage extends UIStackLayoutPage {
                     allowDeletion: false,
                 });
 
-                setupDialog.events.on("submit", async (deviceToSubmit) => {
-                    await api.Post(this.store, "/api/device", deviceToSubmit);
+                setupDialog.events.on("submit", async (device) => {
+                    ws.request("POST api.device", device);
                 });
 
                 setupDialog.open();

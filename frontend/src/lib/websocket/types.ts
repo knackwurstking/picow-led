@@ -1,5 +1,7 @@
 export type WSEvents_Command = {
     "GET api.devices": null;
+    "POST api.device": WSEvents_Device;
+    "PUT api.device": WSEvents_Device;
     "DELETE api.device": { addr: string };
     "POST api.device.color": { addr: string; color: number[] };
 };

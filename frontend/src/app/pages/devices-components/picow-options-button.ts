@@ -60,9 +60,8 @@ export default class PicowOptionsButton extends UIIconButton {
                 ws.request("DELETE api.device", { addr: device.server.addr });
             });
 
-            setupDialog.events.on("submit", async (deviceToSubmit) => {
-                // TODO: Use `ws` here
-                await api.Put(this.store, "/api/device", deviceToSubmit);
+            setupDialog.events.on("submit", async (device) => {
+                ws.request("PUT api.device", device);
             });
 
             setupDialog.open();
