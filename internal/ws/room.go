@@ -121,8 +121,9 @@ func (r *Room) postApiDevice(req *Request) {
 		return
 	}
 
-	// Parse request data
 	resp := &Response{}
+
+	// Parse request data
 	deviceData := picow.DeviceData{}
 	if err := json.Unmarshal([]byte(req.Data), &deviceData); err != nil {
 		resp.SetError(err)
@@ -158,8 +159,9 @@ func (r *Room) putApiDevice(req *Request) {
 		return
 	}
 
-	// Parse request data
 	resp := &Response{}
+
+	// Parse request data
 	deviceData := picow.DeviceData{}
 	if err := json.Unmarshal([]byte(req.Data), &deviceData); err != nil {
 		resp.SetError(err)
@@ -226,7 +228,10 @@ func (r *Room) deleteApiDevice(req *Request) {
 	}
 
 	// Do stuff here
-	r.Api.Devices.Delete(device)
+	if ok := r.Api.Devices.Delete(device); !ok {
+		// Nothing to delete it seems
+		return
+	}
 
 	// Handle response/broadcast
 	resp.Set(ResponseTypeDevices, r.Api.Devices)
@@ -234,15 +239,56 @@ func (r *Room) deleteApiDevice(req *Request) {
 }
 
 func (r *Room) postApiDevicePins(req *Request) {
-	// TODO: ...
+	if req.Data == "" {
+		return
+	}
+
+	resp := &Response{}
 
 	// Parse request data
+	var reqData struct {
+		Addr string     `json:"addr"`
+		Pins picow.Pins `json:"pins"`
+	}
+
+	if err := json.Unmarshal([]byte(req.Data), &reqData); err != nil {
+		resp.SetError(err)
+		req.Client.Response <- resp
+		return
+	}
 
 	// Checks
+	if reqData.Pins == nil {
+		resp.SetError(
+			fmt.Errorf("pins missing for %s", reqData.Addr),
+		)
+		req.Client.Response <- resp
+		return
+	}
 
 	// Do stuff here
+	for _, d := range r.Api.Devices {
+		if d.Addr() != reqData.Addr {
+			continue
+		}
+
+		if err := d.SetPins(reqData.Pins); err != nil {
+			resp.SetError(err)
+		} else {
+			resp.Set(ResponseTypeDevice, d)
+		}
+	}
 
 	// Handle response/broadcast
+	if resp.Type == "" {
+		resp.SetError(
+			fmt.Errorf("device %s not found", reqData.Addr),
+		)
+		req.Client.Response <- resp
+		return
+	}
+
+	r.Broadcast <- resp
 }
 
 func (r *Room) postApiDeviceColor(req *Request) {
@@ -264,7 +310,16 @@ func (r *Room) postApiDeviceColor(req *Request) {
 		return
 	}
 
-	// Checks & Do stuff here
+	// Checks
+	if reqData.Color == nil {
+		resp.SetError(
+			fmt.Errorf("color missing for %s", reqData.Addr),
+		)
+		req.Client.Response <- resp
+		return
+	}
+
+	// Do stuff here
 	for _, d := range r.Api.Devices {
 		if d.Addr() != reqData.Addr {
 			continue
@@ -279,7 +334,12 @@ func (r *Room) postApiDeviceColor(req *Request) {
 
 	// Handle response/broadcast
 	if resp.Type == "" {
-		resp.SetError(fmt.Errorf("device %s not found", reqData.Addr))
+		resp.SetError(
+			fmt.Errorf("device %s not found", reqData.Addr),
+		)
+		req.Client.Response <- resp
+		return
 	}
+
 	r.Broadcast <- resp
 }
