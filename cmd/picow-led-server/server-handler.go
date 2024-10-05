@@ -20,7 +20,6 @@ func (*serverHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	crw.Header().Set("Access-Control-Allow-Origin", "*")
-	crw.Header().Set("Content-Type", "text/plain")
 	http.DefaultServeMux.ServeHTTP(crw, r)
 
 	log := slog.Warn
