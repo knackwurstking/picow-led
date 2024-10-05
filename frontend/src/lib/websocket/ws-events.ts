@@ -52,8 +52,8 @@ export class WSEvents extends BaseWebSocketEvents {
             case "POST api.device":
             case "PUT api.device":
             case "DELETE api.device":
-            case "POST api.device.color":
             case "POST api.device.pins":
+            case "POST api.device.color":
                 this.ws.send(JSON.stringify(request));
                 break;
 
