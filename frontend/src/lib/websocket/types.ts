@@ -7,6 +7,11 @@ export type WSEvents_Command = {
     "POST api.device.color": { addr: string; color: number[] };
 };
 
+export interface WSEvents_Request {
+    command: string;
+    data: string; // NOTE: JSON string
+}
+
 export type WSEvents_Response =
     | {
           data: string;
@@ -27,19 +32,14 @@ export interface WSEvents_Server {
     port: string;
 }
 
-export interface WSEvents_DeviceServer {
-    name?: string;
-    addr: string;
-    online?: boolean;
-}
-
 export interface WSEvents_Device {
     server: WSEvents_DeviceServer;
     pins?: number[];
     color?: number[];
 }
 
-export interface WSEvents_Request {
-    command: string;
-    data: string; // NOTE: JSON string
+export interface WSEvents_DeviceServer {
+    name?: string;
+    addr: string;
+    online?: boolean;
 }
