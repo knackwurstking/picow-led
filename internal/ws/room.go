@@ -72,10 +72,10 @@ func (r *Room) Run() {
 				go r.getApiDevices(req)
 
 			case CommandPostApiDevice:
-				// TODO: ... go postApiDevice(req)
+				go r.postApiDevice(req)
 
 			case CommandPutApiDevice:
-				// TODO: ... go postApiDevice(req)
+				// TODO: ... go putApiDevice(req)
 
 			case CommandDeleteApiDevice:
 				// TODO: ... go deleteApiDevice(req)
@@ -116,6 +116,26 @@ func (r *Room) getApiDevices(req *Request) {
 		Type: ResponseTypeDevices,
 		Data: r.Api.Devices,
 	}
+}
+
+func (r *Room) postApiDevice(req *Request) {
+	if req.Data == "" {
+		return
+	}
+
+	resp := &Response{}
+	deviceData := picow.DeviceData{}
+	if err := json.Unmarshal([]byte(req.Data), &deviceData); err != nil {
+		resp.SetError(err)
+		req.Client.Response <- resp
+		return
+	}
+
+	device := picow.NewDevice(deviceData)
+	r.Api.Devices = append(r.Api.Devices, device)
+
+	resp.Set(ResponseTypeDevices, r.Api.Devices)
+	r.Broadcast <- resp
 }
 
 func (r *Room) postApiDeviceColor(req *Request) {
