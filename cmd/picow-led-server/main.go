@@ -97,11 +97,11 @@ func runCommand(cmd *cli.Command) error {
 
 	// Init static file server
 	public := frontend.GetFS()
-	http.Handle("/", http.FileServerFS(public))
+	http.Handle("GET /", http.FileServerFS(public))
 
 	// Init websocket handler
 	room := ws.NewRoom(api)
-	http.Handle("/ws", room)
+	http.Handle("GET /ws", room)
 
 	go room.Run()
 
