@@ -12,7 +12,7 @@ var devicesMutex = &sync.Mutex{}
 
 type Devices []*Device
 
-func (d *Devices) Delete(device *Device) {
+func (d *Devices) Delete(device *Device) (ok bool) {
 	devicesMutex.Lock()
 	defer devicesMutex.Unlock()
 
@@ -20,9 +20,13 @@ func (d *Devices) Delete(device *Device) {
 	for _, d := range *d {
 		if d.Addr() != device.Addr() {
 			newDevices = append(newDevices, d)
+		} else {
+			ok = true
 		}
 	}
 	*d = newDevices
+
+	return ok
 }
 
 type Api struct {
