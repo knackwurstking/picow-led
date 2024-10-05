@@ -5,10 +5,28 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sync"
 )
 
+var devicesMutex = &sync.Mutex{}
+
+type Devices []*Device
+
+func (d *Devices) Delete(device *Device) {
+	devicesMutex.Lock()
+	defer devicesMutex.Unlock()
+
+	newDevices := make([]*Device, 0)
+	for _, d := range *d {
+		if d.Addr() != device.Addr() {
+			newDevices = append(newDevices, d)
+		}
+	}
+	*d = newDevices
+}
+
 type Api struct {
-	Devices []*Device `json:"devices"`
+	Devices Devices `json:"devices"`
 }
 
 func NewApi() *Api {
