@@ -3,7 +3,7 @@ Description=PicoW LED server for handling microcontroller devices
 After=network.target
 
 [Service]
-ExecStart=picow-led-server -d -p 50834 -c $HOME/.config/picow-led-server/api.json
+ExecStart=picow-led-server -d -c $HOME/.config/picow-led-server/api.json
 
 [Install]
 WantedBy=default.target
