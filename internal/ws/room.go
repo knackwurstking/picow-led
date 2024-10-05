@@ -168,9 +168,28 @@ func (r *Room) putApiDevice(req *Request) {
 	}
 
 	// Checks
-	// TODO: Check if device exists, set error if false, update if true
+	var device *picow.Device
+
+	for _, d := range r.Api.Devices {
+		if d.Addr() == deviceData.Server.Addr {
+			device = d
+			break
+		}
+	}
+
+	if device == nil {
+		resp.SetError(
+			fmt.Errorf(
+				"device does not exist, use \"%s\" command",
+				CommandPostApiDevice,
+			),
+		)
+		req.Client.Response <- resp
+		return
+	}
 
 	// Do stuff here
+	device.SetData(deviceData)
 
 	// Handle response/broadcast
 	resp.Set(ResponseTypeDevice, device)
