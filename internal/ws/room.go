@@ -67,16 +67,17 @@ func (r *Room) Run() {
 			)
 
 		case req := <-r.Handle:
-			// TODO: Missing command: "POST api.device.pins"
 			switch req.Command {
 			case CommandGetApiDevices:
 				go r.getApiDevices(req)
 			case CommandPostApiDevice:
 				go r.postApiDevice(req)
 			case CommandPutApiDevice:
-				// TODO: ... go putApiDevice(req)
+				go r.putApiDevice(req)
 			case CommandDeleteApiDevice:
-				// TODO: ... go deleteApiDevice(req)
+				go r.deleteApiDevice(req)
+			case CommandPostApiDevicePins:
+				go r.postApiDevicePins(req)
 			case CommandPostApiDeviceColor:
 				go r.postApiDeviceColor(req)
 			}
@@ -133,6 +134,18 @@ func (r *Room) postApiDevice(req *Request) {
 
 	resp.Set(ResponseTypeDevices, r.Api.Devices)
 	r.Broadcast <- resp
+}
+
+func (r *Room) putApiDevice(req *Request) {
+	// TODO: ...
+}
+
+func (r *Room) deleteApiDevice(req *Request) {
+	// TODO: ...
+}
+
+func (r *Room) postApiDevicePins(req *Request) {
+	// TODO: ...
 }
 
 func (r *Room) postApiDeviceColor(req *Request) {
