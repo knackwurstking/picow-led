@@ -28,18 +28,22 @@ type Device struct {
 }
 
 func NewDevice(data DeviceData) *Device {
-	d := &Device{
-		data: data,
-	}
-
-	// TODO: Set color and pins to device, ignore any error?
-	_ = d.SetColor(d.data.Color)
-
+	d := &Device{}
+	d.SetData(data)
 	return d
 }
 
 func (d *Device) Addr() string {
 	return d.data.Server.Addr
+}
+
+func (d *Device) SetData(data DeviceData) {
+	d.data = data
+
+	// Set color and pins to device, ignore any error?
+	_ = d.SetColor(d.data.Color)
+
+	// TODO: Set pins
 }
 
 func (d *Device) SetColor(c Color) error {
