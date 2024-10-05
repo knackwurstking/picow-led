@@ -5,6 +5,7 @@ import "net/http"
 type serverResponseWriter struct {
 	http.ResponseWriter
 	http.Hijacker
+
 	status int
 }
 

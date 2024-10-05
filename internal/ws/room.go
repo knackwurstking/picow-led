@@ -24,21 +24,22 @@ var upgrader = &websocket.Upgrader{
 
 type Room struct {
 	Api       *picow.Api
-	clients   map[*Client]bool
 	Join      chan *Client
 	Leave     chan *Client
 	Handle    chan *Request
 	Broadcast chan *Response
+
+	clients map[*Client]bool
 }
 
 func NewRoom(api *picow.Api) *Room {
 	return &Room{
 		Api:       api,
-		clients:   make(map[*Client]bool),
 		Join:      make(chan *Client),
 		Leave:     make(chan *Client),
 		Handle:    make(chan *Request),
 		Broadcast: make(chan *Response),
+		clients:   make(map[*Client]bool),
 	}
 }
 
@@ -66,20 +67,16 @@ func (r *Room) Run() {
 			)
 
 		case req := <-r.Handle:
+			// TODO: Missing command: "POST api.device.pins"
 			switch req.Command {
-
 			case CommandGetApiDevices:
 				go r.getApiDevices(req)
-
 			case CommandPostApiDevice:
 				go r.postApiDevice(req)
-
 			case CommandPutApiDevice:
 				// TODO: ... go putApiDevice(req)
-
 			case CommandDeleteApiDevice:
 				// TODO: ... go deleteApiDevice(req)
-
 			case CommandPostApiDeviceColor:
 				go r.postApiDeviceColor(req)
 			}
