@@ -44,8 +44,13 @@ func (d *Device) SetData(data DeviceData) {
 	d.data = data
 
 	// Set color and pins to device, ignore any error?
-	_ = d.SetPins(d.data.Pins)
-	_ = d.SetColor(d.data.Color)
+	if d.data.Pins != nil {
+		_ = d.SetPins(d.data.Pins)
+	}
+
+	if d.data.Color != nil {
+		_ = d.SetColor(d.data.Color)
+	}
 }
 
 func (d *Device) SetPins(p Pins) error {
