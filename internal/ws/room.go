@@ -121,6 +121,7 @@ func (r *Room) postApiDevice(req *Request) {
 		return
 	}
 
+	// Parse request data
 	resp := &Response{}
 	deviceData := picow.DeviceData{}
 	if err := json.Unmarshal([]byte(req.Data), &deviceData); err != nil {
@@ -129,15 +130,51 @@ func (r *Room) postApiDevice(req *Request) {
 		return
 	}
 
+	// Checks
+	for _, d := range r.Api.Devices {
+		if d.Addr() == deviceData.Server.Addr {
+			resp.SetError(
+				fmt.Errorf(
+					"device already exists, use \"%s\" command",
+					CommandPutApiDevice,
+				),
+			)
+			req.Client.Response <- resp
+			return
+		}
+	}
+
+	// Do stuff here
 	device := picow.NewDevice(deviceData)
 	r.Api.Devices = append(r.Api.Devices, device)
 
+	// Handle response/broadcast
 	resp.Set(ResponseTypeDevices, r.Api.Devices)
 	r.Broadcast <- resp
 }
 
 func (r *Room) putApiDevice(req *Request) {
-	// TODO: ...
+	if req.Data == "" {
+		return
+	}
+
+	// Parse request data
+	resp := &Response{}
+	deviceData := picow.DeviceData{}
+	if err := json.Unmarshal([]byte(req.Data), &deviceData); err != nil {
+		resp.SetError(err)
+		req.Client.Response <- resp
+		return
+	}
+
+	// Checks
+	// TODO: Check if device exists, set error if false, update if true
+
+	// Do stuff here
+
+	// Handle response/broadcast
+	resp.Set(ResponseTypeDevice, device)
+	r.Broadcast <- resp
 }
 
 func (r *Room) deleteApiDevice(req *Request) {
@@ -153,12 +190,12 @@ func (r *Room) postApiDeviceColor(req *Request) {
 		return
 	}
 
+	// Parse request data
+	resp := &Response{}
 	var data struct {
 		Addr  string      `json:"addr"`
 		Color picow.Color `json:"color"`
 	}
-
-	resp := &Response{}
 
 	if err := json.Unmarshal([]byte(req.Data), &data); err != nil {
 		resp.SetError(err)
@@ -166,6 +203,7 @@ func (r *Room) postApiDeviceColor(req *Request) {
 		return
 	}
 
+	// Checks & Do stuff here
 	for _, d := range r.Api.Devices {
 		if d.Addr() != data.Addr {
 			continue
@@ -178,6 +216,7 @@ func (r *Room) postApiDeviceColor(req *Request) {
 		}
 	}
 
+	// Handle response/broadcast
 	if resp.Type == "" {
 		resp.SetError(fmt.Errorf("device %s not found", data.Addr))
 	}
