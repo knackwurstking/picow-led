@@ -42,19 +42,18 @@ export class WSEvents extends BaseWebSocketEvents {
             data,
         });
 
-        let request: WSEvents_Request;
+        let request: WSEvents_Request = {
+            command: command,
+            data: data === null ? null : JSON.stringify(data),
+        };
+
         switch (command) {
             case "GET api.devices":
-                request = {
-                    command: command,
-                    data: null,
-                };
                 this.ws.send(JSON.stringify(request));
                 break;
 
             case "POST api.device":
-                // TODO: ...
-
+                this.ws.send(JSON.stringify(request));
                 break;
 
             case "PUT api.device":
@@ -68,10 +67,6 @@ export class WSEvents extends BaseWebSocketEvents {
                 break;
 
             case "POST api.device.color":
-                request = {
-                    command: command,
-                    data: JSON.stringify(data),
-                };
                 this.ws.send(JSON.stringify(request));
                 break;
 
