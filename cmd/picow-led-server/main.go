@@ -89,6 +89,7 @@ func runCommand(cmd *cli.Command) error {
 	api := picow.NewApi()
 
 	if flags.config != "" {
+		slog.Debug("Try to load configuration", "path", flags.config)
 		if err := api.LoadFromPath(flags.config); err != nil {
 			slog.Warn("Loading api configuration failed", "error", err)
 		}
