@@ -27,6 +27,17 @@ type Device struct {
 	connected bool       `json:"-"`
 }
 
+func NewDevice(data DeviceData) *Device {
+	d := &Device{
+		data: data,
+	}
+
+	// TODO: Set color and pins to device, ignore any error?
+	_ = d.SetColor(d.data.Color)
+
+	return d
+}
+
 func (d *Device) Addr() string {
 	return d.data.Server.Addr
 }
