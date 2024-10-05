@@ -3,6 +3,7 @@ export type WSEvents_Command = {
     "POST api.device": WSEvents_Device;
     "PUT api.device": WSEvents_Device;
     "DELETE api.device": { addr: string };
+    "POST api.device.pins": { addr: string; pins: number[] };
     "POST api.device.color": { addr: string; color: number[] };
 };
 
