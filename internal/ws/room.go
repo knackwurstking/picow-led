@@ -198,10 +198,26 @@ func (r *Room) putApiDevice(req *Request) {
 
 func (r *Room) deleteApiDevice(req *Request) {
 	// TODO: ...
+
+	// Parse request data
+
+	// Checks
+
+	// Do stuff here
+
+	// Handle response/broadcast
 }
 
 func (r *Room) postApiDevicePins(req *Request) {
 	// TODO: ...
+
+	// Parse request data
+
+	// Checks
+
+	// Do stuff here
+
+	// Handle response/broadcast
 }
 
 func (r *Room) postApiDeviceColor(req *Request) {
