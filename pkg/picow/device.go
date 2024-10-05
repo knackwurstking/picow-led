@@ -21,6 +21,9 @@ type (
 	}
 )
 
+// NOTE: No error check on "SetPins" and "SetColor" methods, picow server id set to -1
+//
+// TODO: Missing "GetPins" and "GetColor" methods
 type Device struct {
 	socket    net.Conn   `json:"-"`
 	data      DeviceData `json:"-"`
@@ -41,12 +44,48 @@ func (d *Device) SetData(data DeviceData) {
 	d.data = data
 
 	// Set color and pins to device, ignore any error?
+	_ = d.SetPins(d.data.Pins)
 	_ = d.SetColor(d.data.Color)
+}
 
-	// TODO: Set pins
+func (d *Device) SetPins(p Pins) error {
+	if p == nil {
+		panic("pins should not be nil")
+	}
+
+	if !d.IsConnected() {
+		if err := d.Connect(); err != nil {
+			return err
+		}
+		defer d.Close()
+	}
+
+	slog.Debug("Set device pins",
+		"device.address", d.socket.RemoteAddr(),
+		"pins", p,
+	)
+
+	req := &Request{
+		Type:    "set",
+		Group:   "config",
+		Command: "led",
+		Args:    p.StringArray(),
+		ID:      IDNoResponse,
+	}
+
+	data, _ := json.Marshal(req)
+	_, err := d.socket.Write(data)
+	if err == nil {
+		d.data.Pins = p
+	}
+	return err
 }
 
 func (d *Device) SetColor(c Color) error {
+	if c == nil {
+		panic("color should not be nil")
+	}
+
 	if !d.IsConnected() {
 		if err := d.Connect(); err != nil {
 			return err
@@ -72,7 +111,6 @@ func (d *Device) SetColor(c Color) error {
 	if err == nil {
 		d.data.Color = c
 	}
-
 	return err
 }
 
@@ -92,7 +130,11 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	// TODO: Set device "pins"
+	if d.data.Pins != nil {
+		if err := d.SetPins(d.data.Pins); err != nil {
+			return err
+		}
+	}
 
 	if d.data.Color != nil {
 		if err := d.SetColor(d.data.Color); err != nil {
