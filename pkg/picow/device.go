@@ -73,7 +73,17 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	// TODO: Set device "pins" and "color"
+	if d.data.Server.Addr == "" {
+		return nil
+	}
+
+	// TODO: Set device "pins"
+
+	if d.data.Color != nil {
+		if err := d.SetColor(d.data.Color); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
@@ -86,6 +96,7 @@ func (d *Device) Connect() error {
 	dialer := net.Dialer{
 		Timeout: time.Duration(time.Second * 5),
 	}
+
 	conn, err := dialer.Dial("tcp", d.data.Server.Addr)
 	if err != nil {
 		d.data.Server.Online = false
