@@ -58,18 +58,15 @@ func (c *Client) Write() {
 	for resp := range c.Response {
 		data, err := json.Marshal(resp)
 		if err != nil {
-			slog.Warn(
-				"Marshal response failed",
+			slog.Warn("Marshal response failed",
 				"client.address", c.Socket.RemoteAddr(),
-				"error", err,
-			)
+				"error", err)
+
 			resp.SetError(err)
 			data, _ = json.Marshal(resp)
 		}
 
-		if err := c.Socket.WriteMessage(
-			websocket.TextMessage, data,
-		); err != nil {
+		if err := c.Socket.WriteMessage(websocket.TextMessage, data); err != nil {
 			return
 		}
 	}
