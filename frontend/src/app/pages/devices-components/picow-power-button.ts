@@ -84,10 +84,13 @@ export default class PicowPowerButton extends UIIconButton {
             this.picow.state = "pending";
 
             try {
-                // TODO: Using the (stored) device color here
-                const color: number[] = this.picow.isOn()
-                    ? this.device.color.map(() => 0)
-                    : [255, 255, 255, 255];
+                const color: number[] =
+                    this.store.ui.get("devicesColor")[
+                        this.device.server.addr
+                    ] ||
+                    (this.picow.isOn()
+                        ? this.device.color.map(() => 0)
+                        : [255, 255, 255, 255]);
 
                 await ws.request("POST api.device.color", {
                     addr: this.device.server.addr,

@@ -57,8 +57,12 @@ async function main() {
     // ---------------- //
 
     const store = el.querySelector<PicowStore>(`ui-store`);
-    store.ui.set("devices", [], true);
+
     store.ui.set("currentPage", null, true);
+    store.ui.set("devices", [], true);
+
+    store.ui.set("devicesColor", {}, true);
+
     store.ui.set(
         "server",
         {
