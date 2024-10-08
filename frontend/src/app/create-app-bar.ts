@@ -1,6 +1,16 @@
 import { plus as svgAdd, menu as svgMenu } from "ui/svg/smoothie-line-icons";
 
-import { Events, UIAppBar, UIAppBarItem, UIIconButton, html } from "ui";
+import {
+    Events,
+    UIAppBar,
+    UIAppBarItem,
+    UIIconButton,
+    UISecondary,
+    html,
+} from "ui";
+import type StatusLED from "../components/status-led";
+import ws from "../lib/websocket";
+import { styles } from "ui";
 
 export interface AppBar {
     element: import("ui").UIAppBar;
@@ -31,6 +41,13 @@ export default async function (): Promise<AppBar> {
             <ui-icon-button ghost> ${svgMenu} </ui-icon-button>
         </ui-app-bar-item>
 
+        <ui-app-bar-item name="status" slot="left">
+            <ui-flex-grid-row align="flex-end" gap="0.25rem">
+                <status-led></status-led>
+                <ui-secondary style="white-space: nowrap;"></ui-secondary>
+            </ui-flex-grid-row>
+        </ui-app-bar-item>
+
         <ui-app-bar-item name="title" slot="center">
             <h4 style="white-space: nowrap;">PicoW LED</h4>
         </ui-app-bar-item>
@@ -42,6 +59,10 @@ export default async function (): Promise<AppBar> {
 
     const events = new Events<AppBar_Events>();
 
+    //
+    // Left Slot: Menu
+    //
+
     const menu = el.querySelector<UIAppBarItem<UIIconButton>>(
         `ui-app-bar-item[name="menu"]`
     );
@@ -50,9 +71,41 @@ export default async function (): Promise<AppBar> {
         events.dispatch("menu", ev);
     });
 
+    //
+    // Left Slot: Status
+    //
+
+    {
+        const status = el.querySelector<UIAppBarItem<HTMLDivElement>>(
+            `ui-app-bar-item[name="status"]`
+        );
+
+        const led = status.ui.child.querySelector<StatusLED>("status-led");
+        const statusText =
+            status.ui.child.querySelector<UISecondary>(`ui-secondary`);
+
+        ws.events.on("open", () => {
+            led.setAttribute("active", "");
+            statusText.innerText = "Online";
+        });
+
+        ws.events.on("close", () => {
+            led.removeAttribute("active");
+            statusText.innerText = "Offline";
+        });
+    }
+
+    //
+    // Center Slot: Title
+    //
+
     const title = el.querySelector<UIAppBarItem<HTMLElement>>(
         `ui-app-bar-item[name="title"]`
     );
+
+    //
+    // Right Slot: Add
+    //
 
     const add = el.querySelector<UIAppBarItem<UIIconButton>>(
         `ui-app-bar-item[name="add"]`
