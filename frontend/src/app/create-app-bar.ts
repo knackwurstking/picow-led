@@ -10,7 +10,6 @@ import {
 } from "ui";
 import type StatusLED from "../components/status-led";
 import ws from "../lib/websocket";
-import { styles } from "ui";
 
 export interface AppBar {
     element: import("ui").UIAppBar;
