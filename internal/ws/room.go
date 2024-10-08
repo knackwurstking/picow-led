@@ -29,17 +29,21 @@ type Room struct {
 	Handle    chan *Request
 	Broadcast chan *Response
 
+	// OnApiChange will trigger every time api data changed, excluded color changes
+	OnApiChange func(a *picow.Api)
+
 	clients map[*Client]bool
 }
 
 func NewRoom(api *picow.Api) *Room {
 	return &Room{
-		Api:       api,
-		Join:      make(chan *Client),
-		Leave:     make(chan *Client),
-		Handle:    make(chan *Request),
-		Broadcast: make(chan *Response),
-		clients:   make(map[*Client]bool),
+		Api:         api,
+		Join:        make(chan *Client),
+		Leave:       make(chan *Client),
+		Handle:      make(chan *Request),
+		Broadcast:   make(chan *Response),
+		OnApiChange: nil,
+		clients:     make(map[*Client]bool),
 	}
 }
 
@@ -152,6 +156,10 @@ func (r *Room) postApiDevice(req *Request) {
 	// Handle response/broadcast
 	resp.Set(ResponseTypeDevices, r.Api.Devices)
 	r.Broadcast <- resp
+
+	if r.OnApiChange != nil {
+		go r.OnApiChange(r.Api)
+	}
 }
 
 func (r *Room) putApiDevice(req *Request) {
@@ -196,6 +204,10 @@ func (r *Room) putApiDevice(req *Request) {
 	// Handle response/broadcast
 	resp.Set(ResponseTypeDevice, device)
 	r.Broadcast <- resp
+
+	if r.OnApiChange != nil {
+		go r.OnApiChange(r.Api)
+	}
 }
 
 func (r *Room) deleteApiDevice(req *Request) {
@@ -236,6 +248,10 @@ func (r *Room) deleteApiDevice(req *Request) {
 	// Handle response/broadcast
 	resp.Set(ResponseTypeDevices, r.Api.Devices)
 	r.Broadcast <- resp
+
+	if r.OnApiChange != nil {
+		go r.OnApiChange(r.Api)
+	}
 }
 
 func (r *Room) postApiDevicePins(req *Request) {
@@ -287,8 +303,11 @@ func (r *Room) postApiDevicePins(req *Request) {
 		req.Client.Response <- resp
 		return
 	}
-
 	r.Broadcast <- resp
+
+	if r.OnApiChange != nil {
+		go r.OnApiChange(r.Api)
+	}
 }
 
 func (r *Room) postApiDeviceColor(req *Request) {
