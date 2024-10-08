@@ -194,6 +194,7 @@ export default class PicowDeviceItem extends HTMLElement {
                 if (this.device.color.filter((c) => c > 0).length > 0) {
                     this.store.ui.update("devicesColor", (data) => {
                         data[this.device.server.addr] = this.device.color;
+                        return data;
                     });
                 }
             })
