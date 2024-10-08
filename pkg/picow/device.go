@@ -66,19 +66,20 @@ func (d *Device) GetPins() (Pins, error) {
 		defer d.Close()
 	}
 
-	slog.Debug("Get device pins", "device.address", d.socket.RemoteAddr())
+	slog.Debug("Get device pins", "device.address", d.Addr())
 
 	req := &Request{
 		Type:    "get",
 		Group:   "config",
 		Command: "led",
-		Args:    nil,
+		Args:    make([]string, 0),
 		ID:      ID(0),
 	}
 
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	data, _ := json.Marshal(req)
+	data = append(data, EndByte...)
 	_, err := d.socket.Write(data)
 	if err != nil {
 		return nil, err
@@ -112,10 +113,7 @@ func (d *Device) SetPins(p Pins) error {
 		defer d.Close()
 	}
 
-	slog.Debug("Set device pins",
-		"device.address", d.socket.RemoteAddr(),
-		"pins", p,
-	)
+	slog.Debug("Set device pins", "device.address", d.Addr(), "pins", p)
 
 	req := &Request{
 		Type:    "set",
@@ -128,6 +126,7 @@ func (d *Device) SetPins(p Pins) error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	data, _ := json.Marshal(req)
+	data = append(data, EndByte...)
 	_, err := d.socket.Write(data)
 	if err == nil {
 		d.data.Pins = p
@@ -143,19 +142,20 @@ func (d *Device) GetColor() (Color, error) {
 		defer d.Close()
 	}
 
-	slog.Debug("Get device color", "device.address", d.socket.RemoteAddr())
+	slog.Debug("Get device color", "device.address", d.Addr())
 
 	req := &Request{
 		Type:    "get",
 		Group:   "led",
 		Command: "color",
-		Args:    nil,
+		Args:    make([]string, 0),
 		ID:      ID(0),
 	}
 
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	data, _ := json.Marshal(req)
+	data = append(data, EndByte...)
 	_, err := d.socket.Write(data)
 	if err != nil {
 		return nil, err
@@ -190,9 +190,7 @@ func (d *Device) SetColor(c Color) error {
 	}
 
 	slog.Debug("Set device color",
-		"device.address", d.socket.RemoteAddr(),
-		"color", c,
-	)
+		"device.address", d.Addr(), "color", c)
 
 	req := &Request{
 		Type:    "set",
@@ -205,6 +203,7 @@ func (d *Device) SetColor(c Color) error {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 	data, _ := json.Marshal(req)
+	data = append(data, EndByte...)
 	_, err := d.socket.Write(data)
 	if err == nil {
 		d.data.Color = c
@@ -241,6 +240,8 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		if err != nil {
 			return err
 		}
+		slog.Debug("Store device pins",
+			"device.address", d.Addr(), "pins", pins)
 		d.data.Pins = pins
 	}
 
@@ -253,6 +254,8 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		if err != nil {
 			return err
 		}
+		slog.Debug("Store device color",
+			"device.address", d.Addr(), "color", color)
 		d.data.Color = color
 	}
 
