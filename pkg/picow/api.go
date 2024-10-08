@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"sync"
 )
 
@@ -53,6 +54,7 @@ func (a *Api) LoadFromPath(path string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 
 	data, err := io.ReadAll(f)
 	if err != nil {
@@ -63,9 +65,27 @@ func (a *Api) LoadFromPath(path string) error {
 }
 
 func (a *Api) SaveToPath(path string) error {
-	// TODO: Create dirs to path, strip last index "/" (file name)
+	dir, _ := filepath.Split(path)
+	if err := os.MkdirAll(dir, os.FileMode(0700)); err != nil {
+		return err
+	}
 
-	// TODO: Marshal data and write to file
+	data, err := json.Marshal(a)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.OpenFile(path, os.O_WRONLY, os.FileMode(0644))
+	if err != nil {
+		return err
+	}
+
+	n, err := f.Write(data)
+	if err != nil {
+		return err
+	} else if n == 0 {
+		return fmt.Errorf("nothing written to %s", path)
+	}
 
 	return nil
 }
