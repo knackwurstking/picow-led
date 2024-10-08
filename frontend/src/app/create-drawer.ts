@@ -1,8 +1,6 @@
 import "../components/status-led";
 
-import { UIButton, UIDrawer, UILabel, html } from "ui";
-import type StatusLED from "../components/status-led";
-import ws from "../lib/websocket";
+import { UIButton, UIDrawer, html } from "ui";
 import type { PicowStackLayout } from "../types";
 
 export interface Drawer {
@@ -18,14 +16,6 @@ export default async function (): Promise<Drawer> {
     const el = new UIDrawer();
 
     el.innerHTML = html`
-        <ui-drawer-group nofold>
-            <ui-drawer-group-item style="column">
-                <ui-label name="/ws" style="width: 100%;">
-                    <status-led name="/ws"></status-led>
-                </ui-label>
-            </ui-drawer-group-item>
-        </ui-drawer-group>
-
         <ui-drawer-group nofold>
             <ui-drawer-group-item>
                 <ui-button
@@ -102,26 +92,6 @@ export default async function (): Promise<Drawer> {
         stackLayout.ui.set("settings");
         el.ui.open = false;
     });
-
-    // -------------------------------------------- //
-    // Setup "/ws" event handler for the status led //
-    // -------------------------------------------- //
-
-    {
-        const statusLED = el.querySelector<StatusLED>(`status-led[name="/ws"]`);
-
-        const label = el.querySelector<UILabel>(`ui-label[name="/ws"]`);
-        label.ui.primary = ws.path;
-        label.ui.secondary = ws.origin;
-
-        ws.events.on("server", async () => {
-            label.ui.primary = ws.path;
-            label.ui.secondary = ws.origin;
-        });
-
-        ws.events.on("close", () => statusLED.removeAttribute("active"));
-        ws.events.on("open", () => statusLED.setAttribute("active", ""));
-    }
 
     return {
         element: el,
