@@ -187,6 +187,15 @@ export default class PicowDeviceItem extends HTMLElement {
             ws.events.on("message-device", (data) => {
                 if (data.server.addr !== this.device.server.addr) return;
                 this.picow.set(data);
+
+                if (!this.device.color) return;
+
+                // Only update "devicesColor" store if color is not 0
+                if (this.device.color.filter((c) => c > 0).length > 0) {
+                    this.store.ui.update("devicesColor", (data) => {
+                        data[this.device.server.addr] = this.device.color;
+                    });
+                }
             })
         );
     }
