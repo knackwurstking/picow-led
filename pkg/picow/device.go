@@ -292,9 +292,9 @@ func (d *Device) readAllDataWithTimeout() ([]byte, error) {
 
 	for {
 		if n, err = d.socket.Read(b); err != nil {
-			return nil, err
+			return data, err
 		} else if n == 0 {
-			return nil, fmt.Errorf("no data from %s", d.Addr())
+			return data, fmt.Errorf("no data from %s", d.Addr())
 		} else {
 			if bytes.Equal(b, EndByte) {
 				break
