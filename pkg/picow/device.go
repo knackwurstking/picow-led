@@ -236,12 +236,24 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		if err := d.SetPins(d.data.Pins); err != nil {
 			return err
 		}
+	} else {
+		pins, err := d.GetPins()
+		if err != nil {
+			return err
+		}
+		d.data.Pins = pins
 	}
 
 	if d.data.Color != nil {
 		if err := d.SetColor(d.data.Color); err != nil {
 			return err
 		}
+	} else {
+		color, err := d.GetColor()
+		if err != nil {
+			return err
+		}
+		d.data.Color = color
 	}
 
 	return nil
