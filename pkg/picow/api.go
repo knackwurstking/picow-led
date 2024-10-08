@@ -70,7 +70,7 @@ func (a *Api) SaveToPath(path string) error {
 		return err
 	}
 
-	data, err := json.Marshal(a)
+	data, err := json.MarshalIndent(a, "", "\t")
 	if err != nil {
 		return err
 	}

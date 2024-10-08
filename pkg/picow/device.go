@@ -122,7 +122,7 @@ func (d *Device) SetColor(c Color) error {
 func (d *Device) MarshalJSON() ([]byte, error) {
 	// TODO: Get "pins" and "color" from server
 
-	return json.Marshal(d.data)
+	return json.MarshalIndent(d.data, "", "\t")
 }
 
 func (d *Device) UnmarshalJSON(data []byte) error {
