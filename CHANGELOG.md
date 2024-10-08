@@ -9,7 +9,7 @@
 
 <!--toc:end-->
 
-## v0.7.0 — [unreleased]
+## v0.7.0 — 2024-10-08
 
 **General**:
 
