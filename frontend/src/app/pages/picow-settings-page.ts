@@ -24,6 +24,8 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             </style>
         `;
 
+        // TODO: Add the new theme picker section select between "original" and gruvbox.
+        //       Use the new (ui) Dropdown component
         this.innerHTML = html`
             <ui-flex-grid gap="0.25rem">
                 <ui-flex-grid-item>
