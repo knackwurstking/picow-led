@@ -31,6 +31,8 @@ export default class StatusLED extends HTMLElement {
                     height: 1rem;
                     border-radius: 50%;
                     filter: blur(2px);
+
+                    transition: background-color 0.15s linear;
                 }
 
                 :host(:not([active])) .inner {
