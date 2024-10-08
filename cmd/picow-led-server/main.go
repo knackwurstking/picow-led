@@ -101,6 +101,13 @@ func runCommand(cmd *cli.Command) error {
 
 	// Init websocket handler
 	room := ws.NewRoom(api)
+
+	if flags.config != "" {
+		room.OnApiChange = func(api *picow.Api) {
+			api.SaveToPath(flags.config)
+		}
+	}
+
 	http.Handle("GET /ws", room)
 
 	go room.Run()
