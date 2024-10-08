@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"reflect"
 	"sync"
 	"time"
 )
@@ -231,18 +232,20 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	if d.data.Pins != nil {
-		if err := d.SetPins(d.data.Pins); err != nil {
-			return err
-		}
-	} else {
+	{
 		pins, err := d.GetPins()
 		if err != nil {
 			return err
 		}
+
 		slog.Debug("Store device pins",
 			"device.address", d.Addr(), "pins", pins)
-		d.data.Pins = pins
+
+		if !reflect.DeepEqual(pins, d.data.Pins) {
+			if err := d.SetPins(d.data.Pins); err != nil {
+				return err
+			}
+		}
 	}
 
 	if d.data.Color != nil {
