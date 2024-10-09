@@ -1,15 +1,26 @@
-import { CleanUp, html, UICheck, UIInput, UIStackLayoutPage } from "ui";
+import {
+    CleanUp,
+    html,
+    UICheck,
+    UIInput,
+    UISelect,
+    UIStackLayoutPage,
+    UIThemeHandler,
+} from "ui";
 import type { PicowStore } from "../../types";
 
 export default class PicowSettingsPage extends UIStackLayoutPage {
     store: PicowStore;
     cleanup: CleanUp;
+    themeHandler: UIThemeHandler;
 
     constructor() {
         super("settings");
 
-        this.store = document.querySelector(`ui-store`);
         this.cleanup = new CleanUp();
+
+        this.store = document.querySelector(`ui-store`);
+        this.themeHandler = document.querySelector(`ui-theme-handler`);
 
         this.#render();
     }
@@ -57,15 +68,15 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
 
                 <ui-flex-grid-item>
                     <ui-label primary="Theme">
-                        <ui-dropdown slot="inputs">
-                            <ui-dropdown-options vlaue="original">
+                        <ui-select name="theme" keep-open>
+                            <ui-select-option value="original">
                                 Original
-                            </ui-dropdown-options>
+                            </ui-select-option>
 
-                            <ui-dropdown-options value="gruvbox">
+                            <ui-select-option value="gruvbox">
                                 Gruvbox
-                            </ui-dropdown-options>
-                        </ui-dropdown>
+                            </ui-select-option>
+                        </ui-select>
                     </ui-label>
                 </ui-flex-grid-item>
             </ui-flex-grid>
@@ -143,6 +154,29 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                             return server;
                         });
                     }, 250);
+                });
+            }
+
+            // ------------ //
+            // Theme Select //
+            // ------------ //
+
+            {
+                const theme = this.querySelector<UISelect>(
+                    `ui-select[name="theme"]`
+                );
+
+                theme.ui.options().forEach((option) => {
+                    const currentTheme = this.themeHandler.ui.theme;
+                    option.ui.selected = option.ui.value === currentTheme;
+                });
+
+                theme.ui.events.on("change", async (option) => {
+                    // @ts-expect-error
+                    this.themeHandler.ui.theme = option.ui.value;
+                    this.store.ui.set("currentTheme", {
+                        theme: this.themeHandler.ui.theme,
+                    });
                 });
             }
         }
