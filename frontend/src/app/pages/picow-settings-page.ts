@@ -54,6 +54,20 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                         ></ui-input>
                     </ui-label>
                 </ui-flex-grid-item>
+
+                <ui-flex-grid-item>
+                    <ui-label primary="Theme">
+                        <ui-dropdown slot="inputs">
+                            <ui-dropdown-options vlaue="original">
+                                Original
+                            </ui-dropdown-options>
+
+                            <ui-dropdown-options value="gruvbox">
+                                Gruvbox
+                            </ui-dropdown-options>
+                        </ui-dropdown>
+                    </ui-label>
+                </ui-flex-grid-item>
             </ui-flex-grid>
         `;
 
