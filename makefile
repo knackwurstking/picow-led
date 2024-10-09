@@ -1,38 +1,10 @@
-SERVER_ADDR=localhost:50833
-TEST_SETUP_COLOR_WHITE='[255, 255, 255, 255]'
+clean:
+	git clean -f -x -d
 
 build:
-	@cd frontend && \
+	@go mod tidy -v && \
+		cd frontend && \
 		npm install && \
 		npm run build && \
 		cd .. && \
-		go build -v -o ./build/ ./cmd/picow-led-server/ && \
-		cp ./cmd/picow-led-server/picow-led-server.service ./build/
-
-run:
-	@cd frontend && npm install && npm run build
-	@go run -v ./cmd/picow-led-server -debug
-
-setup:
-	@curl -X POST \
-		--header 'content-type: application/json' \
-		--data '{ "server": { "name": "Kitchen", "addr": "192.168.178.58:3000" }, "pins": [0, 1, 2, 3] }' \
-		${SERVER_ADDR}/api/device
-	@echo
-	@curl -X POST \
-		--header 'content-type: application/json' \
-		--data '{ "server": { "name": "PC Room", "addr": "192.168.178.68:3000" }, "pins": [0, 1, 2, 3] }' \
-		${SERVER_ADDR}/api/device
-	@echo
-	@curl -X POST \
-		--header 'content-type: application/json' \
-		--data '{ "server": { "name": "Sleep Room", "addr": "192.168.178.67:3000" }, "pins": [0, 1, 2, 3] }' \
-		${SERVER_ADDR}/api/device
-	@echo
-	@curl -X POST \
-		--header 'content-type: application/json' \
-		--data ${TEST_SETUP_COLOR_WHITE} \
-		${SERVER_ADDR}/api/colors/white
-	@echo
-	@curl -X GET \
-		${SERVER_ADDR}/api
+		go build -v -o build/picow-led-server ./cmd/picow-led-server

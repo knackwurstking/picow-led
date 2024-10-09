@@ -1,0 +1,9 @@
+[Unit]
+Description=PicoW LED server for handling microcontroller devices
+After=network.target
+
+[Service]
+ExecStart=picow-led-server -d -c %h/.config/picow-led-server/api.json
+
+[Install]
+WantedBy=default.target

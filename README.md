@@ -4,49 +4,53 @@
 
 - [PicoW LED Server](#picow-led-server)
   - [Notes](#notes)
-  - [TODO](#todo)
 
 <!--toc:end-->
 
 ## Notes
 
-**Routing**:
+**Endpoints**:
 
-| Endpoint          | GET | POST | PUT | DELETE |
-| ----------------- | :-: | :--: | :-: | :----: |
-| /events/device    |  x  |      |     |        |
-| /events/devices   |  x  |      |     |        |
-| /api              |  x  |      |     |        |
-| /api/devices      |  x  |      |     |        |
-| /api/device       |  x  |  x   |  x  |   x    |
-| /api/device/pins  |  x  |  x   |     |        |
-| api/device/color  |  x  |  x   |     |        |
-| /api/colors       |  x  |      |     |        |
-| /api/colors/:name |  x  |  x   |  x  |   x    |
+| Endpoint | GET | POST | PUT | DELETE |
+| -------- | :-: | :--: | :-: | :----: |
+| /        |  x  |      |     |        |
+| /ws      |  x  |      |     |        |
 
-**API**:
+**WebSocket Events**:
 
-```json
-{
-    "devices": [
-        {
-            "server": {
-                "name": "Picow Test Device",
-                "addr": "192.168.178.58:3000"
-            },
-            "pins": [0, 1, 2, 3],
-            "color": [0, 0, 0, 0]
-        }
-    ],
-    "colors": {
-        "red": [255, 0, 0, 0],
-        "green": [0, 255, 0, 0],
-        "blue": [0, 0, 255, 0],
-        "white": [255, 255, 255, 255]
-    }
+| Type    | Data                             |
+| ------- | -------------------------------- |
+| error   | `string`                         |
+| devices | [`WSEvents_Device[]`](#ts-types) |
+| device  | [`WSEvents_Device`](#ts-types)   |
+
+**WebSocket Commands**:
+
+| Command               | Data                                |
+| --------------------- | ----------------------------------- |
+| GET api.devices       | `null`                              |
+| POST api.device       | [`WSEvents_Device`](#ts-types)      |
+| PUT api.device        | [`WSEvents_Device`](#ts-types)      |
+| DELETE api.device     | `{ addr: string }`                  |
+| POST api.device.pins  | `{ addr: string; pins: number[] }`  |
+| POST api.device.color | `{ addr: string; color: number[] }` |
+
+<a id="ts-types"></a>
+
+**TS Types**:
+
+_[frontend/src/lib/websocket/types.ts](frontend/src/lib/websocket/types.ts)_
+
+```typescript
+export interface WSEvents_Device {
+    server: WSEvents_DeviceServer;
+    pins?: number[];
+    color?: number[];
+}
+
+export interface WSEvents_DeviceServer {
+    name?: string;
+    addr: string;
+    online?: boolean;
 }
 ```
-
-## TODO
-
-- Need to do a version check on all devices first

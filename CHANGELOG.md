@@ -1,6 +1,24 @@
 # CHANGELOG
 
-## v0.6.2 — 2024-09-30
+<!--toc:start-->
+
+- [CHANGELOG](#changelog)
+  - [v0.7.0 — 2024-10-09](#v070-2024-10-09)
+  - [v0.6.2 — [2024-09-30]](#v062-2024-09-30)
+  - [v0.6.1 — [2024-09-30]](#v061-2024-09-30)
+
+<!--toc:end-->
+
+## v0.7.0 — 2024-10-09
+
+- [ui v0.8.0](https://github.com/knackwurstking/ui)
+
+**General**:
+
+- [backend] Completely rewritten, using only websockets now
+- [frontend] Converted to typescript
+
+## v0.6.2 — [2024-09-30]
 
 **Fixed**:
 
@@ -8,7 +26,7 @@
 - [frontend] Fix missing setup-device-dialog action buttons if
     `allowDeletion` was set to false
 
-## v0.6.1 — 2024-09-30
+## v0.6.1 — [2024-09-30]
 
 **Added**:
 
