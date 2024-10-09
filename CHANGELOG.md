@@ -9,7 +9,9 @@
 
 <!--toc:end-->
 
-## v0.7.0 — [unreleased]
+## v0.7.0 — 2024-10-09
+
+- [ui v0.8.0](https://github.com/knackwurstking/ui)
 
 **General**:
 
