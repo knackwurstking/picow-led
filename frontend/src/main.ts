@@ -1,6 +1,6 @@
 import "../node_modules/ui/css/main.css";
 
-import { html } from "ui";
+import { html, UIThemeHandler } from "ui";
 import { registerSW } from "virtual:pwa-register";
 
 import createAppBar from "./app/create-app-bar";
@@ -57,6 +57,11 @@ async function main() {
     // ---------------- //
 
     const store = el.querySelector<PicowStore>(`ui-store`);
+
+    {
+        el.querySelector<UIThemeHandler>(`ui-theme-handler`).ui.theme =
+            store.ui.get("currentTheme")?.theme || null;
+    }
 
     store.ui.set("currentPage", null, true);
     store.ui.set("devices", [], true);
