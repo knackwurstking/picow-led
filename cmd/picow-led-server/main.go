@@ -9,7 +9,7 @@ import (
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/knackwurstking/picow-led-server/frontend"
-	"github.com/knackwurstking/picow-led-server/internal/ws"
+	"github.com/knackwurstking/picow-led-server/internal/models/ws"
 	"github.com/knackwurstking/picow-led-server/pkg/picow"
 )
 
