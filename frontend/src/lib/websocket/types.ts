@@ -9,7 +9,7 @@ export type WSEvents_Command = {
 
 export interface WSEvents_Request {
     command: string;
-    data: string; // NOTE: JSON string
+    data: string; // JSON string
 }
 
 export type WSEvents_Response =

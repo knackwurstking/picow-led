@@ -23,7 +23,7 @@ registerSW({
         setTimeout(async () => {
             try {
                 console.debug(`PWA Update service...`);
-                await r.update(); // NOTE: for now do auto update all the time
+                await r.update(); // For now do auto update all the time
             } catch (err) {
                 console.warn(`PWA Auto update: ${err}`);
             }
