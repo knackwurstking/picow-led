@@ -58,7 +58,7 @@ func main() {
 			return runCommand
 		}),
 		// NOTE: Only "zsh" seems to be supported, maybe i should fork this
-		//       repo and add some completions for "fish" and "zsh"?
+		//       repo and try to add some completions for "fish" and "bash"?
 		// Commands: []cli.Command{
 		// 	cli.CompletionCommand(),
 		// },
