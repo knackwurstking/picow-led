@@ -8,6 +8,7 @@ import {
     UIThemeHandler,
 } from "ui";
 import type { PicowStore } from "../../types";
+import type { UIThemeHandler_Theme } from "ui/src/ui-theme-handler/ui-theme-handler";
 
 export default class PicowSettingsPage extends UIStackLayoutPage {
     store: PicowStore;
@@ -35,8 +36,6 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             </style>
         `;
 
-        // TODO: Add the new theme picker section select between "original" and gruvbox.
-        //       Use the new (ui) Dropdown component
         this.innerHTML = html`
             <ui-flex-grid gap="0.25rem">
                 <ui-flex-grid-item>
@@ -172,8 +171,9 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                 });
 
                 theme.ui.events.on("change", async (option) => {
-                    // @ts-expect-error
-                    this.themeHandler.ui.theme = option.ui.value;
+                    this.themeHandler.ui.theme = option.ui
+                        .value as UIThemeHandler_Theme;
+
                     this.store.ui.set("currentTheme", {
                         theme: this.themeHandler.ui.theme,
                     });
