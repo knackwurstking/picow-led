@@ -7,8 +7,8 @@ import {
     UIStackLayoutPage,
     UIThemeHandler,
 } from "ui";
-import type { PicowStore } from "../../types";
 import type { UIThemeHandler_Theme } from "ui/src/ui-theme-handler/ui-theme-handler";
+import type { PicowStore } from "../../types";
 
 export default class PicowSettingsPage extends UIStackLayoutPage {
     store: PicowStore;
