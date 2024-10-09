@@ -30,7 +30,7 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
             <ui-flex-grid gap="0.25rem">
                 <ui-flex-grid-item>
                     <ui-label primary="Use SSL connections" ripple>
-                        <ui-check name="ssl" slot="input"></ui-check>
+                        <ui-check name="ssl" slot="inputs"></ui-check>
                     </ui-label>
                 </ui-flex-grid-item>
 
@@ -38,7 +38,7 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                     <ui-label primary="Server Host">
                         <ui-input
                             name="host"
-                            slot="input"
+                            slot="inputs"
                             value="${this.store.ui.get("server").host}"
                         ></ui-input>
                     </ui-label>
@@ -48,7 +48,7 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                     <ui-label primary="Server Port">
                         <ui-input
                             name="port"
-                            slot="input"
+                            slot="inputs"
                             type="number"
                             value="${this.store.ui.get("server").port}"
                         ></ui-input>
