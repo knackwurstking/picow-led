@@ -32,8 +32,7 @@ registerSW({
 });
 
 async function main() {
-    const el = document.createElement("div");
-    document.querySelector(`div#app`).replaceWith(el);
+    const el = document.querySelector<HTMLElement>(`#app`)!;
 
     el.style.width = "100%";
     el.style.height = "100%";
