@@ -9,7 +9,9 @@ import (
 	"sync"
 )
 
-var devicesMutex = &sync.Mutex{}
+// TODO: Use a mutex for file operations like `LoadFromPath` and `SavetoPath`
+// TODO: Passing mutex as parameter and alway check for nil
+var devicesMutex = &sync.Mutex{} // TODO: Delete this, using mutex from parameter
 
 type Devices []*Device
 
