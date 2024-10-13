@@ -13,6 +13,7 @@ import (
 // TODO: Passing mutex as parameter and alway check for nil
 var devicesMutex = &sync.Mutex{} // TODO: Delete this, using mutex from parameter
 
+// TODO: Add `Add` method, with mutex as param
 type Devices []*Device
 
 func (d *Devices) Delete(device *Device) (ok bool) {
