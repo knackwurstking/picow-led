@@ -7,7 +7,7 @@ import { customElement, property } from "lit/decorators.js";
  * **Attributes**:
  *  - active: `boolean`
  */
-@customElement("status-led")
+@customElement("picow-status-led")
 export class PicowStatusLED extends LitElement {
     @property({ type: Boolean, attribute: "active", reflect: true })
     active: boolean = false;
