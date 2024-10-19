@@ -7,6 +7,10 @@ import { PicowAppBarEvents } from "../types";
 
 /**
  * **Tag**: picow-app-bar
+ *
+ * **Public Methods
+ *  - `title`
+ *  - `root()`
  */
 @customElement("picow-app-bar")
 export class PicowAppBar extends LitElement {
