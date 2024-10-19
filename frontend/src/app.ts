@@ -136,7 +136,7 @@ export class PicowApp extends LitElement {
         stackLayout.events.addListener("change", ({ current }) => {
             // Reset all layouts (AppBar buttons and title)
             this.appBar.title = "PicoW LED";
-            this.appBar.items.add.hide();
+            this.appBar.items.add.hide(); // TODO: Continue here...
 
             if (!current) {
                 this.drawer.open();
