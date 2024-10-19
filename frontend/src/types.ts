@@ -1,4 +1,4 @@
-import type { UIStore, UIThemeHandlerThemes } from "ui";
+import type { UIIconButton, UIStore, UIThemeHandlerThemes } from "ui";
 
 import type { WSEventsDevice, WSEventsServer } from "./lib/websocket";
 
@@ -13,4 +13,9 @@ export interface PicowStoreEvents {
     currentTheme: {
         theme: UIThemeHandlerThemes;
     };
+}
+
+export interface PicowAppBarEvents {
+    menu: MouseEvent;
+    add: MouseEvent;
 }
