@@ -46,5 +46,15 @@ export class PicowApp extends LitElement {
 
     protected firstUpdated(_changedProperties: PropertyValues): void {
         globalStylesToShadowRoot(this.shadowRoot!);
+
+        // TODO: Initialize store
+
+        // TODO: Initialize stack-layout
+
+        // TODO: Set the start page
+
+        // TODO: Handle websocket error messages
+
+        // TODO: Updating the websocket server on store "server" canges
     }
 }
