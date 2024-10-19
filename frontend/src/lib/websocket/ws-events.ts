@@ -1,22 +1,22 @@
 import { Events } from "ui";
 import { BaseWebSocketEvents } from "./base-web-socket-events";
 import type {
-    WSEvents_Command,
-    WSEvents_Device,
-    WSEvents_Request,
-    WSEvents_Response,
-    WSEvents_Server,
+    WSEventsCommand,
+    WSEventsDevice,
+    WSEventsRequest,
+    WSEventsResponse,
+    WSEventsServer,
 } from "./types";
 
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
-        server: WSEvents_Server | null;
+        server: WSEventsServer | null;
         open: null;
         close: null;
         message: any;
-        "message-devices": WSEvents_Device[];
+        "message-devices": WSEventsDevice[];
         "message-error": string;
-        "message-device": WSEvents_Device;
+        "message-device": WSEventsDevice;
     }> = new Events();
 
     constructor() {
@@ -32,9 +32,9 @@ export class WSEvents extends BaseWebSocketEvents {
         this.events.dispatch("server", value);
     }
 
-    async request<T extends keyof WSEvents_Command>(
+    async request<T extends keyof WSEventsCommand>(
         command: T,
-        data: WSEvents_Command[T] = null
+        data: WSEventsCommand[T] = null
     ) {
         if (!this.isOpen()) return;
         console.debug(`[ws] Send command: "${command}"`, {
@@ -42,7 +42,7 @@ export class WSEvents extends BaseWebSocketEvents {
             data,
         });
 
-        let request: WSEvents_Request = {
+        let request: WSEventsRequest = {
             command: command,
             data: data === null ? null : JSON.stringify(data),
         };
@@ -68,7 +68,7 @@ export class WSEvents extends BaseWebSocketEvents {
 
         if (typeof ev.data === "string") {
             try {
-                const resp = JSON.parse(ev.data) as WSEvents_Response;
+                const resp = JSON.parse(ev.data) as WSEventsResponse;
                 console.debug(`[ws] message:`, resp);
 
                 switch (resp.type) {

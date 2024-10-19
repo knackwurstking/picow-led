@@ -1,7 +1,7 @@
-import type { WSEvents_Server } from "./types";
+import type { WSEventsServer } from "./types";
 
 export class BaseWebSocketEvents {
-    #server: WSEvents_Server | null;
+    #server: WSEventsServer | null = null;
 
     #messageHandler = async (ev: MessageEvent) => {
         await this.handleMessageEvent(ev);

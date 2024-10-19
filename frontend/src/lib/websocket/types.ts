@@ -1,44 +1,44 @@
-export type WSEvents_Command = {
+export type WSEventsCommand = {
     "GET api.devices": null;
-    "POST api.device": WSEvents_Device;
-    "PUT api.device": WSEvents_Device;
+    "POST api.device": WSEventsDevice;
+    "PUT api.device": WSEventsDevice;
     "DELETE api.device": { addr: string };
     "POST api.device.pins": { addr: string; pins: number[] };
     "POST api.device.color": { addr: string; color: number[] };
 };
 
-export interface WSEvents_Request {
+export interface WSEventsRequest {
     command: string;
     data: string; // JSON string
 }
 
-export type WSEvents_Response =
+export type WSEventsResponse =
     | {
           data: string;
           type: "error";
       }
     | {
-          data: WSEvents_Device[];
+          data: WSEventsDevice[];
           type: "devices";
       }
     | {
-          data: WSEvents_Device;
+          data: WSEventsDevice;
           type: "device";
       };
 
-export interface WSEvents_Server {
+export interface WSEventsServer {
     ssl: boolean;
     host: string;
     port: string;
 }
 
-export interface WSEvents_Device {
-    server: WSEvents_DeviceServer;
+export interface WSEventsDevice {
+    server: WSEventsDeviceServer;
     pins?: number[];
     color?: number[];
 }
 
-export interface WSEvents_DeviceServer {
+export interface WSEventsDeviceServer {
     name?: string;
     addr: string;
     online?: boolean;
