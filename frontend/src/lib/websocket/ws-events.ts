@@ -34,7 +34,7 @@ export class WSEvents extends BaseWebSocketEvents {
 
     async request<T extends keyof WSEventsCommand>(
         command: T,
-        data: WSEventsCommand[T] = null
+        data?: WSEventsCommand[T]
     ) {
         if (!this.isOpen()) return;
         console.debug(`[ws] Send command: "${command}"`, {
@@ -44,7 +44,7 @@ export class WSEvents extends BaseWebSocketEvents {
 
         let request: WSEventsRequest = {
             command: command,
-            data: data === null ? null : JSON.stringify(data),
+            data: data === undefined ? undefined : JSON.stringify(data),
         };
 
         switch (command) {
@@ -54,7 +54,7 @@ export class WSEvents extends BaseWebSocketEvents {
             case "DELETE api.device":
             case "POST api.device.pins":
             case "POST api.device.color":
-                this.ws.send(JSON.stringify(request));
+                this.ws?.send(JSON.stringify(request));
                 break;
 
             default:

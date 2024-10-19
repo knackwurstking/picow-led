@@ -69,17 +69,17 @@ export class BaseWebSocketEvents {
     }
 
     close() {
-        this.ws.removeEventListener("close", this.#closeHandler);
+        this.ws?.removeEventListener("close", this.#closeHandler);
 
         if (!!this.timeout) {
             clearTimeout(this.timeout);
             this.timeout = null;
         }
 
-        if (this.isOpen()) this.ws.close();
+        if (this.isOpen()) this.ws?.close();
     }
 
-    async handleMessageEvent(ev: MessageEvent) {}
+    async handleMessageEvent(_ev: MessageEvent) {}
 
     async handleOpenEvent() {
         console.debug(
