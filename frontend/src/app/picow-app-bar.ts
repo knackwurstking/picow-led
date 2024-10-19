@@ -44,7 +44,7 @@ export class PicowAppBar extends LitElement {
     }
 
     protected updated(_changedProperties: PropertyValues): void {
-        const root = this.rootElement()!;
+        const root = this.root()!;
 
         let item: UIAppBarItem;
 
@@ -83,17 +83,17 @@ export class PicowAppBar extends LitElement {
     }
 
     public get title() {
-        const root = this.rootElement();
+        const root = this.root();
         if (!root) return "";
         return root.contentName("title")!.contentAt(0).innerText;
     }
 
     public set title(value: string) {
-        const root = this.rootElement()!;
+        const root = this.root()!;
         root.contentName("title")!.contentAt(0).innerText = value;
     }
 
-    public rootElement(): UIAppBar | null {
+    public root(): UIAppBar | null {
         return this.shadowRoot?.querySelector<UIAppBar>(`ui-app-bar`)! || null;
     }
 }

@@ -134,9 +134,11 @@ export class PicowApp extends LitElement {
         });
 
         stackLayout.events.addListener("change", ({ current }) => {
+            const addItem = this.appBar.root()!.contentName("add")!;
+
             // Reset all layouts (AppBar buttons and title)
             this.appBar.title = "PicoW LED";
-            this.appBar.items.add.hide(); // TODO: Continue here...
+            addItem.hide();
 
             if (!current) {
                 this.drawer.open();
@@ -148,7 +150,7 @@ export class PicowApp extends LitElement {
                 case "devices":
                     store.setData("currentPage", current.name);
                     this.appBar.title = "Devices";
-                    this.appBar.items.add.show();
+                    addItem.show();
                     break;
 
                 case "settings":
