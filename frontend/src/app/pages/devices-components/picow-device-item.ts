@@ -119,7 +119,10 @@ export class PicowDeviceItem extends LitElement {
                 }, ${this.device.color[2] || 0})`
             );
         }
+    }
 
+    connectedCallback(): void {
+        super.connectedCallback();
         this.cleanup.add(
             ws.events.addListener("message-device", (data) => {
                 if (data.server.addr !== this.device?.server.addr) return;
