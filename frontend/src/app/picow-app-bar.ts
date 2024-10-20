@@ -9,8 +9,8 @@ import { PicowAppBarEvents } from "../types";
  * **Tag**: picow-app-bar
  *
  * **Public Methods
- *  - `title`
- *  - `root()`
+ *  - `title: string`
+ *  - `root(): UIAppBar | null`
  */
 @customElement("picow-app-bar")
 export class PicowAppBar extends LitElement {

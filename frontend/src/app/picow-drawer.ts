@@ -7,7 +7,7 @@ import { PicowStackLayoutPages } from "../types";
  * **App**: picow-drawer
  *
  * **Public Methods**:
- *  - `root()`
+ *  - `root(): UIDrawer`
  *  - `open()`
  *  - `close()`
  */
