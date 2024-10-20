@@ -1,112 +1,94 @@
-import { power as svgPower } from "ui/svg/smoothie-line-icons";
+import { css as CSS, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { svg } from "ui";
+import { ws, WSEventsDevice } from "../../../lib/websocket";
+import { PicowStore } from "../../../types";
 
-import { html, UIIconButton } from "ui";
-import type { WSEvents_Device } from "../../../lib/websocket";
-import ws from "../../../lib/websocket";
-import type { PicowStore } from "../../../types";
-export type PicowPowerButton_States = "active" | "pending" | null;
+/**
+ * **Tag**: picow-power-button
+ */
+@customElement("picow-power-button")
+export class PicowPowerButton extends LitElement {
+    @property({ type: Object, attribute: "device", reflect: true })
+    device?: WSEventsDevice;
 
-class PicowPowerButton_Picow {
-    root: PicowPowerButton;
+    @property({ type: String, attribute: "state", reflect: true })
+    state: "active" | "pending" | "" = "";
 
-    constructor(root: PicowPowerButton) {
-        this.root = root;
-    }
+    store: PicowStore = document.querySelector(`ui-store`)!;
 
-    get state(): PicowPowerButton_States {
-        return this.root.getAttribute("active") as PicowPowerButton_States;
-    }
-
-    set state(state: PicowPowerButton_States) {
-        if (!state) {
-            this.root.removeAttribute("state");
-            return;
-        }
-
-        this.root.setAttribute("state", state);
-    }
-
-    set(device: WSEvents_Device) {
-        this.root.device = device;
-        this.root.updateColor();
-    }
-
-    isOn() {
-        return !!this.root.device?.color?.find((n: number) => n > 0);
-    }
-}
-
-export default class PicowPowerButton extends UIIconButton {
-    store: PicowStore;
-    device: WSEvents_Device | null;
-    picow: PicowPowerButton_Picow;
-
-    constructor() {
-        super();
-
-        this.store = document.querySelector(`ui-store`);
-        this.device = null;
-
-        this.picow = new PicowPowerButton_Picow(this);
-
-        this.#render();
-    }
-
-    #render() {
-        this.ui.noripple = true;
-        this.ui.ghost = true;
-
-        this.shadowRoot.innerHTML += html`
-            <style>
-                :host {
-                    height: 100%;
-                    width: 3rem;
-                    color: black;
-                }
-
-                :host([state="active"]) {
-                    color: rgb(0, 255, 0);
-                }
-
-                :host([state="pending"]) {
-                    color: yellow;
-                }
-            </style>
-        `;
-
-        this.innerHTML = svgPower;
-
-        this.ui.events.on("click", async (ev) => {
-            ev.stopPropagation();
-            if (!this.device) return;
-
-            const prevStateBackup = this.picow.state;
-            this.picow.state = "pending";
-
-            try {
-                const color: number[] = this.picow.isOn()
-                    ? this.device.color.map(() => 0) // Turn OFF
-                    : this.store.ui.get("devicesColor")[
-                          this.device.server.addr
-                      ] || [255, 255, 255, 255]; // Turn ON
-
-                await ws.request("POST api.device.color", {
-                    addr: this.device.server.addr,
-                    color: color,
-                });
-            } finally {
-                this.picow.state = prevStateBackup;
+    static get styles() {
+        return CSS`
+            :host {
+                height: 100%;
+                width: 3rem;
+                color: black;
             }
 
-            this.updateColor();
-        });
+            :host([state="active"]) {
+                color: rgb(0, 255, 0);
+            }
+
+            :host([state="pending"]) {
+                color: yellow;
+            }
+        `;
     }
 
-    updateColor() {
-        if (this.picow.isOn()) this.picow.state = "active";
-        else this.picow.state = null;
+    protected render() {
+        return html`
+            <ui-icon-button
+                ghost
+                @click=${async (ev: MouseEvent) => {
+                    ev.stopPropagation();
+                    if (!this.device) return;
+
+                    const prevStateBackup = this.state;
+                    this.state = "pending";
+
+                    try {
+                        const color: number[] = this.isOn()
+                            ? this.device.color!.map(() => 0) // Turn OFF
+                            : this.store.getData("devicesColor")?.[
+                                  this.device.server.addr
+                              ] || [255, 255, 255, 255]; // Turn ON
+
+                        await ws.request("POST api.device.color", {
+                            addr: this.device.server.addr,
+                            color: color,
+                        });
+                    } finally {
+                        this.state = prevStateBackup;
+                    }
+
+                    this.updateColor();
+                }}
+            >
+                ${svg.smoothieLineIcons.power}
+            </ui-icon-button>
+        `;
+    }
+
+    attributeChangedCallback(
+        name: string,
+        _old: string | null,
+        value: string | null
+    ): void {
+        super.attributeChangedCallback(name, _old, value);
+
+        switch (name) {
+            case "device":
+                this.updateColor();
+                break;
+        }
+    }
+
+    private isOn() {
+        return !!this.device?.color?.find((n: number) => n > 0);
+    }
+
+    private updateColor() {
+        if (this.isOn()) this.state = "active";
+        else this.state = "";
     }
 }
-
-console.debug(`Register the "picow-power-button"`);
-customElements.define("picow-power-button", PicowPowerButton);
