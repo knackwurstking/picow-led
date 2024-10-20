@@ -1,4 +1,4 @@
-import type { UIIconButton, UIStore, UIThemeHandlerThemes } from "ui";
+import type { UIStore, UIThemeHandlerThemes } from "ui";
 
 import type { WSEventsDevice, WSEventsServer } from "./lib/websocket";
 
