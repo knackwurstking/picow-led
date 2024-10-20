@@ -1,210 +1,138 @@
 import "./picow-options-button";
 import "./picow-power-button";
 
-import {
-    CleanUp,
-    globalStylesToShadowRoot,
-    html,
-    UILabel,
-    UISecondary,
-} from "ui";
-import type { WSEvents_Device } from "../../../lib/websocket";
-import ws from "../../../lib/websocket";
-import type { PicowStore } from "../../../types";
-import type PicowOptionsButton from "./picow-options-button";
-import type PicowPowerButton from "./picow-power-button";
+import { css as CSS, html, LitElement, PropertyValues } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { globalStylesToShadowRoot } from "ui";
 
-class PicowDeviceItem_Picow {
-    root: PicowDeviceItem;
+import { ws, WSEventsDevice } from "../../../lib/websocket";
+import { PicowStore } from "../../../types";
 
-    constructor(root: PicowDeviceItem) {
-        this.root = root;
-    }
+/**
+ * **Tag**: picow-options-button
+ *
+ * **Attributes**:
+ *  - device: `WSEventsDevice` - [json]
+ *  - hide: `boolean`
+ */
+@customElement("picow-device-item")
+export class PicowDeviceItem extends LitElement {
+    @property({ type: Object, attribute: "device", reflect: true })
+    device?: WSEventsDevice;
 
-    set(device: WSEvents_Device) {
-        this.root.device = device;
+    @property({ type: Boolean, attribute: "hide", reflect: true })
+    hide: boolean = false;
 
-        const list = this.root.querySelector(`li.is-card`);
-        list.setAttribute("data-server-addr", device.server.addr);
+    private store: PicowStore = document.querySelector(`ui-store`)!;
 
-        if (!!device.color) {
-            this.root.style.setProperty(
-                "--current-color",
-                `rgb(${device.color[0] || 0}, ${device.color[1] || 0}, ${
-                    device.color[2] || 0
-                })`
-            );
-        }
-
-        // ------------ //
-        // Update Label //
-        // ------------ //
-
-        {
-            let primary = device.server.name || "";
-            let secondary = device.server.addr;
-            if (!primary) {
-                primary = device.server.addr;
-                secondary = "&nbsp;";
+    static get styles() {
+        return CSS`
+            :host {
+                display: block;
+                position: relative;
+                border-radius: var(--ui-radius);
             }
 
-            const label = this.root.querySelector<UILabel>(`ui-label`);
+            .current-color {
+                position: absolute;
+                top: var(--ui-spacing);
+                right: var(--ui-spacing);
+                bottom: var(--ui-spacing);
+                left: var(--ui-spacing);
 
-            label.ui.primary = primary;
-            label.ui.secondary = secondary;
-        }
+                border-radius: var(--ui-radius);
 
-        // ------------------- //
-        // Update Power Button //
-        // ------------------- //
+                box-shadow: 0 0 8px 1px var(--current-color, transparent);
 
-        {
-            const power =
-                this.root.querySelector<PicowPowerButton>(`picow-power-button`);
+                transition: box-shadow 0.35s linear;
+            }
 
-            power.picow.set(device);
-        }
+            .offline-marker {
+                position: absolute;
+                top: -0.25rem;
+                left: 50%;
 
-        // --------------------- //
-        // Update Options Button //
-        // --------------------- //
+                color: hsl(var(--ui-hsl-destructive));
 
-        {
-            const options =
-                this.root.querySelector<PicowOptionsButton>(
-                    `picow-options-button`
-                );
+                transform: translateX(-50%);
+            }
 
-            options.picow.set(device);
-        }
-
-        // --------------------- //
-        // Update Offline Marker //
-        // --------------------- //
-
-        {
-            const marker = this.root.shadowRoot.querySelector<UISecondary>(
-                `ui-secondary.offline-marker`
-            );
-
-            if (!!device.server.online) marker.removeAttribute("hide");
-            else marker.setAttribute("hide", "");
-        }
-    }
-}
-
-export default class PicowDeviceItem extends HTMLElement {
-    store: PicowStore;
-    device: WSEvents_Device;
-    cleanup: CleanUp;
-    picow: PicowDeviceItem_Picow;
-
-    constructor(device: WSEvents_Device | null = null) {
-        super();
-
-        this.store = document.querySelector(`ui-store`);
-        this.device = device;
-        this.cleanup = new CleanUp();
-        this.picow = new PicowDeviceItem_Picow(this);
-
-        this.#render();
-    }
-
-    #render() {
-        this.classList.add("no-user-select");
-
-        this.attachShadow({ mode: "open" });
-        globalStylesToShadowRoot(this.shadowRoot);
-
-        this.shadowRoot.innerHTML = html`
-            <style>
-                :host {
-                    display: block;
-                    position: relative;
-                    border-radius: var(--ui-radius);
-                }
-
-                .current-color {
-                    position: absolute;
-                    top: var(--ui-spacing);
-                    right: var(--ui-spacing);
-                    bottom: var(--ui-spacing);
-                    left: var(--ui-spacing);
-
-                    border-radius: var(--ui-radius);
-
-                    box-shadow: 0 0 8px 1px var(--current-color, transparent);
-
-                    transition: box-shadow 0.35s linear;
-                }
-
-                .offline-marker {
-                    position: absolute;
-                    top: -0.25rem;
-                    left: 50%;
-
-                    color: var(--ui-destructive);
-
-                    transform: translateX(-50%);
-                }
-
-                .offline-marker[hide] {
-                    display: none;
-                }
-            </style>
-
-            <div class="current-color"></div>
-            <slot></slot>
-            <ui-secondary class="offline-marker"></ui-secondary>
+            .offline-marker[hide] {
+                display: none;
+            }
         `;
+    }
 
-        this.innerHTML = html`
-            <li class="is-card" style="cursor: pointer;">
-                <ui-label>
+    protected render() {
+        let primary = this.device?.server.name || "";
+        let secondary = this.device?.server.addr;
+        if (!primary) {
+            primary = this.device?.server?.addr || "&nbsp;";
+            secondary = "&nbsp;";
+        }
+
+        return html`
+            <div class="current-color"></div>
+
+            <li
+                class="is-card"
+                style="cursor: pointer;"
+                data-server-addr="${this.device?.server.addr || ""}"
+                @click=${() => {
+                    // TODO: Open a color picker dialog to select a color
+                }}
+            >
+                <ui-label primary="${primary}" secondary="${secondary}">
                     <ui-flex-grid-row gap="0.25rem" align="center">
                         <ui-flex-grid-item>
-                            <picow-power-button></picow-power-button>
+                            <picow-power-button
+                                device=${this.device}
+                            ></picow-power-button>
                         </ui-flex-grid-item>
 
                         <ui-flex-grid-item>
-                            <picow-options-button></picow-options-button>
+                            <picow-options-button
+                                device=${this.device}
+                            ></picow-options-button>
                         </ui-flex-grid-item>
                     </ui-flex-grid-row>
                 </ui-label>
             </li>
+
+            <ui-secondary
+                class="offline-marker"
+                ?hide=${!this.device?.server.online}
+            ></ui-secondary>
         `;
-
-        const card = this.querySelector<HTMLLIElement>("li.is-card");
-        card.onclick = async () => {
-            // TODO: Open a color picker dialog to select a color
-        };
-
-        this.picow.set(this.device);
     }
 
-    connectedCallback() {
-        this.cleanup.add(
-            ws.events.on("message-device", (data) => {
-                if (data.server.addr !== this.device.server.addr) return;
-                this.picow.set(data);
+    protected firstUpdated(_changedProperties: PropertyValues): void {
+        globalStylesToShadowRoot(this.shadowRoot!);
+        this.classList.add("no-user-select");
 
-                if (!this.device.color) return;
+        if (this.device?.color) {
+            this.style.setProperty(
+                "--current-color",
+                `rgb(${this.device.color[0] || 0}, ${
+                    this.device.color[1] || 0
+                }, ${this.device.color[2] || 0})`
+            );
+        }
 
-                // Only update "devicesColor" store if color is not 0
-                if (this.device.color.filter((c) => c > 0).length > 0) {
-                    this.store.ui.update("devicesColor", (data) => {
-                        data[this.device.server.addr] = this.device.color;
-                        return data;
-                    });
-                }
-            })
-        );
-    }
+        ws.events.addListener("message-device", (data) => {
+            if (data.server.addr !== this.device?.server.addr) return;
+            this.device = data;
 
-    disconnectedCallback() {
-        this.cleanup.run();
+            if (!this.device.color) return;
+
+            // Only update "devicesColor" store if color is not 0
+            if (this.device.color.filter((c) => c > 0).length > 0) {
+                this.store.updateData("devicesColor", (data) => {
+                    if (!this.device || !this.device?.color) return data;
+                    data[this.device.server.addr] = this.device.color;
+                    return data;
+                });
+            }
+        });
     }
 }
-
-console.debug(`Register the "picow-device-item"`);
-customElements.define("picow-device-item", PicowDeviceItem);
