@@ -4,6 +4,12 @@ import { svg } from "ui";
 import { ws, WSEventsDevice } from "../../../lib/websocket";
 import { PicowDeviceSetupDialog } from "../../dialogs/picow-device-setup-dialog";
 
+/**
+ * **Tag**: picow-options-button
+ *
+ * **Attributes**:
+ *  - device: `WSEventsDevice` - [json]
+ */
 @customElement("picow-options-button")
 export class PicowOptionsButton extends LitElement {
     @property({ type: Object, attribute: "device", reflect: true })

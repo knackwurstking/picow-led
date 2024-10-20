@@ -6,6 +6,10 @@ import { PicowStore } from "../../../types";
 
 /**
  * **Tag**: picow-power-button
+ *
+ * **Attributes**:
+ *  - device: `WSEventsDevice` - [json]
+ *  - state: `"active" | "pending" | ""`
  */
 @customElement("picow-power-button")
 export class PicowPowerButton extends LitElement {
