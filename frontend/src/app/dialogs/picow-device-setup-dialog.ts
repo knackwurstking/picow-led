@@ -7,7 +7,7 @@ import { WSEventsDevice } from "../../lib/websocket";
  * **Tag**: picow-device-setup-dialog
  *
  * **Attributes**:
- *  - device: `json`
+ *  - device: `WSEventsDevice` - [json]
  *  - allow-deletion: `boolean`
  *
  * **Events**:
