@@ -9,6 +9,7 @@ import { PicowAppBarEvents } from "../types";
  * **Tag**: picow-app-bar
  *
  * **Public Methods**:
+ *  - `events: Events<PicowAppBarEvents>`
  *  - `title: string`
  *  - `root(): UIAppBar | null`
  */
@@ -59,7 +60,7 @@ export class PicowAppBar extends LitElement {
             button.onclick = (ev) => this.events.dispatch("menu", ev);
         }
 
-        // Initialize the satus led
+        // Initialize the status led
         const statusItem = root.contentName("status")!;
         {
             const picowStatusLED =
