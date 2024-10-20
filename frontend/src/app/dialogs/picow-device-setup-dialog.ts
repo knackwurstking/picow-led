@@ -32,7 +32,7 @@ export class PicowDeviceSetupDialog extends LitElement {
         return html`
             <ui-dialog
                 @close=${() => {
-                    document.removeChild(this);
+                    if (!!this.parentElement) document.removeChild(this);
                 }}
             >
                 <ui-flex-grid gap="0.5rem">
@@ -154,6 +154,7 @@ export class PicowDeviceSetupDialog extends LitElement {
     }
 
     public open() {
+        if (!this.parentElement) document.body.appendChild(this);
         this.root().open({ modal: true });
     }
 
