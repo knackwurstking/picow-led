@@ -14,7 +14,7 @@ import { PicowStackLayoutPages, PicowStore } from "./types";
  */
 @customElement("picow-app")
 export class PicowApp extends LitElement {
-    private appBar: PicowAppBar = new PicowAppBar();
+    private appBar: PicowAppBar = document.querySelector(`ui-app-bar`)!;
     private drawer: PicowDrawer = new PicowDrawer();
 
     private store(): PicowStore {
@@ -50,7 +50,7 @@ export class PicowApp extends LitElement {
                 <ui-stack-layout></ui-stack-layout>
             </ui-container>
 
-            ${this.appBar} ${this.drawer}
+            ${this.drawer}
         `;
     }
 
