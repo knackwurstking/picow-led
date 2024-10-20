@@ -8,7 +8,7 @@ import { PicowAppBarEvents } from "../types";
 /**
  * **Tag**: picow-app-bar
  *
- * **Public Methods
+ * **Public Methods**:
  *  - `title: string`
  *  - `root(): UIAppBar | null`
  */
