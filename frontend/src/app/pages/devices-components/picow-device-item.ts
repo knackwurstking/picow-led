@@ -3,7 +3,7 @@ import "./picow-power-button";
 
 import { css as CSS, html, LitElement, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { globalStylesToShadowRoot } from "ui";
+import { CleanUp, globalStylesToShadowRoot } from "ui";
 
 import { ws, WSEventsDevice } from "../../../lib/websocket";
 import { PicowStore } from "../../../types";
@@ -24,6 +24,7 @@ export class PicowDeviceItem extends LitElement {
     hide: boolean = false;
 
     private store: PicowStore = document.querySelector(`ui-store`)!;
+    private cleanup = new CleanUp();
 
     static get styles() {
         return CSS`
@@ -119,20 +120,27 @@ export class PicowDeviceItem extends LitElement {
             );
         }
 
-        ws.events.addListener("message-device", (data) => {
-            if (data.server.addr !== this.device?.server.addr) return;
-            this.device = data;
+        this.cleanup.add(
+            ws.events.addListener("message-device", (data) => {
+                if (data.server.addr !== this.device?.server.addr) return;
+                this.device = data;
 
-            if (!this.device.color) return;
+                if (!this.device.color) return;
 
-            // Only update "devicesColor" store if color is not 0
-            if (this.device.color.filter((c) => c > 0).length > 0) {
-                this.store.updateData("devicesColor", (data) => {
-                    if (!this.device || !this.device?.color) return data;
-                    data[this.device.server.addr] = this.device.color;
-                    return data;
-                });
-            }
-        });
+                // Only update "devicesColor" store if color is not 0
+                if (this.device.color.filter((c) => c > 0).length > 0) {
+                    this.store.updateData("devicesColor", (data) => {
+                        if (!this.device || !this.device?.color) return data;
+                        data[this.device.server.addr] = this.device.color;
+                        return data;
+                    });
+                }
+            })
+        );
+    }
+
+    disconnectedCallback(): void {
+        super.disconnectedCallback();
+        this.cleanup.run();
     }
 }
