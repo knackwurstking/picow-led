@@ -1,4 +1,4 @@
-import { css as CSS, html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { svg } from "ui";
 import { ws, WSEventsDevice } from "../../../lib/websocket";
@@ -18,7 +18,7 @@ export class PicowPowerButton extends LitElement {
     store: PicowStore = document.querySelector(`ui-store`)!;
 
     static get styles() {
-        return CSS`
+        return css`
             :host {
                 height: 100%;
                 width: 3rem;

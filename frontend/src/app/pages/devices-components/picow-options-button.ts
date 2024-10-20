@@ -1,4 +1,4 @@
-import { css as CSS, html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { svg } from "ui";
 import { ws, WSEventsDevice } from "../../../lib/websocket";
@@ -10,7 +10,7 @@ export class PicowOptionsButton extends LitElement {
     device?: WSEventsDevice;
 
     static get styles() {
-        return CSS`
+        return css`
             :host {
                 height: 100%;
             }
