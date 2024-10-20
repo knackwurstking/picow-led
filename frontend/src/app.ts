@@ -61,7 +61,7 @@ export class PicowApp extends LitElement {
         this.initializeStackLayout();
         this.initializeAppBar();
 
-        setTimeout(() => {
+        setTimeout(async () => {
             const store = this.store();
             const stackLayout = this.stackLayout();
 
@@ -133,7 +133,7 @@ export class PicowApp extends LitElement {
             return new PicowSettingsPage();
         });
 
-        stackLayout.events.addListener("change", ({ current }) => {
+        stackLayout.events.addListener("change", async ({ current }) => {
             const addItem = this.appBar.root()!.contentName("add")!;
 
             // Reset all layouts (AppBar buttons and title)

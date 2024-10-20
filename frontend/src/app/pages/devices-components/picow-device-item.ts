@@ -1,7 +1,7 @@
 import "./picow-options-button";
 import "./picow-power-button";
 
-import { css as CSS, html, LitElement, PropertyValues } from "lit";
+import { css, html, LitElement, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { CleanUp, globalStylesToShadowRoot } from "ui";
 
@@ -27,7 +27,7 @@ export class PicowDeviceItem extends LitElement {
     private cleanup = new CleanUp();
 
     static get styles() {
-        return CSS`
+        return css`
             :host {
                 display: block;
                 position: relative;
@@ -79,7 +79,7 @@ export class PicowDeviceItem extends LitElement {
                 class="is-card"
                 style="cursor: pointer;"
                 data-server-addr="${this.device?.server.addr || ""}"
-                @click=${() => {
+                @click=${async () => {
                     // TODO: Open a color picker dialog to select a color
                 }}
             >

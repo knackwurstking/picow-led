@@ -1,4 +1,4 @@
-import { css as CSS, html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 /**
@@ -13,7 +13,7 @@ export class PicowStatusLED extends LitElement {
     active: boolean = false;
 
     static get styles() {
-        return CSS`
+        return css`
             :host {
                 display: block;
             }

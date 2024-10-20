@@ -42,11 +42,10 @@ export class PicowDeviceSetupDialog extends LitElement {
                             type="text"
                             title="Server Name"
                             value="${this.device?.server.name}"
-                            @input=${(ev: Event) => {
+                            @input=${async (ev: Event) => {
                                 if (!this.device) return;
-                                this.device.server.name = (
-                                    ev.currentTarget as UIInput
-                                ).value;
+                                const target = ev.currentTarget as UIInput;
+                                this.device.server.name = target.value;
                             }}
                         ></ui-input>
                     </ui-flex-grid-item>
@@ -57,11 +56,10 @@ export class PicowDeviceSetupDialog extends LitElement {
                             type="text"
                             title="Server Address"
                             value="${this.device?.server.addr}"
-                            @input=${(ev: Event) => {
+                            @input=${async (ev: Event) => {
                                 if (!this.device) return;
-                                this.device.server.addr = (
-                                    ev.currentTarget as UIInput
-                                ).value;
+                                const target = ev.currentTarget as UIInput;
+                                this.device.server.addr = target.value;
                             }}
                         ></ui-input>
                     </ui-flex-grid-item>
@@ -73,11 +71,10 @@ export class PicowDeviceSetupDialog extends LitElement {
                             title="GPIO pins in use"
                             placeholder="ex.: 0,1,2,3"
                             value="${this.device?.pins?.join(",") || ""}"
-                            @input=${(ev: Event) => {
+                            @input=${async (ev: Event) => {
                                 if (!this.device) return;
-                                this.device.pins = (
-                                    ev.currentTarget as UIInput
-                                ).value
+                                const target = ev.currentTarget as UIInput;
+                                this.device.pins = target.value
                                     .split(/,|\.|\s/)
                                     .map((v) => parseInt(v))
                                     .filter((v) => !isNaN(v));
@@ -95,7 +92,7 @@ export class PicowDeviceSetupDialog extends LitElement {
         if (this.allowDeletion) {
             // Create "Delete" action
             root.addDialogActionButton("Delete", {
-                onClick: () => {
+                onClick: async () => {
                     this.dispatchEvent(new Event("delete"));
                     root.close();
                 },
@@ -107,7 +104,7 @@ export class PicowDeviceSetupDialog extends LitElement {
 
         // Create "Cancel" action
         root.addDialogActionButton("Cancel", {
-            onClick: () => {
+            onClick: async () => {
                 root.close();
             },
             variant: "full",
@@ -117,7 +114,7 @@ export class PicowDeviceSetupDialog extends LitElement {
 
         // Create "Submit" action
         root.addDialogActionButton("Submit", {
-            onClick: () => {
+            onClick: async () => {
                 let addrInput = this.shadowRoot!.querySelector<UIInput>(
                     `ui-input[name="server.addr"]`
                 )!;

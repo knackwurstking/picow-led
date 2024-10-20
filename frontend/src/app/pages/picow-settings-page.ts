@@ -1,16 +1,12 @@
-import {
-    CleanUp,
-    html,
-    UICheck,
-    UIInput,
-    UISelect,
-    UIStackLayoutPage,
-    UIThemeHandler,
-} from "ui";
-import type { UIThemeHandler_Theme } from "ui/src/ui-theme-handler/ui-theme-handler";
-import type { PicowStore } from "../../types";
+import { customElement } from "lit/decorators.js";
+import { UIStackLayoutPage } from "ui";
 
-export default class PicowSettingsPage extends UIStackLayoutPage {
+@customElement("picow-settings-page")
+export class PicowSettingsPage extends UIStackLayoutPage {
+    // TODO: Convert to lit component
+}
+
+export default class _PicowSettingsPage extends UIStackLayoutPage {
     store: PicowStore;
     cleanup: CleanUp;
     themeHandler: UIThemeHandler;
@@ -182,6 +178,3 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
         }
     }
 }
-
-console.debug(`Register the "picow-settings-page"`);
-customElements.define("picow-settings-page", PicowSettingsPage);
