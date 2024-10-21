@@ -66,6 +66,7 @@ export class PicowApp extends LitElement {
                 <ui-app-bar-item name="menu" slot="left">
                     <ui-icon-button
                         ghost
+                        ripple
                         @click=${(ev: Event) => {
                             this.events.dispatch("menu", ev);
                         }}
@@ -77,9 +78,9 @@ export class PicowApp extends LitElement {
                 <ui-app-bar-item name="status" slot="left">
                     <ui-flex-grid-row align="flex-end" gap="0.25rem">
                         <picow-status-led></picow-status-led>
-                        <ui-secondary
-                            style="white-space: nowrap;"
-                        ></ui-secondary>
+                        <ui-secondary style="white-space: nowrap;">
+                            Offline
+                        </ui-secondary>
                     </ui-flex-grid-row>
                 </ui-app-bar-item>
 
@@ -87,14 +88,14 @@ export class PicowApp extends LitElement {
                     <h4 style="white-space: nowrap;">PicoW LED</h4>
                 </ui-app-bar-item>
 
-                <ui-app-bar-item
-                    name="add"
-                    slot="right"
-                    @click=${(ev: Event) => {
-                        this.events.dispatch("add", ev);
-                    }}
-                >
-                    <ui-icon-button ghost>
+                <ui-app-bar-item name="add" slot="right" hidden>
+                    <ui-icon-button
+                        ghost
+                        ripple
+                        @click=${(ev: Event) => {
+                            this.events.dispatch("add", ev);
+                        }}
+                    >
                         ${svg.smoothieLineIcons.plus}
                     </ui-icon-button>
                 </ui-app-bar-item>
