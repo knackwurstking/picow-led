@@ -6,7 +6,7 @@ import {
     UISelect,
     UIStackLayoutPage,
     UIThemeHandler,
-    UIThemeHandlerThemes,
+    UIThemeHandlerTheme,
 } from "ui";
 import { PicowStore } from "../../types";
 
@@ -45,7 +45,6 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                     <ui-label primary="Use SSL connections" ripple>
                         <ui-check
                             name="ssl"
-                            slot="inputs"
                             ?checked=${this.store.getData("server")?.ssl}
                             @input=${async (ev: Event) => {
                                 resetTimeoutHandler();
@@ -57,7 +56,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                         (server) => {
                                             server.ssl = target.checked;
                                             return server;
-                                        }
+                                        },
                                     );
                                 }, timeoutValueMS);
                             }}
@@ -69,7 +68,6 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                     <ui-label primary="Server Host">
                         <ui-input
                             name="host"
-                            slot="inputs"
                             value="${this.store.getData("server")?.host}"
                             @input=${async (ev: Event) => {
                                 resetTimeoutHandler();
@@ -81,7 +79,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                         (server) => {
                                             server.host = target.value;
                                             return server;
-                                        }
+                                        },
                                     );
                                 }, timeoutValueMS);
                             }}
@@ -93,7 +91,6 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                     <ui-label primary="Server Port">
                         <ui-input
                             name="port"
-                            slot="inputs"
                             type="number"
                             value="${this.store.getData("server")?.port}"
                             @input=${async (ev: Event) => {
@@ -106,7 +103,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                         (server) => {
                                             server.port = target.value;
                                             return server;
-                                        }
+                                        },
                                     );
                                 }, timeoutValueMS);
                             }}
@@ -126,7 +123,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                 if (option === null) return;
 
                                 this.themeHandler.theme = target.selected()
-                                    ?.value as UIThemeHandlerThemes;
+                                    ?.value as UIThemeHandlerTheme;
 
                                 this.store.setData("currentTheme", {
                                     theme: this.themeHandler.theme,
