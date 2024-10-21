@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 	"github.com/knackwurstking/picow-led-server/pkg/picow"
@@ -33,17 +34,20 @@ type Room struct {
 	OnApiChange func(a *picow.Api)
 
 	clients map[*Client]bool
+
+	mutexDevices *sync.Mutex
 }
 
 func NewRoom(api *picow.Api) *Room {
 	return &Room{
-		Api:         api,
-		Join:        make(chan *Client),
-		Leave:       make(chan *Client),
-		Handle:      make(chan *Request),
-		Broadcast:   make(chan *Response),
-		OnApiChange: nil,
-		clients:     make(map[*Client]bool),
+		Api:          api,
+		Join:         make(chan *Client),
+		Leave:        make(chan *Client),
+		Handle:       make(chan *Request),
+		Broadcast:    make(chan *Response),
+		OnApiChange:  nil,
+		clients:      make(map[*Client]bool),
+		mutexDevices: &sync.Mutex{},
 	}
 }
 
@@ -150,8 +154,7 @@ func (r *Room) postApiDevice(req *Request) {
 	}
 
 	// Do stuff here
-	device := picow.NewDevice(deviceData)
-	r.Api.Devices = append(r.Api.Devices, device)
+	r.Api.Devices.Add(picow.NewDevice(deviceData), r.mutexDevices)
 
 	// Handle response/broadcast
 	resp.Set(ResponseTypeDevices, r.Api.Devices)
@@ -199,7 +202,7 @@ func (r *Room) putApiDevice(req *Request) {
 	}
 
 	// Do stuff here
-	device.SetData(deviceData)
+	device.SetDeviceData(deviceData, r.mutexDevices)
 
 	// Handle response/broadcast
 	resp.Set(ResponseTypeDevice, device)
@@ -240,7 +243,7 @@ func (r *Room) deleteApiDevice(req *Request) {
 	}
 
 	// Do stuff here
-	if ok := r.Api.Devices.Delete(device); !ok {
+	if ok := r.Api.Devices.Remove(device, r.mutexDevices); !ok {
 		// Nothing to delete it seems
 		return
 	}

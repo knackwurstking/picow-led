@@ -6,32 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"sync"
 )
-
-// TODO: Use a mutex for file operations like `LoadFromPath` and `SavetoPath`
-// TODO: Passing mutex as parameter and alway check for nil
-var devicesMutex = &sync.Mutex{} // TODO: Delete this, using mutex from parameter
-
-// TODO: Add `Add` method, with mutex as param
-type Devices []*Device
-
-func (d *Devices) Delete(device *Device) (ok bool) {
-	devicesMutex.Lock()
-	defer devicesMutex.Unlock()
-
-	newDevices := make([]*Device, 0)
-	for _, d := range *d {
-		if d.Addr() != device.Addr() {
-			newDevices = append(newDevices, d)
-		} else {
-			ok = true
-		}
-	}
-	*d = newDevices
-
-	return ok
-}
 
 type Api struct {
 	Devices Devices `json:"devices"`

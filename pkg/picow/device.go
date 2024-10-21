@@ -38,7 +38,7 @@ func NewDevice(data DeviceData) *Device {
 		mutex: &sync.Mutex{},
 	}
 
-	d.SetData(data)
+	d.SetDeviceData(data, nil)
 	return d
 }
 
@@ -46,7 +46,16 @@ func (d *Device) Addr() string {
 	return d.data.Server.Addr
 }
 
-func (d *Device) SetData(data DeviceData) {
+func (device *Device) DeviceData() *DeviceData {
+	return &device.data
+}
+
+func (d *Device) SetDeviceData(data DeviceData, mutex *sync.Mutex) {
+	if mutex != nil {
+		mutex.Lock()
+		defer mutex.Unlock()
+	}
+
 	d.data = data
 
 	// Set color and pins to device, ignore any error?
