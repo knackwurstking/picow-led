@@ -8,6 +8,8 @@ import { PicowDrawer } from "./app/picow-drawer";
 import { throwAlert } from "./lib/utils";
 import { ws } from "./lib/websocket";
 import { PicowStackLayoutPages, PicowStore } from "./types";
+import { PicowDevicesPage } from "./app/pages/picow-devices-page";
+import { PicowSettingsPage } from "./app/pages/picow-settings-page";
 
 /**
  * **Tag**: picow-app
@@ -122,11 +124,7 @@ export class PicowApp extends LitElement {
             >(`ui-stack-layout`)!;
 
         stackLayout.register("devices", async () => {
-            const page = new PicowDevicesPage();
-
-            // TODO: Do app-bar stuff here
-
-            return page;
+            return new PicowDevicesPage();
         });
 
         stackLayout.register("settings", async () => {
