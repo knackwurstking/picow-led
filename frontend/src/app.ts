@@ -1,6 +1,6 @@
 import "ui/lib/css/main.css";
 
-import { css as CSS, html, LitElement, type PropertyValues } from "lit";
+import { css, html, LitElement, type PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { globalStylesToShadowRoot, UIStackLayout, UIThemeHandler } from "ui";
 import { PicowAppBar } from "./app/picow-app-bar";
@@ -32,7 +32,7 @@ export class PicowApp extends LitElement {
     }
 
     static get styles() {
-        return CSS`
+        return css`
             :host {
                 position: fixed !important;
                 top: 0;
