@@ -2,12 +2,12 @@ import type { UIStore, UIThemeHandlerThemes } from "ui";
 
 import type { WSEventsDevice, WSEventsServer } from "./lib/websocket";
 
-export type PicowStackLayoutPages = "devices" | "settings" | "";
+export type PicowStackLayoutPage = "devices" | "settings" | "";
 
 export type PicowStore = UIStore<PicowStoreEvents>;
 
 export interface PicowStoreEvents {
-    currentPage: PicowStackLayoutPages;
+    currentPage: PicowStackLayoutPage;
     devices: WSEventsDevice[];
     devicesColor: { [key: string]: number[] };
     server: WSEventsServer;
