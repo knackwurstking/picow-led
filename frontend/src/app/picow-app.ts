@@ -16,7 +16,7 @@ import { PicowSettingsPage } from "./pages/picow-settings-page";
  */
 @customElement("picow-app")
 export class PicowApp extends LitElement {
-    private appBar: PicowAppBar = document.querySelector(`ui-app-bar`)!;
+    private appBar: PicowAppBar = document.querySelector(`picow-app-bar`)!;
     private drawer: PicowDrawer = new PicowDrawer();
 
     private store(): PicowStore {

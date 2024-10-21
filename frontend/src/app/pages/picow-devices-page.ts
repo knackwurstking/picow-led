@@ -15,7 +15,7 @@ import { PicowDeviceItem } from "./devices-components/picow-device-item";
 export class PicowDevicesPage extends UIStackLayoutPage {
     name = "devices";
 
-    private appBar: PicowAppBar = document.querySelector(`ui-app-bar`)!;
+    private appBar: PicowAppBar = document.querySelector(`picow-app-bar`)!;
     private store: PicowStore = document.querySelector(`ui-store`)!;
     private cleanup = new CleanUp();
 
