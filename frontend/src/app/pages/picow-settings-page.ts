@@ -1,6 +1,7 @@
-import { css, CSSResult, html, TemplateResult } from "lit";
+import { css, CSSResult, html, PropertyValues, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import {
+    globalStylesToShadowRoot,
     UICheck,
     UIInput,
     UISelect,
@@ -150,5 +151,10 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                 </ui-flex-grid-item>
             </ui-flex-grid>
         `;
+    }
+
+    protected firstUpdated(_changedProperties: PropertyValues): void {
+        super.firstUpdated(_changedProperties);
+        globalStylesToShadowRoot(this.shadowRoot!);
     }
 }

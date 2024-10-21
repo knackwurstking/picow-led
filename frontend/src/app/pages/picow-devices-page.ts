@@ -1,6 +1,11 @@
-import { css, html, TemplateResult } from "lit";
+import { css, html, PropertyValues, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
-import { CleanUp, Events, UIStackLayoutPage } from "ui";
+import {
+    CleanUp,
+    Events,
+    globalStylesToShadowRoot,
+    UIStackLayoutPage,
+} from "ui";
 import { throwAlert } from "../../lib/utils";
 import { ws } from "../../lib/websocket";
 import { AppBarEvents, PicowStore } from "../../types";
@@ -36,6 +41,11 @@ export class PicowDevicesPage extends UIStackLayoutPage {
         return html`<ul style="border-radius: var(--ui-radius);">
             <slot></slot>
         </ul>`;
+    }
+
+    protected firstUpdated(_changedProperties: PropertyValues): void {
+        super.firstUpdated(_changedProperties);
+        globalStylesToShadowRoot(this.shadowRoot!);
     }
 
     connectedCallback(): void {
