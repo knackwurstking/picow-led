@@ -22,7 +22,7 @@ export class PicowDrawer extends LitElement {
     protected render() {
         return html`
             <ui-drawer>
-                <ui-drawer-group nofold>
+                <ui-drawer-group no-fold>
                     <ui-drawer-group-item>
                         <ui-button
                             name="devices"
@@ -81,7 +81,7 @@ export class PicowDrawer extends LitElement {
         const pages: PicowStackLayoutPages[] = ["devices", "settings"];
         for (const name of pages) {
             button = this.shadowRoot!.querySelector(
-                `ui-button[name="devices"]`
+                `ui-button[name="devices"]`,
             )!;
             button.onclick = () => {
                 stackLayout.clear();

@@ -1,11 +1,10 @@
 import { css, html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
-import { CleanUp, UIStackLayoutPage } from "ui";
+import { CleanUp, Events, UIStackLayoutPage } from "ui";
 import { throwAlert } from "../../lib/utils";
 import { ws } from "../../lib/websocket";
-import { PicowStore } from "../../types";
+import { AppBarEvents, PicowStore } from "../../types";
 import { PicowDeviceSetupDialog } from "../dialogs/picow-device-setup-dialog";
-import { PicowAppBar } from "../picow-app-bar";
 import { PicowDeviceItem } from "./devices-components/picow-device-item";
 
 /**
@@ -15,7 +14,8 @@ import { PicowDeviceItem } from "./devices-components/picow-device-item";
 export class PicowDevicesPage extends UIStackLayoutPage {
     name = "devices";
 
-    private appBar: PicowAppBar = document.querySelector(`picow-app-bar`)!;
+    public picowAppEvents: Events<AppBarEvents> | null = null;
+
     private store: PicowStore = document.querySelector(`ui-store`)!;
     private cleanup = new CleanUp();
 
@@ -38,20 +38,24 @@ export class PicowDevicesPage extends UIStackLayoutPage {
 
     connectedCallback(): void {
         super.connectedCallback();
+
+        if (this.picowAppEvents !== null) {
+            this.cleanup.add(
+                this.picowAppEvents.addListener("add", async () => {
+                    const dialog = new PicowDeviceSetupDialog();
+                    dialog.allowDeletion = false;
+
+                    dialog.addEventListener("submit", async () => {
+                        if (!dialog.device) return;
+                        ws.request("POST api.device", dialog.device);
+                    });
+
+                    dialog.open();
+                }),
+            );
+        }
+
         this.cleanup.add(
-            // AppBar Events
-            this.appBar.events.addListener("add", async () => {
-                const dialog = new PicowDeviceSetupDialog();
-                dialog.allowDeletion = false;
-
-                dialog.addEventListener("submit", async () => {
-                    if (!dialog.device) return;
-                    ws.request("POST api.device", dialog.device);
-                });
-
-                dialog.open();
-            }),
-
             // Store Events
             this.store.addListener("devices", (devices) => {
                 const list = this.shadowRoot!.querySelector("ul")!;
@@ -68,7 +72,7 @@ export class PicowDevicesPage extends UIStackLayoutPage {
             // WS Events
             ws.events.addListener("message-devices", async (data) => {
                 this.store.setData("devices", data);
-            })
+            }),
         );
 
         const getDevicesFromWS = async () => {

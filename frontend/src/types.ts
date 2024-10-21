@@ -16,7 +16,7 @@ export interface PicowStoreEvents {
     };
 }
 
-export interface PicowAppBarEvents {
-    menu: MouseEvent;
-    add: MouseEvent;
+export interface AppBarEvents {
+    menu: Event;
+    add: Event;
 }
