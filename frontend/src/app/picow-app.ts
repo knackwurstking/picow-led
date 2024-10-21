@@ -16,7 +16,6 @@ import { ws } from "../lib/websocket";
 import { AppBarEvents, PicowStackLayoutPage, PicowStore } from "../types";
 import { PicowDevicesPage } from "./pages/picow-devices-page";
 import { PicowSettingsPage } from "./pages/picow-settings-page";
-import { PicowDrawer } from "./picow-drawer";
 
 /**
  * **Tag**: picow-app
@@ -24,8 +23,6 @@ import { PicowDrawer } from "./picow-drawer";
 @customElement("picow-app")
 export class PicowApp extends LitElement {
     private events: Events<AppBarEvents> = new Events();
-
-    private drawer: PicowDrawer = new PicowDrawer();
 
     private queryStore(): PicowStore {
         return document.querySelector<PicowStore>(`ui-store`)!;
@@ -43,9 +40,9 @@ export class PicowApp extends LitElement {
         return this.shadowRoot!.querySelector<UIDrawer>(`ui-drawer`)!;
     }
 
-    private queryStackLayout(): UIStackLayout<PicowStackLayoutPages> {
+    private queryStackLayout(): UIStackLayout<PicowStackLayoutPage> {
         return this.shadowRoot!.querySelector<
-            UIStackLayout<PicowStackLayoutPages>
+            UIStackLayout<PicowStackLayoutPage>
         >(`ui-stack-layout`)!;
     }
 
@@ -68,7 +65,7 @@ export class PicowApp extends LitElement {
                 <ui-stack-layout></ui-stack-layout>
             </ui-container>
 
-            ${this.renderAppBar()} ${this.drawer}
+            ${this.renderAppBar()} ${this.renderDrawer()}
         `;
     }
 
@@ -180,6 +177,7 @@ export class PicowApp extends LitElement {
         setTimeout(async () => {
             const store = this.queryStore();
             const stackLayout = this.queryStackLayout();
+            const drawer = this.queryDrawer();
 
             // Set the start page
             if (!!store.getData("currentPage")) {
@@ -188,7 +186,7 @@ export class PicowApp extends LitElement {
                     stackLayout.set(currentPage);
                 }
             } else {
-                this.drawer.open();
+                drawer.open = true;
             }
 
             // Handle websocket error messages
@@ -232,6 +230,7 @@ export class PicowApp extends LitElement {
     private initializeStackLayout() {
         const store = this.queryStore();
         const appBar = this.queryAppBar();
+        const drawer = this.queryDrawer();
 
         const stackLayout =
             this.shadowRoot!.querySelector<UIStackLayout<PicowStackLayoutPage>>(
@@ -256,7 +255,7 @@ export class PicowApp extends LitElement {
             addItem.hide();
 
             if (!current) {
-                this.drawer.open();
+                drawer.open = true;
                 return;
             }
 
@@ -282,8 +281,11 @@ export class PicowApp extends LitElement {
 
     private initializeAppBar() {
         const appBar = this.queryAppBar();
+        const drawer = this.queryDrawer();
 
-        this.events.addListener("menu", () => this.drawer.open());
+        this.events.addListener("menu", () => {
+            drawer.open = true;
+        });
 
         const statusItem = appBar.contentName("status")!;
         const picowStatusLED =

@@ -1,4 +1,4 @@
-import type { UIStore, UIThemeHandlerThemes } from "ui";
+import type { UIStore, UIThemeHandlerTheme } from "ui";
 
 import type { WSEventsDevice, WSEventsServer } from "./lib/websocket";
 
@@ -12,7 +12,7 @@ export interface PicowStoreEvents {
     devicesColor: { [key: string]: number[] };
     server: WSEventsServer;
     currentTheme: {
-        theme: UIThemeHandlerThemes;
+        theme: UIThemeHandlerTheme;
     };
 }
 
