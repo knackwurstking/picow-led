@@ -5,13 +5,15 @@ import {
     globalStylesToShadowRoot,
     svg,
     UIAppBar,
+    UIButton,
+    UIDrawer,
     UIStackLayout,
     UIThemeHandler,
 } from "ui";
 import { PicowStatusLED } from "../components/picow-status-led";
 import { throwAlert } from "../lib/utils";
 import { ws } from "../lib/websocket";
-import { AppBarEvents, PicowStackLayoutPages, PicowStore } from "../types";
+import { AppBarEvents, PicowStackLayoutPage, PicowStore } from "../types";
 import { PicowDevicesPage } from "./pages/picow-devices-page";
 import { PicowSettingsPage } from "./pages/picow-settings-page";
 import { PicowDrawer } from "./picow-drawer";
@@ -25,19 +27,23 @@ export class PicowApp extends LitElement {
 
     private drawer: PicowDrawer = new PicowDrawer();
 
-    private store(): PicowStore {
+    private queryStore(): PicowStore {
         return document.querySelector<PicowStore>(`ui-store`)!;
     }
 
-    private themeHandler(): UIThemeHandler {
+    private queryThemeHandler(): UIThemeHandler {
         return document.querySelector<UIThemeHandler>(`ui-theme-handler`)!;
     }
 
-    private appBar(): UIAppBar {
+    private queryAppBar(): UIAppBar {
         return this.shadowRoot!.querySelector<UIAppBar>(`ui-app-bar`)!;
     }
 
-    private stackLayout(): UIStackLayout<PicowStackLayoutPages> {
+    private queryDrawer(): UIDrawer {
+        return this.shadowRoot!.querySelector<UIDrawer>(`ui-drawer`)!;
+    }
+
+    private queryStackLayout(): UIStackLayout<PicowStackLayoutPages> {
         return this.shadowRoot!.querySelector<
             UIStackLayout<PicowStackLayoutPages>
         >(`ui-stack-layout`)!;
@@ -110,7 +116,57 @@ export class PicowApp extends LitElement {
     }
 
     protected renderDrawer() {
-        return html``; // TODO: ...
+        return html`
+            <ui-drawer>
+                <ui-drawer-group no-fold>
+                    <ui-drawer-group-item>
+                        <ui-button
+                            name="devices"
+                            style="justify-content: flex-start;"
+                            variant="ghost"
+                            color="primary"
+                        >
+                            Devices
+                        </ui-button>
+                    </ui-drawer-group-item>
+
+                    <ui-drawer-group-item>
+                        <ui-button
+                            name="groups"
+                            style="justify-content: flex-start;"
+                            variant="ghost"
+                            color="primary"
+                            disabled
+                        >
+                            Groups
+                        </ui-button>
+                    </ui-drawer-group-item>
+
+                    <ui-drawer-group-item>
+                        <ui-button
+                            name="scenes"
+                            style="justify-content: flex-start;"
+                            variant="ghost"
+                            color="primary"
+                            disabled
+                        >
+                            Scenes
+                        </ui-button>
+                    </ui-drawer-group-item>
+
+                    <ui-drawer-group-item>
+                        <ui-button
+                            name="settings"
+                            style="justify-content: flex-start;"
+                            variant="ghost"
+                            color="primary"
+                        >
+                            Settings
+                        </ui-button>
+                    </ui-drawer-group-item>
+                </ui-drawer-group>
+            </ui-drawer>
+        `;
     }
 
     protected firstUpdated(_changedProperties: PropertyValues): void {
@@ -122,8 +178,8 @@ export class PicowApp extends LitElement {
         this.initializeDrawer();
 
         setTimeout(async () => {
-            const store = this.store();
-            const stackLayout = this.stackLayout();
+            const store = this.queryStore();
+            const stackLayout = this.queryStackLayout();
 
             // Set the start page
             if (!!store.getData("currentPage")) {
@@ -140,7 +196,7 @@ export class PicowApp extends LitElement {
                 throwAlert({ message: msg, variant: "error" }),
             );
 
-            // Updating the websocket server on store "server" canges
+            // Updating the websocket server if store data "server" changes
             store.addListener(
                 "server",
                 async (server) => {
@@ -152,8 +208,8 @@ export class PicowApp extends LitElement {
     }
 
     private initializeStore() {
-        const store = this.store();
-        const themeHandler = this.themeHandler();
+        const store = this.queryStore();
+        const themeHandler = this.queryThemeHandler();
 
         themeHandler.theme =
             store.getData("currentTheme")?.theme || themeHandler.theme;
@@ -174,13 +230,13 @@ export class PicowApp extends LitElement {
     }
 
     private initializeStackLayout() {
-        const store = this.store();
-        const appBar = this.appBar();
+        const store = this.queryStore();
+        const appBar = this.queryAppBar();
 
         const stackLayout =
-            this.shadowRoot!.querySelector<
-                UIStackLayout<PicowStackLayoutPages>
-            >(`ui-stack-layout`)!;
+            this.shadowRoot!.querySelector<UIStackLayout<PicowStackLayoutPage>>(
+                `ui-stack-layout`,
+            )!;
 
         stackLayout.register("devices", async () => {
             const page = new PicowDevicesPage();
@@ -204,7 +260,7 @@ export class PicowApp extends LitElement {
                 return;
             }
 
-            store.setData("currentPage", current.name as PicowStackLayoutPages);
+            store.setData("currentPage", current.name as PicowStackLayoutPage);
             switch (current.name) {
                 case "devices":
                     store.setData("currentPage", current.name);
@@ -225,7 +281,7 @@ export class PicowApp extends LitElement {
     }
 
     private initializeAppBar() {
-        const appBar = this.appBar();
+        const appBar = this.queryAppBar();
 
         this.events.addListener("menu", () => this.drawer.open());
 
@@ -247,6 +303,20 @@ export class PicowApp extends LitElement {
     }
 
     private initializeDrawer() {
-        // TODO: ...
+        const drawer = this.queryDrawer();
+        const stackLayout = this.queryStackLayout();
+
+        let button: UIButton;
+        const pages: PicowStackLayoutPage[] = ["devices", "settings"];
+        for (const name of pages) {
+            button = this.shadowRoot!.querySelector(
+                `ui-button[name="devices"]`,
+            )!;
+            button.onclick = () => {
+                stackLayout.clear();
+                stackLayout.set(name);
+                drawer.open = false;
+            };
+        }
     }
 }
