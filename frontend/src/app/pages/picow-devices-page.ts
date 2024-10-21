@@ -14,6 +14,8 @@ import { PicowDeviceItem } from "./devices-components/picow-device-item";
 export class PicowDevicesPage extends UIStackLayoutPage {
     name = "devices";
 
+    // NOTE: For now the events object needs to be passed before the
+    //       connectedCallback method is running
     public picowAppEvents: Events<AppBarEvents> | null = null;
 
     private store: PicowStore = document.querySelector(`ui-store`)!;
