@@ -31,8 +31,9 @@ export class PicowSettingsPage extends UIStackLayoutPage {
 
     protected render(): TemplateResult<1> {
         let timeout: NodeJS.Timeout | null = null;
+        const timeoutValueMS: number = 250;
 
-        const resetTimeout = () => {
+        const resetTimeoutHandler = () => {
             if (!timeout) return;
             clearTimeout(timeout);
             timeout = null;
@@ -47,7 +48,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                             slot="inputs"
                             ?checked=${this.store.getData("server")?.ssl}
                             @input=${async (ev: Event) => {
-                                resetTimeout();
+                                resetTimeoutHandler();
                                 const target = ev.currentTarget as UICheck;
 
                                 timeout = setTimeout(() => {
@@ -58,7 +59,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                             return server;
                                         }
                                     );
-                                }, 250);
+                                }, timeoutValueMS);
                             }}
                         ></ui-check>
                     </ui-label>
@@ -71,7 +72,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                             slot="inputs"
                             value="${this.store.getData("server")?.host}"
                             @input=${async (ev: Event) => {
-                                resetTimeout();
+                                resetTimeoutHandler();
                                 const target = ev.currentTarget as UIInput;
 
                                 timeout = setTimeout(() => {
@@ -82,7 +83,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                             return server;
                                         }
                                     );
-                                }, 250);
+                                }, timeoutValueMS);
                             }}
                         ></ui-input>
                     </ui-label>
@@ -96,7 +97,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                             type="number"
                             value="${this.store.getData("server")?.port}"
                             @input=${async (ev: Event) => {
-                                resetTimeout();
+                                resetTimeoutHandler();
                                 const target = ev.currentTarget as UIInput;
 
                                 timeout = setTimeout(() => {
@@ -107,7 +108,7 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                             return server;
                                         }
                                     );
-                                }, 250);
+                                }, timeoutValueMS);
                             }}
                         ></ui-input>
                     </ui-label>
