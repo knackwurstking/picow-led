@@ -12,7 +12,7 @@
 
 ## v0.8.0 — [unreleased]
 
-- [ui v0.9.0](https://github.com/knackwurstking/ui)
+- [ui v1.0.0](https://github.com/knackwurstking/ui)
 
 **TODOs**:
 
