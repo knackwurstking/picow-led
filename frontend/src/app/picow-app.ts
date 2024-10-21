@@ -1,5 +1,3 @@
-import "ui/lib/css/main.css";
-
 import { css, html, LitElement, type PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { globalStylesToShadowRoot, UIStackLayout, UIThemeHandler } from "ui";

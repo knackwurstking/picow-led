@@ -1,3 +1,6 @@
+import "ui/lib/css/main.css";
+
+import "./app/picow-app-bar";
 import "./app/picow-app";
 
 import { registerSW } from "virtual:pwa-register";
