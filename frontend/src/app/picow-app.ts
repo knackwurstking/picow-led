@@ -62,6 +62,12 @@ export class PicowApp extends LitElement {
                 <ui-stack-layout></ui-stack-layout>
             </ui-container>
 
+            ${this.renderAppBar()} ${this.drawer}
+        `;
+    }
+
+    protected renderAppBar() {
+        return html`
             <ui-app-bar position="top">
                 <ui-app-bar-item name="menu" slot="left">
                     <ui-icon-button
@@ -100,9 +106,11 @@ export class PicowApp extends LitElement {
                     </ui-icon-button>
                 </ui-app-bar-item>
             </ui-app-bar>
-
-            ${this.drawer}
         `;
+    }
+
+    protected renderDrawer() {
+        return html``; // TODO: ...
     }
 
     protected firstUpdated(_changedProperties: PropertyValues): void {
@@ -111,6 +119,7 @@ export class PicowApp extends LitElement {
         this.initializeStore();
         this.initializeStackLayout();
         this.initializeAppBar();
+        this.initializeDrawer();
 
         setTimeout(async () => {
             const store = this.store();
@@ -235,5 +244,9 @@ export class PicowApp extends LitElement {
             picowStatusLED.active = false;
             text.innerHTML = "Offline";
         });
+    }
+
+    private initializeDrawer() {
+        // TODO: ...
     }
 }

@@ -1,3 +1,4 @@
+// TODO: Move this to the "picow-app" component, just like the app-bar
 import { html, LitElement, PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { UIButton, UIDrawer, UIStackLayout } from "ui";
@@ -13,6 +14,8 @@ import { PicowStackLayoutPages } from "../types";
  */
 @customElement("picow-drawer")
 export class PicowDrawer extends LitElement {
+    // FIXME: Should be fixed after moving, this returns null because the stack-layout
+    //        belongs to the "picow-app"
     private stackLayout(): UIStackLayout<PicowStackLayoutPages> {
         return this.shadowRoot!.querySelector<
             UIStackLayout<PicowStackLayoutPages>
