@@ -1,6 +1,6 @@
-import { registerSW } from "virtual:pwa-register";
+import "./app/picow-app";
 
-import { PicowApp } from "./app";
+import { registerSW } from "virtual:pwa-register";
 
 registerSW({
     onRegistered(r) {
@@ -17,9 +17,3 @@ registerSW({
         });
     },
 });
-
-async function main() {
-    document.querySelector("#app")!.replaceWith(new PicowApp());
-}
-
-main();

@@ -3,13 +3,13 @@ import "ui/lib/css/main.css";
 import { css, html, LitElement, type PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { globalStylesToShadowRoot, UIStackLayout, UIThemeHandler } from "ui";
-import { PicowAppBar } from "./app/picow-app-bar";
-import { PicowDrawer } from "./app/picow-drawer";
-import { throwAlert } from "./lib/utils";
-import { ws } from "./lib/websocket";
-import { PicowStackLayoutPages, PicowStore } from "./types";
-import { PicowDevicesPage } from "./app/pages/picow-devices-page";
-import { PicowSettingsPage } from "./app/pages/picow-settings-page";
+import { PicowAppBar } from "./picow-app-bar";
+import { PicowDrawer } from "./picow-drawer";
+import { throwAlert } from "../lib/utils";
+import { ws } from "../lib/websocket";
+import { PicowStackLayoutPages, PicowStore } from "../types";
+import { PicowDevicesPage } from "./pages/picow-devices-page";
+import { PicowSettingsPage } from "./pages/picow-settings-page";
 
 /**
  * **Tag**: picow-app
