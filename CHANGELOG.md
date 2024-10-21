@@ -12,14 +12,11 @@
 
 ## v0.8.0 — [unreleased]
 
-- [ui v1.0.0](https://github.com/knackwurstking/ui)
-
-**TODOs**:
-
-- [ ] [frontend] Updated "ui" version, using Lit web components now
-
 **General**:
 
+- [frontend] Updated
+    ["ui" to version v1.0.0](https://github.com/knackwurstking/ui)
+    , using Lit web components now
 - [backend] Moved "ws" package to models/
 
 ## v0.7.0 — [2024-10-09]
