@@ -312,7 +312,7 @@ export class PicowApp extends LitElement {
         const pages: PicowStackLayoutPage[] = ["devices", "settings"];
         for (const name of pages) {
             button = this.shadowRoot!.querySelector(
-                `ui-button[name="devices"]`,
+                `ui-button[name="${name}"]`,
             )!;
             button.onclick = () => {
                 stackLayout.clear();
