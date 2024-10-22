@@ -15,7 +15,7 @@ import { WSEventsDevice } from "../../lib/websocket";
  *  - delete
  *
  * **Public Methods**:
- *  - `root(): UIDialog`
+ *  - `rootElement(): UIDialog`
  *  - `open()`
  *  - `close()`
  */
@@ -28,7 +28,6 @@ export class PicowDeviceSetupDialog extends LitElement {
     allowDeletion: boolean = false;
 
     protected render() {
-        UIDialog;
         return html`
             <ui-dialog
                 @close=${() => {
@@ -87,14 +86,14 @@ export class PicowDeviceSetupDialog extends LitElement {
     }
 
     protected updated(_changedProperties: PropertyValues): void {
-        const root = this.root();
+        const rootElement = this.rootElement();
 
         if (this.allowDeletion) {
             // Create "Delete" action
-            root.addDialogActionButton("Delete", {
+            rootElement.addDialogActionButton("Delete", {
                 onClick: async () => {
                     this.dispatchEvent(new Event("delete"));
-                    root.close();
+                    rootElement.close();
                 },
                 variant: "full",
                 color: "destructive",
@@ -103,9 +102,9 @@ export class PicowDeviceSetupDialog extends LitElement {
         }
 
         // Create "Cancel" action
-        root.addDialogActionButton("Cancel", {
+        rootElement.addDialogActionButton("Cancel", {
             onClick: async () => {
-                root.close();
+                rootElement.close();
             },
             variant: "full",
             color: "secondary",
@@ -113,10 +112,10 @@ export class PicowDeviceSetupDialog extends LitElement {
         });
 
         // Create "Submit" action
-        root.addDialogActionButton("Submit", {
+        rootElement.addDialogActionButton("Submit", {
             onClick: async () => {
                 let addrInput = this.shadowRoot!.querySelector<UIInput>(
-                    `ui-input[name="server.addr"]`
+                    `ui-input[name="server.addr"]`,
                 )!;
 
                 if (!this.device?.server.addr) {
@@ -127,7 +126,7 @@ export class PicowDeviceSetupDialog extends LitElement {
                 addrInput.invalid = false;
 
                 let pinsInput = this.shadowRoot!.querySelector<UIInput>(
-                    `ui-input[name="pins"]`
+                    `ui-input[name="pins"]`,
                 )!;
 
                 if (!this.device?.pins?.length) {
@@ -138,7 +137,7 @@ export class PicowDeviceSetupDialog extends LitElement {
                 pinsInput.invalid = false;
 
                 this.dispatchEvent(new Event("submit"));
-                root.close();
+                rootElement.close();
             },
             variant: "full",
             color: "secondary",
@@ -146,16 +145,17 @@ export class PicowDeviceSetupDialog extends LitElement {
         });
     }
 
-    public root(): UIDialog {
+    public rootElement(): UIDialog {
         return this.shadowRoot!.querySelector(`ui-dialog`)!;
     }
 
     public open() {
         if (!this.parentElement) document.body.appendChild(this);
-        this.root().open({ modal: true });
+        const rootElement = this.rootElement();
+        rootElement.show({ modal: true, inert: true });
     }
 
     public close() {
-        this.root().close();
+        this.rootElement().close();
     }
 }
