@@ -62,7 +62,7 @@ export class PicowDevicesPage extends UIStackLayoutPage {
                         ws.request("POST api.device", dialog.device);
                     });
 
-                    dialog.open();
+                    dialog.show();
                 }),
             );
         }

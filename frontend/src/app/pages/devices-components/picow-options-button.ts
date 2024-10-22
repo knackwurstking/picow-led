@@ -42,7 +42,7 @@ export class PicowOptionsButton extends LitElement {
                     const validateDevice = () => {
                         if (!dialog.device) {
                             throw new Error(
-                                `missing dialog data: device undefined`
+                                `missing dialog data: device undefined`,
                             );
                         }
                     };
@@ -60,7 +60,7 @@ export class PicowOptionsButton extends LitElement {
                         ws.request("PUT api.device", dialog.device!);
                     });
 
-                    dialog.open();
+                    dialog.show();
                 }}
             >
                 ${svg.smoothieLineIcons.moreVertical}

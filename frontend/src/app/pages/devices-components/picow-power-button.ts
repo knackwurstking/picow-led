@@ -76,7 +76,7 @@ export class PicowPowerButton extends LitElement {
     attributeChangedCallback(
         name: string,
         _old: string | null,
-        value: string | null
+        value: string | null,
     ): void {
         super.attributeChangedCallback(name, _old, value);
 

@@ -65,6 +65,8 @@ export class PicowDeviceItem extends LitElement {
     }
 
     protected render() {
+        this.updateCurrentColor();
+
         let primary = this.device?.server.name || "";
         let secondary = this.device?.server.addr;
         if (!primary) {
@@ -87,13 +89,13 @@ export class PicowDeviceItem extends LitElement {
                     <ui-flex-grid-row gap="0.25rem" align="center">
                         <ui-flex-grid-item>
                             <picow-power-button
-                                device=${this.device}
+                                device=${JSON.stringify(this.device)}
                             ></picow-power-button>
                         </ui-flex-grid-item>
 
                         <ui-flex-grid-item>
                             <picow-options-button
-                                device=${this.device}
+                                device=${JSON.stringify(this.device)}
                             ></picow-options-button>
                         </ui-flex-grid-item>
                     </ui-flex-grid-row>
@@ -116,7 +118,7 @@ export class PicowDeviceItem extends LitElement {
                 "--current-color",
                 `rgb(${this.device.color[0] || 0}, ${
                     this.device.color[1] || 0
-                }, ${this.device.color[2] || 0})`
+                }, ${this.device.color[2] || 0})`,
             );
         }
     }
@@ -138,12 +140,24 @@ export class PicowDeviceItem extends LitElement {
                         return data;
                     });
                 }
-            })
+            }),
         );
     }
 
     disconnectedCallback(): void {
         super.disconnectedCallback();
         this.cleanup.run();
+    }
+
+    private updateCurrentColor() {
+        if (!this.device?.color) {
+            this.style.removeProperty("--current-color");
+            return;
+        }
+
+        this.style.setProperty(
+            "--current-color",
+            `rgb(${this.device.color.slice(0, 3).join(", ")})`,
+        );
     }
 }

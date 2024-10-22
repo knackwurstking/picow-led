@@ -9,6 +9,7 @@ import { WSEventsDevice } from "../../lib/websocket";
  * **Attributes**:
  *  - device: `WSEventsDevice` - [json]
  *  - allow-deletion: `boolean`
+ *  - open: `boolean`
  *
  * **Events**:
  *  - submit
@@ -16,8 +17,8 @@ import { WSEventsDevice } from "../../lib/websocket";
  *
  * **Public Methods**:
  *  - `rootElement(): UIDialog`
- *  - `open()`
- *  - `close()`
+ *  - `async open()`
+ *  - `async close()`
  */
 @customElement("picow-device-setup-dialog")
 export class PicowDeviceSetupDialog extends LitElement {
@@ -27,11 +28,20 @@ export class PicowDeviceSetupDialog extends LitElement {
     @property({ type: Boolean, attribute: "allow-deletion", reflect: true })
     allowDeletion: boolean = false;
 
+    @property({ type: Boolean, attribute: "open", reflect: true })
+    open: boolean = false;
+
     protected render() {
         return html`
             <ui-dialog
-                @close=${() => {
-                    if (!!this.parentElement) document.removeChild(this);
+                title="Device Setup"
+                ?open=${this.open}
+                modal
+                inert
+                @close=${async () => {
+                    try {
+                        document.removeChild(this);
+                    } catch {}
                 }}
             >
                 <ui-flex-grid gap="0.5rem">
@@ -140,7 +150,7 @@ export class PicowDeviceSetupDialog extends LitElement {
                 rootElement.close();
             },
             variant: "full",
-            color: "secondary",
+            color: "primary",
             flex: 0,
         });
     }
@@ -149,13 +159,24 @@ export class PicowDeviceSetupDialog extends LitElement {
         return this.shadowRoot!.querySelector(`ui-dialog`)!;
     }
 
-    public open() {
-        if (!this.parentElement) document.body.appendChild(this);
+    public async show() {
+        if (
+            [...document.body.children].find((child) => child === this) ===
+            undefined
+        ) {
+            document.body.appendChild(this);
+        }
+
         const rootElement = this.rootElement();
+        if (rootElement === null) {
+            this.open = true;
+            return;
+        }
+
         rootElement.show({ modal: true, inert: true });
     }
 
-    public close() {
+    public async close() {
         this.rootElement().close();
     }
 }
