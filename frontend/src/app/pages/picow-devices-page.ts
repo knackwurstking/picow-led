@@ -56,13 +56,13 @@ export class PicowDevicesPage extends UIStackLayoutPage {
                 this.picowAppEvents.addListener("add", async () => {
                     const dialog = new PicowDeviceSetupDialog();
                     dialog.allowDeletion = false;
+                    dialog.open = true;
+                    document.body.appendChild(dialog);
 
                     dialog.addEventListener("submit", async () => {
                         if (!dialog.device) return;
                         ws.request("POST api.device", dialog.device);
                     });
-
-                    dialog.show();
                 }),
             );
         }

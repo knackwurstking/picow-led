@@ -17,8 +17,6 @@ import { WSEventsDevice } from "../../lib/websocket";
  *
  * **Public Methods**:
  *  - `rootElement(): UIDialog`
- *  - `async open()`
- *  - `async close()`
  */
 @customElement("picow-device-setup-dialog")
 export class PicowDeviceSetupDialog extends LitElement {
@@ -39,9 +37,7 @@ export class PicowDeviceSetupDialog extends LitElement {
                 modal
                 inert
                 @close=${async () => {
-                    try {
-                        document.removeChild(this);
-                    } catch {}
+                    this.parentElement?.removeChild(this);
                 }}
             >
                 <ui-flex-grid gap="0.5rem">
@@ -157,26 +153,5 @@ export class PicowDeviceSetupDialog extends LitElement {
 
     public rootElement(): UIDialog {
         return this.shadowRoot!.querySelector(`ui-dialog`)!;
-    }
-
-    public async show() {
-        if (
-            [...document.body.children].find((child) => child === this) ===
-            undefined
-        ) {
-            document.body.appendChild(this);
-        }
-
-        const rootElement = this.rootElement();
-        if (rootElement === null) {
-            this.open = true;
-            return;
-        }
-
-        rootElement.show({ modal: true, inert: true });
-    }
-
-    public async close() {
-        this.rootElement().close();
     }
 }

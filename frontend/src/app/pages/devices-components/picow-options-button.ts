@@ -33,11 +33,15 @@ export class PicowOptionsButton extends LitElement {
                     if (!this.device) return;
 
                     const dialog = new PicowDeviceSetupDialog();
-                    dialog.allowDeletion = true;
+
                     dialog.device = {
                         ...this.device,
                         server: { ...this.device.server },
                     };
+
+                    dialog.allowDeletion = true;
+                    dialog.open = true;
+                    document.body.appendChild(dialog);
 
                     const validateDevice = () => {
                         if (!dialog.device) {
@@ -59,8 +63,6 @@ export class PicowOptionsButton extends LitElement {
                         validateDevice();
                         ws.request("PUT api.device", dialog.device!);
                     });
-
-                    dialog.show();
                 }}
             >
                 ${svg.smoothieLineIcons.moreVertical}
