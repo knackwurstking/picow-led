@@ -1,73 +1,72 @@
-import { moreVertical as svgOptions } from "ui/svg/smoothie-line-icons";
+import { css, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { svg } from "ui";
+import { ws, WSEventsDevice } from "../../../lib/websocket";
+import { PicowDeviceSetupDialog } from "../../dialogs/picow-device-setup-dialog";
 
-import { html, UIIconButton } from "ui";
-import type { WSEvents_Device } from "../../../lib/websocket";
-import type { PicowStore } from "../../../types";
-import createDeviceSetupDialog from "../../dialogs/createDeviceSetupDialog";
-import ws from "../../../lib/websocket";
+/**
+ * **Tag**: picow-options-button
+ *
+ * **Attributes**:
+ *  - device: `WSEventsDevice` - [json]
+ */
+@customElement("picow-options-button")
+export class PicowOptionsButton extends LitElement {
+    @property({ type: Object, attribute: "device", reflect: true })
+    device?: WSEventsDevice;
 
-class PicowOptionsButton_Picow {
-    root: PicowOptionsButton;
-
-    constructor(root: PicowOptionsButton) {
-        this.root = root;
-    }
-
-    set(device: WSEvents_Device) {
-        this.root.device = device;
-    }
-}
-
-export default class PicowOptionsButton extends UIIconButton {
-    device: WSEvents_Device;
-    store: PicowStore;
-    picow: PicowOptionsButton_Picow;
-
-    constructor(device: WSEvents_Device | null = null) {
-        super();
-
-        this.device = device;
-        this.store = document.querySelector(`ui-store`);
-        this.picow = new PicowOptionsButton_Picow(this);
-
-        this.#render();
-    }
-
-    #render() {
-        this.ui.ghost = true;
-
-        this.shadowRoot.innerHTML += html`
-            <style>
-                :host {
-                    height: 100%;
-                }
-            </style>
+    static get styles() {
+        return css`
+            :host {
+                height: 100%;
+            }
         `;
+    }
 
-        this.innerHTML = svgOptions;
+    protected render() {
+        return html`
+            <ui-icon-button
+                ghost
+                ripple
+                @click=${async (ev: MouseEvent) => {
+                    ev.stopPropagation();
+                    if (!this.device) return;
 
-        this.onclick = async (ev) => {
-            ev.stopPropagation();
+                    const dialog = new PicowDeviceSetupDialog();
 
-            const setupDialog = await createDeviceSetupDialog({
-                name: this.device.server.name,
-                addr: this.device.server.addr,
-                pins: this.device.pins,
-                allowDeletion: true,
-            });
+                    dialog.device = {
+                        ...this.device,
+                        server: { ...this.device.server },
+                    };
 
-            setupDialog.events.on("delete", async (device) => {
-                ws.request("DELETE api.device", { addr: device.server.addr });
-            });
+                    dialog.allowDeletion = true;
+                    dialog.open = true;
+                    document.body.appendChild(dialog);
 
-            setupDialog.events.on("submit", async (device) => {
-                ws.request("PUT api.device", device);
-            });
+                    const validateDevice = () => {
+                        if (!dialog.device) {
+                            throw new Error(
+                                `missing dialog data: device undefined`,
+                            );
+                        }
+                    };
 
-            setupDialog.open();
-        };
+                    dialog.addEventListener("delete", async () => {
+                        validateDevice();
+
+                        ws.request("DELETE api.device", {
+                            addr: dialog.device!.server.addr,
+                        });
+                    });
+
+                    dialog.addEventListener("submit", async () => {
+                        validateDevice();
+                        ws.request("PUT api.device", dialog.device!);
+                    });
+                }}
+            >
+                ${svg.smoothieLineIcons.moreVertical}
+            </ui-icon-button>
+        `;
     }
 }
-
-console.debug(`Register the "picow-options-button"`);
-customElements.define("picow-options-button", PicowOptionsButton);

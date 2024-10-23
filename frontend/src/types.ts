@@ -1,24 +1,22 @@
-import type { UIStackLayout, UIStore } from "ui";
+import type { UIStore, UIThemeHandlerTheme } from "ui";
 
-import type { WSEvents_Device, WSEvents_Server } from "./lib/websocket";
-import type { UIThemeHandler_Theme } from "ui/src/ui-theme-handler/ui-theme-handler";
+import type { WSEventsDevice, WSEventsServer } from "./lib/websocket";
 
-export type PicowStackLayout = UIStackLayout<PicowStackLayout_Pages>;
+export type PicowStackLayoutPage = "devices" | "settings" | "";
 
-export type PicowStackLayout_Pages = null | "devices" | "settings";
+export type PicowStore = UIStore<PicowStoreEvents>;
 
-export type PicowStore = UIStore<PicowStore_Events>;
-
-export interface DevicesColor {
-    [key: string]: number[];
+export interface PicowStoreEvents {
+    currentPage: PicowStackLayoutPage;
+    devices: WSEventsDevice[];
+    devicesColor: { [key: string]: number[] };
+    server: WSEventsServer;
+    currentTheme: {
+        theme: UIThemeHandlerTheme;
+    };
 }
 
-export interface PicowStore_Events {
-    currentPage: PicowStackLayout_Pages;
-    devices: WSEvents_Device[];
-    devicesColor: DevicesColor;
-    server: WSEvents_Server;
-    currentTheme: {
-        theme: UIThemeHandler_Theme;
-    };
+export interface AppBarEvents {
+    menu: Event;
+    add: Event;
 }

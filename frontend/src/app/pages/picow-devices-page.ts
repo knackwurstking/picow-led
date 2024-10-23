@@ -1,106 +1,113 @@
-import { CleanUp, html, UIStackLayoutPage } from "ui";
-import * as utils from "../../lib/utils";
-import ws from "../../lib/websocket";
-import type { PicowStore } from "../../types";
-import type { AppBar } from "../create-app-bar";
-import createDeviceSetupDialog from "../dialogs/createDeviceSetupDialog";
-import PicowDeviceItem from "./devices-components/picow-device-item";
+import { css, html, PropertyValues, TemplateResult } from "lit";
+import { customElement } from "lit/decorators.js";
+import {
+    CleanUp,
+    Events,
+    globalStylesToShadowRoot,
+    UIStackLayoutPage,
+} from "ui";
+import { throwAlert } from "../../lib/utils";
+import { ws } from "../../lib/websocket";
+import { AppBarEvents, PicowStore } from "../../types";
+import { PicowDeviceSetupDialog } from "../dialogs/picow-device-setup-dialog";
+import { PicowDeviceItem } from "./devices-components/picow-device-item";
 
-export default class PicowDevicesPage extends UIStackLayoutPage {
-    store: PicowStore;
-    appBar: AppBar;
-    cleanup: CleanUp;
+/**
+ * **Tag**: picow-devices-page
+ */
+@customElement("picow-devices-page")
+export class PicowDevicesPage extends UIStackLayoutPage {
+    name = "devices";
 
-    constructor(appBar: AppBar) {
-        super("devices");
+    // NOTE: For now the events object needs to be passed before the
+    //       connectedCallback method is running
+    public picowAppEvents: Events<AppBarEvents> | null = null;
 
-        this.store = document.querySelector(`ui-store`);
-        this.appBar = appBar;
-        this.cleanup = new CleanUp();
+    private store: PicowStore = document.querySelector(`ui-store`)!;
+    private cleanup = new CleanUp();
 
-        this.#render();
+    static get styles() {
+        return css`
+            ${UIStackLayoutPage.styles}
+
+            :host {
+                padding-top: var(--ui-app-bar-height);
+                overflow: auto;
+            }
+        `;
     }
 
-    #render() {
-        this.shadowRoot.innerHTML += html`
-            <style>
-                :host {
-                    padding-top: var(--ui-app-bar-height);
-                    overflow: auto;
-                }
-            </style>
-        `;
-
-        this.innerHTML = html`
-            <ul style="border-radius: var(--ui-radius);"></ul>
-        `;
+    protected render(): TemplateResult<1> {
+        return html`<ul style="border-radius: var(--ui-radius);">
+            <slot></slot>
+        </ul>`;
     }
 
-    connectedCallback() {
+    protected firstUpdated(_changedProperties: PropertyValues): void {
+        super.firstUpdated(_changedProperties);
+        globalStylesToShadowRoot(this.shadowRoot!);
+    }
+
+    connectedCallback(): void {
         super.connectedCallback();
 
+        if (this.picowAppEvents !== null) {
+            this.cleanup.add(
+                this.picowAppEvents.addListener("add", async () => {
+                    const dialog = new PicowDeviceSetupDialog();
+                    dialog.allowDeletion = false;
+                    dialog.open = true;
+                    document.body.appendChild(dialog);
+
+                    dialog.addEventListener("submit", async () => {
+                        if (!dialog.device) return;
+                        ws.request("POST api.device", dialog.device);
+                    });
+                }),
+            );
+        }
+
         this.cleanup.add(
-            // -------------------- //
-            // Handle AppBar events //
-            // -------------------- //
-
-            this.appBar.events.on("add", async () => {
-                const setupDialog = await createDeviceSetupDialog({
-                    allowDeletion: false,
-                });
-
-                setupDialog.events.on("submit", async (device) => {
-                    ws.request("POST api.device", device);
-                });
-
-                setupDialog.open();
-            }),
-
-            // ------------------- //
-            // Handle Store events //
-            // ------------------- //
-
-            this.store.ui.on("devices", (devices) => {
-                const list = this.querySelector("ul");
+            // Store Events
+            this.store.addListener("devices", (devices) => {
+                const list = this.shadowRoot!.querySelector("ul")!;
                 while (!!list.firstChild) list.removeChild(list.firstChild);
                 for (const device of devices) {
                     setTimeout(() => {
-                        list.appendChild(new PicowDeviceItem(device));
+                        const deviceItem = new PicowDeviceItem();
+                        deviceItem.device = device;
+                        list.appendChild(deviceItem);
                     });
                 }
             }),
 
-            // ----------------------- //
-            // Handle WebSocket events //
-            // ----------------------- //
-
-            ws.events.on("message-devices", async (data) => {
-                this.store.ui.set("devices", data);
-            })
+            // WS Events
+            ws.events.addListener("message-devices", async (data) => {
+                this.store.setData("devices", data);
+            }),
         );
 
         const getDevicesFromWS = async () => {
             try {
                 await ws.request("GET api.devices");
             } catch (err) {
-                console.error(err);
-                utils.throwAlert({
-                    message: err,
-                    variant: "error",
-                });
+                if (err instanceof Error) {
+                    console.error(err);
+                    throwAlert({
+                        message: err.message,
+                        variant: "error",
+                    });
+                }
             }
         };
 
         getDevicesFromWS().then(() => {
-            this.cleanup.add(ws.events.on("open", getDevicesFromWS));
+            this.cleanup.add(ws.events.addListener("open", getDevicesFromWS));
         });
     }
 
-    disconnectedCallback() {
+    disconnectedCallback(): void {
         super.disconnectedCallback();
         this.cleanup.run();
     }
 }
-
-console.debug(`Register the "picow-devices-page"`);
-customElements.define("picow-devices-page", PicowDevicesPage);

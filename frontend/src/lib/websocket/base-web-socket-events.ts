@@ -1,7 +1,7 @@
-import type { WSEvents_Server } from "./types";
+import type { WSEventsServer } from "./types";
 
 export class BaseWebSocketEvents {
-    #server: WSEvents_Server | null;
+    #server: WSEventsServer | null = null;
 
     #messageHandler = async (ev: MessageEvent) => {
         await this.handleMessageEvent(ev);
@@ -69,17 +69,17 @@ export class BaseWebSocketEvents {
     }
 
     close() {
-        this.ws.removeEventListener("close", this.#closeHandler);
+        this.ws?.removeEventListener("close", this.#closeHandler);
 
         if (!!this.timeout) {
             clearTimeout(this.timeout);
             this.timeout = null;
         }
 
-        if (this.isOpen()) this.ws.close();
+        if (this.isOpen()) this.ws?.close();
     }
 
-    async handleMessageEvent(ev: MessageEvent) {}
+    async handleMessageEvent(_ev: MessageEvent) {}
 
     async handleOpenEvent() {
         console.debug(

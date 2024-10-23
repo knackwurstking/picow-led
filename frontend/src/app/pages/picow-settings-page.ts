@@ -1,46 +1,67 @@
+import { css, CSSResult, html, PropertyValues, TemplateResult } from "lit";
+import { customElement } from "lit/decorators.js";
 import {
-    CleanUp,
-    html,
+    globalStylesToShadowRoot,
     UICheck,
     UIInput,
     UISelect,
     UIStackLayoutPage,
     UIThemeHandler,
+    UIThemeHandlerTheme,
 } from "ui";
-import type { UIThemeHandler_Theme } from "ui/src/ui-theme-handler/ui-theme-handler";
-import type { PicowStore } from "../../types";
+import { PicowStore } from "../../types";
 
-export default class PicowSettingsPage extends UIStackLayoutPage {
-    store: PicowStore;
-    cleanup: CleanUp;
-    themeHandler: UIThemeHandler;
+@customElement("picow-settings-page")
+export class PicowSettingsPage extends UIStackLayoutPage {
+    name = "settings";
 
-    constructor() {
-        super("settings");
+    private store: PicowStore = document.querySelector(`ui-store`)!;
+    private themeHandler: UIThemeHandler =
+        document.querySelector(`ui-theme-handler`)!;
 
-        this.cleanup = new CleanUp();
+    static get styles(): CSSResult {
+        return css`
+            ${UIStackLayoutPage.styles}
 
-        this.store = document.querySelector(`ui-store`);
-        this.themeHandler = document.querySelector(`ui-theme-handler`);
-
-        this.#render();
+            :host {
+                padding-top: var(--ui-app-bar-height);
+                overflow: auto;
+            }
+        `;
     }
 
-    #render() {
-        this.shadowRoot.innerHTML += html`
-            <style>
-                :host {
-                    padding-top: var(--ui-app-bar-height);
-                    overflow: auto;
-                }
-            </style>
-        `;
+    protected render(): TemplateResult<1> {
+        let timeout: NodeJS.Timeout | null = null;
+        const timeoutValueMS: number = 250;
 
-        this.innerHTML = html`
+        const resetTimeoutHandler = () => {
+            if (!timeout) return;
+            clearTimeout(timeout);
+            timeout = null;
+        };
+
+        return html`
             <ui-flex-grid gap="0.25rem">
                 <ui-flex-grid-item>
                     <ui-label primary="Use SSL connections" ripple>
-                        <ui-check name="ssl" slot="inputs"></ui-check>
+                        <ui-check
+                            name="ssl"
+                            ?checked=${this.store.getData("server")?.ssl}
+                            @input=${async (ev: Event) => {
+                                resetTimeoutHandler();
+                                const target = ev.currentTarget as UICheck;
+
+                                timeout = setTimeout(() => {
+                                    this.store.updateData(
+                                        "server",
+                                        (server) => {
+                                            server.ssl = target.checked;
+                                            return server;
+                                        },
+                                    );
+                                }, timeoutValueMS);
+                            }}
+                        ></ui-check>
                     </ui-label>
                 </ui-flex-grid-item>
 
@@ -48,8 +69,21 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                     <ui-label primary="Server Host">
                         <ui-input
                             name="host"
-                            slot="inputs"
-                            value="${this.store.ui.get("server").host}"
+                            value="${this.store.getData("server")?.host}"
+                            @input=${async (ev: Event) => {
+                                resetTimeoutHandler();
+                                const target = ev.currentTarget as UIInput;
+
+                                timeout = setTimeout(() => {
+                                    this.store.updateData(
+                                        "server",
+                                        (server) => {
+                                            server.host = target.value;
+                                            return server;
+                                        },
+                                    );
+                                }, timeoutValueMS);
+                            }}
                         ></ui-input>
                     </ui-label>
                 </ui-flex-grid-item>
@@ -58,21 +92,58 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                     <ui-label primary="Server Port">
                         <ui-input
                             name="port"
-                            slot="inputs"
                             type="number"
-                            value="${this.store.ui.get("server").port}"
+                            value="${this.store.getData("server")?.port}"
+                            @input=${async (ev: Event) => {
+                                resetTimeoutHandler();
+                                const target = ev.currentTarget as UIInput;
+
+                                timeout = setTimeout(() => {
+                                    this.store.updateData(
+                                        "server",
+                                        (server) => {
+                                            server.port = target.value;
+                                            return server;
+                                        },
+                                    );
+                                }, timeoutValueMS);
+                            }}
                         ></ui-input>
                     </ui-label>
                 </ui-flex-grid-item>
 
                 <ui-flex-grid-item>
                     <ui-label primary="Theme">
-                        <ui-select name="theme" keep-open>
-                            <ui-select-option value="original">
+                        <ui-select
+                            name="theme"
+                            keep-open
+                            @change=${(ev: Event) => {
+                                const target = ev.currentTarget as UISelect;
+
+                                const option = target.selected();
+                                if (option === null) return;
+
+                                this.themeHandler.theme = target.selected()
+                                    ?.value as UIThemeHandlerTheme;
+
+                                this.store.setData("currentTheme", {
+                                    theme: this.themeHandler.theme,
+                                });
+                            }}
+                        >
+                            <ui-select-option
+                                value="original"
+                                ?selected=${this.themeHandler.theme ===
+                                "original"}
+                            >
                                 Original
                             </ui-select-option>
 
-                            <ui-select-option value="gruvbox">
+                            <ui-select-option
+                                value="gruvbox"
+                                ?selected=${this.themeHandler.theme ===
+                                "gruvbox"}
+                            >
                                 Gruvbox
                             </ui-select-option>
                         </ui-select>
@@ -80,108 +151,10 @@ export default class PicowSettingsPage extends UIStackLayoutPage {
                 </ui-flex-grid-item>
             </ui-flex-grid>
         `;
+    }
 
-        // ------------- //
-        // Handle Inputs //
-        // ------------- //
-
-        {
-            let inputEventTimeout: NodeJS.Timeout | null = null;
-            const resetInputEventTimeout = () => {
-                if (!inputEventTimeout) return;
-                clearTimeout(inputEventTimeout);
-                inputEventTimeout = null;
-            };
-
-            // ------------ //
-            // SSL Checkbox //
-            // ------------ //
-
-            {
-                const input =
-                    this.querySelector<UICheck>(`ui-check[name="ssl"]`);
-
-                input.ui.checked = this.store.ui.get("server").ssl;
-                input.ui.events.on("input", async (state) => {
-                    resetInputEventTimeout();
-
-                    inputEventTimeout = setTimeout(() => {
-                        this.store.ui.update("server", (server) => {
-                            server.ssl = state;
-                            return server;
-                        });
-                    }, 250);
-                });
-            }
-
-            // ---------- //
-            // Host Input //
-            // ---------- //
-
-            {
-                const input = this.querySelector<UIInput>(
-                    `ui-input[name="host"]`
-                );
-
-                input.ui.events.on("input", async (host) => {
-                    resetInputEventTimeout();
-
-                    inputEventTimeout = setTimeout(() => {
-                        this.store.ui.update("server", (server) => {
-                            server.host = host;
-                            return server;
-                        });
-                    }, 250);
-                });
-            }
-
-            // ---------- //
-            // Port Input //
-            // ---------- //
-
-            {
-                const input = this.querySelector<UIInput>(
-                    `ui-input[name="port"]`
-                );
-
-                input.ui.events.on("input", async (port) => {
-                    resetInputEventTimeout();
-
-                    inputEventTimeout = setTimeout(() => {
-                        this.store.ui.update("server", (server) => {
-                            server.port = port;
-                            return server;
-                        });
-                    }, 250);
-                });
-            }
-
-            // ------------ //
-            // Theme Select //
-            // ------------ //
-
-            {
-                const theme = this.querySelector<UISelect>(
-                    `ui-select[name="theme"]`
-                );
-
-                theme.ui.options().forEach((option) => {
-                    const currentTheme = this.themeHandler.ui.theme;
-                    option.ui.selected = option.ui.value === currentTheme;
-                });
-
-                theme.ui.events.on("change", async (option) => {
-                    this.themeHandler.ui.theme = option.ui
-                        .value as UIThemeHandler_Theme;
-
-                    this.store.ui.set("currentTheme", {
-                        theme: this.themeHandler.ui.theme,
-                    });
-                });
-            }
-        }
+    protected firstUpdated(_changedProperties: PropertyValues): void {
+        super.firstUpdated(_changedProperties);
+        globalStylesToShadowRoot(this.shadowRoot!);
     }
 }
-
-console.debug(`Register the "picow-settings-page"`);
-customElements.define("picow-settings-page", PicowSettingsPage);

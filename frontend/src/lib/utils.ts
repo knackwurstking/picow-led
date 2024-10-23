@@ -1,12 +1,18 @@
-import { UIAlert, UIAlerts, type UIAlert_Options } from "ui";
+import { UIAlert, UIAlerts, UIAlertVariant } from "ui";
 
-export function throwAlert(options: UIAlert_Options) {
-    const alerts = document.querySelector<UIAlerts>(`ui-alerts`);
-    if (!alerts) return;
+export function throwAlert(options: {
+    variant: UIAlertVariant;
+    message: string;
+}) {
+    const alerts = document.querySelector<UIAlerts>(`ui-alerts`)!;
 
-    const alert = new UIAlert(options);
+    const alert = new UIAlert();
+
+    alert.variant = options.variant;
+    alert.message = options.message;
+
     alert.style.cursor = "pointer";
 
-    const remove = alerts.ui.add(alert);
-    alert.onclick = async () => remove();
+    const cleanUp = alerts.addAlert(alert);
+    alert.onclick = async () => cleanUp();
 }
