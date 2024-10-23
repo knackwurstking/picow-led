@@ -3,19 +3,19 @@
 <!--toc:start-->
 
 - [CHANGELOG](#changelog)
-  - [v0.8.0 — [2024-10-22]](#v080-2024-10-22)
+  - [v0.8.0 — [unreleased]](#v080-unreleased)
   - [v0.7.0 — [2024-10-09]](#v070-2024-10-09)
   - [v0.6.2 — [2024-09-30]](#v062-2024-09-30)
   - [v0.6.1 — [2024-09-30]](#v061-2024-09-30)
 
 <!--toc:end-->
 
-## v0.8.0 — [unreleased]
+## v0.8.0 — [2024-10-24]
 
 **General**:
 
 - [frontend] Updated
-    ["ui" to version v0.9.0](https://github.com/knackwurstking/ui)
+    ["ui" to version v1.0.0](https://github.com/knackwurstking/ui)
     , using Lit web components now
 - [backend] Moved "ws" package to models/
 
