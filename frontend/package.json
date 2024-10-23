@@ -19,6 +19,6 @@
     },
     "dependencies": {
         "lit": "^3.2.1",
-        "ui": "knackwurstking/ui"
+        "ui": "knackwurstking/ui#v1.0.0"
     }
 }
