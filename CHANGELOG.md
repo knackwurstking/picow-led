@@ -3,6 +3,7 @@
 <!--toc:start-->
 
 - [CHANGELOG](#changelog)
+  - [v0.8.2 — [unreleased]](#v082-unreleased)
   - [v0.8.1 — [2024-10-24 Quick Fix]](#v081-2024-10-24-quick-fix)
   - [v0.8.0 — [2024-10-24]](#v080-2024-10-24)
   - [v0.7.0 — [2024-10-09]](#v070-2024-10-09)
@@ -10,6 +11,12 @@
   - [v0.6.1 — [2024-09-30]](#v061-2024-09-30)
 
 <!--toc:end-->
+
+## v0.8.2 — [unreleased]
+
+**Removed**:
+
+- Removed scrollbars from pages
 
 ## v0.8.1 — [2024-10-24 Quick Fix]
 
