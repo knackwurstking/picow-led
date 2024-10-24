@@ -10,6 +10,12 @@
 
 <!--toc:end-->
 
+## v0.8.1 — [unreleased]
+
+**Fixed**:
+
+- Fixed wrong fonts path for `includeAssets` (PWA manifest), and themes added
+
 ## v0.8.0 — [2024-10-24]
 
 **General**:
