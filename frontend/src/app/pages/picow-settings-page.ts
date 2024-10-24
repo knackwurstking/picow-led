@@ -25,7 +25,6 @@ export class PicowSettingsPage extends UIStackLayoutPage {
 
             :host {
                 padding-top: var(--ui-app-bar-height);
-                overflow: auto;
             }
         `;
     }

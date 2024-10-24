@@ -54,16 +54,15 @@ export class PicowApp extends LitElement {
                 right: 0;
                 bottom: 0;
                 left: 0;
-                overflow: auto;
             }
         `;
     }
 
     protected render() {
         return html`
-            <ui-container style="width: 100%; height: 100%;">
+            <div class="is-container no-scrollbar" style="height: 100%;">
                 <ui-stack-layout></ui-stack-layout>
-            </ui-container>
+            </div>
 
             ${this.renderAppBar()} ${this.renderDrawer()}
         `;
