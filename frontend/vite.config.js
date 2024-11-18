@@ -52,7 +52,6 @@ const manifest = {
         display: "standalone",
         scope: ".",
         start_url: "./",
-        orientation: "any",
         //publicPath: "/picow-led.github.io",
     },
 };
