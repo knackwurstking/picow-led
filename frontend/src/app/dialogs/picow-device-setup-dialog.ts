@@ -1,27 +1,18 @@
-import { html, LitElement, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
+
+import { html, LitElement, PropertyValues } from "lit";
 import { UIDialog, UIInput } from "ui";
-import { WSEventsDevice } from "../../lib/websocket";
+
+import * as types from "@types";
 
 /**
- * **Tag**: picow-device-setup-dialog
- *
- * **Attributes**:
- *  - device: `WSEventsDevice` - [json]
- *  - allow-deletion: `boolean`
- *  - open: `boolean`
- *
- * **Events**:
- *  - submit
- *  - delete
- *
- * **Public Methods**:
- *  - `rootElement(): UIDialog`
+ * @fires submit
+ * @fires delete
  */
 @customElement("picow-device-setup-dialog")
-export class PicowDeviceSetupDialog extends LitElement {
+class PicowDeviceSetupDialog extends LitElement {
     @property({ type: Object, attribute: "device", reflect: true })
-    device?: WSEventsDevice;
+    device?: types.WSEventsDevice;
 
     @property({ type: Boolean, attribute: "allow-deletion", reflect: true })
     allowDeletion: boolean = false;
@@ -131,9 +122,7 @@ export class PicowDeviceSetupDialog extends LitElement {
 
                 addrInput.invalid = false;
 
-                let pinsInput = this.shadowRoot!.querySelector<UIInput>(
-                    `ui-input[name="pins"]`,
-                )!;
+                let pinsInput = this.shadowRoot!.querySelector<UIInput>(`ui-input[name="pins"]`)!;
 
                 if (!this.device?.pins?.length) {
                     pinsInput.invalid = true;
@@ -155,3 +144,5 @@ export class PicowDeviceSetupDialog extends LitElement {
         return this.shadowRoot!.querySelector(`ui-dialog`)!;
     }
 }
+
+export default PicowDeviceSetupDialog;

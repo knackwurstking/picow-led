@@ -1,29 +1,21 @@
-import { css, html, PropertyValues, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
-import {
-    CleanUp,
-    Events,
-    globalStylesToShadowRoot,
-    UIStackLayoutPage,
-} from "ui";
-import { throwAlert } from "../../lib/utils";
-import { ws } from "../../lib/websocket";
-import { AppBarEvents, PicowStore } from "../../types";
-import { PicowDeviceSetupDialog } from "../dialogs/picow-device-setup-dialog";
-import { PicowDeviceItem } from "./devices-components/picow-device-item";
 
-/**
- * **Tag**: picow-devices-page
- */
+import { css, html, PropertyValues, TemplateResult } from "lit";
+import { CleanUp, Events, globalStylesToShadowRoot, UIStackLayoutPage } from "ui";
+
+import * as app from "@app";
+import * as lib from "@lib";
+import * as types from "@types";
+
 @customElement("picow-devices-page")
-export class PicowDevicesPage extends UIStackLayoutPage {
+class PicowDevicesPage extends UIStackLayoutPage {
     name = "devices";
 
     // NOTE: For now the events object needs to be passed before the
     //       connectedCallback method is running
-    public picowAppEvents: Events<AppBarEvents> | null = null;
+    public picowAppEvents: Events<types.AppBarEvents> | null = null;
 
-    private store: PicowStore = document.querySelector(`ui-store`)!;
+    private store: types.PicowStore = document.querySelector(`ui-store`)!;
     private cleanup = new CleanUp();
 
     static get styles() {
@@ -54,14 +46,14 @@ export class PicowDevicesPage extends UIStackLayoutPage {
         if (this.picowAppEvents !== null) {
             this.cleanup.add(
                 this.picowAppEvents.addListener("add", async () => {
-                    const dialog = new PicowDeviceSetupDialog();
+                    const dialog = new app.PicowDeviceSetupDialog();
                     dialog.allowDeletion = false;
                     dialog.open = true;
                     document.body.appendChild(dialog);
 
                     dialog.addEventListener("submit", async () => {
                         if (!dialog.device) return;
-                        ws.request("POST api.device", dialog.device);
+                        lib.ws.request("POST api.device", dialog.device);
                     });
                 }),
             );
@@ -74,7 +66,7 @@ export class PicowDevicesPage extends UIStackLayoutPage {
                 while (!!list.firstChild) list.removeChild(list.firstChild);
                 for (const device of devices) {
                     setTimeout(() => {
-                        const deviceItem = new PicowDeviceItem();
+                        const deviceItem = new app.PicowDeviceItem();
                         deviceItem.device = device;
                         list.appendChild(deviceItem);
                     });
@@ -82,18 +74,18 @@ export class PicowDevicesPage extends UIStackLayoutPage {
             }),
 
             // WS Events
-            ws.events.addListener("message-devices", async (data) => {
+            lib.ws.events.addListener("message-devices", async (data) => {
                 this.store.setData("devices", data);
             }),
         );
 
         const getDevicesFromWS = async () => {
             try {
-                await ws.request("GET api.devices");
+                await lib.ws.request("GET api.devices");
             } catch (err) {
                 if (err instanceof Error) {
                     console.error(err);
-                    throwAlert({
+                    lib.throwAlert({
                         message: err.message,
                         variant: "error",
                     });
@@ -102,7 +94,7 @@ export class PicowDevicesPage extends UIStackLayoutPage {
         };
 
         getDevicesFromWS().then(() => {
-            this.cleanup.add(ws.events.addListener("open", getDevicesFromWS));
+            this.cleanup.add(lib.ws.events.addListener("open", getDevicesFromWS));
         });
     }
 
@@ -111,3 +103,5 @@ export class PicowDevicesPage extends UIStackLayoutPage {
         this.cleanup.run();
     }
 }
+
+export default PicowDevicesPage;

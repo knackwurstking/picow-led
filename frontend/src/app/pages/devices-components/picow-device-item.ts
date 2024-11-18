@@ -1,29 +1,20 @@
-import "./picow-options-button";
-import "./picow-power-button";
+import { customElement, property } from "lit/decorators.js";
 
 import { css, html, LitElement, PropertyValues } from "lit";
-import { customElement, property } from "lit/decorators.js";
 import { CleanUp, globalStylesToShadowRoot } from "ui";
 
-import { ws, WSEventsDevice } from "../../../lib/websocket";
-import { PicowStore } from "../../../types";
+import * as lib from "@lib";
+import * as types from "@types";
 
-/**
- * **Tag**: picow-options-button
- *
- * **Attributes**:
- *  - device: `WSEventsDevice` - [json]
- *  - hide: `boolean`
- */
 @customElement("picow-device-item")
-export class PicowDeviceItem extends LitElement {
+class PicowDeviceItem extends LitElement {
     @property({ type: Object, attribute: "device", reflect: true })
-    device?: WSEventsDevice;
+    device?: types.WSEventsDevice;
 
     @property({ type: Boolean, attribute: "hide", reflect: true })
     hide: boolean = false;
 
-    private store: PicowStore = document.querySelector(`ui-store`)!;
+    private store: types.PicowStore = document.querySelector(`ui-store`)!;
     private cleanup = new CleanUp();
 
     static get styles() {
@@ -126,11 +117,11 @@ export class PicowDeviceItem extends LitElement {
     connectedCallback(): void {
         super.connectedCallback();
         this.cleanup.add(
-            ws.events.addListener("message-device", (data) => {
+            lib.ws.events.addListener("message-device", (data) => {
                 if (data.server.addr !== this.device?.server.addr) return;
                 this.device = data;
 
-                if (!this.device.color) return;
+                if (!this.device?.color) return;
 
                 // Only update "devicesColor" store if color is not 0
                 if (this.device.color.filter((c) => c > 0).length > 0) {
@@ -161,3 +152,5 @@ export class PicowDeviceItem extends LitElement {
         );
     }
 }
+
+export default PicowDeviceItem;

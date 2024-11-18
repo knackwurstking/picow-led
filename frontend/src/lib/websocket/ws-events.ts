@@ -1,22 +1,17 @@
 import { Events } from "ui";
 import { BaseWebSocketEvents } from "./base-web-socket-events";
-import type {
-    WSEventsCommand,
-    WSEventsDevice,
-    WSEventsRequest,
-    WSEventsResponse,
-    WSEventsServer,
-} from "./types";
+
+import * as types from "@types";
 
 export class WSEvents extends BaseWebSocketEvents {
     events: Events<{
-        server: WSEventsServer | null;
+        server: types.WSEventsServer | null;
         open: null;
         close: null;
         message: any;
-        "message-devices": WSEventsDevice[];
+        "message-devices": types.WSEventsDevice[];
         "message-error": string;
-        "message-device": WSEventsDevice;
+        "message-device": types.WSEventsDevice;
     }> = new Events();
 
     constructor() {
@@ -32,9 +27,9 @@ export class WSEvents extends BaseWebSocketEvents {
         this.events.dispatch("server", value);
     }
 
-    async request<T extends keyof WSEventsCommand>(
+    async request<T extends keyof types.WSEventsCommand>(
         command: T,
-        data?: WSEventsCommand[T]
+        data?: types.WSEventsCommand[T],
     ) {
         if (!this.isOpen()) return;
         console.debug(`[ws] Send command: "${command}"`, {
@@ -42,7 +37,7 @@ export class WSEvents extends BaseWebSocketEvents {
             data,
         });
 
-        let request: WSEventsRequest = {
+        let request: types.WSEventsRequest = {
             command: command,
             data: data === undefined ? undefined : JSON.stringify(data),
         };
@@ -68,7 +63,7 @@ export class WSEvents extends BaseWebSocketEvents {
 
         if (typeof ev.data === "string") {
             try {
-                const resp = JSON.parse(ev.data) as WSEventsResponse;
+                const resp = JSON.parse(ev.data) as types.WSEventsResponse;
                 console.debug(`[ws] message:`, resp);
 
                 switch (resp.type) {

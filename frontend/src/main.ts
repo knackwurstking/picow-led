@@ -1,7 +1,6 @@
 import "ui/lib/css/main.css";
 
-import "./app/picow-app";
-import "./components/picow-status-led";
+import "@app";
 
 import { registerSW } from "virtual:pwa-register";
 

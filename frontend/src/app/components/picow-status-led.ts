@@ -1,14 +1,9 @@
-import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-/**
- * **Tag**: status-led
- *
- * **Attributes**:
- *  - active: `boolean`
- */
+import { css, html, LitElement } from "lit";
+
 @customElement("picow-status-led")
-export class PicowStatusLED extends LitElement {
+class PicowStatusLED extends LitElement {
     @property({ type: Boolean, attribute: "active", reflect: true })
     active: boolean = false;
 
@@ -51,3 +46,5 @@ export class PicowStatusLED extends LitElement {
         `;
     }
 }
+
+export default PicowStatusLED;

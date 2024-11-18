@@ -1,7 +1,7 @@
-import type { WSEventsServer } from "./types";
+import * as types from "@types";
 
 export class BaseWebSocketEvents {
-    #server: WSEventsServer | null = null;
+    #server: types.WSEventsServer | null = null;
 
     #messageHandler = async (ev: MessageEvent) => {
         await this.handleMessageEvent(ev);
@@ -42,9 +42,7 @@ export class BaseWebSocketEvents {
         if (!value) {
             this.origin = "";
         } else {
-            const addr = !value.port
-                ? value.host
-                : `${value.host}:${value.port}`;
+            const addr = !value.port ? value.host : `${value.host}:${value.port}`;
 
             this.origin = `${value.ssl ? "wss:" : "ws:"}//${addr}`;
         }
@@ -82,22 +80,15 @@ export class BaseWebSocketEvents {
     async handleMessageEvent(_ev: MessageEvent) {}
 
     async handleOpenEvent() {
-        console.debug(
-            `websocket connection established "${this.origin}${this.path}"`
-        );
+        console.debug(`websocket connection established "${this.origin}${this.path}"`);
     }
 
     async handleErrorEvent(ev: Event) {
-        console.error(
-            `websocket connection error "${this.origin}${this.path}"`,
-            ev
-        );
+        console.error(`websocket connection error "${this.origin}${this.path}"`, ev);
     }
 
     async handleCloseEvent() {
-        console.warn(
-            `websocket connection closed "${this.origin}${this.path}"`
-        );
+        console.warn(`websocket connection closed "${this.origin}${this.path}"`);
 
         this.timeout = setTimeout(async () => {
             this.connect();

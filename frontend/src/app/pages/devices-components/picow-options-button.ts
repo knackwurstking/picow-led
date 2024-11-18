@@ -1,19 +1,16 @@
-import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { svg } from "ui";
-import { ws, WSEventsDevice } from "../../../lib/websocket";
-import { PicowDeviceSetupDialog } from "../../dialogs/picow-device-setup-dialog";
 
-/**
- * **Tag**: picow-options-button
- *
- * **Attributes**:
- *  - device: `WSEventsDevice` - [json]
- */
+import { css, html, LitElement } from "lit";
+import { svg } from "ui";
+
+import * as app from "@app";
+import * as lib from "@lib";
+import * as types from "@types";
+
 @customElement("picow-options-button")
-export class PicowOptionsButton extends LitElement {
+class PicowOptionsButton extends LitElement {
     @property({ type: Object, attribute: "device", reflect: true })
-    device?: WSEventsDevice;
+    device?: types.WSEventsDevice;
 
     static get styles() {
         return css`
@@ -32,7 +29,7 @@ export class PicowOptionsButton extends LitElement {
                     ev.stopPropagation();
                     if (!this.device) return;
 
-                    const dialog = new PicowDeviceSetupDialog();
+                    const dialog = new app.PicowDeviceSetupDialog();
 
                     dialog.device = {
                         ...this.device,
@@ -45,23 +42,21 @@ export class PicowOptionsButton extends LitElement {
 
                     const validateDevice = () => {
                         if (!dialog.device) {
-                            throw new Error(
-                                `missing dialog data: device undefined`,
-                            );
+                            throw new Error(`missing dialog data: device undefined`);
                         }
                     };
 
                     dialog.addEventListener("delete", async () => {
                         validateDevice();
 
-                        ws.request("DELETE api.device", {
+                        lib.ws.request("DELETE api.device", {
                             addr: dialog.device!.server.addr,
                         });
                     });
 
                     dialog.addEventListener("submit", async () => {
                         validateDevice();
-                        ws.request("PUT api.device", dialog.device!);
+                        lib.ws.request("PUT api.device", dialog.device!);
                     });
                 }}
             >
@@ -70,3 +65,5 @@ export class PicowOptionsButton extends LitElement {
         `;
     }
 }
+
+export default PicowOptionsButton;

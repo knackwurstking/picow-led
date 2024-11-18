@@ -1,9 +1,8 @@
-import { UIAlert, UIAlerts, UIAlertVariant } from "ui";
+import { UIAlertVariant } from "ui/lib/ui-alert/ui-alert";
 
-export function throwAlert(options: {
-    variant: UIAlertVariant;
-    message: string;
-}) {
+import { UIAlert, UIAlerts } from "ui";
+
+export function throwAlert(options: { variant: UIAlertVariant; message: string }) {
     const alerts = document.querySelector<UIAlerts>(`ui-alerts`)!;
 
     const alert = new UIAlert();

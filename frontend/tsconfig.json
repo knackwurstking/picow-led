@@ -18,7 +18,13 @@
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+
+        "paths": {
+            "@app": ["./src/app/index.ts"],
+            "@lib": ["./src/lib/index.ts"],
+            "@types": ["./src/types.ts"]
+        }
     },
     "include": ["src"]
 }

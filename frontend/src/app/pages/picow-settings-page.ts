@@ -1,5 +1,6 @@
-import { css, CSSResult, html, PropertyValues, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
+
+import { css, CSSResult, html, PropertyValues, TemplateResult } from "lit";
 import {
     globalStylesToShadowRoot,
     UICheck,
@@ -9,15 +10,15 @@ import {
     UIThemeHandler,
     UIThemeHandlerTheme,
 } from "ui";
-import { PicowStore } from "../../types";
+
+import * as types from "@types";
 
 @customElement("picow-settings-page")
-export class PicowSettingsPage extends UIStackLayoutPage {
+class PicowSettingsPage extends UIStackLayoutPage {
     name = "settings";
 
-    private store: PicowStore = document.querySelector(`ui-store`)!;
-    private themeHandler: UIThemeHandler =
-        document.querySelector(`ui-theme-handler`)!;
+    private store: types.PicowStore = document.querySelector(`ui-store`)!;
+    private themeHandler: UIThemeHandler = document.querySelector(`ui-theme-handler`)!;
 
     static get styles(): CSSResult {
         return css`
@@ -51,13 +52,10 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                 const target = ev.currentTarget as UICheck;
 
                                 timeout = setTimeout(() => {
-                                    this.store.updateData(
-                                        "server",
-                                        (server) => {
-                                            server.ssl = target.checked;
-                                            return server;
-                                        },
-                                    );
+                                    this.store.updateData("server", (server) => {
+                                        server.ssl = target.checked;
+                                        return server;
+                                    });
                                 }, timeoutValueMS);
                             }}
                         ></ui-check>
@@ -74,13 +72,10 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                 const target = ev.currentTarget as UIInput;
 
                                 timeout = setTimeout(() => {
-                                    this.store.updateData(
-                                        "server",
-                                        (server) => {
-                                            server.host = target.value;
-                                            return server;
-                                        },
-                                    );
+                                    this.store.updateData("server", (server) => {
+                                        server.host = target.value;
+                                        return server;
+                                    });
                                 }, timeoutValueMS);
                             }}
                         ></ui-input>
@@ -98,13 +93,10 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                                 const target = ev.currentTarget as UIInput;
 
                                 timeout = setTimeout(() => {
-                                    this.store.updateData(
-                                        "server",
-                                        (server) => {
-                                            server.port = target.value;
-                                            return server;
-                                        },
-                                    );
+                                    this.store.updateData("server", (server) => {
+                                        server.port = target.value;
+                                        return server;
+                                    });
                                 }, timeoutValueMS);
                             }}
                         ></ui-input>
@@ -132,16 +124,14 @@ export class PicowSettingsPage extends UIStackLayoutPage {
                         >
                             <ui-select-option
                                 value="original"
-                                ?selected=${this.themeHandler.theme ===
-                                "original"}
+                                ?selected=${this.themeHandler.theme === "original"}
                             >
                                 Original
                             </ui-select-option>
 
                             <ui-select-option
                                 value="gruvbox"
-                                ?selected=${this.themeHandler.theme ===
-                                "gruvbox"}
+                                ?selected=${this.themeHandler.theme === "gruvbox"}
                             >
                                 Gruvbox
                             </ui-select-option>
@@ -157,3 +147,5 @@ export class PicowSettingsPage extends UIStackLayoutPage {
         globalStylesToShadowRoot(this.shadowRoot!);
     }
 }
+
+export default PicowSettingsPage;

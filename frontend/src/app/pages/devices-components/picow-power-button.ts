@@ -1,25 +1,20 @@
-import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { svg } from "ui";
-import { ws, WSEventsDevice } from "../../../lib/websocket";
-import { PicowStore } from "../../../types";
 
-/**
- * **Tag**: picow-power-button
- *
- * **Attributes**:
- *  - device: `WSEventsDevice` - [json]
- *  - state: `"active" | "pending" | ""`
- */
+import { css, html, LitElement } from "lit";
+import { svg } from "ui";
+
+import * as lib from "@lib";
+import * as types from "@types";
+
 @customElement("picow-power-button")
-export class PicowPowerButton extends LitElement {
+class PicowPowerButton extends LitElement {
     @property({ type: Object, attribute: "device", reflect: true })
-    device?: WSEventsDevice;
+    device?: types.WSEventsDevice;
 
     @property({ type: String, attribute: "state", reflect: true })
     state: "active" | "pending" | "" = "";
 
-    store: PicowStore = document.querySelector(`ui-store`)!;
+    store: types.PicowStore = document.querySelector(`ui-store`)!;
 
     static get styles() {
         return css`
@@ -53,11 +48,11 @@ export class PicowPowerButton extends LitElement {
                     try {
                         const color: number[] = this.isOn()
                             ? this.device.color!.map(() => 0) // Turn OFF
-                            : this.store.getData("devicesColor")?.[
-                                  this.device.server.addr
-                              ] || [255, 255, 255, 255]; // Turn ON
+                            : this.store.getData("devicesColor")?.[this.device.server.addr] || [
+                                  255, 255, 255, 255,
+                              ]; // Turn ON
 
-                        await ws.request("POST api.device.color", {
+                        await lib.ws.request("POST api.device.color", {
                             addr: this.device.server.addr,
                             color: color,
                         });
@@ -73,11 +68,7 @@ export class PicowPowerButton extends LitElement {
         `;
     }
 
-    attributeChangedCallback(
-        name: string,
-        _old: string | null,
-        value: string | null,
-    ): void {
+    attributeChangedCallback(name: string, _old: string | null, value: string | null): void {
         super.attributeChangedCallback(name, _old, value);
 
         switch (name) {
@@ -96,3 +87,5 @@ export class PicowPowerButton extends LitElement {
         else this.state = "";
     }
 }
+
+export default PicowPowerButton;
