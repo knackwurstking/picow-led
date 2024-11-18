@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.8.3 — [2024-11-18]
+
+**Fixed**:
+
+- Fixed orientation lock on mobile, remove orientation from manifest
+
 ## v0.8.2 — [2024-11-18]
 
 [ui v1.1.0](https://github.com/knackwurstking/ui)
