@@ -1,4 +1,4 @@
-import "ui/lib/css/main.css";
+import "../node_modules/ui/lib/css/main.css";
 
 import "@app";
 
