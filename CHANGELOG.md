@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.8.2 — [unreleased]
+## v0.8.2 — [2024-11-18]
 
 [ui v1.1.0](https://github.com/knackwurstking/ui)
 
