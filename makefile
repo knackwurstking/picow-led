@@ -8,3 +8,6 @@ build:
 		npm run build && \
 		cd .. && \
 		go build -v -o build/picow-led-server ./cmd/picow-led-server
+
+dev:
+	go run ./cmd/picow-led-server -d -c .api.dev.json
