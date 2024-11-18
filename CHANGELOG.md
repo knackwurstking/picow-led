@@ -4,10 +4,6 @@
 
 [ui v1.1.0](https://github.com/knackwurstking/ui)
 
-**TODO**:
-
--   [ ] Fixed all errors caused by v1.1.0
-
 **Removed**:
 
 -   Removed scrollbars from pages
