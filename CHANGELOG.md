@@ -4,7 +4,8 @@
 
 **Fixed**:
 
-- Fixed orientation lock on mobile, remove orientation from manifest
+-   Fixed orientation lock on mobile, remove orientation from manifest
+-   Fixed html closing tag
 
 ## v0.8.2 — [2024-11-18]
 
