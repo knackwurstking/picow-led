@@ -2,17 +2,17 @@ package frontend
 
 import (
 	"embed"
-	"fmt"
 	"io/fs"
 )
 
 //go:embed dist
 var dist embed.FS
 
-func GetFS() fs.FS {
-	fsys, err := fs.Sub(dist, "dist")
+func Dist() fs.FS {
+	data, err := fs.Sub(dist, "dist")
 	if err != nil {
-		panic(fmt.Sprintf("Get sub fs: %s", err.Error()))
+		panic(err)
 	}
-	return fsys
+
+	return data
 }

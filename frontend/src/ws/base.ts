@@ -1,18 +1,9 @@
-import * as types from "@types";
+import { WSServer } from "./types";
 
-export class BaseWebSocketEvents {
-    #server: types.WSEventsServer | null = null;
+export class BaseWS {
+    private _server: WSServer | null = null;
 
-    #messageHandler = async (ev: MessageEvent) => {
-        await this.handleMessageEvent(ev);
-    };
-    #openHandler = async () => {
-        await this.handleOpenEvent();
-    };
-    #errorHandler = async (ev: Event) => {
-        await this.handleErrorEvent(ev);
-    };
-    #closeHandler = async () => {
+    private closeHandler = async () => {
         await this.handleCloseEvent();
     };
 
@@ -35,7 +26,7 @@ export class BaseWebSocketEvents {
     }
 
     get server() {
-        return this.#server;
+        return this._server;
     }
 
     set server(value) {
@@ -48,26 +39,37 @@ export class BaseWebSocketEvents {
         }
 
         this.connect();
-        this.#server = value;
+        this._server = value;
     }
 
-    isOpen() {
+    protected isOpen() {
         if (!this.ws) return false;
         return this.ws.readyState === this.ws.OPEN;
     }
 
-    connect() {
+    protected connect() {
         if (this.ws) this.close();
-        this.ws = new WebSocket(this.origin + this.path);
+        const addr = this.origin + this.path;
+        console.debug(`Connect WebSocket to ${addr}`);
+        this.ws = new WebSocket(addr);
 
-        this.ws.addEventListener("message", this.#messageHandler);
-        this.ws.addEventListener("open", this.#openHandler);
-        this.ws.addEventListener("error", this.#errorHandler);
-        this.ws.addEventListener("close", this.#closeHandler);
+        this.ws.addEventListener("message", (ev) => {
+            this.handleMessageEvent(ev);
+        });
+
+        this.ws.addEventListener("open", () => {
+            this.handleOpenEvent();
+        });
+
+        this.ws.addEventListener("error", (ev) => {
+            this.handleErrorEvent(ev);
+        });
+
+        this.ws.addEventListener("close", this.closeHandler);
     }
 
-    close() {
-        this.ws?.removeEventListener("close", this.#closeHandler);
+    protected close() {
+        this.ws?.removeEventListener("close", this.closeHandler);
 
         if (!!this.timeout) {
             clearTimeout(this.timeout);
@@ -77,17 +79,17 @@ export class BaseWebSocketEvents {
         if (this.isOpen()) this.ws?.close();
     }
 
-    async handleMessageEvent(_ev: MessageEvent) {}
+    protected async handleMessageEvent(_ev: MessageEvent) {}
 
-    async handleOpenEvent() {
+    protected async handleOpenEvent() {
         console.debug(`websocket connection established "${this.origin}${this.path}"`);
     }
 
-    async handleErrorEvent(ev: Event) {
+    protected async handleErrorEvent(ev: Event) {
         console.error(`websocket connection error "${this.origin}${this.path}"`, ev);
     }
 
-    async handleCloseEvent() {
+    protected async handleCloseEvent() {
         console.warn(`websocket connection closed "${this.origin}${this.path}"`);
 
         this.timeout = setTimeout(async () => {

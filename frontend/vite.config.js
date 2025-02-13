@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 const icons = [
     {
@@ -31,17 +30,7 @@ const screenshots = [];
 /** @type {import("vite-plugin-pwa").VitePWAOptions} */
 const manifest = {
     strategies: "generateSW",
-    registerType: "autoUpdate",
-    includeAssets: [
-        "/assets/fonts/Recursive_VF_1.085--subset_range_english_basic.woff2",
-        "/assets/fonts/Recursive_VF_1.085--subset_range_latin_1_punc.woff2",
-        "/assets/fonts/Recursive_VF_1.085--subset_range_remaining.woff2",
-        "/assets/fonts/Recursive_VF_1.085--subset_range_latin_1.woff2",
-        "/assets/fonts/Recursive_VF_1.085--subset_range_latin_ext.woff2",
-        "/assets/fonts/Recursive_VF_1.085--subset_range_vietnamese.woff2",
-        "/themes/gruvbox.css",
-        "/themes/original.css",
-    ],
+    registerType: "prompt",
     manifest: {
         name: "PicoW LED",
         short_name: "picow-led",
@@ -57,12 +46,6 @@ const manifest = {
 };
 
 export default defineConfig({
-    //server: {
-    //    proxy: {
-    //        "/api": "http://localhost:50833",
-    //        "/events/device": "ws://localhost:50833",
-    //    },
-    //},
     clearScreen: false,
-    plugins: [VitePWA(manifest), tsconfigPaths()],
+    plugins: [VitePWA(manifest)],
 });

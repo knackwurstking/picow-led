@@ -1,18 +1,19 @@
-import { Events } from "ui";
-import { BaseWebSocketEvents } from "./base-web-socket-events";
+import * as ui from "ui";
 
-import * as types from "@types";
+import * as base from "./base";
+import * as types from "./types";
+import * as alerts from "../alerts/";
 
-export class WSEvents extends BaseWebSocketEvents {
-    events: Events<{
-        server: types.WSEventsServer | null;
+export class WS extends base.BaseWS {
+    public events: ui.Events<{
+        server: types.WSServer | null;
         open: null;
         close: null;
         message: any;
-        "message-devices": types.WSEventsDevice[];
+        "message-devices": types.WSDevice[];
         "message-error": string;
-        "message-device": types.WSEventsDevice;
-    }> = new Events();
+        "message-device": types.WSDevice;
+    }> = new ui.Events();
 
     constructor() {
         super("/ws");
@@ -27,17 +28,14 @@ export class WSEvents extends BaseWebSocketEvents {
         this.events.dispatch("server", value);
     }
 
-    async request<T extends keyof types.WSEventsCommand>(
-        command: T,
-        data?: types.WSEventsCommand[T],
-    ) {
+    public async request<T extends keyof types.WSCommand>(command: T, data?: types.WSCommand[T]) {
         if (!this.isOpen()) return;
         console.debug(`[ws] Send command: "${command}"`, {
             server: this.server,
             data,
         });
 
-        let request: types.WSEventsRequest = {
+        let request: types.WSRequest = {
             command: command,
             data: data === undefined ? undefined : JSON.stringify(data),
         };
@@ -57,13 +55,13 @@ export class WSEvents extends BaseWebSocketEvents {
         }
     }
 
-    async handleMessageEvent(ev: MessageEvent) {
+    protected async handleMessageEvent(ev: MessageEvent) {
         super.handleMessageEvent(ev);
         console.debug("[ws] message.event:", ev);
 
         if (typeof ev.data === "string") {
             try {
-                const resp = JSON.parse(ev.data) as types.WSEventsResponse;
+                const resp = JSON.parse(ev.data) as types.WSResponse;
                 console.debug(`[ws] message:`, resp);
 
                 switch (resp.type) {
@@ -76,19 +74,21 @@ export class WSEvents extends BaseWebSocketEvents {
                         break;
                 }
             } catch (err) {
-                console.warn("[ws] Parsing JSON:", err);
+                const message = `[ws] Parsing JSON: ${err}`;
+                console.warn(message);
+                alerts.add("warning", message);
             }
         }
 
         this.events.dispatch("message", ev.data);
     }
 
-    async handleOpenEvent() {
+    protected async handleOpenEvent() {
         await super.handleOpenEvent();
         this.events.dispatch("open", null);
     }
 
-    async handleCloseEvent() {
+    protected async handleCloseEvent() {
         await super.handleCloseEvent();
         this.events.dispatch("close", null);
     }

@@ -1,8 +1,15 @@
 package picow
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 type Color []uint
+
+func (c *Color) String() string {
+	return strings.Join(c.StringArray(), ", ")
+}
 
 func (c *Color) StringArray() []string {
 	cS := make([]string, 0)

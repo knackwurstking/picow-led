@@ -1,32 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="dark">
     <head>
         <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
-        />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <link rel="icon" href="/icons/favicon.ico" sizes="any" />
-        <link
-            rel="apple-touch-icon"
-            href="/icons/apple-touch-icon-180x180.png"
-        />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180x180.png" />
 
         <title>PicoW LED</title>
 
-        <style>
-            html,
-            body {
-                overscroll-behavior: none !important;
-            }
-        </style>
+        <link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.min.css" />
+        <link rel="stylesheet" href="/node_modules/ui/dist/css/main.css" />
+        <link rel="stylesheet" href="/src/index.css" />
     </head>
-    <body>
-        <ui-theme-handler theme="original" mode="dark"></ui-theme-handler>
-        <ui-store storage-prefix="picow:" storage></ui-store>
-        <picow-app></picow-app>
-        <ui-alerts></ui-alerts>
+    <body class="ui-container">
+        <!-- Layout -->
+
+        <div class="router-target ui-auto-scroll ui-hide-scrollbar"></div>
+
+        <div class="ui-app-bar" position="top" fixed>
+            <div class="left">
+                <button id="goBack" style="display: none" variant="ghost" color="primary" icon>
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <div class="ui-flex-grid-row" style="--align: flex-end">
+                    <div class="status-led">
+                        <div class="inner"></div>
+                    </div>
+                    <i style="font-size: 0.9rem; white-space: nowrap">Offline</i>
+                </div>
+            </div>
+
+            <div class="center">
+                <h3 class="title">PicoW LED</h3>
+            </div>
+
+            <div class="right">
+                <button
+                    id="goToSettings"
+                    style="display: none"
+                    variant="ghost"
+                    color="primary"
+                    icon
+                >
+                    <div class="bi bi-gear"></div>
+                </button>
+            </div>
+        </div>
+
+        <div
+            class="alerts-container ui-flex column justify-end align-end"
+            style="position: fixed; bottom: 0; right: 0; max-width: 100%; max-height: 100%"
+        ></div>
+
+        <span class="build" style="position: fixed; bottom: 0; left: 0; font-size: 0.75rem"></span>
+
+        <!-- Templates -->
+
+        <template class="devices">
+            <!-- Devices List -->
+
+            <ul id="devices-list" style="border-radius: var(--ui-radius)"></ul>
+
+            <!-- Dialog: Color Cache & Sliders -->
+
+            <dialog class="device-setup" style="width: 100%; max-width: 25rem">
+                <div class="ui-flex-grid-row" style="--justify: space-between; --align: center">
+                    <h3 class="title">Device Setup</h3>
+
+                    <button class="close" variant="ghost" icon>
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <br />
+
+                <details>
+                    <summary>Color Cache</summary>
+
+                    <div class="ui-flex-grid">
+                        <i style="font-size: 0.75rem">
+                            Right-click to remove a color, or touch-hold on mobile.
+                        </i>
+
+                        <div
+                            class="color-cache ui-flex-grid-row ui-auto-scroll-x ui-hide-scrollbar"
+                            style="padding: var(--ui-spacing)"
+                        ></div>
+                    </div>
+                </details>
+
+                <form method="dialog">
+                    <ul class="sliders ui-flex-grid" style="--gap: 1rem"></ul>
+
+                    <br />
+
+                    <div class="ui-flex-grid-row" style="--justify: flex-end; --wrap: wrap">
+                        <button class="cache" variant="outline" color="secondary">Cache</button>
+                        <input type="submit" />
+                    </div>
+                </form>
+            </dialog>
+        </template>
+
+        <template class="settings">
+            <div
+                class="ui-flex-grid"
+                style="
+                    --gap: calc(var(--ui-spacing) * 2);
+                    --align: center;
+                    padding: var(--ui-spacing);
+                "
+            >
+                <div class="ui-flex-grid-item ui-flex justify-between" style="width: 100%">
+                    <label for="settings-usingSSL">Use SSL connections</label>
+                    <input id="settings-usingSSL" style="flex: 0" type="checkbox" />
+                </div>
+
+                <div class="ui-flex-grid-item ui-flex justify-between" style="width: 100%">
+                    <label for="settings-serverHost">Server Host</label>
+                    <input id="settings-serverHost" style="flex: 0" />
+                </div>
+
+                <div class="ui-flex-grid-item ui-flex justify-between" style="width: 100%">
+                    <label for="settings-serverPort">Server Port</label>
+                    <input id="settings-serverPort" style="flex: 0" type="number" />
+                </div>
+            </div>
+        </template>
+
         <script type="module" src="/src/main.ts"></script>
     </body>
 </html>

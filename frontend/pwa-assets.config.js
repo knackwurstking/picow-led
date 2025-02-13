@@ -1,7 +1,4 @@
-import {
-    defineConfig,
-    minimal2023Preset as preset,
-} from "@vite-pwa/assets-generator/config";
+import { defineConfig, minimal2023Preset as preset } from "@vite-pwa/assets-generator/config";
 
 preset.transparent.padding = 0;
 preset.apple.padding = 0;

@@ -9,7 +9,7 @@ import (
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/knackwurstking/picow-led-server/frontend"
-	"github.com/knackwurstking/picow-led-server/internal/models/ws"
+	"github.com/knackwurstking/picow-led-server/internal/ws"
 	"github.com/knackwurstking/picow-led-server/pkg/picow"
 )
 
@@ -57,14 +57,12 @@ func main() {
 
 			return runCommand
 		}),
-		// NOTE: Only "zsh" seems to be supported, maybe i should fork this
-		//       repo and try to add some completions for "fish" and "bash"?
 		// Commands: []cli.Command{
 		// 	cli.CompletionCommand(),
 		// },
 		CommandFlags: []cli.CommandFlag{
 			cli.HelpCommandFlag(),
-			cli.VersionCommandFlag("0.8.3"),
+			cli.VersionCommandFlag("v0.9.0"),
 		},
 	}
 
@@ -95,9 +93,7 @@ func runCommand(cmd *cli.Command) error {
 		}
 	}
 
-	// Init static file server
-	public := frontend.GetFS()
-	http.Handle("GET /", http.FileServerFS(public))
+	http.Handle("GET /", http.FileServerFS(frontend.Dist()))
 
 	// Init websocket handler
 	room := ws.NewRoom(api)

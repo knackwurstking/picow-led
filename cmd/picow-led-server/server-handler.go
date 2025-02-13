@@ -14,7 +14,7 @@ func (*serverHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	crw := &serverResponseWriter{
+	crw := &customResponseWriter{
 		ResponseWriter: w,
 		Hijacker:       w.(http.Hijacker),
 	}
@@ -24,20 +24,11 @@ func (*serverHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	log := slog.Warn
 
-	if crw.status >= 200 && crw.status < 300 {
-		if crw.Header().Get("Content-Type") == "" {
-			crw.Header().Set("Content-Type", "application/json")
-		}
-
+	if crw.status >= 200 && crw.status < 300 || crw.status == 0 {
 		log = slog.Info
-	} else if crw.status >= 500 || crw.status == 0 {
+	} else if crw.status >= 500 {
 		log = slog.Error
 	}
 
-	log("Request",
-		"status", crw.status,
-		"addr", r.RemoteAddr,
-		"method", r.Method,
-		"url", r.URL,
-	)
+	log("Request", "status", crw.status, "addr", r.RemoteAddr, "method", r.Method, "url", r.URL)
 }
