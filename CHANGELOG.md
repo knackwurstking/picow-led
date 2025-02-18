@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v0.9.2 [unreleased]
+
+**TODOs**:
+
+- [ ] Improve offline handling for picow devices
+
+## v0.9.1 [2025-02-18]
+
+- Fixed missing color check for null
+
 ## v0.9.0 [2025-02-13]
 
 **Updated**:

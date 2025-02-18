@@ -2,12 +2,12 @@ import * as globals from "../../globals";
 import * as ws from "../../ws";
 
 export const color = {
-    set(addr: string, color: number[] | undefined): void {
-        if (color === undefined) {
+    set(addr: string, color?: number[] | null): void {
+        if (!color) {
             return;
         }
 
-        if (color.find((c) => c > 0) == undefined) {
+        if (!color.find((c) => c > 0)) {
             return;
         }
 
@@ -19,15 +19,15 @@ export const color = {
 
     get(device: ws.WSDevice) {
         let color = globals.store.get("color")?.devices[device.server.addr];
-        if (color == undefined) {
+        if (!color) {
             color = device.pins?.map(() => 255) || [255, 255, 255];
         }
         return color;
     },
 };
 
-export function getPowerButtonColor(color?: number[]) {
-    if (color === undefined) {
+export function getPowerButtonColor(color?: number[] | null) {
+    if (!color) {
         return `rgb(0, 0, 0)`;
     }
 

@@ -4,7 +4,7 @@ import * as alerts from "./alerts";
 import * as types from "./types";
 import * as ws from "./ws";
 
-export const version = "v0.9.0";
+export const version = "v0.9.1";
 export const store = createStore();
 export const websocket = createWebSocket(store);
 

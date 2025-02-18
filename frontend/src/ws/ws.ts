@@ -57,12 +57,11 @@ export class WS extends base.BaseWS {
 
     protected async handleMessageEvent(ev: MessageEvent) {
         super.handleMessageEvent(ev);
-        console.debug("[ws] message.event:", ev);
 
         if (typeof ev.data === "string") {
             try {
+                console.debug("[ws] message:", ev.data);
                 const resp = JSON.parse(ev.data) as types.WSResponse;
-                console.debug(`[ws] message:`, resp);
 
                 switch (resp.type) {
                     case "devices":
