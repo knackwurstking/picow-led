@@ -11,6 +11,6 @@ build:
 		go build -v -o dist/picow-led-server ./cmd/picow-led-server
 
 dev:
-	#DEBUG=nodemon:*,nodemon nodemon -L --signal SIGTERM --exec 'go run ./cmd/picow-led-server -d -c .api.dev.json' --ext 'go,html,css,js,ico,png,mod,sum' --delay 3
-	nodemon -L --signal SIGTERM --exec 'go run ./cmd/picow-led-server -d -c .api.dev.json' --ext 'go,html,css,js,ico,png,tmpl' --delay 3 --ignore ./frontend
+	#DEBUG=nodemon:*,nodemon nodemon -L --signal SIGTERM --exec 'go run ./cmd/picow-led-server -d -c .api.dev.json' --ext '' --delay 3
+	nodemon -L --signal SIGTERM --exec 'go run ./cmd/picow-led-server -d -c .api.dev.json' --ext 'go,mod,sum' --delay 3 --ignore ./frontend
 
