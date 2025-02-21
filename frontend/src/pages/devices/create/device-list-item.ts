@@ -11,6 +11,7 @@ import * as devicesUtils from "../utils";
 const html = String.raw;
 const colorStringSeparator = ", ";
 
+// TODO: Mark offline device somehow
 export function deviceListItem(device: ws.WSDevice): types.Component<HTMLLIElement> {
     const powerButtonColor = devicesUtils.getPowerButtonColor(device.color);
     const item = document.createElement("li");
@@ -81,6 +82,7 @@ export function deviceListItem(device: ws.WSDevice): types.Component<HTMLLIEleme
     };
 }
 
+// TODO: Mark offline device somehow
 export function updateDeviceListItem(item: HTMLLIElement | HTMLElement, device: ws.WSDevice): void {
     if (item.getAttribute("data-addr") !== device.server.addr) {
         return;
