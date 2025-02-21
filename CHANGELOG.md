@@ -2,9 +2,7 @@
 
 ## v0.9.2 [unreleased]
 
-**TODOs**:
-
-- [ ] Improve offline handling for picow devices
+- Fixed device handling while unmarshalling API data if some devices are offline.
 
 ## v0.9.1 [2025-02-18]
 
