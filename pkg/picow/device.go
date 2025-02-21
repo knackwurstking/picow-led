@@ -88,8 +88,10 @@ func (d *Device) GetPins() (Pins, error) {
 
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
+
 	data, _ := json.Marshal(req)
 	data = append(data, EndByte...)
+
 	_, err := d.socket.Write(data)
 	if err != nil {
 		return nil, err
@@ -135,12 +137,15 @@ func (d *Device) SetPins(p Pins) error {
 
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
+
 	data, _ := json.Marshal(req)
 	data = append(data, EndByte...)
+
 	_, err := d.socket.Write(data)
 	if err == nil {
 		d.data.Pins = p
 	}
+
 	return err
 }
 
@@ -164,8 +169,10 @@ func (d *Device) GetColor() (Color, error) {
 
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
+
 	data, _ := json.Marshal(req)
 	data = append(data, EndByte...)
+
 	_, err := d.socket.Write(data)
 	if err != nil {
 		return nil, err
@@ -212,12 +219,15 @@ func (d *Device) SetColor(c Color) error {
 
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
+
 	data, _ := json.Marshal(req)
 	data = append(data, EndByte...)
+
 	_, err := d.socket.Write(data)
 	if err == nil {
 		d.data.Color = c
 	}
+
 	return err
 }
 
@@ -241,34 +251,31 @@ func (d *Device) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	{
-		pins, err := d.GetPins()
-		if err != nil {
-			return err
-		}
-
-		slog.Debug("Store device pins",
-			"device.address", d.Addr(), "pins", pins)
+	if pins, err := d.GetPins(); err == nil {
+		slog.Debug("Store device pins", "device.address", d.Addr(), "pins", pins)
 
 		if !reflect.DeepEqual(pins, d.data.Pins) {
 			if err := d.SetPins(d.data.Pins); err != nil {
-				return err
+				slog.Error("Set device pins", "device.address", d.Addr(), "error", err)
 			}
 		}
+	} else {
+		slog.Warn("Get device pins", "device.address", d.Addr(), "error", err)
 	}
 
 	if d.data.Color != nil {
 		if err := d.SetColor(d.data.Color); err != nil {
-			return err
+			slog.Warn("Set device color", "device.address", d.Addr(), "error", err)
 		}
-	} else {
-		color, err := d.GetColor()
-		if err != nil {
-			return err
-		}
-		slog.Debug("Store device color",
-			"device.address", d.Addr(), "color", color)
+
+		return nil
+	}
+
+	if color, err := d.GetColor(); err == nil {
+		slog.Debug("Store device color", "device.address", d.Addr(), "color", color)
 		d.data.Color = color
+	} else {
+		slog.Warn("Get device color", "device.address", d.Addr(), "error", err)
 	}
 
 	return nil
