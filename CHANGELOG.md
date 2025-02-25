@@ -1,8 +1,15 @@
 # CHANGELOG
 
-## v0.9.2 [unreleased]
+## v0.9.2 [2025-02-25]
 
-- Fixed device handling while unmarshalling API data if some devices are offline.
+**Misc**:
+
+- Rename "frontend" to "ui"
+- Code clean up
+
+**Fixed**:
+
+- Device handling while unmarshalling API data, if devices are offline.
 
 ## v0.9.1 [2025-02-18]
 
