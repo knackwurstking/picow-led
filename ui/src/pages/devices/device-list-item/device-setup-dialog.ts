@@ -1,61 +1,59 @@
-import * as globals from "../../../globals";
-import * as storeUtils from "../../../store-utils";
-import * as types from "../../../types";
-import * as ws from "../../../ws";
+import * as store from "../../../lib/store";
+import * as ws from "../../../lib/ws";
 
-import * as devicesUtils from "../utils";
+import * as devicesUtils from "./utils";
 
 const html = String.raw;
 const colorStringSeparator = ", ";
 
-export interface DeviceSetupProps {
+export interface Props {
     device: ws.WSDevice;
 }
 
-export function deviceSetup(props: DeviceSetupProps): types.Component<HTMLDialogElement> {
-    const dialog = document.querySelector<HTMLDialogElement>(`dialog.device-setup`)!;
+export async function open(props: Props): Promise<void> {
+    return new Promise((resolve) => {
+        const dialog = document.querySelector<HTMLDialogElement>(`dialog.device-setup`)!;
 
-    const query = {
-        title: dialog.querySelector<HTMLElement>(`.title`)!,
-        form: dialog.querySelector<HTMLFormElement>(`form`)!,
-        colorCache: dialog.querySelector<HTMLElement>(`.color-cache`)!,
-        sliders: dialog.querySelector<HTMLUListElement>(`.sliders`)!,
-        cacheButton: dialog.querySelector<HTMLButtonElement>(`button.cache`)!,
-        closeButton: dialog.querySelector<HTMLButtonElement>(`button.close`)!,
-    };
+        const title = dialog.querySelector<HTMLElement>(`.title`)!;
+        const form = dialog.querySelector<HTMLFormElement>(`form`)!;
+        const colorCache = dialog.querySelector<HTMLElement>(`.color-cache`)!;
+        const sliders = dialog.querySelector<HTMLUListElement>(`.sliders`)!;
+        const cacheButton = dialog.querySelector<HTMLButtonElement>(`button.cache`)!;
+        const closeButton = dialog.querySelector<HTMLButtonElement>(`button.close`)!;
 
-    query.title.innerHTML = `${props.device.server.name || props.device.server.addr}`;
+        dialog.onclose = () => resolve();
 
-    createSliders(query.sliders, props.device.pins, devicesUtils.color.get(props.device));
+        title.innerHTML = `${props.device.server.name || props.device.server.addr}`;
 
-    // Dialog Action Buttons
+        createSliders(sliders, props.device.pins, devicesUtils.color.get(props.device));
 
-    query.closeButton.onclick = () => dialog.close();
+        // Dialog Action Buttons
 
-    query.cacheButton.onclick = (e) => {
-        e.preventDefault();
-        storeUtils.colorCache.add(getSliderValues(query.sliders));
-        createColorCache(query.colorCache, query.sliders, props.device);
-    };
+        closeButton.onclick = () => dialog.close();
 
-    query.form.onsubmit = async () => {
-        const color: number[] = getSliderValues(query.sliders);
-        globals.store.update("color", (data) => {
-            data.devices[props.device.server.addr] = color;
-            return data;
-        });
+        cacheButton.onclick = (e) => {
+            e.preventDefault();
+            store.colorCache.add(getSliderValues(sliders));
+            createColorCache(colorCache, sliders, props.device);
+        };
 
-        await globals.websocket.request("POST api.device.color", {
-            addr: props.device.server.addr,
-            color,
-        });
-    };
+        form.onsubmit = async () => {
+            const color: number[] = getSliderValues(sliders);
+            store.obj.update("color", (data) => {
+                data.devices[props.device.server.addr] = color;
+                return data;
+            });
 
-    createColorCache(query.colorCache, query.sliders, props.device);
+            await ws.socket.request("POST api.device.color", {
+                addr: props.device.server.addr,
+                color,
+            });
+        };
 
-    return {
-        element: dialog,
-    };
+        createColorCache(colorCache, sliders, props.device);
+
+        dialog.showModal();
+    });
 }
 
 function createSliders(
@@ -104,7 +102,7 @@ function createColorCache(
 ) {
     container.innerHTML = "";
 
-    storeUtils.colorCache.getAll().forEach((color) => {
+    store.colorCache.getAll().forEach((color) => {
         const item = document.createElement("div");
 
         item.style.setProperty("--align", "center");
@@ -119,7 +117,7 @@ function createColorCache(
         item.oncontextmenu = (e) => {
             e.preventDefault();
             if (confirm(`You want to delete this item: ${color.join(colorStringSeparator)}?`)) {
-                storeUtils.colorCache.remove(color);
+                store.colorCache.remove(color);
                 createColorCache(container, slidersContainer, device);
             }
         };

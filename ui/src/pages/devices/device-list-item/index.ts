@@ -1,18 +1,16 @@
 // @ts-ignore
 import svgPower from "ui/svg/power";
 
-import * as globals from "../../../globals";
-import * as types from "../../../types";
-import * as ws from "../../../ws";
+import * as ws from "../../../lib/ws";
 
-import * as dialogs from "../dialogs";
-import * as devicesUtils from "../utils";
+import * as deviceSetupDialog from "./device-setup-dialog";
+import * as devicesUtils from "./utils";
 
 const html = String.raw;
 const colorStringSeparator = ", ";
 
 // TODO: Mark offline device somehow
-export function deviceListItem(device: ws.WSDevice): types.Component<HTMLLIElement> {
+export function create(device: ws.WSDevice): HTMLLIElement {
     const powerButtonColor = devicesUtils.getPowerButtonColor(device.color);
     const item = document.createElement("li");
 
@@ -77,13 +75,11 @@ export function deviceListItem(device: ws.WSDevice): types.Component<HTMLLIEleme
 
     devicesUtils.color.set(item.getAttribute("data-addr")!, device.color);
 
-    return {
-        element: item,
-    };
+    return item;
 }
 
 // TODO: Mark offline device somehow
-export function updateDeviceListItem(item: HTMLLIElement | HTMLElement, device: ws.WSDevice): void {
+export function update(item: HTMLLIElement | HTMLElement, device: ws.WSDevice): void {
     if (item.getAttribute("data-addr") !== device.server.addr) {
         return;
     }
@@ -118,13 +114,12 @@ function initPowerButton(item: HTMLLIElement, device: ws.WSDevice) {
             color = devicesUtils.color.get(device);
         }
 
-        await globals.websocket.request("POST api.device.color", { addr, color });
+        await ws.socket.request("POST api.device.color", { addr, color });
     };
 }
 
 function initOptionsButton(item: HTMLLIElement, device: ws.WSDevice) {
     item.querySelector<HTMLElement>(`button.options`)!.onclick = async () => {
-        const dialog = dialogs.deviceSetup({ device });
-        dialog.element.showModal();
+        await deviceSetupDialog.open({ device });
     };
 }

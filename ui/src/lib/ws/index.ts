@@ -1,37 +1,15 @@
-import * as ui from "ui";
+export * from "./base";
+export * from "./types";
+export * from "./ws";
 
-import * as alerts from "./alerts";
-import * as types from "./types";
+import * as alerts from "../../alerts";
+import * as store from "../store";
 import * as ws from "./ws";
 
-export const version = "v0.9.2";
-export const store = createStore();
-export const websocket = createWebSocket(store);
-
-function createStore(): types.PicoWStore {
-    const storePrefix = "picow:";
-    const store: types.PicoWStore = new ui.Store(storePrefix);
-
-    store.set(
-        "server",
-        {
-            ssl: !!location.protocol.match(/(https)/),
-            host: location.hostname,
-            port: location.port,
-        },
-        true,
-    );
-
-    store.set("firstTimeConnect", true, true);
-    store.set("color", { cache: [], devices: {} }, true);
-
-    return store;
-}
-
-function createWebSocket(store: types.PicoWStore): ws.WS {
+export const socket: ws.WS = (() => {
     const websocket = new ws.WS();
 
-    store.listen(
+    store.obj.listen(
         "server",
         (data) => {
             console.debug("Connect WebSocket to", data);
@@ -47,8 +25,8 @@ function createWebSocket(store: types.PicoWStore): ws.WS {
         statusLED.setAttribute("active", "");
         statusLED.nextElementSibling!.innerHTML = "Online";
 
-        if (store.get("firstTimeConnect") === true) {
-            store.set("firstTimeConnect", false);
+        if (store.obj.get("firstTimeConnect") === true) {
+            store.obj.set("firstTimeConnect", false);
         }
     });
 
@@ -64,4 +42,4 @@ function createWebSocket(store: types.PicoWStore): ws.WS {
     });
 
     return websocket;
-}
+})();

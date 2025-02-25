@@ -1,8 +1,8 @@
 import * as ui from "ui";
 
+import * as alerts from "../../alerts";
 import * as base from "./base";
 import * as types from "./types";
-import * as alerts from "../alerts/";
 
 export class WS extends base.BaseWS {
     public events: ui.Events<{

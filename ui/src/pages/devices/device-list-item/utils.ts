@@ -1,5 +1,5 @@
-import * as globals from "../../globals";
-import * as ws from "../../ws";
+import * as store from "../../../lib/store";
+import * as ws from "../../../lib/ws";
 
 export const color = {
     set(addr: string, color?: number[] | null): void {
@@ -11,14 +11,14 @@ export const color = {
             return;
         }
 
-        globals.store.update("color", (data) => {
+        store.obj.update("color", (data) => {
             data.devices[addr] = color;
             return data;
         });
     },
 
     get(device: ws.WSDevice) {
-        let color = globals.store.get("color")?.devices[device.server.addr];
+        let color = store.obj.get("color")?.devices[device.server.addr];
         if (!color) {
             color = device.pins?.map(() => 255) || [255, 255, 255];
         }

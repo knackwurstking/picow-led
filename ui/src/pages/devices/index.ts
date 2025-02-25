@@ -1,7 +1,8 @@
 import * as ui from "ui";
 
-import * as globals from "../../globals";
-import * as create from "./create";
+import * as ws from "../../lib/ws";
+
+import * as deviceListItem from "./device-list-item";
 
 let cleanUp: ui.CleanUpFunction[] = [];
 
@@ -12,27 +13,27 @@ export async function onMount() {
     const list = routerTarget.querySelector(`#devices-list`)!;
 
     cleanUp.push(
-        globals.websocket.events.addListener("message-devices", (devices) => {
+        ws.socket.events.addListener("message-devices", (devices) => {
             console.debug(`[devices] ws event "message-devices"`, devices);
             list.innerHTML = "";
-            devices.forEach((d) => list.appendChild(create.deviceListItem(d).element));
+            devices.forEach((d) => list.appendChild(deviceListItem.create(d)));
         }),
 
-        globals.websocket.events.addListener("message-device", (device) => {
+        ws.socket.events.addListener("message-device", (device) => {
             console.debug(`[devices] ws event "message-devices"`, device);
 
             for (const child of list.children) {
-                create.updateDeviceListItem(child as HTMLElement, device);
+                deviceListItem.update(child as HTMLElement, device);
             }
         }),
 
-        globals.websocket.events.addListener("open", () => {
+        ws.socket.events.addListener("open", () => {
             console.debug("[devices] Request device list");
-            globals.websocket.request("GET api.devices");
+            ws.socket.request("GET api.devices");
         }),
     );
 
-    globals.websocket.request("GET api.devices");
+    ws.socket.request("GET api.devices");
 
     const settingsButton = document.querySelector<HTMLElement>(`.ui-app-bar button#goToSettings`)!;
     settingsButton.style.display = "block";

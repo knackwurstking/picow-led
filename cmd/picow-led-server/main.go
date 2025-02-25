@@ -8,9 +8,10 @@ import (
 
 	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
-	"github.com/knackwurstking/picow-led-server/frontend"
+
 	"github.com/knackwurstking/picow-led-server/internal/ws"
 	"github.com/knackwurstking/picow-led-server/pkg/picow"
+	"github.com/knackwurstking/picow-led-server/ui"
 )
 
 type Flags struct{}
@@ -93,7 +94,7 @@ func runCommand(cmd *cli.Command) error {
 		}
 	}
 
-	http.Handle("GET /", http.FileServerFS(frontend.Dist()))
+	http.Handle("GET /", http.FileServerFS(ui.Dist()))
 
 	// Init websocket handler
 	room := ws.NewRoom(api)

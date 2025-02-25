@@ -2,12 +2,15 @@ import { registerSW } from "virtual:pwa-register";
 
 import * as ui from "ui";
 
-import * as globals from "./globals";
+import * as constants from "./constants";
+import * as store from "./lib/store";
 import * as pages from "./pages";
+
+// PWA Updater
 
 const updateSW = registerSW({
     async onNeedRefresh() {
-        if (confirm(`Update available`)) {
+        if (confirm(`Update available, press OK to update.`)) {
             await updateSW();
         }
     },
@@ -38,8 +41,8 @@ const routes: { [key: string]: ui.router.Route } = {
 
 ui.router.hash.init(document.querySelector(`.router-target`)!, routes);
 
-if (globals.store.get("firstTimeConnect")) {
+if (store.obj.get("firstTimeConnect")) {
     location.hash = "#settings";
 }
 
-document.querySelector<HTMLElement>(`.build`)!.innerText = `${globals.version}`;
+document.querySelector<HTMLElement>(`.build`)!.innerText = `${constants.version}`;

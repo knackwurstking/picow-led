@@ -4,7 +4,7 @@ clean:
 build:
 	@rm -rf dist && \
 		go mod tidy -v && \
-		cd frontend && \
+		cd ui && \
 		npm install && \
 		npm run build && \
 		cd .. && \
@@ -12,5 +12,5 @@ build:
 
 dev:
 	#DEBUG=nodemon:*,nodemon nodemon -L --signal SIGTERM --exec 'go run ./cmd/picow-led-server -d -c .api.dev.json' --ext '' --delay 3
-	nodemon -L --signal SIGTERM --exec 'go run ./cmd/picow-led-server -d -c .api.dev.json' --ext 'go,mod,sum' --delay 3 --ignore ./frontend
+	nodemon -L --signal SIGTERM --exec 'go run ./cmd/picow-led-server -d -c .api.dev.json' --ext 'go,mod,sum' --delay 3 --ignore ./ui
 

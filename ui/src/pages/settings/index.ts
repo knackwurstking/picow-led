@@ -1,11 +1,11 @@
-import * as globals from "../../globals";
+import * as store from "../../lib/store";
 
 export async function onMount() {
     console.debug("[settings] Mount settings template/page");
 
     const routerTarget = document.querySelector(`.router-target`)!;
     const usingSSL = routerTarget.querySelector<HTMLInputElement>(`#settings-usingSSL`)!;
-    const server = globals.store.get("server")!;
+    const server = store.obj.get("server")!;
 
     let timeout: NodeJS.Timeout | null = null;
 
@@ -19,7 +19,7 @@ export async function onMount() {
     const update = (server: { ssl?: boolean; host?: string; port?: string }) => {
         timeout = setTimeout(() => {
             timeout = null;
-            globals.store.update("server", (data) => {
+            store.obj.update("server", (data) => {
                 return {
                     ...data,
                     ...server,
