@@ -1,7 +1,7 @@
 {
     "name": "ui",
     "private": true,
-    "version": "0.9.2",
+    "version": "0.10.0",
     "type": "module",
     "scripts": {
         "dev": "vite --host",
@@ -16,6 +16,6 @@
         "vite": "^6.0.5",
         "vite-plugin-pwa": "^0.21.1",
         "bootstrap-icons": "^1.11.3",
-        "ui": "knackwurstking/ui#v2.0.0"
+        "ui": "knackwurstking/ui#v2.1.0"
     }
 }

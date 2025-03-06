@@ -5,11 +5,14 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
-	"github.com/MatusOllah/slogcolor"
 	"github.com/SuperPaintman/nice/cli"
+	"github.com/lmittmann/tint"
+	"golang.org/x/net/websocket"
 
-	"github.com/knackwurstking/picow-led-server/internal/ws"
+	"github.com/knackwurstking/picow-led-server/internal/server"
+	"github.com/knackwurstking/picow-led-server/pkg/event"
 	"github.com/knackwurstking/picow-led-server/pkg/picow"
 	"github.com/knackwurstking/picow-led-server/ui"
 )
@@ -63,7 +66,7 @@ func main() {
 		// },
 		CommandFlags: []cli.CommandFlag{
 			cli.HelpCommandFlag(),
-			cli.VersionCommandFlag("v0.9.2"),
+			cli.VersionCommandFlag("v0.10.0"),
 		},
 	}
 
@@ -72,15 +75,20 @@ func main() {
 
 func runCommand(cmd *cli.Command) error {
 	// Initialize logger
+
+	tintOptions := &tint.Options{
+		AddSource:  true,
+		Level:      slog.LevelInfo,
+		TimeFormat: time.DateTime,
+	}
+
 	if flags.debug {
-		slogcolor.DefaultOptions.Level = slog.LevelDebug
+		tintOptions.Level = slog.LevelDebug
 	}
 
 	slog.SetDefault(
 		slog.New(
-			slogcolor.NewHandler(
-				os.Stderr, slogcolor.DefaultOptions,
-			),
+			tint.NewHandler(os.Stderr, tintOptions),
 		),
 	)
 
@@ -97,17 +105,18 @@ func runCommand(cmd *cli.Command) error {
 	http.Handle("GET /", http.FileServerFS(ui.Dist()))
 
 	// Init websocket handler
-	room := ws.NewRoom(api)
+	event := event.NewEvent[*picow.Api]()
+	server := server.NewServer(api, event)
 
 	if flags.config != "" {
-		room.OnApiChange = func(api *picow.Api) {
+		event.On("change", func(api *picow.Api) {
 			api.SaveToPath(flags.config)
-		}
+		})
 	}
 
-	http.Handle("GET /ws", room)
+	http.Handle("GET /ws", websocket.Handler(server.HandleWS))
 
-	go room.Run()
+	go server.StartResponseHandler()
 
 	addr := fmt.Sprintf("%s:%d", flags.host, flags.port)
 	slog.Info("Started server", "address", addr)
