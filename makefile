@@ -20,4 +20,4 @@ test:
 
 dev:
 	#DEBUG=nodemon:*,nodemon nodemon -L --signal SIGTERM --exec 'go run ./cmd/picow-led-server -d -c .api.dev.json' --ext '' --delay 3
-nodemon -L --signal SIGTERM --exec 'go run --race -v ./cmd/picow-led-server -d -c ${CONFIG_LOCATION}' --ext 'go,mod,sum' --delay 3 --ignore ./ui
+	nodemon -L --signal SIGTERM --exec 'go run --race -v ./cmd/picow-led-server -d -c ${CONFIG_LOCATION}' --ext 'go,mod,sum' --delay 3 --ignore ./ui
