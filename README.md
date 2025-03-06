@@ -1,7 +1,5 @@
 # PicoW LED Server
 
-Here's the updated project description with the correct name:
-
 **Project Description**:
 
 Picow LED Server is a web-based control system that manages and coordinates multiple Raspberry
