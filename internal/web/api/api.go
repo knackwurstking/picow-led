@@ -25,18 +25,17 @@ func GetDevices(o Options) []*Device {
 		go func() {
 			defer wg.Done()
 
-			// TODO: Request pins and color
 			r := &MicroRequest{}
 
 			if pins, err := r.RequestPins(device.Server); err != nil {
-				// TODO: Logging...
+				device.Server.Error = err.Error()
 				return
 			} else {
 				device.Pins = pins
 			}
 
 			if color, err := r.RequestColor(device.Server); err != nil {
-				// TODO: Logging...
+				device.Server.Error = err.Error()
 				return
 			} else {
 				device.Color = color

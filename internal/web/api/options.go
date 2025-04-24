@@ -8,4 +8,5 @@ type Options struct {
 type Server struct {
 	Addr   string `json,yaml:"addr"`
 	Online bool   `json:"online" yaml:"-"` //  Not used in configurations
+	Error  string `json:"error" yaml:"-"`
 }
