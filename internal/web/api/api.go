@@ -1,8 +1,6 @@
-// TODO: Either scan the network or read from configuration
 package api
 
 type Options struct {
-	// TODO: Configuration stuff here
 	Servers []Server `json,yaml:"servers"`
 }
 
@@ -13,7 +11,6 @@ type Server struct {
 
 type Device struct {
 	Server Server `json,yaml:"server"`
-	// TODO: ...
 }
 
 func GetDevices(d Options) []Device {
