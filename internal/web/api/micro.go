@@ -61,6 +61,17 @@ type MicroRequest struct {
 	CommandArgs []string `json:"args"`
 }
 
+type (
+	MicroPins      []uint
+	MicroColor     []uint
+	MicroTemp      int
+	MicroDiskUsage struct {
+		Used int `json:"used"`
+		Free int `json:"free"`
+	}
+	MicroVersion string
+)
+
 type MicroResponse[T any | MicroPins | MicroColor | MicroTemp | MicroDiskUsage | MicroVersion] struct {
 	ID    MicroID `json:"id"`
 	Error string  `json:"error"`
