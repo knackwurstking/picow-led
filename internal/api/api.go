@@ -6,7 +6,7 @@ type Device struct {
 	Server *Server `json:"server"`
 	// Color can be nil
 	Color MicroColor `json:"color"`
-	// Color can be nil
+	// Pins can be nil
 	Pins MicroPins `json:"pins"`
 }
 
