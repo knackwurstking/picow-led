@@ -7,7 +7,7 @@ import (
 )
 
 // apiDevices - GET - "/api/devices"
-func apiDevices(e *echo.Echo, data Data) {
+func apiDevices(e *echo.Echo, data Options) {
 	e.GET(data.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
 		// TODO: ...
 

@@ -6,11 +6,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Data struct {
-	ServerPathPrefix string
-	Api              api.Data
+type Options struct {
+	ServerPathPrefix string      `json,yaml:"server-path-prefix"`
+	Api              api.Options `json,yaml:"api"`
 }
 
-func Create(e *echo.Echo, data Data) {
+func Create(e *echo.Echo, data Options) {
 	apiDevices(e, data)
 }

@@ -145,9 +145,11 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		))
 
 		// Api
-		routes.Create(e, routes.Data{
+		routes.Create(e, routes.Options{
 			ServerPathPrefix: serverPathPrefix,
-			Api:              api.Data{},
+
+			// TODO: Get this api options from "~/.config/picow-led/api.json" or "api.json" (or use yaml)
+			Api: api.Options{},
 		})
 
 		return e.Start(*addr)
