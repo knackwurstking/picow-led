@@ -1,5 +1,7 @@
 package api
 
+import "fmt"
+
 const (
 	// Micro Default IDs
 
@@ -59,6 +61,18 @@ type MicroRequest struct {
 	// 	else
 	// 		nil
 	CommandArgs []string `json:"args"`
+}
+
+func (mr *MicroRequest) RequestPins(s *Server) (MicroPins, error) {
+	// TODO: ...
+
+	return nil, fmt.Errorf("under construction")
+}
+
+func (mr *MicroRequest) RequestColor(s *Server) (MicroColor, error) {
+	// TODO: ...
+
+	return nil, fmt.Errorf("under construction")
 }
 
 type (
