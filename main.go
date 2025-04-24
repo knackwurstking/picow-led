@@ -159,6 +159,10 @@ func cliGenerateAction(path *string) cli.ActionRunner {
 		}
 		for _, p := range pages {
 			file, err := createFile(*path, p)
+			if err != nil {
+				return err
+			}
+
 			err = components.Base(
 				baseData, components.PageDevices(),
 			).Render(context.Background(), file)
@@ -182,12 +186,9 @@ func cliGenerateAction(path *string) cli.ActionRunner {
 
 func createFile(path, filePath string) (*os.File, error) {
 	// Generate all templ stuff to `*path+"index.html"`
-	err := os.MkdirAll(path, 0700)
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Create(filepath.Join(path, filePath))
+	fp := filepath.Join(path, filePath)
+	_ = os.MkdirAll(filepath.Dir(fp), 0700)
+	file, err := os.Create(fp)
 	if err != nil {
 		return nil, err
 	}
