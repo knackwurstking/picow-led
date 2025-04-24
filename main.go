@@ -144,7 +144,10 @@ func cliGenerateAction(path *string) cli.ActionRunner {
 			ServerPathPrefix: serverPathPrefix,
 			Version:          version,
 		}
-		err = components.Index(indexData).Render(context.Background(), file)
+		err = components.Base(
+			indexData,
+			// TODO: Add page here
+		).Render(context.Background(), file)
 		if err != nil {
 			return err
 		}
