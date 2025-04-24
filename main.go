@@ -1,4 +1,3 @@
-// NOTE: go:generate npx tailwindcss build -i static/css/style.css -o static/css/tailwindcss -m
 package main
 
 import (
@@ -111,10 +110,10 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(dist(), false))
 		e.GET(serverPathPrefix+"/", echo.WrapHandler(
 			templ.Handler(
-				components.Index(components.Data{
+				components.Base(components.Data{
 					ServerPathPrefix: serverPathPrefix,
 					Version:          version,
-				}),
+				}), // TODO: Add page here
 			),
 		))
 

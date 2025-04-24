@@ -1,7 +1,12 @@
 // Generate with `templ generate`
 package components
 
-templ Layout(data Data, children ...templ.Component) {
+type Data struct {
+ServerPathPrefix string
+Version string
+}
+
+templ Base(data Data, children ...templ.Component) {
 <!DOCTYPE html>
 <html lang="en">
 
