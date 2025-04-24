@@ -1,7 +1,7 @@
 package api
 
 type Device struct {
-	Server Server `json,yaml:"server"`
+	Server Server `json:"server"`
 }
 
 func GetDevices(d Options) []Device {
