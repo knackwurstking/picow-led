@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"picow-led/internal/web/api"
+	"picow-led/internal/api"
 
 	"github.com/labstack/echo/v4"
 )

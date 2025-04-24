@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"picow-led/components"
-	"picow-led/internal/web/api"
-	"picow-led/internal/web/routes"
+	"picow-led/internal/api"
+	"picow-led/internal/routes"
 	"picow-led/web/js"
 	"picow-led/web/pwa"
 
