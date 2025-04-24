@@ -23,6 +23,7 @@ var (
 	// NOTE: No need for a "/" at the beginning
 	assetsToCache = []string{
 		"",
+		"settings",
 		"manifest.json",
 		"static/css/styles.css",
 		"static/icons/apple-touch-icon-180x180.png",
