@@ -1,7 +1,7 @@
 {
     "version": "{{ .Version }}",
     "manifest_version": 3,
-    "name": "Templ Echo PWA Starter",
+    "name": "PicoW LED",
     "short_name": "picow-led",
     "id": "",
     "icons": [

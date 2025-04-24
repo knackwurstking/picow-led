@@ -63,7 +63,7 @@ func dist() fs.FS {
 func main() {
 	app := cli.App{
 		Name:  "picow-led",
-		Usage: cli.Usage("Templ + Echo Starter Template"),
+		Usage: cli.Usage("PicoW LED server and client."),
 		Commands: []cli.Command{
 			{
 				Name:  "server",
