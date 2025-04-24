@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"picow-led/components"
+	"picow-led/internal/web/api"
+	"picow-led/internal/web/routes"
 	"picow-led/web/js"
 	"picow-led/web/pwa"
 
@@ -141,6 +143,12 @@ func cliServerAction(addr *string) cli.ActionRunner {
 				),
 			),
 		))
+
+		// Api
+		routes.Create(e, routes.Data{
+			ServerPathPrefix: serverPathPrefix,
+			Api:              api.Data{},
+		})
 
 		return e.Start(*addr)
 	}
