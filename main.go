@@ -108,14 +108,6 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		e := echo.New()
 
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(dist(), false))
-		e.GET(serverPathPrefix+"/", echo.WrapHandler(
-			templ.Handler(
-				components.Base(components.Data{
-					ServerPathPrefix: serverPathPrefix,
-					Version:          version,
-				}), // TODO: Add page here
-			),
-		))
 
 		// Server all "pwa" templates
 		pwa.Serve(e, pwaTemplateData)
@@ -123,37 +115,59 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		// Server all "js" scripts
 		js.Serve(e, jsTemplateData)
 
+		// The devices page will be at "/" for now
+		e.GET(serverPathPrefix+"/", echo.WrapHandler(
+			templ.Handler(
+				components.Base(
+					components.Data{
+						ServerPathPrefix: serverPathPrefix,
+						Version:          version,
+					},
+					components.PageDevices(),
+				),
+			),
+		))
+
+		// Settings page
+		e.GET(serverPathPrefix+"/settings", echo.WrapHandler(
+			templ.Handler(
+				components.Base(
+					components.Data{
+						ServerPathPrefix: serverPathPrefix,
+						Version:          version,
+					},
+					components.PageSettings(),
+				),
+			),
+		))
+
 		return e.Start(*addr)
 	}
 }
 
 func cliGenerateAction(path *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
-		// Generate all templ stuff to `*path+"index.html"`
-		err := os.MkdirAll(*path, 0700)
-		if err != nil {
-			return err
-		}
-
-		file, err := os.Create(filepath.Join(*path, "index.html"))
-		if err != nil {
-			return err
-		}
-
-		indexData := components.Data{
+		baseData := components.Data{
 			ServerPathPrefix: serverPathPrefix,
 			Version:          version,
 		}
-		err = components.Base(
-			indexData,
-			// TODO: Add page here
-		).Render(context.Background(), file)
-		if err != nil {
-			return err
+
+		pages := []string{
+			"index.html",
+			filepath.Join("settings", "index.html"),
+		}
+		for _, p := range pages {
+			file, err := createFile(*path, p)
+			err = components.Base(
+				baseData, components.PageDevices(),
+			).Render(context.Background(), file)
+			if err != nil {
+				return err
+			}
 		}
 
 		// Generate all PWA files
-		err = pwa.Generate(*path, pwaTemplateData)
+		err := pwa.Generate(*path, pwaTemplateData)
 		if err != nil {
 			return err
 		}
@@ -163,4 +177,19 @@ func cliGenerateAction(path *string) cli.ActionRunner {
 
 		return nil
 	}
+}
+
+func createFile(path, filePath string) (*os.File, error) {
+	// Generate all templ stuff to `*path+"index.html"`
+	err := os.MkdirAll(path, 0700)
+	if err != nil {
+		return nil, err
+	}
+
+	file, err := os.Create(filepath.Join(path, filePath))
+	if err != nil {
+		return nil, err
+	}
+
+	return file, err
 }
