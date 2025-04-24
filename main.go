@@ -146,6 +146,11 @@ func cliServerAction(addr *string) cli.ActionRunner {
 	}
 }
 
+type generatePage struct {
+	filePath string
+	page     templ.Component
+}
+
 func cliGenerateAction(path *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		baseData := components.Data{
@@ -153,18 +158,22 @@ func cliGenerateAction(path *string) cli.ActionRunner {
 			Version:          version,
 		}
 
-		pages := []string{
-			"index.html",
-			filepath.Join("settings", "index.html"),
+		pages := []generatePage{
+			{filePath: "index.html", page: components.PageDevices()},
+			{
+				filePath: filepath.Join("settings", "index.html"),
+				page:     components.PageSettings(),
+			},
 		}
+
 		for _, p := range pages {
-			file, err := createFile(*path, p)
+			file, err := createFile(*path, p.filePath)
 			if err != nil {
 				return err
 			}
 
 			err = components.Base(
-				baseData, components.PageDevices(),
+				baseData, p.page,
 			).Render(context.Background(), file)
 			if err != nil {
 				return err
