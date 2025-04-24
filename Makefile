@@ -27,3 +27,5 @@ build:
 
 generate-pwa-assets:
 	npx pwa-assets-generator
+
+# TODO: Add all "rpi-server-project" related commands here
