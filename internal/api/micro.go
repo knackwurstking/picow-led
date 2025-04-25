@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
@@ -72,19 +73,37 @@ type MicroRequest struct {
 	CommandArgs []string `json:"args"`
 }
 
-func (mr *MicroRequest) RequestPins(s *Server) (MicroPins, error) {
+func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
 	if !mr.IsConnected() {
 		if err := mr.Connect(s); err != nil {
 			return nil, err
 		}
 	}
 
-	// TODO: ...
+	// TODO: Connect if needed, Read and return
 
-	return nil, fmt.Errorf("under construction")
+	return nil, errors.New("under construction")
 }
 
-func (mr *MicroRequest) RequestColor(s *Server) (MicroColor, error) {
+// RequestPins will change fields like "ID", "Type", "Group", "Command" or
+// "CommandArgs"
+func (mr *MicroRequest) Pins(s *Server) (MicroPins, error) {
+	mr.ID = MicroIDDefault
+	mr.Type = MicroTypeGET
+	mr.Group = MicroGroupConfig
+	mr.Command = "led"
+	mr.CommandArgs = nil
+
+	data, err := mr.Send(s)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := MicroResponse[MicroPins]{}
+	return resp.Data, json.Unmarshal(data, resp)
+}
+
+func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
 	// TODO: ...
 
 	return nil, fmt.Errorf("under construction")
