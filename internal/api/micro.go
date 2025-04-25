@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net"
 	"sync"
 	"time"
@@ -49,7 +48,7 @@ type MicroRequest struct {
 	// 		- Group: "config" Command: "led"
 	// 		- Group: "led"    Command: "color"
 	//
-	// Type: "set":
+	// Type: "get":
 	// 		- Group: "config" Command: "led"
 	// 		- Group: "led"    Command: "color"
 	// 		- Group: "info"   Command: "temp"
@@ -104,9 +103,19 @@ func (mr *MicroRequest) Pins(s *Server) (MicroPins, error) {
 }
 
 func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
-	// TODO: ...
+	mr.ID = MicroIDDefault
+	mr.Type = MicroTypeGET
+	mr.Group = MicroGroupLED
+	mr.Command = "color"
+	mr.CommandArgs = nil
 
-	return nil, fmt.Errorf("under construction")
+	data, err := mr.Send(s)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := MicroResponse[MicroColor]{}
+	return resp.Data, json.Unmarshal(data, resp)
 }
 
 type (
