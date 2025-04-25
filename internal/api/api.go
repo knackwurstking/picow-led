@@ -10,7 +10,7 @@ type Device struct {
 	Pins MicroPins `json:"pins"`
 }
 
-func GetDevices(o Options) []*Device {
+func GetDevices(o *Options) []*Device {
 	devices := []*Device{}
 
 	for _, server := range o.Servers {

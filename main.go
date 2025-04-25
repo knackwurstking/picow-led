@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"picow-led/components"
-	"picow-led/internal/api"
+	"picow-led/internal/config"
 	"picow-led/internal/routes"
 	"picow-led/web/js"
 	"picow-led/web/pwa"
@@ -48,7 +48,16 @@ var (
 	jsTemplateData = js.TemplateData{
 		ServerPathPrefix: serverPathPrefix,
 	}
+
+	apiConfigPath         = "api.config"
+	apiConfigFallbackPath = ""
 )
+
+func init() {
+	if d, err := os.UserConfigDir(); err == nil {
+		apiConfigFallbackPath = filepath.Join(d, "picow-led", "api.config")
+	}
+}
 
 //go:embed dist
 var _dist embed.FS
@@ -145,11 +154,15 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		))
 
 		// Api
+		e.Logger.Infof(
+			"Rad API configuration from: %s, %s",
+			apiConfigPath, apiConfigFallbackPath,
+		)
 		routes.Create(e, routes.Options{
 			ServerPathPrefix: serverPathPrefix,
-
-			// TODO: Get this api options from "~/.config/picow-led/api.json" or "api.json" (or use yaml)
-			Api: api.Options{},
+			Api: config.GetApiOptions(
+				apiConfigPath, apiConfigFallbackPath,
+			),
 		})
 
 		return e.Start(*addr)
