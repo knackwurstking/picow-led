@@ -176,6 +176,7 @@ type generatePage struct {
 
 func cliGenerateAction(path *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
+		// Generate templ pages
 		baseData := components.Data{
 			ServerPathPrefix: serverPathPrefix,
 			Version:          version,
