@@ -1,6 +1,13 @@
 package api
 
-import "fmt"
+import (
+	"bytes"
+	"errors"
+	"fmt"
+	"net"
+	"sync"
+	"time"
+)
 
 const (
 	// Micro Default IDs
@@ -29,6 +36,8 @@ type (
 )
 
 type MicroRequest struct {
+	MicroSocket
+
 	ID    MicroID    `json:"id"`
 	Group MicroGroup `json:"group"`
 	Type  MicroType  `json:"type"`
@@ -64,6 +73,12 @@ type MicroRequest struct {
 }
 
 func (mr *MicroRequest) RequestPins(s *Server) (MicroPins, error) {
+	if !mr.IsConnected() {
+		if err := mr.Connect(s); err != nil {
+			return nil, err
+		}
+	}
+
 	// TODO: ...
 
 	return nil, fmt.Errorf("under construction")
@@ -85,6 +100,76 @@ type (
 	}
 	MicroVersion string
 )
+
+type MicroSocket struct {
+	socket net.Conn
+	mutex  sync.Mutex
+}
+
+func (ms *MicroSocket) IsConnected() bool {
+	return ms.socket != nil
+}
+
+func (ms *MicroSocket) Connect(s *Server) error {
+	if ms.socket != nil {
+		ms.Close()
+	}
+
+	dialer := net.Dialer{
+		Timeout: time.Duration(time.Second * 5),
+	}
+
+	if conn, err := dialer.Dial("tcp", s.Addr); err != nil {
+		ms.socket = nil
+		s.Error = err.Error()
+		s.Online = false
+	} else {
+		ms.socket = conn
+		s.Error = ""
+		s.Online = true
+	}
+
+	return errors.New(s.Error)
+}
+
+func (ms *MicroSocket) Read() ([]byte, error) {
+	if ms.socket == nil {
+		panic("socket is nil, call connect first")
+	}
+
+	data := make([]byte, 0)
+	b := make([]byte, 1)
+	endByte := []byte("\n")
+	var n int
+	var err error
+	for {
+		n, err = ms.socket.Read(b)
+		if err != nil {
+			break
+		}
+		if n == 0 {
+			err = errors.New("no data")
+			break
+		}
+
+		if bytes.Equal(b, endByte) {
+			break
+		}
+
+		data = append(data, b...)
+	}
+
+	return data, err
+}
+
+func (ms *MicroSocket) Close() {
+	if ms.socket == nil {
+		return
+	}
+
+	ms.socket.Close()
+	ms.socket = nil
+}
 
 type MicroResponse[T any | MicroPins | MicroColor | MicroTemp | MicroDiskUsage | MicroVersion] struct {
 	ID    MicroID `json:"id"`
