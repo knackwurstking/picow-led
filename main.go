@@ -22,25 +22,6 @@ var (
 	version               = "v1.0.0"
 	apiConfigPath         = "api.yaml"
 	apiConfigFallbackPath = ""
-
-	//assetsToCache = []string{
-	//	"",
-	//	"settings",
-	//	"manifest.json",
-	//	"static/css/styles.css",
-	//	"static/icons/apple-touch-icon-180x180.png",
-	//	"static/icons/favicon.ico",
-	//	"static/icons/icon.png",
-	//	"static/icons/maskable-icon-512x512.png",
-	//	"static/icons/pwa-192x192.png",
-	//	"static/icons/pwa-512x512.png",
-	//	"static/icons/pwa-64x64.png",
-	//	"static/js/main.js",
-	//	"static/js/api.js",
-	//	"static/js/page-devices.js",
-	//	"static/screenshots/328x626.png",
-	//	"static/screenshots/626x338.png",
-	//}
 )
 
 func init() {
@@ -82,19 +63,6 @@ func main() {
 					return cliServerAction(addr)
 				}),
 			},
-			//{
-			//	Name:  "generate",
-			//	Usage: cli.Usage("Generate HTML"),
-			//	Action: cli.ActionFunc(func(cmd *cli.Command) cli.ActionRunner {
-			//		path := cli.StringArg(
-			//			cmd, "path",
-			//			cli.Usage("destination directory"),
-			//			cli.Required,
-			//		)
-
-			//		return cliGenerateAction(path)
-			//	}),
-			//},
 		},
 		CommandFlags: []cli.CommandFlag{
 			cli.HelpCommandFlag(),
@@ -171,61 +139,3 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		return e.Start(*addr)
 	}
 }
-
-type generatePage struct {
-	filePath string
-	page     templ.Component
-}
-
-//func cliGenerateAction(path *string) cli.ActionRunner {
-//	return func(cmd *cli.Command) error {
-//		// Generate templ pages
-//		baseData := &components.BaseData{
-//			ServerPathPrefix: serverPathPrefix,
-//			Version:          version,
-//		}
-//
-//		pages := []generatePage{
-//			{
-//				filePath: "index.html",
-//				page: components.PageDevices(
-//					&components.PageDevicesData{
-//						BaseData: baseData,
-//					},
-//				),
-//			},
-//			{
-//				filePath: filepath.Join("settings", "index.html"),
-//				page:     components.PageSettings(),
-//			},
-//		}
-//
-//		for _, p := range pages {
-//			file, err := createFile(*path, p.filePath)
-//			if err != nil {
-//				return err
-//			}
-//
-//			err = components.Base(
-//				baseData, p.page,
-//			).Render(context.Background(), file)
-//			if err != nil {
-//				return err
-//			}
-//		}
-//
-//		return nil
-//	}
-//}
-//
-//func createFile(path, filePath string) (*os.File, error) {
-//	// Generate all templ stuff to `*path+"index.html"`
-//	fp := filepath.Join(path, filePath)
-//	_ = os.MkdirAll(filepath.Dir(fp), 0700)
-//	file, err := os.Create(fp)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return file, err
-//}
