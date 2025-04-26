@@ -133,15 +133,21 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		// Server all "js" scripts
 		js.Serve(e, jsTemplateData)
 
+		baseData := &components.BaseData{
+			ServerPathPrefix: serverPathPrefix,
+			Version:          version,
+		}
+
 		// The devices page will be at "/" for now
 		e.GET(serverPathPrefix+"/", echo.WrapHandler(
 			templ.Handler(
 				components.Base(
-					components.Data{
-						ServerPathPrefix: serverPathPrefix,
-						Version:          version,
-					},
-					components.PageDevices(),
+					baseData,
+					components.PageDevices(
+						&components.PageDevicesData{
+							BaseData: baseData,
+						},
+					),
 				),
 			),
 		))
@@ -150,10 +156,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		e.GET(serverPathPrefix+"/settings", echo.WrapHandler(
 			templ.Handler(
 				components.Base(
-					components.Data{
-						ServerPathPrefix: serverPathPrefix,
-						Version:          version,
-					},
+					baseData,
 					components.PageSettings(),
 				),
 			),
@@ -187,13 +190,20 @@ type generatePage struct {
 func cliGenerateAction(path *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		// Generate templ pages
-		baseData := components.Data{
+		baseData := &components.BaseData{
 			ServerPathPrefix: serverPathPrefix,
 			Version:          version,
 		}
 
 		pages := []generatePage{
-			{filePath: "index.html", page: components.PageDevices()},
+			{
+				filePath: "index.html",
+				page: components.PageDevices(
+					&components.PageDevicesData{
+						BaseData: baseData,
+					},
+				),
+			},
 			{
 				filePath: filepath.Join("settings", "index.html"),
 				page:     components.PageSettings(),

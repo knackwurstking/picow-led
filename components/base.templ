@@ -1,12 +1,12 @@
 // Generate with `templ generate`
 package components
 
-type Data struct {
+type BaseData struct {
 ServerPathPrefix string
 Version string
 }
 
-templ Base(data Data, children ...templ.Component) {
+templ Base(data *BaseData, children ...templ.Component) {
 <!DOCTYPE html>
 <html lang="en">
 
