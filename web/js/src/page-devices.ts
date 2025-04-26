@@ -9,7 +9,6 @@ window.addEventListener("focus", () => {
 });
 
 function updateApiDevices() {
-    // FIXME: How to get rid of these error
-    console.warn(api);
+    console.warn((window as any).api as Api);
     // TODO: Fetch devices from GET "/api/devices"
 }

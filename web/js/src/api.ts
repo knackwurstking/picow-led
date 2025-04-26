@@ -1,4 +1,5 @@
-class Api {}
+class Api {
+    // TODO: ...
+}
 
-// FIXME: How to get rid of these error
-window.api = new Api();
+(window as any).api = new Api();
