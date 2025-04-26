@@ -8,6 +8,7 @@ type PageDevicesData struct {
 templ PageDevices(data *PageDevicesData) {
 <main>
     <p>Devices Page</p>
+    <script src={ data.ServerPathPrefix + "/api.js" }></script>
     <script src={ data.ServerPathPrefix + "/page-devices.js" }></script>
 </main>
 }

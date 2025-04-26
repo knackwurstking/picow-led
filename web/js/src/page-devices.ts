@@ -1,15 +1,15 @@
-// TODO: Fetch devices data from the api, on focus and on window load
-
 window.addEventListener("load", () => {
-    console.debug("window onload event");
+    console.warn("window onload event");
     updateApiDevices();
 });
 
 window.addEventListener("focus", () => {
-    console.debug("window focus event");
+    console.warn("window focus event");
     updateApiDevices();
 });
 
 function updateApiDevices() {
-    // ...
+    // FIXME: How to get rid of these error
+    console.warn(api);
+    // TODO: Fetch devices from GET "/api/devices"
 }

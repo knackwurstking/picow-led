@@ -22,6 +22,11 @@ func Serve(e *echo.Echo, data TemplateData) {
 				"application/javascript",
 			},
 		},
+		"api.js": {
+			"Content-Type": {
+				"application/javascript",
+			},
+		},
 		"page-devices.js": {
 			"Content-Type": {
 				"application/javascript",
