@@ -7,10 +7,11 @@ type PageDevicesData struct {
 Servers []*api.Server
 }
 
+// TODO: Rendering device list items
 templ PageDevices(data *PageDevicesData) {
 <main>
     for _, server := range data.Servers {
-    <p><code>{ server.Addr }</code></p>
+    @DeviceItem(server)
     }
     <script src={ data.ServerPathPrefix + "/js/api.js" }></script>
     <script src={ data.ServerPathPrefix + "/js/page-devices.js" }></script>
