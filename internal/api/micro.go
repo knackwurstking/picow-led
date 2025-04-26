@@ -82,8 +82,10 @@ func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
 			s.Error = err.Error()
 			return nil, err
 		}
+		// NOTE: Ok, all connections created here will be closed, all other
+		// 		 connections will stay open
+		defer mr.Close()
 	}
-	defer mr.Close()
 
 	data, err := json.Marshal(mr)
 	if err != nil {
