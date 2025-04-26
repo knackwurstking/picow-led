@@ -73,15 +73,42 @@ type MicroRequest struct {
 }
 
 func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
+	s.Online = true
+	s.Error = ""
+
 	if !mr.IsConnected() {
-		if err := mr.Connect(s); err != nil {
+		if err := mr.Connect(s.Addr); err != nil {
+			s.Online = false
+			s.Error = err.Error()
 			return nil, err
 		}
 	}
 
-	// TODO: Connect if needed, Read and return
+	data, err := json.Marshal(mr)
+	if err != nil {
+		panic(err.Error())
+	}
+	err = mr.Write(data)
+	if err != nil {
+		mr.socket = nil
+		s.Error = err.Error()
+		s.Online = false
+		return nil, err
+	}
 
-	return nil, errors.New("under construction")
+	if mr.ID == MicroIDNoResponse {
+		return []byte{}, nil
+	}
+
+	data, err = mr.Read()
+	if err != nil {
+		mr.socket = nil
+		s.Error = err.Error()
+		s.Online = false
+		return nil, err
+	}
+
+	return data, nil
 }
 
 // RequestPins will change fields like "ID", "Type", "Group", "Command" or
@@ -99,7 +126,12 @@ func (mr *MicroRequest) Pins(s *Server) (MicroPins, error) {
 	}
 
 	resp := MicroResponse[MicroPins]{}
-	return resp.Data, json.Unmarshal(data, resp)
+	err = json.Unmarshal(data, resp)
+	if err != nil {
+		s.Error = resp.Error
+		s.Online = true
+	}
+	return resp.Data, err
 }
 
 func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
@@ -138,7 +170,7 @@ func (ms *MicroSocket) IsConnected() bool {
 	return ms.socket != nil
 }
 
-func (ms *MicroSocket) Connect(s *Server) error {
+func (ms *MicroSocket) Connect(addr string) error {
 	if ms.socket != nil {
 		ms.Close()
 	}
@@ -147,17 +179,26 @@ func (ms *MicroSocket) Connect(s *Server) error {
 		Timeout: time.Duration(time.Second * 5),
 	}
 
-	if conn, err := dialer.Dial("tcp", s.Addr); err != nil {
+	conn, err := dialer.Dial("tcp", addr)
+	if err != nil {
 		ms.socket = nil
-		s.Error = err.Error()
-		s.Online = false
 	} else {
 		ms.socket = conn
-		s.Error = ""
-		s.Online = true
 	}
 
-	return errors.New(s.Error)
+	return err
+}
+
+func (ms *MicroSocket) Write(data []byte) error {
+	n, err := ms.socket.Write(data)
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return errors.New("write: no data")
+	}
+
+	return nil
 }
 
 func (ms *MicroSocket) Read() ([]byte, error) {
@@ -176,7 +217,7 @@ func (ms *MicroSocket) Read() ([]byte, error) {
 			break
 		}
 		if n == 0 {
-			err = errors.New("no data")
+			err = errors.New("read: no data")
 			break
 		}
 
