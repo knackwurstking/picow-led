@@ -101,6 +101,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		}
 
 		// Echo: / - page-devices
+		// TODO: Stop using a wrapper
 		e.GET(serverPathPrefix+"/", echo.WrapHandler(
 			templ.Handler(
 				components.Base(
