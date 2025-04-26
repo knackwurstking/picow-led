@@ -14,19 +14,19 @@ generate:
 	templ generate 
 	go generate -v
 
-generate-dist:
-	make generate
-	rm -rf dist
-	cp -r public dist
-	go run -v . generate ./dist
-
 test:
 	go test -v ./...
 
 build:
 	make test
-	SERVER_PATH_PREFIX= make generate-dist
+	SERVER_PATH_PREFIX= make generate
 	go build -v -ldflags="-w -s" -o bin/${BINARY_NAME}
+
+build-dist:
+	make generate
+	rm -rf dist
+	cp -r public dist
+	go run -v . generate ./dist
 
 generate-pwa-assets:
 	npx pwa-assets-generator
