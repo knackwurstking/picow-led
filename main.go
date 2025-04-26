@@ -37,6 +37,8 @@ var (
 		"static/icons/pwa-512x512.png",
 		"static/icons/pwa-64x64.png",
 		"static/js/main.js",
+		"static/js/api.js",
+		"static/js/page-devices.js",
 		"static/screenshots/328x626.png",
 		"static/screenshots/626x338.png",
 	}
