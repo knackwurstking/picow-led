@@ -83,6 +83,7 @@ func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
 			return nil, err
 		}
 	}
+	defer mr.Close()
 
 	data, err := json.Marshal(mr)
 	if err != nil {
