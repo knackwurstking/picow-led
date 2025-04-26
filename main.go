@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"picow-led/components"
-	"picow-led/internal/api"
 	"picow-led/internal/config"
 	"picow-led/internal/routes"
 
@@ -87,12 +86,6 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		apiOptions, err := config.GetApiOptions(
 			apiConfigPath, apiConfigFallbackPath,
 		)
-		if err != nil {
-			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
-		}
-
-		// Echo: Static File Server
-		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(public(), false))
 
 		// Base Data (templ)
 		baseData := &components.BaseData{
@@ -100,18 +93,24 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			Version:          version,
 		}
 
+		// Page Data: "/" - devices
+		pageDevicesData := &components.PageDevicesData{
+			BaseData: baseData,
+			Servers:  apiOptions.Servers,
+		}
+
+		if err != nil {
+			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
+		}
+
+		// Echo: Static File Server
+		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(public(), false))
+
 		// Echo: / - page-devices
-		// TODO: Stop using a wrapper
 		e.GET(serverPathPrefix+"/", echo.WrapHandler(
 			templ.Handler(
-				components.Base(
-					baseData,
-					components.PageDevices(
-						&components.PageDevicesData{
-							BaseData: baseData,
-							Devices:  api.GetDevices(apiOptions),
-						},
-					),
+				components.Base(baseData,
+					components.PageDevices(pageDevicesData),
 				),
 			),
 		))
@@ -119,8 +118,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		// Echo: /settings - page-settings
 		e.GET(serverPathPrefix+"/settings", echo.WrapHandler(
 			templ.Handler(
-				components.Base(
-					baseData,
+				components.Base(baseData,
 					components.PageSettings(),
 				),
 			),
