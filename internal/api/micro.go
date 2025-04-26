@@ -135,7 +135,11 @@ func (mr *MicroRequest) Pins(s *Server) (MicroPins, error) {
 		return nil, errors.New(s.Error)
 	}
 
-	return ParseMicroResponse[MicroPins](data)
+	pins, err := ParseMicroResponse[MicroPins](data)
+	if err != nil {
+		s.Error = err.Error()
+	}
+	return pins, err
 }
 
 func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
@@ -153,7 +157,11 @@ func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
 		return nil, errors.New(s.Error)
 	}
 
-	return ParseMicroResponse[MicroColor](data)
+	color, err := ParseMicroResponse[MicroColor](data)
+	if err != nil {
+		s.Error = err.Error()
+	}
+	return color, err
 }
 
 type (
