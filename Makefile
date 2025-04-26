@@ -13,6 +13,7 @@ generate:
 	go mod tidy -v
 	templ generate 
 	go generate -v
+	npx tsc
 
 test:
 	go test -v ./...
