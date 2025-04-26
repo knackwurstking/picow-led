@@ -50,13 +50,13 @@ var (
 		ServerPathPrefix: serverPathPrefix,
 	}
 
-	apiConfigPath         = "api.config"
+	apiConfigPath         = "api.yaml"
 	apiConfigFallbackPath = ""
 )
 
 func init() {
 	if d, err := os.UserConfigDir(); err == nil {
-		apiConfigFallbackPath = filepath.Join(d, "picow-led", "api.config")
+		apiConfigFallbackPath = filepath.Join(d, "picow-led", "api.yaml")
 	}
 }
 
