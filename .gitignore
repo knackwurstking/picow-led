@@ -1,11 +1,7 @@
-# .gitignore
 *_templ.go
 *templ.txt
-#static/css/tailwind.css
 package-lock.json
 node_modules
-templ-pwa-example
 .DS_Store
-/public/index.html
 /bin
 /dist
