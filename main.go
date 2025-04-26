@@ -164,11 +164,15 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			"Read API configuration from: %s, %s",
 			apiConfigPath, apiConfigFallbackPath,
 		)
+		apiOptions, err := config.GetApiOptions(
+			apiConfigPath, apiConfigFallbackPath,
+		)
+		if err != nil {
+			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
+		}
 		routes.Create(e, routes.Options{
 			ServerPathPrefix: serverPathPrefix,
-			Api: config.GetApiOptions(
-				apiConfigPath, apiConfigFallbackPath,
-			),
+			Api:              apiOptions,
 		})
 
 		return e.Start(*addr)

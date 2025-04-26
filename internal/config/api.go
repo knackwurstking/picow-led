@@ -1,13 +1,37 @@
 package config
 
-import "picow-led/internal/api"
+import (
+	"io"
+	"os"
+	"path/filepath"
+	"picow-led/internal/api"
 
-func GetApiOptions(paths ...string) *api.Options {
+	"gopkg.in/yaml.v3"
+)
+
+func GetApiOptions(paths ...string) (*api.Options, error) {
 	o := &api.Options{
 		Servers: []*api.Server{},
 	}
 
-	// TODO: Read configuration from path if possible
+	for _, path := range paths {
+		absPath, err := filepath.Abs(path)
+		if err != nil {
+			absPath = path
+		}
+		f, err := os.Open(absPath)
+		if err != nil {
+			continue
+		}
+		d, err := io.ReadAll(f)
+		if err != nil {
+			return o, err
+		}
+		err = yaml.Unmarshal(d, o)
+		if err != nil {
+			return o, err
+		}
+	}
 
-	return o
+	return o, nil
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func TestMicroRequestError_InvalidCommand(t *testing.T) {
-	apiOptions := GetApiOptions(".api.yaml")
+	apiOptions, _ := GetApiOptions(".api.yaml")
 
 	r := &api.MicroRequest{
 		ID:      api.MicroIDDefault,
@@ -35,7 +35,7 @@ func TestMicroRequestError_InvalidCommand(t *testing.T) {
 }
 
 func TestMicroRequestError_InvalidGroup(t *testing.T) {
-	apiOptions := GetApiOptions(".api.yaml")
+	apiOptions, _ := GetApiOptions(".api.yaml")
 
 	r := &api.MicroRequest{
 		ID:      api.MicroIDDefault,
@@ -64,7 +64,7 @@ func TestMicroRequestError_InvalidGroup(t *testing.T) {
 }
 
 func TestMicroRequestError_InvalidType(t *testing.T) {
-	apiOptions := GetApiOptions(".api.yaml")
+	apiOptions, _ := GetApiOptions(".api.yaml")
 
 	r := &api.MicroRequest{
 		ID:      api.MicroIDDefault,
