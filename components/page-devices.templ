@@ -1,14 +1,18 @@
 package components
 
+import "picow-led/internal/api"
+
 type PageDevicesData struct {
 *BaseData
+Devices []*api.Device
 }
 
-// TODO: Using template html tag for device list item
 templ PageDevices(data *PageDevicesData) {
 <main>
-    <p>Devices Page</p>
-    <script src={ data.ServerPathPrefix + "/api.js" }></script>
-    <script src={ data.ServerPathPrefix + "/page-devices.js" }></script>
+    for _, d := range data.Devices {
+    <p><code>{ d.Server.Addr }</code></p>
+    }
+    <script src={ data.ServerPathPrefix + "/static/js/api.js" }></script>
+    <script src={ data.ServerPathPrefix + "/static/js/page-devices.js" }></script>
 </main>
 }

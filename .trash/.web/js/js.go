@@ -17,17 +17,17 @@ type TemplateData struct {
 func Serve(e *echo.Echo, data TemplateData) {
 	tFS := web.StripSubFromFS(templates)
 	web.ServeGET(e, map[web.File]map[web.Key][]web.Value{
-		"main.js": {
+		"static/js/main.js": {
 			"Content-Type": {
 				"application/javascript",
 			},
 		},
-		"api.js": {
+		"static/js/api.js": {
 			"Content-Type": {
 				"application/javascript",
 			},
 		},
-		"page-devices.js": {
+		"static/js/page-devices.js": {
 			"Content-Type": {
 				"application/javascript",
 			},

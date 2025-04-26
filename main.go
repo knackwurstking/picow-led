@@ -1,16 +1,14 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"picow-led/components"
+	"picow-led/internal/api"
 	"picow-led/internal/config"
 	"picow-led/internal/routes"
-	"picow-led/web/js"
-	"picow-led/web/pwa"
 
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/a-h/templ"
@@ -19,41 +17,30 @@ import (
 )
 
 var (
-	serverPathPrefix = os.Getenv("SERVER_PATH_PREFIX")
-	serverAddr       = os.Getenv("SERVER_ADDR")
-	version          = "v1.0.0"
-
-	// NOTE: No need for a "/" at the beginning
-	assetsToCache = []string{
-		"",
-		"settings",
-		"manifest.json",
-		"static/css/styles.css",
-		"static/icons/apple-touch-icon-180x180.png",
-		"static/icons/favicon.ico",
-		"static/icons/icon.png",
-		"static/icons/maskable-icon-512x512.png",
-		"static/icons/pwa-192x192.png",
-		"static/icons/pwa-512x512.png",
-		"static/icons/pwa-64x64.png",
-		"static/js/main.js",
-		"static/js/api.js",
-		"static/js/page-devices.js",
-		"static/screenshots/328x626.png",
-		"static/screenshots/626x338.png",
-	}
-
-	pwaTemplateData = pwa.TemplateData{
-		ServerPathPrefix: serverPathPrefix,
-		Version:          version,
-		AssetsToCache:    assetsToCache,
-	}
-	jsTemplateData = js.TemplateData{
-		ServerPathPrefix: serverPathPrefix,
-	}
-
+	serverPathPrefix      = os.Getenv("SERVER_PATH_PREFIX")
+	serverAddr            = os.Getenv("SERVER_ADDR")
+	version               = "v1.0.0"
 	apiConfigPath         = "api.yaml"
 	apiConfigFallbackPath = ""
+
+	//assetsToCache = []string{
+	//	"",
+	//	"settings",
+	//	"manifest.json",
+	//	"static/css/styles.css",
+	//	"static/icons/apple-touch-icon-180x180.png",
+	//	"static/icons/favicon.ico",
+	//	"static/icons/icon.png",
+	//	"static/icons/maskable-icon-512x512.png",
+	//	"static/icons/pwa-192x192.png",
+	//	"static/icons/pwa-512x512.png",
+	//	"static/icons/pwa-64x64.png",
+	//	"static/js/main.js",
+	//	"static/js/api.js",
+	//	"static/js/page-devices.js",
+	//	"static/screenshots/328x626.png",
+	//	"static/screenshots/626x338.png",
+	//}
 )
 
 func init() {
@@ -95,19 +82,19 @@ func main() {
 					return cliServerAction(addr)
 				}),
 			},
-			{
-				Name:  "generate",
-				Usage: cli.Usage("Generate HTML"),
-				Action: cli.ActionFunc(func(cmd *cli.Command) cli.ActionRunner {
-					path := cli.StringArg(
-						cmd, "path",
-						cli.Usage("destination directory"),
-						cli.Required,
-					)
+			//{
+			//	Name:  "generate",
+			//	Usage: cli.Usage("Generate HTML"),
+			//	Action: cli.ActionFunc(func(cmd *cli.Command) cli.ActionRunner {
+			//		path := cli.StringArg(
+			//			cmd, "path",
+			//			cli.Usage("destination directory"),
+			//			cli.Required,
+			//		)
 
-					return cliGenerateAction(path)
-				}),
-			},
+			//		return cliGenerateAction(path)
+			//	}),
+			//},
 		},
 		CommandFlags: []cli.CommandFlag{
 			cli.HelpCommandFlag(),
@@ -122,25 +109,30 @@ func cliServerAction(addr *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		e := echo.New()
 
+		// Echo: Middleware
 		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 			Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
 			Output: os.Stderr,
 		}))
 
+		// Api Configuration
+		apiOptions, err := config.GetApiOptions(
+			apiConfigPath, apiConfigFallbackPath,
+		)
+		if err != nil {
+			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
+		}
+
+		// Echo: Static File Server
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(dist(), false))
 
-		// Server all "pwa" templates
-		pwa.Serve(e, pwaTemplateData)
-
-		// Server all "js" scripts
-		js.Serve(e, jsTemplateData)
-
+		// Base Data (templ)
 		baseData := &components.BaseData{
 			ServerPathPrefix: serverPathPrefix,
 			Version:          version,
 		}
 
-		// The devices page will be at "/" for now
+		// Echo: / - page-devices
 		e.GET(serverPathPrefix+"/", echo.WrapHandler(
 			templ.Handler(
 				components.Base(
@@ -148,13 +140,14 @@ func cliServerAction(addr *string) cli.ActionRunner {
 					components.PageDevices(
 						&components.PageDevicesData{
 							BaseData: baseData,
+							Devices:  api.GetDevices(apiOptions),
 						},
 					),
 				),
 			),
 		))
 
-		// Settings page
+		// Echo: /settings - page-settings
 		e.GET(serverPathPrefix+"/settings", echo.WrapHandler(
 			templ.Handler(
 				components.Base(
@@ -164,17 +157,12 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			),
 		))
 
-		// Api
+		// Echo: Api
 		e.Logger.Infof(
 			"Read API configuration from: %s, %s",
 			apiConfigPath, apiConfigFallbackPath,
 		)
-		apiOptions, err := config.GetApiOptions(
-			apiConfigPath, apiConfigFallbackPath,
-		)
-		if err != nil {
-			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
-		}
+
 		routes.Create(e, routes.Options{
 			ServerPathPrefix: serverPathPrefix,
 			Api:              apiOptions,
@@ -189,64 +177,55 @@ type generatePage struct {
 	page     templ.Component
 }
 
-func cliGenerateAction(path *string) cli.ActionRunner {
-	return func(cmd *cli.Command) error {
-		// Generate templ pages
-		baseData := &components.BaseData{
-			ServerPathPrefix: serverPathPrefix,
-			Version:          version,
-		}
-
-		pages := []generatePage{
-			{
-				filePath: "index.html",
-				page: components.PageDevices(
-					&components.PageDevicesData{
-						BaseData: baseData,
-					},
-				),
-			},
-			{
-				filePath: filepath.Join("settings", "index.html"),
-				page:     components.PageSettings(),
-			},
-		}
-
-		for _, p := range pages {
-			file, err := createFile(*path, p.filePath)
-			if err != nil {
-				return err
-			}
-
-			err = components.Base(
-				baseData, p.page,
-			).Render(context.Background(), file)
-			if err != nil {
-				return err
-			}
-		}
-
-		// Generate all PWA files
-		err := pwa.Generate(*path, pwaTemplateData)
-		if err != nil {
-			return err
-		}
-
-		// Generate all JavaScript files
-		err = js.Generate(*path, jsTemplateData)
-
-		return nil
-	}
-}
-
-func createFile(path, filePath string) (*os.File, error) {
-	// Generate all templ stuff to `*path+"index.html"`
-	fp := filepath.Join(path, filePath)
-	_ = os.MkdirAll(filepath.Dir(fp), 0700)
-	file, err := os.Create(fp)
-	if err != nil {
-		return nil, err
-	}
-
-	return file, err
-}
+//func cliGenerateAction(path *string) cli.ActionRunner {
+//	return func(cmd *cli.Command) error {
+//		// Generate templ pages
+//		baseData := &components.BaseData{
+//			ServerPathPrefix: serverPathPrefix,
+//			Version:          version,
+//		}
+//
+//		pages := []generatePage{
+//			{
+//				filePath: "index.html",
+//				page: components.PageDevices(
+//					&components.PageDevicesData{
+//						BaseData: baseData,
+//					},
+//				),
+//			},
+//			{
+//				filePath: filepath.Join("settings", "index.html"),
+//				page:     components.PageSettings(),
+//			},
+//		}
+//
+//		for _, p := range pages {
+//			file, err := createFile(*path, p.filePath)
+//			if err != nil {
+//				return err
+//			}
+//
+//			err = components.Base(
+//				baseData, p.page,
+//			).Render(context.Background(), file)
+//			if err != nil {
+//				return err
+//			}
+//		}
+//
+//		return nil
+//	}
+//}
+//
+//func createFile(path, filePath string) (*os.File, error) {
+//	// Generate all templ stuff to `*path+"index.html"`
+//	fp := filepath.Join(path, filePath)
+//	_ = os.MkdirAll(filepath.Dir(fp), 0700)
+//	file, err := os.Create(fp)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return file, err
+//}

@@ -13,7 +13,6 @@ generate:
 	go mod tidy -v
 	templ generate 
 	go generate -v
-	cd web/js && make
 
 generate-dist:
 	make generate
