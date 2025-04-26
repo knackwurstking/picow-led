@@ -155,7 +155,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 
 		// Api
 		e.Logger.Infof(
-			"Rad API configuration from: %s, %s",
+			"Read API configuration from: %s, %s",
 			apiConfigPath, apiConfigFallbackPath,
 		)
 		routes.Create(e, routes.Options{
