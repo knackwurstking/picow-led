@@ -125,7 +125,7 @@ func (mr *MicroRequest) Pins(s *Server) (MicroPins, error) {
 		return nil, err
 	}
 
-	resp := MicroResponse[MicroPins]{}
+	resp := &MicroResponse[MicroPins]{}
 	err = json.Unmarshal(data, resp)
 	if err != nil {
 		s.Error = resp.Error
@@ -147,7 +147,7 @@ func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
 	}
 
 	resp := MicroResponse[MicroColor]{}
-	return resp.Data, json.Unmarshal(data, resp)
+	return resp.Data, json.Unmarshal(data, &resp)
 }
 
 type (
