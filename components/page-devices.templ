@@ -12,7 +12,7 @@ templ PageDevices(data *PageDevicesData) {
     for _, d := range data.Devices {
     <p><code>{ d.Server.Addr }</code></p>
     }
-    <script src={ data.ServerPathPrefix + "/static/js/api.js" }></script>
-    <script src={ data.ServerPathPrefix + "/static/js/page-devices.js" }></script>
+    <script src={ data.ServerPathPrefix + "/js/api.js" }></script>
+    <script src={ data.ServerPathPrefix + "/js/page-devices.js" }></script>
 </main>
 }
