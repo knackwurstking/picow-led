@@ -1,5 +1,5 @@
 servers:
-    - Addr: "192.168.178.50:3000"
-      Name: "Living Room"
-    - Addr: "192.168.178.67:3000"
-      Name: "Bed Room"
+    - addr: "192.168.178.50:3000"
+      name: "Living Room"
+    - addr: "192.168.178.67:3000"
+      name: "Bed Room"
