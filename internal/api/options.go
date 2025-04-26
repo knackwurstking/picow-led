@@ -1,7 +1,7 @@
 package api
 
 type Options struct {
-	Servers []*Server `json,yaml:"servers"`
+	Servers []*Server `json,yaml:"servers,omitempty"`
 }
 
 // Server contains host and port in use from a Device
