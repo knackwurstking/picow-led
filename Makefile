@@ -21,7 +21,11 @@ generate-dist:
 	cp -r public dist
 	go run -v . generate ./dist
 
+test:
+	go test -v ./...
+
 build:
+	make test
 	SERVER_PATH_PREFIX= make generate-dist
 	go build -v -ldflags="-w -s" -o bin/${BINARY_NAME}
 
