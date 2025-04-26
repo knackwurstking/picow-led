@@ -87,6 +87,10 @@ func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
 		defer mr.Close()
 	}
 
+	if mr.CommandArgs == nil {
+		mr.CommandArgs = []string{}
+	}
+
 	data, err := json.Marshal(mr)
 	if err != nil {
 		panic(err.Error())
@@ -121,20 +125,17 @@ func (mr *MicroRequest) Pins(s *Server) (MicroPins, error) {
 	mr.Type = MicroTypeGET
 	mr.Group = MicroGroupConfig
 	mr.Command = "led"
-	mr.CommandArgs = nil
+	mr.CommandArgs = []string{}
 
 	data, err := mr.Send(s)
 	if err != nil {
 		return nil, err
 	}
-
-	resp := &MicroResponse[MicroPins]{}
-	err = json.Unmarshal(data, resp)
-	if err != nil {
-		s.Error = resp.Error
-		s.Online = true
+	if s.Error != "" {
+		return nil, errors.New(s.Error)
 	}
-	return resp.Data, err
+
+	return ParseMicroResponse[MicroPins](data)
 }
 
 func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
@@ -142,15 +143,17 @@ func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
 	mr.Type = MicroTypeGET
 	mr.Group = MicroGroupLED
 	mr.Command = "color"
-	mr.CommandArgs = nil
+	mr.CommandArgs = []string{}
 
 	data, err := mr.Send(s)
 	if err != nil {
 		return nil, err
 	}
+	if s.Error != "" {
+		return nil, errors.New(s.Error)
+	}
 
-	resp := MicroResponse[MicroColor]{}
-	return resp.Data, json.Unmarshal(data, &resp)
+	return ParseMicroResponse[MicroColor](data)
 }
 
 type (
@@ -250,4 +253,16 @@ type MicroResponse[T any | MicroPins | MicroColor | MicroTemp | MicroDiskUsage |
 
 	// Data contains the data requested
 	Data T `json:"data"`
+}
+
+func ParseMicroResponse[T any](data []byte) (T, error) {
+	resp := &MicroResponse[T]{}
+	err := json.Unmarshal(data, resp)
+	if err != nil {
+		return resp.Data, err
+	}
+	if resp.Error != "" {
+		return resp.Data, errors.New(resp.Error)
+	}
+	return resp.Data, nil
 }
