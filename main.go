@@ -49,11 +49,11 @@ func init() {
 	}
 }
 
-//go:embed dist
-var _dist embed.FS
+//go:embed public
+var _public embed.FS
 
-func dist() fs.FS {
-	fs, err := fs.Sub(_dist, "dist")
+func public() fs.FS {
+	fs, err := fs.Sub(_public, "public")
 	if err != nil {
 		panic(err)
 	}
@@ -124,7 +124,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		}
 
 		// Echo: Static File Server
-		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(dist(), false))
+		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(public(), false))
 
 		// Base Data (templ)
 		baseData := &components.BaseData{
