@@ -4,13 +4,13 @@ import "picow-led/internal/api"
 
 type PageDevicesData struct {
 *BaseData
-Devices []*api.Device
+Servers []*api.Server
 }
 
 templ PageDevices(data *PageDevicesData) {
 <main>
-    for _, d := range data.Devices {
-    <p><code>{ d.Server.Addr }</code></p>
+    for _, server := range data.Servers {
+    <p><code>{ server.Addr }</code></p>
     }
     <script src={ data.ServerPathPrefix + "/js/api.js" }></script>
     <script src={ data.ServerPathPrefix + "/js/page-devices.js" }></script>
