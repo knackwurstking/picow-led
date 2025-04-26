@@ -191,6 +191,7 @@ func (ms *MicroSocket) Connect(addr string) error {
 }
 
 func (ms *MicroSocket) Write(data []byte) error {
+	data = append(data, []byte("\n")...)
 	n, err := ms.socket.Write(data)
 	if err != nil {
 		return err
