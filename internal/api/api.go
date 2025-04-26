@@ -27,14 +27,14 @@ func GetDevices(o *Options) []*Device {
 
 			r := &MicroRequest{}
 
-			if pins, err := r.RequestPins(device.Server); err != nil {
+			if pins, err := r.Pins(device.Server); err != nil {
 				device.Server.Error = err.Error()
 				return
 			} else {
 				device.Pins = pins
 			}
 
-			if color, err := r.RequestColor(device.Server); err != nil {
+			if color, err := r.Color(device.Server); err != nil {
 				device.Server.Error = err.Error()
 				return
 			} else {
