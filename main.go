@@ -15,6 +15,7 @@ import (
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 var (
@@ -118,6 +119,11 @@ func main() {
 func cliServerAction(addr *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		e := echo.New()
+
+		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+			Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
+			Output: os.Stderr,
+		}))
 
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(dist(), false))
 
