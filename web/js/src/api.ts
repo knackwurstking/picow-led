@@ -1,5 +1,5 @@
 class Api {
-    // TODO: ...
+    // TODO: GET "/api/devices"
 }
 
 (window as any).api = new Api();
