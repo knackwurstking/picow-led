@@ -1,11 +1,22 @@
 package components
 
-templ deviceListItem() {
-<div class="device-list-item ui-flex column gap justify-between">
-    <div class="ui-flex row gap">
-        <div class="name"></div>
-        <div class="color"></div>
-    </div>
-    @powerButton()
-</div>
+import "picow-led/internal/api"
+
+templ deviceListItem(s *api.Server) {
+<section class="device-list-item ui-flex row gap justify-between align-center ui-padding ui-debug" style="width: 100%;">
+    if s.Name != "" {
+    <h4 class="title">{ s.Name }</h4>
+    } else {
+    <h4 class="title">{ s.Addr }</h4>
+    }
+    <span class="ui-flex-item" style="flex: 0;">
+        @powerButton()
+    </span>
+</section>
+}
+
+templ deviceListItemTemplate() {
+<template name="device-list-item">
+    @deviceListItem(&api.Server{Addr: "", Name: ""})
+</template>
 }

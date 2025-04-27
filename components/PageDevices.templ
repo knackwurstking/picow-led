@@ -8,8 +8,13 @@ Servers []*api.Server
 }
 
 templ PageDevices(data *PageDevicesData) {
-<main>
-    @deviceListItem()
+<main class="ui-container">
+    <span class="ui-flex column gap align-center">
+        for _, s := range data.Servers {
+        @deviceListItem(s)
+        }
+    </span>
+    @deviceListItemTemplate()
     <script src={ data.ServerPathPrefix + "/js/api.js" }></script>
     <script src={ data.ServerPathPrefix + "/js/page-devices.js" }></script>
 </main>
