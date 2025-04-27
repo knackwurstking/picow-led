@@ -14,10 +14,10 @@ generate:
 	templ generate 
 	npx tsc
 
-tsc-watch:
+watch-tsc:
 	npx tsc --watch
 
-templ-watch:
+watch-templ:
 	templ generate --watch
 
 dev:
