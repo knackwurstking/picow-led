@@ -1,6 +1,35 @@
 package components
 
-// TODO: Server online indicator with a status LED (states: online/offline)
 templ onlineIndicator() {
-	<span style="--mono: 1;">Online</span>
+<style>
+    .online-indicator[data-state] {
+        display: none;
+    }
+
+    .online-indicator[data-state="online"],
+    .online-indicator[data-state="offline"] {
+        display: inline-flex;
+    }
+
+    .online-indicator[data-state="online"] {
+        color: green;
+    }
+
+    .online-indicator[data-state="online"]::after {
+        --mono: 1;
+        content: "Online";
+        color: green;
+    }
+
+    .online-indicator[data-state="offline"] {
+        color: red;
+    }
+
+    .online-indicator[data-state="offline"]::after {
+        --mono: 1;
+        content: "Offline";
+        color: red;
+    }
+</style>
+<span class="online-indicator" style="--mono: 1;" data-state></span>
 }
