@@ -2,6 +2,7 @@ package routes
 
 import (
 	"picow-led/components"
+	"picow-led/internal/api"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -15,9 +16,13 @@ func frontend(e *echo.Echo, data Options) {
 	}
 
 	// Page Data: "/" - devices
+	devices := []*api.Device{}
+	for _, s := range data.Api.Servers {
+		devices = append(devices, &api.Device{Server: s})
+	}
 	pageDevicesData := &components.PageDevicesData{
 		BaseData: baseData,
-		Devices:  data.Api.Servers, // TODO: To fix this is need an global api storage first
+		Devices:  devices,
 	}
 
 	e.GET(data.ServerPathPrefix+"/", func(c echo.Context) error {

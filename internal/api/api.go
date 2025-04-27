@@ -45,12 +45,9 @@ func GetApiConfig(paths ...string) (*Config, error) {
 		}
 	}
 
-	// TODO: On this point trigger and api update to initially get all data
-
 	return o, nil
 }
 
-// TODO: Need to store all data somewhere in the memory
 func GetDevices(o *Config) []*Device {
 	devices := []*Device{}
 
