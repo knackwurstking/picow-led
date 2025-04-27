@@ -8,9 +8,11 @@ import (
 
 type Options struct {
 	ServerPathPrefix string       `json,yaml:"server-path-prefix"`
+	Version          string       `json,yaml:"version"`
 	Api              *api.Options `json,yaml:"api"`
 }
 
 func Create(e *echo.Echo, data Options) {
 	apiDevices(e, data)
+	frontend(e, data)
 }

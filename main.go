@@ -5,12 +5,10 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"picow-led/components"
 	"picow-led/internal/config"
 	"picow-led/internal/routes"
 
 	"github.com/SuperPaintman/nice/cli"
-	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -86,18 +84,10 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		apiOptions, err := config.GetApiOptions(
 			apiConfigPath, apiConfigFallbackPath,
 		)
-
-		// Base Data (templ)
-		baseData := &components.BaseData{
-			ServerPathPrefix: serverPathPrefix,
-			Version:          version,
-		}
-
-		// Page Data: "/" - devices
-		pageDevicesData := &components.PageDevicesData{
-			BaseData: baseData,
-			Servers:  apiOptions.Servers,
-		}
+		e.Logger.Infof(
+			"Read API configuration from: %s, %s",
+			apiConfigPath, apiConfigFallbackPath,
+		)
 
 		if err != nil {
 			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
@@ -106,32 +96,9 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		// Echo: Static File Server
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(public(), false))
 
-		// Echo: / - page-devices
-		e.GET(serverPathPrefix+"/", echo.WrapHandler(
-			templ.Handler(
-				components.Base(baseData,
-					components.PageDevices(pageDevicesData),
-				),
-			),
-		))
-
-		// Echo: /settings - page-settings
-		e.GET(serverPathPrefix+"/settings", echo.WrapHandler(
-			templ.Handler(
-				components.Base(baseData,
-					components.PageSettings(),
-				),
-			),
-		))
-
-		// Echo: Api
-		e.Logger.Infof(
-			"Read API configuration from: %s, %s",
-			apiConfigPath, apiConfigFallbackPath,
-		)
-
 		routes.Create(e, routes.Options{
 			ServerPathPrefix: serverPathPrefix,
+			Version:          version,
 			Api:              apiOptions,
 		})
 
