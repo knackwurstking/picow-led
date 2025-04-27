@@ -2,6 +2,11 @@ package internalcomponents
 
 import "picow-led/internal/api"
 
+script powerButtonClickHandler(ev templ.JSExpression, s *api.Server) {
+    // TODO: Toggle lights on or off
+    console.debug(ev, s)
+}
+
 templ DeviceListItem(s *api.Server) {
 	<section class="device-list-item ui-flex row gap justify-between align-center ui-padding" style="width: 100%;">
 		if s.Name != "" {
@@ -10,7 +15,7 @@ templ DeviceListItem(s *api.Server) {
 			<h4 class="title">{ s.Addr }</h4>
 		}
 		<span class="ui-flex-item" style="flex: 0;">
-			@PowerButton()
+			@PowerButton(s, powerButtonClickHandler)
 		</span>
 	</section>
 }
