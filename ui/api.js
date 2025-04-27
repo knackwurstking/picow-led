@@ -1,13 +1,13 @@
-function url() {
+function getUrl() {
     return ``; // TODO: Add the server prefix somehow, or just move this crap back to templ
 }
 
-function color(color, ...devices) {
+async function color(color, ...devices) {
     if (!color) {
         color = [255, 255, 255, 255];
     }
 
-    const url = url() + "/api/devices/color";
+    const url = getUrl() + "/api/devices/color";
     const data = { devices, color };
     console.debug(`POST "${url}":`, data);
 
@@ -38,7 +38,5 @@ function color(color, ...devices) {
 }
 
 window.api = {
-    url,
-    //devices,
     color,
 };

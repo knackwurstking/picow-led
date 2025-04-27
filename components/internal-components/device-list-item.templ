@@ -2,17 +2,6 @@ package internalcomponents
 
 import "picow-led/internal/api"
 
-script powerButtonClickHandler(ev templ.JSExpression, d *api.Device) {
-    let color;
-    if (!d.color || !d.color.find(c => c > 0)) {
-        color = [255,255,255,255]
-    } else {
-        color = [0,0,0,0]
-    }
-
-    const devices = window.api.color(color, d)
-}
-
 templ DeviceListItem(d *api.Device) {
 	<section class="device-list-item ui-flex row gap justify-between align-center ui-padding" style="width: 100%;">
 		if d.Server.Name != "" {
@@ -21,7 +10,7 @@ templ DeviceListItem(d *api.Device) {
 			<h4 class="title">{ d.Server.Addr }</h4>
 		}
 		<span class="ui-flex-item" style="flex: 0;">
-			@PowerButton(d, powerButtonClickHandler)
+			@PowerButton(d)
 		</span>
 	</section>
 }

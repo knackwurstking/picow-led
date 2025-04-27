@@ -1,6 +1,26 @@
-package scripts
+function setOnlineIndicator(state) {
+    const el = document.querySelector(`.online-indicator`);
 
-script RegisterServiceWorkers(serverPathPrefix string) {
+    if (state) {
+        el.setAttribute(`data-state`, "online");
+    } else {
+        el.setAttribute(`data-state`, "offline");
+    }
+}
+
+function powerButtonClickHandler(ev, device) {
+    console.debug({ ev, device });
+    let color;
+    if (!device.color || !device.color.find((c) => c > 0)) {
+        color = [255, 255, 255, 255];
+    } else {
+        color = [0, 0, 0, 0];
+    }
+
+    window.api.color(color, device);
+}
+
+function registerServiceWorker(serverPathPrefix) {
     // NOTE: Currently not in use, the service-worker is still missing
 
     // Check if the browser supports service workers, otherwise abort.
@@ -21,12 +41,8 @@ script RegisterServiceWorkers(serverPathPrefix string) {
     });
 }
 
-script SetOnlineIndicator(state bool) {
-    const el = document.querySelector(`.online-indicator`);
-
-    if (state) {
-        el.setAttribute(`data-state`, "online");
-    } else if (state) {
-        el.setAttribute(`data-state`, "offline");
-    }
-}
+window.utils = {
+    setOnlineIndicator,
+    powerButtonClickHandler,
+    registerServiceWorker,
+};

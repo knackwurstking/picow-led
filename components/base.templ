@@ -1,7 +1,5 @@
 package components
 
-import . "picow-led/components/scripts"
-
 type BaseData struct {
 	ServerPathPrefix string
 	Version          string
@@ -18,13 +16,14 @@ templ Base(data *BaseData, children ...templ.Component) {
 			<title>PicoW LED</title>
 			<link rel="stylesheet" href={ data.ServerPathPrefix + "/css/style.css" }/>
 			<link rel="stylesheet" href={ data.ServerPathPrefix + "/css/ui-v4.0.1.css" }/>
+			<script src={ data.ServerPathPrefix + "/js/api.js" }></script>
+			<script src={ data.ServerPathPrefix + "/js/ws.js" }></script>
+			<script src={ data.ServerPathPrefix + "/js/utils.js" }></script>
 		</head>
 		<body class="ui-container ui-debug">
 			for _, child := range children {
 				@child
 			}
-			<script src={ data.ServerPathPrefix + "/js/api.js" }></script>
-			@WindowWS(data.ServerPathPrefix)
 		</body>
 	</html>
 }
