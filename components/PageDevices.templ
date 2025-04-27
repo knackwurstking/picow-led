@@ -3,17 +3,14 @@ package components
 import "picow-led/internal/api"
 
 type PageDevicesData struct {
-	*BaseData
-	Servers []*api.Server
+*BaseData
+Servers []*api.Server
 }
 
-// TODO: Rendering device list items
 templ PageDevices(data *PageDevicesData) {
-	<main>
-		for _, server := range data.Servers {
-			@deviceItem(server)
-		}
-		<script src={ data.ServerPathPrefix + "/js/api.js" }></script>
-		<script src={ data.ServerPathPrefix + "/js/page-devices.js" }></script>
-	</main>
+<main>
+    @deviceListItem()
+    <script src={ data.ServerPathPrefix + "/js/api.js" }></script>
+    <script src={ data.ServerPathPrefix + "/js/page-devices.js" }></script>
+</main>
 }
