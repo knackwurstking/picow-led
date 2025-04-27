@@ -3,7 +3,7 @@ package components
 import "picow-led/internal/api"
 
 templ deviceListItem(s *api.Server) {
-<section class="device-list-item ui-flex row gap justify-between align-center ui-padding ui-debug" style="width: 100%;">
+<section class="device-list-item ui-flex row gap justify-between align-center ui-padding" style="width: 100%;">
     if s.Name != "" {
     <h4 class="title">{ s.Name }</h4>
     } else {
