@@ -17,9 +17,6 @@ generate:
 templ-watch:
 	templ generate --watch
 
-test:
-	go test -v ./...
-
 dev:
 	make generate
 	which gow || (echo 'gow is not installed, install with: `go install github.com/mitranim/gow@latest`' && exit 1)
@@ -28,6 +25,9 @@ dev:
 run:
 	make generate
 	go run . server -a :8887
+
+test:
+	go test -v ./...
 
 build:
 	make test
