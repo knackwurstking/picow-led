@@ -12,4 +12,6 @@ func apiDevices(e *echo.Echo, data Options) {
 	e.GET(data.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, api.GetDevices(data.Api))
 	})
+
+	// TODO: Add "/api/devices/color"
 }
