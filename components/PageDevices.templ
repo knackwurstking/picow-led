@@ -7,12 +7,11 @@ type PageDevicesData struct {
 Servers []*api.Server
 }
 
-// TODO: Add server online indicator with a status led to the app-bar (states: online/offline)
 templ PageDevices(data *PageDevicesData) {
 <main>
     <div class="ui-app-bar">
-        <span class="ui-app-bar-left" style="--mono: 1;">
-            Online
+        <span class="ui-app-bar-left">
+            @onlineIndicator()
         </span>
         <span class="ui-app-bar-center"></span>
         <span class="ui-app-bar-right"></span>
