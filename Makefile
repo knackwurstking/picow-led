@@ -12,22 +12,20 @@ init:
 generate:
 	go mod tidy -v
 	templ generate 
-	go generate -v
 	npx tsc
 
 test:
 	go test -v ./...
 
+run:
+	make test
+	make generate
+	go run .
+
 build:
 	make test
-	SERVER_PATH_PREFIX= make generate
-	go build -v -ldflags="-w -s" -o bin/${BINARY_NAME}
-
-build-dist:
 	make generate
-	rm -rf dist
-	cp -r public dist
-	go run -v . generate ./dist
+	go build -v -ldflags="-w -s" -o bin/${BINARY_NAME}
 
 generate-pwa-assets:
 	npx pwa-assets-generator
