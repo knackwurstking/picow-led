@@ -2,9 +2,15 @@ package internalcomponents
 
 import "picow-led/internal/api"
 
-script powerButtonClickHandler(ev templ.JSExpression, s *api.Device) {
-    // TODO: Toggle lights on or off
-    console.debug(ev, s)
+script powerButtonClickHandler(ev templ.JSExpression, d *api.Device) {
+    let color;
+    if (!d.color || !d.color.find(c => c > 0)) {
+        color = [255,255,255,255]
+    } else {
+        color = [0,0,0,0]
+    }
+
+    const devices = window.api.color(color, d)
 }
 
 templ DeviceListItem(d *api.Device) {

@@ -23,7 +23,7 @@ templ Base(data *BaseData, children ...templ.Component) {
 			for _, child := range children {
 				@child
 			}
-			@WindowAPI(data.ServerPathPrefix)
+			<script src={ data.ServerPathPrefix + "/js/api.js" }></script>
 			@WindowWS(data.ServerPathPrefix)
 		</body>
 	</html>
