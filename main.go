@@ -5,7 +5,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"picow-led/internal/config"
+	"picow-led/internal/api"
 	"picow-led/internal/routes"
 
 	"github.com/SuperPaintman/nice/cli"
@@ -81,7 +81,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		}))
 
 		// Api Configuration
-		apiOptions, err := config.GetApiOptions(
+		apiOptions, err := api.GetApiOptions(
 			apiConfigPath, apiConfigFallbackPath,
 		)
 		e.Logger.Infof(

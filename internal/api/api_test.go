@@ -1,17 +1,16 @@
-package config
+package api
 
 import (
-	"picow-led/internal/api"
 	"testing"
 )
 
 func TestMicroRequestError_InvalidCommand(t *testing.T) {
 	apiOptions, _ := GetApiOptions(".api.yaml")
 
-	r := &api.MicroRequest{
-		ID:      api.MicroIDDefault,
-		Type:    api.MicroTypeGET,
-		Group:   api.MicroGroupConfig,
+	r := &MicroRequest{
+		ID:      MicroIDDefault,
+		Type:    MicroTypeGET,
+		Group:   MicroGroupConfig,
 		Command: "not-existing-command",
 	}
 
@@ -21,7 +20,7 @@ func TestMicroRequestError_InvalidCommand(t *testing.T) {
 			continue
 		}
 
-		_, err = api.ParseMicroResponse[any](respData)
+		_, err = ParseMicroResponse[any](respData)
 		if err != nil {
 			s.Error = err.Error()
 		}
@@ -37,9 +36,9 @@ func TestMicroRequestError_InvalidCommand(t *testing.T) {
 func TestMicroRequestError_InvalidGroup(t *testing.T) {
 	apiOptions, _ := GetApiOptions(".api.yaml")
 
-	r := &api.MicroRequest{
-		ID:      api.MicroIDDefault,
-		Type:    api.MicroTypeGET,
+	r := &MicroRequest{
+		ID:      MicroIDDefault,
+		Type:    MicroTypeGET,
 		Group:   "wrong-group",
 		Command: "not-existing-command",
 	}
@@ -50,7 +49,7 @@ func TestMicroRequestError_InvalidGroup(t *testing.T) {
 			continue
 		}
 
-		_, err = api.ParseMicroResponse[any](respData)
+		_, err = ParseMicroResponse[any](respData)
 		if err != nil {
 			s.Error = err.Error()
 		}
@@ -66,8 +65,8 @@ func TestMicroRequestError_InvalidGroup(t *testing.T) {
 func TestMicroRequestError_InvalidType(t *testing.T) {
 	apiOptions, _ := GetApiOptions(".api.yaml")
 
-	r := &api.MicroRequest{
-		ID:      api.MicroIDDefault,
+	r := &MicroRequest{
+		ID:      MicroIDDefault,
 		Type:    "wrong-type",
 		Group:   "wrong-group",
 		Command: "not-existing-command",
@@ -79,7 +78,7 @@ func TestMicroRequestError_InvalidType(t *testing.T) {
 			continue
 		}
 
-		_, err = api.ParseMicroResponse[any](respData)
+		_, err = ParseMicroResponse[any](respData)
 		if err != nil {
 			s.Error = err.Error()
 		}

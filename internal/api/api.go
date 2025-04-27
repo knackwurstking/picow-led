@@ -1,6 +1,13 @@
 package api
 
-import "sync"
+import (
+	"io"
+	"os"
+	"path/filepath"
+	"sync"
+
+	"gopkg.in/yaml.v3"
+)
 
 type Device struct {
 	Server *Server `json:"server"`
@@ -10,6 +17,36 @@ type Device struct {
 	Pins MicroPins `json:"pins"`
 }
 
+func GetApiOptions(paths ...string) (*Options, error) {
+	o := &Options{
+		Servers: []*Server{},
+	}
+
+	for _, path := range paths {
+		absPath, err := filepath.Abs(path)
+		if err != nil {
+			absPath = path
+		}
+		f, err := os.Open(absPath)
+		if err != nil {
+			continue
+		}
+		d, err := io.ReadAll(f)
+		if err != nil {
+			return o, err
+		}
+		err = yaml.Unmarshal(d, o)
+		if err != nil {
+			return o, err
+		}
+	}
+
+	// TODO: On this point trigger and api update to initially get all data
+
+	return o, nil
+}
+
+// TODO: Need to store all data somewhere in the memory
 func GetDevices(o *Options) []*Device {
 	devices := []*Device{}
 
