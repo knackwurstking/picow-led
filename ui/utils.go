@@ -24,7 +24,6 @@ func page(title string, children ...Node) Node {
 		},
 		Body: []Node{
 			Class("ui-container"),
-			Attr("data-ui-theme", "auto"),
 			Group(children),
 		},
 	})

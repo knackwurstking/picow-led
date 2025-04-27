@@ -7,6 +7,7 @@ clean:
 
 init:
 	npm install
+	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.1.0.css
 	go mod tidy -v
 
 generate:

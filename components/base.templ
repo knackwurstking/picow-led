@@ -7,7 +7,7 @@ type BaseData struct {
 
 templ Base(data *BaseData, children ...templ.Component) {
 	<!DOCTYPE html>
-	<html lang="en" data-theme="auto">
+	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"/>
@@ -15,7 +15,7 @@ templ Base(data *BaseData, children ...templ.Component) {
 			<link rel="apple-touch-icon" href={ data.ServerPathPrefix + "/icons/apple-touch-icon-180x180.png" }/>
 			<title>PicoW LED</title>
 			<link rel="stylesheet" href={ data.ServerPathPrefix + "/css/style.css" }/>
-			<link rel="stylesheet" href={ data.ServerPathPrefix + "/css/ui-v4.0.1.css" }/>
+			<link rel="stylesheet" href={ data.ServerPathPrefix + "/css/ui-dev.css" }/>
 			<script src={ data.ServerPathPrefix + "/js/api.js" }></script>
 			<script src={ data.ServerPathPrefix + "/js/ws.js" }></script>
 			<script src={ data.ServerPathPrefix + "/js/utils.js" }></script>
