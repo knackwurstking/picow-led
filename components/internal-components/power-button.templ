@@ -2,6 +2,10 @@ package internalcomponents
 
 import "picow-led/internal/api"
 
+// NOTE: The following could be the cache for color toggle
+//
+//var powerButtonCache = map[string]api.MicroColor{}
+
 script powerButtonOnClick(ev templ.JSExpression, d *api.Device) {
     window.utils.powerButtonClickHandler(ev, d)
 }
