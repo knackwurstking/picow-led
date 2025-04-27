@@ -1,6 +1,10 @@
 {
     "devDependencies": {
+        "@eslint/js": "^9.25.1",
         "@vite-pwa/assets-generator": "^0.2.6",
-        "ui": "knackwurstking/ui#v4.0.1"
+        "eslint": "^9.25.1",
+        "globals": "^16.0.0",
+        "ui": "knackwurstking/ui#v4.0.1",
+        "vite": "^6.3.3"
     }
 }
