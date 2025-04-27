@@ -1,5 +1,5 @@
 function url() {
-    return ``; // TODO: ...
+    return ``; // TODO: Add the server prefix somehow, or just move this crap back to templ
 }
 
 function color(color, ...devices) {
