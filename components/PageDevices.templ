@@ -2,28 +2,38 @@ package components
 
 import "picow-led/internal/api"
 
+script setOnlineIndicator(state bool) {
+    const el = document.querySelector(`.online-indicator`);
+
+    if (state) {
+        el.setAttribute(`data-state`, "online");
+    } else if (state) {
+        el.setAttribute(`data-state`, "offline");
+    }
+}
+
 type PageDevicesData struct {
-*BaseData
-Servers []*api.Server
+	*BaseData
+	Servers []*api.Server
 }
 
 templ PageDevices(data *PageDevicesData) {
-<main>
-    <div class="ui-app-bar">
-        <span class="ui-app-bar-left">
-            @onlineIndicator()
-        </span>
-        <span class="ui-app-bar-center"></span>
-        <span class="ui-app-bar-right"></span>
-    </div>
-    <span class="ui-flex column gap align-center">
-        for _, s := range data.Servers {
-        @deviceListItem(s)
-        }
-    </span>
-    @deviceListItemTemplate()
-    <script src={ data.ServerPathPrefix + "/js/api.js" }></script>
-    <script src={ data.ServerPathPrefix + "/js/ws.js" }></script>
-    <script src={ data.ServerPathPrefix + "/js/page-devices.js" }></script>
-</main>
+	<main>
+		<div class="ui-app-bar">
+			<span class="ui-app-bar-left">
+				@onlineIndicator()
+			</span>
+			<span class="ui-app-bar-center"></span>
+			<span class="ui-app-bar-right"></span>
+		</div>
+		<span class="ui-flex column gap align-center">
+			for _, s := range data.Servers {
+				@deviceListItem(s)
+			}
+		</span>
+		@deviceListItemTemplate()
+		<script src={ data.ServerPathPrefix + "/js/api.js" }></script>
+		<script src={ data.ServerPathPrefix + "/js/ws.js" }></script>
+		@setOnlineIndicator(true)
+	</main>
 }

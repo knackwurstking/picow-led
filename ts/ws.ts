@@ -6,7 +6,7 @@ class WS {
     private timeout: number | null = null;
     private timeoutDuration: number = 1000;
 
-    private closeHandler = async () => {
+    private onClose = async () => {
         if (this.timeout !== null) {
             clearTimeout(this.timeout);
             this.timeout = null;
@@ -16,6 +16,15 @@ class WS {
         this.timeout = setTimeout(async () => {
             this.connect();
         }, this.timeoutDuration);
+    };
+
+    private onOpen = async () => {
+        // TODO: Request devices
+        const devices: []Device = window.api.devices();
+    };
+
+    private onMessage = async (ev: MessageEvent) => {
+        // TODO: ...
     };
 
     public addr(): string {
@@ -36,7 +45,9 @@ class WS {
         this.socket = new WebSocket(wsAddr);
 
         // Reconnect handler
-        this.socket.addEventListener("close", this.closeHandler);
+        this.socket.addEventListener("close", this.onClose);
+        this.socket.addEventListener("open", this.onOpen);
+        this.socket.addEventListener("message", this.onMessage);
     }
 
     protected close() {
@@ -46,9 +57,11 @@ class WS {
         }
 
         if (this.socket) {
-            this.socket?.removeEventListener("close", this.closeHandler);
+            this.socket?.removeEventListener("close", this.onClose);
             if (this.isOpen()) this.socket.close();
             this.socket = null;
         }
     }
 }
+
+(window as any).ws = new WS();
