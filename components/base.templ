@@ -16,7 +16,6 @@ templ Base(data *BaseData, children ...templ.Component) {
 			<title>PicoW LED</title>
 			<link rel="stylesheet" href={ data.ServerPathPrefix + "/css/style.css" }/>
 			<link rel="stylesheet" href={ data.ServerPathPrefix + "/css/ui-v4.0.1.css" }/>
-			<!-- TODO: script src={ data.ServerPathPrefix + "/js/main.js" } type="module" defer></script-->
 		</head>
 		<body class="ui-container ui-debug">
 			for _, child := range children {
