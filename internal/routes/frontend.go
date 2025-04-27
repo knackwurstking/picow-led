@@ -34,16 +34,16 @@ func frontend(e *echo.Echo, data Options) {
 		)
 	})
 
+	e.GET(data.ServerPathPrefix+"/v2/", func(c echo.Context) error {
+		return ui.DevicesPage(data.ServerPathPrefix).Render(c.Response().Writer)
+	})
+
 	e.GET(data.ServerPathPrefix+"/settings", func(c echo.Context) error {
 		return renderTempl(c,
 			components.Base(baseData,
 				components.PageSettings(),
 			),
 		)
-	})
-
-	e.GET(data.ServerPathPrefix+"/gomponents", func(c echo.Context) error {
-		return ui.DevicesPage().Render(c.Response().Writer)
 	})
 }
 

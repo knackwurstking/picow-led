@@ -5,8 +5,8 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func DevicesPage() Node {
-	return page("PicoW LED | Devices",
+func DevicesPage(serverPathPrefix string) Node {
+	return page("PicoW LED | Devices", serverPathPrefix,
 		Main(
 			// UI App Bar
 			Div(
