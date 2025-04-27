@@ -5,7 +5,13 @@ import (
 )
 
 func TestMicroRequestError_InvalidCommand(t *testing.T) {
-	apiOptions, _ := GetApiOptions(".api.yaml")
+	apiConfig, _ := GetApiConfig(".api.yaml")
+	devices := []*Device{}
+	for _, s := range apiConfig.Servers {
+		devices = append(devices, &Device{
+			Server: s,
+		})
+	}
 
 	r := &MicroRequest{
 		ID:      MicroIDDefault,
@@ -14,27 +20,29 @@ func TestMicroRequestError_InvalidCommand(t *testing.T) {
 		Command: "not-existing-command",
 	}
 
-	for _, s := range apiOptions.Servers {
-		respData, err := r.Send(s)
+	for _, d := range devices {
+		respData, err := r.Send(d)
 		if err != nil {
 			continue
 		}
 
 		_, err = ParseMicroResponse[any](respData)
-		if err != nil {
-			s.Error = err.Error()
-		}
-
-		if s.Error == "" {
-			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", s)
+		if err == nil {
+			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", d)
 		} else {
-			t.Log(s.Error)
+			t.Log(err)
 		}
 	}
 }
 
 func TestMicroRequestError_InvalidGroup(t *testing.T) {
-	apiOptions, _ := GetApiOptions(".api.yaml")
+	apiConfig, _ := GetApiConfig(".api.yaml")
+	devices := []*Device{}
+	for _, s := range apiConfig.Servers {
+		devices = append(devices, &Device{
+			Server: s,
+		})
+	}
 
 	r := &MicroRequest{
 		ID:      MicroIDDefault,
@@ -43,27 +51,29 @@ func TestMicroRequestError_InvalidGroup(t *testing.T) {
 		Command: "not-existing-command",
 	}
 
-	for _, s := range apiOptions.Servers {
-		respData, err := r.Send(s)
+	for _, d := range devices {
+		respData, err := r.Send(d)
 		if err != nil {
 			continue
 		}
 
 		_, err = ParseMicroResponse[any](respData)
-		if err != nil {
-			s.Error = err.Error()
-		}
-
-		if s.Error == "" {
-			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", s)
+		if err == nil {
+			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", d)
 		} else {
-			t.Log(s.Error)
+			t.Log(err)
 		}
 	}
 }
 
 func TestMicroRequestError_InvalidType(t *testing.T) {
-	apiOptions, _ := GetApiOptions(".api.yaml")
+	apiConfig, _ := GetApiConfig(".api.yaml")
+	devices := []*Device{}
+	for _, s := range apiConfig.Servers {
+		devices = append(devices, &Device{
+			Server: s,
+		})
+	}
 
 	r := &MicroRequest{
 		ID:      MicroIDDefault,
@@ -72,21 +82,17 @@ func TestMicroRequestError_InvalidType(t *testing.T) {
 		Command: "not-existing-command",
 	}
 
-	for _, s := range apiOptions.Servers {
-		respData, err := r.Send(s)
+	for _, d := range devices {
+		respData, err := r.Send(d)
 		if err != nil {
 			continue
 		}
 
 		_, err = ParseMicroResponse[any](respData)
-		if err != nil {
-			s.Error = err.Error()
-		}
-
-		if s.Error == "" {
-			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", s)
+		if err == nil {
+			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", d)
 		} else {
-			t.Log(s.Error)
+			t.Log(err)
 		}
 	}
 }

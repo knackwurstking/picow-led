@@ -11,14 +11,18 @@ import (
 
 type Device struct {
 	Server *Server `json:"server"`
+
+	Online bool   `json:"online" yaml:"-"` //  Not used in configurations
+	Error  string `json:"error" yaml:"-"`  //  Not used in configurations
+
 	// Color can be nil
 	Color MicroColor `json:"color"`
 	// Pins can be nil
 	Pins MicroPins `json:"pins"`
 }
 
-func GetApiOptions(paths ...string) (*Options, error) {
-	o := &Options{
+func GetApiConfig(paths ...string) (*Config, error) {
+	o := &Config{
 		Servers: []*Server{},
 	}
 
@@ -47,7 +51,7 @@ func GetApiOptions(paths ...string) (*Options, error) {
 }
 
 // TODO: Need to store all data somewhere in the memory
-func GetDevices(o *Options) []*Device {
+func GetDevices(o *Config) []*Device {
 	devices := []*Device{}
 
 	for _, server := range o.Servers {
@@ -64,13 +68,13 @@ func GetDevices(o *Options) []*Device {
 
 			r := &MicroRequest{}
 
-			if pins, err := r.Pins(device.Server); err != nil && !device.Server.Online {
+			if pins, err := r.Pins(device); err != nil && !device.Online {
 				return
 			} else {
 				device.Pins = pins
 			}
 
-			if color, err := r.Color(device.Server); err != nil && !device.Server.Online {
+			if color, err := r.Color(device); err != nil && !device.Online {
 				return
 			} else {
 				device.Color = color

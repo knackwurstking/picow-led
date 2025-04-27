@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 	"picow-led/internal/api"
@@ -80,26 +81,26 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			Output: os.Stderr,
 		}))
 
-		// Api Configuration
-		apiOptions, err := api.GetApiOptions(
-			apiConfigPath, apiConfigFallbackPath,
-		)
-		e.Logger.Infof(
-			"Read API configuration from: %s, %s",
-			apiConfigPath, apiConfigFallbackPath,
-		)
-
-		if err != nil {
-			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
-		}
-
 		// Echo: Static File Server
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(public(), false))
+
+		// Api Configuration
+		apiConfig, err := api.GetApiConfig(
+			apiConfigPath, apiConfigFallbackPath,
+		)
+		if err != nil {
+			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
+		} else {
+			log.Printf(
+				"Loaded API config from: \"%s\", \"%s\"",
+				apiConfigPath, apiConfigFallbackPath,
+			)
+		}
 
 		routes.Create(e, routes.Options{
 			ServerPathPrefix: serverPathPrefix,
 			Version:          version,
-			Api:              apiOptions,
+			Api:              apiConfig,
 		})
 
 		return e.Start(*addr)

@@ -17,7 +17,7 @@ func frontend(e *echo.Echo, data Options) {
 	// Page Data: "/" - devices
 	pageDevicesData := &components.PageDevicesData{
 		BaseData: baseData,
-		Servers:  data.Api.Servers,
+		Devices:  data.Api.Servers, // TODO: To fix this is need an global api storage first
 	}
 
 	e.GET(data.ServerPathPrefix+"/", func(c echo.Context) error {

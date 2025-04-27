@@ -72,14 +72,14 @@ type MicroRequest struct {
 	CommandArgs []string `json:"args"`
 }
 
-func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
-	s.Online = true
-	s.Error = ""
+func (mr *MicroRequest) Send(d *Device) ([]byte, error) {
+	d.Online = true
+	d.Error = ""
 
 	if !mr.IsConnected() {
-		if err := mr.Connect(s.Addr); err != nil {
-			s.Online = false
-			s.Error = err.Error()
+		if err := mr.Connect(d.Server.Addr); err != nil {
+			d.Online = false
+			d.Error = err.Error()
 			return nil, err
 		}
 		// NOTE: Ok, all connections created here will be closed, all other
@@ -98,8 +98,8 @@ func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
 	err = mr.Write(data)
 	if err != nil {
 		mr.socket = nil
-		s.Error = err.Error()
-		s.Online = false
+		d.Error = err.Error()
+		d.Online = false
 		return nil, err
 	}
 
@@ -110,8 +110,8 @@ func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
 	data, err = mr.Read()
 	if err != nil {
 		mr.socket = nil
-		s.Error = err.Error()
-		s.Online = false
+		d.Error = err.Error()
+		d.Online = false
 		return nil, err
 	}
 
@@ -120,46 +120,46 @@ func (mr *MicroRequest) Send(s *Server) ([]byte, error) {
 
 // RequestPins will change fields like "ID", "Type", "Group", "Command" or
 // "CommandArgs"
-func (mr *MicroRequest) Pins(s *Server) (MicroPins, error) {
+func (mr *MicroRequest) Pins(d *Device) (MicroPins, error) {
 	mr.ID = MicroIDDefault
 	mr.Type = MicroTypeGET
 	mr.Group = MicroGroupConfig
 	mr.Command = "led"
 	mr.CommandArgs = []string{}
 
-	data, err := mr.Send(s)
+	data, err := mr.Send(d)
 	if err != nil {
 		return nil, err
 	}
-	if s.Error != "" {
-		return nil, errors.New(s.Error)
+	if d.Error != "" {
+		return nil, errors.New(d.Error)
 	}
 
 	pins, err := ParseMicroResponse[MicroPins](data)
 	if err != nil {
-		s.Error = err.Error()
+		d.Error = err.Error()
 	}
 	return pins, err
 }
 
-func (mr *MicroRequest) Color(s *Server) (MicroColor, error) {
+func (mr *MicroRequest) Color(d *Device) (MicroColor, error) {
 	mr.ID = MicroIDDefault
 	mr.Type = MicroTypeGET
 	mr.Group = MicroGroupLED
 	mr.Command = "color"
 	mr.CommandArgs = []string{}
 
-	data, err := mr.Send(s)
+	data, err := mr.Send(d)
 	if err != nil {
 		return nil, err
 	}
-	if s.Error != "" {
-		return nil, errors.New(s.Error)
+	if d.Error != "" {
+		return nil, errors.New(d.Error)
 	}
 
 	color, err := ParseMicroResponse[MicroColor](data)
 	if err != nil {
-		s.Error = err.Error()
+		d.Error = err.Error()
 	}
 	return color, err
 }

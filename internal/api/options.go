@@ -1,6 +1,6 @@
 package api
 
-type Options struct {
+type Config struct {
 	Servers []*Server `json,yaml:"servers,omitempty"`
 }
 
@@ -8,7 +8,5 @@ type Options struct {
 type Server struct {
 	Addr string `json,yaml:"addr"`
 	// Name could be empty (optional)
-	Name   string `json,yaml:"name"`
-	Online bool   `json:"online" yaml:"-"` //  Not used in configurations
-	Error  string `json:"error" yaml:"-"`  //  Not used in configurations
+	Name string `json,yaml:"name"`
 }
