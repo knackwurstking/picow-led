@@ -26,7 +26,7 @@ func frontend(e *echo.Echo, data Options) {
 		Devices:  devices,
 	}
 
-	e.GET(data.ServerPathPrefix+"/", func(c echo.Context) error {
+	e.GET(data.ServerPathPrefix+"", func(c echo.Context) error {
 		return renderTempl(c,
 			components.Base(baseData,
 				components.PageDevices(pageDevicesData),
@@ -34,7 +34,7 @@ func frontend(e *echo.Echo, data Options) {
 		)
 	})
 
-	e.GET(data.ServerPathPrefix+"/v2/", func(c echo.Context) error {
+	e.GET(data.ServerPathPrefix+"/v2", func(c echo.Context) error {
 		return ui.DevicesPage(data.ServerPathPrefix).Render(c.Response().Writer)
 	})
 
