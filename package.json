@@ -1,6 +1,7 @@
 {
     "devDependencies": {
         "@vite-pwa/assets-generator": "^0.2.6",
-        "typescript": "^5.8.3"
+        "typescript": "^5.8.3",
+        "ui": "knackwurstking/ui#v4.0.1"
     }
 }
