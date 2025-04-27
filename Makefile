@@ -14,6 +14,9 @@ generate:
 	templ generate 
 	npx tsc
 
+tsc-watch:
+	npx tsc --watch
+
 templ-watch:
 	templ generate --watch
 
