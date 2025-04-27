@@ -2,12 +2,6 @@ function url() {
     return ``; // TODO: ...
 }
 
-//function devices() {
-//    const url = this.url() + "/api/devices";
-//    // TODO: GET "/api/devices"
-//    return [];
-//}
-
 function color(color, ...devices) {
     if (!color) {
         color = [255, 255, 255, 255];
