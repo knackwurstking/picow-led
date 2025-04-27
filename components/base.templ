@@ -23,7 +23,7 @@ templ Base(data *BaseData, children ...templ.Component) {
 			for _, child := range children {
 				@child
 			}
-			@WindowApi(data.ServerPathPrefix)
+			@WindowAPI(data.ServerPathPrefix)
 			@WindowWS(data.ServerPathPrefix)
 		</body>
 	</html>
