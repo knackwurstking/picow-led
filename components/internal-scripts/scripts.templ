@@ -1,0 +1,11 @@
+package internalscripts
+
+script SetOnlineIndicator(state bool) {
+    const el = document.querySelector(`.online-indicator`);
+
+    if (state) {
+        el.setAttribute(`data-state`, "online");
+    } else if (state) {
+        el.setAttribute(`data-state`, "offline");
+    }
+}

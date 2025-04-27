@@ -1,0 +1,31 @@
+package components
+
+import "picow-led/internal/api"
+import . "picow-led/components/internal-components"
+import . "picow-led/components/internal-scripts"
+
+type PageDevicesData struct {
+	*BaseData
+	Servers []*api.Server
+}
+
+templ PageDevices(data *PageDevicesData) {
+	<main>
+		<div class="ui-app-bar">
+			<span class="ui-app-bar-left">
+				@OnlineIndicator()
+			</span>
+			<span class="ui-app-bar-center"></span>
+			<span class="ui-app-bar-right"></span>
+		</div>
+		<span class="ui-flex column gap align-center">
+			for _, s := range data.Servers {
+				@DeviceListItem(s)
+			}
+		</span>
+		@DeviceListItemTemplate()
+		<!-- TODO: script src={ data.ServerPathPrefix + "/js/api.js" }></script-->
+		<!-- TODO: script src={ data.ServerPathPrefix + "/js/ws.js" }></script-->
+		@SetOnlineIndicator(true)
+	</main>
+}

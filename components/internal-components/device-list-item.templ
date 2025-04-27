@@ -1,0 +1,22 @@
+package internalcomponents
+
+import "picow-led/internal/api"
+
+templ DeviceListItem(s *api.Server) {
+	<section class="device-list-item ui-flex row gap justify-between align-center ui-padding" style="width: 100%;">
+		if s.Name != "" {
+			<h4 class="title">{ s.Name }</h4>
+		} else {
+			<h4 class="title">{ s.Addr }</h4>
+		}
+		<span class="ui-flex-item" style="flex: 0;">
+			@PowerButton()
+		</span>
+	</section>
+}
+
+templ DeviceListItemTemplate() {
+	<template name="device-list-item">
+		@DeviceListItem(&api.Server{Addr: "", Name: ""})
+	</template>
+}
