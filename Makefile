@@ -11,11 +11,8 @@ init:
 
 generate:
 	go mod tidy -v
-	templ generate 
 	npx tsc
-
-watch-tsc:
-	npx tsc --watch
+	templ generate 
 
 watch-templ:
 	templ generate --watch
