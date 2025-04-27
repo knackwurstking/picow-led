@@ -4,3 +4,32 @@ main {
     width: 100%;
     height: 100%;
 }
+
+.online-indicator[data-state] {
+    display: none;
+}
+
+.online-indicator[data-state="online"],
+.online-indicator[data-state="offline"] {
+    display: inline-flex;
+}
+
+.online-indicator[data-state="online"] {
+    color: green;
+}
+
+.online-indicator[data-state="online"]::after {
+    --mono: 1;
+    content: "Online";
+    color: green;
+}
+
+.online-indicator[data-state="offline"] {
+    color: red;
+}
+
+.online-indicator[data-state="offline"]::after {
+    --mono: 1;
+    content: "Offline";
+    color: red;
+}

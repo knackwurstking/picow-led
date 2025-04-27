@@ -10,10 +10,10 @@ func DevicesPage(serverPathPrefix string) Node {
 		Main(
 			// UI App Bar
 			Div(
-				Class("ui-app-bar"),
+				Class("ui-app-bar ui-debug"),
 				Span(
 					Class("ui-app-bar-left"),
-					// onlineIndicator(),
+					onlineIndicator(false),
 				),
 				Span(
 					Class("ui-app-bar-center"),
@@ -31,6 +31,11 @@ func DevicesPage(serverPathPrefix string) Node {
 
 			// Templates for later
 			// deviceListItemTemplate()
+
+			// Scripts section
+			Script(
+				Raw("window.utils.setOnlineIndicator(true)"),
+			),
 		),
 	)
 }
