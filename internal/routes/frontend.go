@@ -3,6 +3,7 @@ package routes
 import (
 	"picow-led/components"
 	"picow-led/internal/api"
+	"picow-led/ui"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -39,6 +40,10 @@ func frontend(e *echo.Echo, data Options) {
 				components.PageSettings(),
 			),
 		)
+	})
+
+	e.GET(data.ServerPathPrefix+"/gomponents", func(c echo.Context) error {
+		return ui.DevicesPage().Render(c.Response().Writer)
 	})
 }
 

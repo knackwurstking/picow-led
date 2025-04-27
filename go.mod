@@ -20,4 +20,5 @@ require (
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
+	maragu.dev/gomponents v1.1.0 // indirect
 )

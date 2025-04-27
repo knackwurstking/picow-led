@@ -11,9 +11,10 @@ export default defineConfig({
         copyPublicDir: false,
         rollupOptions: {
             input: {
-                api: resolve(__dirname, "ui/api.js"),
-                ws: resolve(__dirname, "ui/ws.js"),
-                utils: resolve(__dirname, "ui/utils.js"),
+                // TODO: Add server path prefix via environment here somehow
+                api: resolve(__dirname, "ui/scripts/api.js"),
+                ws: resolve(__dirname, "ui/scripts/ws.js"),
+                utils: resolve(__dirname, "ui/scripts/utils.js"),
             },
             output: {
                 dir: "public/js/",
