@@ -1,0 +1,20 @@
+package internalscripts
+
+script WindowApi(serverPathPrefix string) {
+    function url() {
+        return serverPathPrefix + `` // TODO: ...
+    }
+
+    function devices() {
+        const url = this.url() + "/api/devices";
+
+        // TODO: GET "/api/devices"
+
+        return [];
+    }
+
+    window.api = {
+        url,
+        devices,
+    }
+}

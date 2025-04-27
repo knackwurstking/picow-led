@@ -1,5 +1,7 @@
 package components
 
+import . "picow-led/components/internal-scripts"
+
 type BaseData struct {
 	ServerPathPrefix string
 	Version          string
@@ -21,6 +23,8 @@ templ Base(data *BaseData, children ...templ.Component) {
 			for _, child := range children {
 				@child
 			}
+			@WindowApi(data.ServerPathPrefix)
+			@WindowWS(data.ServerPathPrefix)
 		</body>
 	</html>
 }
