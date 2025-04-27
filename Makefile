@@ -18,9 +18,8 @@ test:
 	go test -v ./...
 
 run:
-	make test
 	make generate
-	go run .
+	go run . server -a :8887
 
 build:
 	make test
