@@ -10,6 +10,7 @@ import (
 func DevicesPage(serverPathPrefix string, devices ...*api.Device) Node {
 	return basePageLayout("PicoW LED | Devices", serverPathPrefix,
 		Main(
+			Class("ui-container"),
 			// Devices List
 			Span(
 				Class("ui-flex column gap align-center"),

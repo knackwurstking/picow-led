@@ -10,7 +10,8 @@ import (
 func SettingsPage(serverPathPrefix string, devices ...*api.Device) Node {
 	return basePageLayout("PicoW LED | Settings", serverPathPrefix,
 		Main(
-		// TODO: Settings page content here
+			Class("ui-container"),
+			// TODO: Settings page content here
 		),
 	)
 }
