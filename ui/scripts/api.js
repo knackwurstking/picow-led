@@ -2,6 +2,11 @@ function getUrl() {
     return ``; // TODO: Add the server prefix somehow, or just move this crap back to templ
 }
 
+/**
+ * @param {MicroColor | undefined | null} color
+ * @param {Device[]} devices
+ * @returns {Promise<void>}
+ */
 async function color(color, ...devices) {
     if (!color) {
         color = [255, 255, 255, 255];
@@ -11,10 +16,11 @@ async function color(color, ...devices) {
     const data = { devices, color };
     console.debug(`POST "${url}":`, data);
 
+    /** @type {number} */
     let status;
     fetch(url, {
         method: "POST",
-        header: {
+        headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -37,6 +43,7 @@ async function color(color, ...devices) {
         });
 }
 
+// @ts-ignore
 window.api = {
     color,
 };

@@ -1,6 +1,9 @@
+/** @type {WebSocket | null} */
 let socket = null;
+/** @type {number | null} */
 let timeout = null;
-let timeoutDuration = 1000;
+/** @type {number} */
+const timeoutDuration = 1000;
 
 const onClose = function () {
     if (timeout !== null) {
@@ -59,6 +62,7 @@ function close() {
     }
 }
 
+// @ts-ignore
 window.ws = {
     addr,
     isOpen,

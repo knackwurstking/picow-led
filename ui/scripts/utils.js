@@ -14,10 +14,11 @@ function setOnlineIndicator(state) {
 
 /**
  * @param {Event} _ev
- * @param {any} device
+ * @param {Device} device
  * @returns {void}
  */
 function powerButtonClickHandler(_ev, device) {
+    /** @type {MicroColor} */
     let color;
     if (!device.color || !device.color.find((c) => c > 0)) {
         color = [255, 255, 255, 255];
@@ -25,6 +26,7 @@ function powerButtonClickHandler(_ev, device) {
         color = [0, 0, 0, 0];
     }
 
+    // @ts-ignore
     window.api.color(color, device);
 }
 
@@ -53,6 +55,7 @@ function registerServiceWorker(serverPathPrefix) {
     });
 }
 
+// @ts-ignore
 window.utils = {
     setOnlineIndicator,
     powerButtonClickHandler,

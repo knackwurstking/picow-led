@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "allowJs": true,
+        "checkJs": true,
+        "noImplicitAny": true
+    },
+    "include": [
+        "./ui/scripts"
+    ]
+}
