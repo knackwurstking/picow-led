@@ -1,16 +1,18 @@
 package ui
 
 import (
+	"picow-led/internal/api"
+
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
 
-func DevicesPage(serverPathPrefix string) Node {
+func DevicesPage(serverPathPrefix string, devices ...*api.Device) Node {
 	return page("PicoW LED | Devices", serverPathPrefix,
 		Main(
 			// UI App Bar
 			Div(
-				Class("ui-app-bar ui-debug"),
+				Class("ui-app-bar"),
 				Span(
 					Class("ui-app-bar-left"),
 					onlineIndicator(false),
@@ -26,7 +28,20 @@ func DevicesPage(serverPathPrefix string) Node {
 			// Devices List
 			Span(
 				Class("ui-flex column gap align-center"),
-				// TODO: Iter devices
+				Map(devices, func(d *api.Device) Node {
+					// Device
+					return Section(
+						Class("device-list-item ui-flex row gap justify-between align-center ui-padding"),
+						Style("width: 100%;"),
+						If(d.Server.Name != "", H4(Text(d.Server.Name))),
+						If(d.Server.Name == "", H4(Text(d.Server.Addr))),
+						Span(
+							Class("ui-flex-item"),
+							Style("flex: 0;"),
+							powerButton(d),
+						),
+					)
+				}),
 			),
 
 			// Templates for later

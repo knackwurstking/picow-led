@@ -35,7 +35,7 @@ func frontend(e *echo.Echo, data Options) {
 	})
 
 	e.GET(data.ServerPathPrefix+"/v2", func(c echo.Context) error {
-		return ui.DevicesPage(data.ServerPathPrefix).Render(c.Response().Writer)
+		return ui.DevicesPage(data.ServerPathPrefix, devices...).Render(c.Response().Writer)
 	})
 
 	e.GET(data.ServerPathPrefix+"/settings", func(c echo.Context) error {
