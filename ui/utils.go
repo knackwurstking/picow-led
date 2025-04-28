@@ -19,6 +19,7 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 			Link(Rel("icon"), Href(serverPathPrefix+"/icons/apple-touch-icon-180x180.png")),
 			Link(Rel("stylesheet"), Href(serverPathPrefix+"/css/ui-v4.1.0.css")),
 			Link(Rel("stylesheet"), Href(serverPathPrefix+"/css/style.css")),
+			Link(Rel("manifest"), Href(serverPathPrefix+"/manifest.json")),
 			Script(Src(serverPathPrefix + "/js/api.js")),
 			Script(Src(serverPathPrefix + "/js/ws.js")),
 			Script(Src(serverPathPrefix + "/js/utils.js")),
