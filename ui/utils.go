@@ -24,7 +24,6 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 			Script(Src(serverPathPrefix + "/js/utils.js")),
 		},
 		Body: []Node{
-			Class("ui-container"),
 			Group(children),
 		},
 	})
@@ -34,9 +33,12 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 func basePageLayout(title string, serverPathPrefix string, children ...Node) Node {
 	return page(title, serverPathPrefix,
 		Main(
+			Style("padding-top: var(--ui-app-bar-height);"),
+
 			// UI App Bar
 			Div(
 				Class("ui-app-bar"),
+				Attr("data-ui-position", "top"),
 				Span(
 					Class("ui-app-bar-left"),
 					onlineIndicator(false),
