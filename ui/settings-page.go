@@ -1,14 +1,22 @@
 package ui
 
 import (
-	"picow-led/internal/api"
+	"fmt"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
 
-func SettingsPage(serverPathPrefix string, devices ...*api.Device) Node {
-	return basePageLayout("PicoW LED | Settings", serverPathPrefix,
+func SettingsPage(serverPathPrefix string) Node {
+	return basePageLayout(
+		basePageLayoutOptions{
+			Title:              "PicoW LED | Settings",
+			AppBarTitle:        "Settings",
+			ServerPathPrefix:   serverPathPrefix,
+			EnableBackButton:   true,
+			BackButtonCallback: fmt.Sprintf("location.pathname = \"%s\"", serverPathPrefix),
+		},
+
 		Main(
 			Class("ui-container"),
 			// TODO: Settings page content here

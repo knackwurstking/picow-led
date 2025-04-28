@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"fmt"
+	"net/url"
 	"picow-led/internal/api"
 	"slices"
 	"strconv"
@@ -10,53 +12,98 @@ import (
 )
 
 func DevicesPage(serverPathPrefix string, devices ...*api.Device) Node {
-	return basePageLayout("PicoW LED | Devices", serverPathPrefix,
+	deviceListItemOptions := []deviceListItemOption{}
+	for _, d := range devices {
+		deviceListItemOptions = append(deviceListItemOptions, deviceListItemOption{
+			Device:           d,
+			serverPathPrefix: serverPathPrefix,
+		})
+	}
+
+	return basePageLayout(
+		basePageLayoutOptions{
+			Title:                    "PicoW LED | Devices",
+			AppBarTitle:              "Devices",
+			ServerPathPrefix:         serverPathPrefix,
+			EnableGoToSettingsButton: true,
+		},
+
 		Div(
 			Class("ui-container ui-auto-scroll ui-hide-scrollbar"),
 			Style("height: 100%; padding-top: var(--ui-app-bar-height);"),
+
 			// Devices List
 			Span(
 				Class("ui-flex column gap align-center"),
-				Map(devices, deviceListItem),
+				Map(deviceListItemOptions, deviceListItem),
 			),
 		),
 	)
 }
 
-func deviceListItem(d *api.Device) Node {
+type deviceListItemOption struct {
+	Device           *api.Device
+	serverPathPrefix string
+}
+
+func deviceListItem(o deviceListItemOption) Node {
 	colorS := []string{}
 	powerButtonState := "off"
-	if d.Color != nil {
-		for _, c := range d.Color[:3] {
+	if o.Device.Color != nil {
+		for _, c := range o.Device.Color[:3] {
 			colorS = append(colorS, strconv.Itoa(int(c)))
 		}
 
-		if slices.Max(d.Color) > 0 {
+		if slices.Max(o.Device.Color) > 0 {
 			powerButtonState = "on"
 		}
 	}
 
 	var name string
-	if d.Server.Name != "" {
-		name = d.Server.Name
+	if o.Device.Server.Name != "" {
+		name = o.Device.Server.Name
 	} else {
-		name = d.Server.Addr
+		name = o.Device.Server.Addr
 	}
 
-	// TODO: I need a new page for device control (ex: edit color)
 	return Section(
 		Class("device-list-item ui-flex row gap justify-between align-center ui-padding"),
 		Style("width: 100%;"),
 		Attr("data-ui-theme", "dark"),
-		Attr("data-json", string(toJSON(d))),
+		Attr("data-json", string(toJSON(o.Device))),
+
 		H3(
 			Class("title ui-padding"),
 			Text(name),
 		),
+
 		Span(
-			Class("ui-flex-item"),
+			Class("ui-flex-item ui-flex row gap"),
 			Style("flex: 0;"),
-			powerButton(powerButtonState, colorS),
+
+			Span(
+				Class("ui-flex-item"),
+				Style("flex: 0;"),
+
+				Button(
+					Attr("data-ui-variant", "ghost"),
+					Attr("data-ui-color", "secondary"),
+					Attr("onclick", fmt.Sprintf(
+						"location.pathname = \"%s/devices/%s\"",
+						o.serverPathPrefix,
+						url.QueryEscape(o.Device.Server.Addr),
+					)),
+
+					Text("Edit"),
+				),
+			),
+
+			Span(
+				Class("ui-flex-item"),
+				Style("flex: 0;"),
+
+				powerButton(powerButtonState, colorS),
+			),
 		),
 	)
 }

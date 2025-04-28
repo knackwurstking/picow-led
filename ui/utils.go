@@ -2,6 +2,7 @@ package ui
 
 import (
 	"encoding/json"
+	"fmt"
 
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/components"
@@ -31,9 +32,20 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 	})
 }
 
+type basePageLayoutOptions struct {
+	Title            string
+	AppBarTitle      string
+	ServerPathPrefix string
+
+	EnableBackButton   bool
+	BackButtonCallback string
+
+	EnableGoToSettingsButton bool
+}
+
 // basePageLayout will call page(...)
-func basePageLayout(title string, serverPathPrefix string, children ...Node) Node {
-	return page(title, serverPathPrefix,
+func basePageLayout(o basePageLayoutOptions, children ...Node) Node {
+	return page(o.Title, o.ServerPathPrefix,
 		Main(
 			Group(children),
 
@@ -41,15 +53,47 @@ func basePageLayout(title string, serverPathPrefix string, children ...Node) Nod
 			Div(
 				Class("ui-app-bar"),
 				Attr("data-ui-position", "top"),
+
 				Span(
 					Class("ui-app-bar-left"),
+
+					If(o.EnableBackButton, Button(
+						Attr("data-ui-variant", "ghost"),
+
+						If(
+							o.BackButtonCallback != "",
+							Attr("onclick", o.BackButtonCallback),
+						),
+
+						Text("Back"),
+					)),
+
 					onlineIndicator(false),
 				),
+
 				Span(
 					Class("ui-app-bar-center"),
+
+					If(o.AppBarTitle != "",
+						Span(
+							H3(Text(o.AppBarTitle)),
+						),
+					),
 				),
+
 				Span(
 					Class("ui-app-bar-right"),
+
+					If(o.EnableGoToSettingsButton, Button(
+						Attr("data-ui-variant", "ghost"),
+						Attr("data-ui-color", "secondary"),
+						Attr("onclick", fmt.Sprintf(
+							"location.pathname = \"%s/settings\"",
+							o.ServerPathPrefix,
+						)),
+
+						Text("Settings"),
+					)),
 				),
 			),
 
