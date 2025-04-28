@@ -1,9 +1,9 @@
 import {
-  defineConfig,
-  minimal2023Preset as preset,
+    defineConfig,
+    minimal2023Preset as preset,
 } from "@vite-pwa/assets-generator/config";
 
 export default defineConfig({
-  preset,
-  images: ["public/static/icons/icon.png"],
+    preset,
+    images: ["public/icons/icon.png"],
 });
