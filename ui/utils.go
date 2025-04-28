@@ -30,6 +30,35 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 	})
 }
 
+// basePageLayout will call page(...)
+func basePageLayout(title string, serverPathPrefix string, children ...Node) Node {
+	return page(title, serverPathPrefix,
+		Main(
+			// UI App Bar
+			Div(
+				Class("ui-app-bar"),
+				Span(
+					Class("ui-app-bar-left"),
+					onlineIndicator(false),
+				),
+				Span(
+					Class("ui-app-bar-center"),
+				),
+				Span(
+					Class("ui-app-bar-right"),
+				),
+			),
+
+			Group(children),
+
+			// Scripts section
+			Script(
+				Raw("window.utils.setOnlineIndicator(true)"),
+			),
+		),
+	)
+}
+
 func toJSON(data any) []byte {
 	d, _ := json.Marshal(data)
 	return d

@@ -8,32 +8,12 @@ import (
 )
 
 func DevicesPage(serverPathPrefix string, devices ...*api.Device) Node {
-	return page("PicoW LED | Devices", serverPathPrefix,
+	return basePageLayout("PicoW LED | Devices", serverPathPrefix,
 		Main(
-			// UI App Bar
-			Div(
-				Class("ui-app-bar"),
-				Span(
-					Class("ui-app-bar-left"),
-					onlineIndicator(false),
-				),
-				Span(
-					Class("ui-app-bar-center"),
-				),
-				Span(
-					Class("ui-app-bar-right"),
-				),
-			),
-
 			// Devices List
 			Span(
 				Class("ui-flex column gap align-center"),
 				Map(devices, deviceListItem),
-			),
-
-			// Scripts section
-			Script(
-				Raw("window.utils.setOnlineIndicator(true)"),
 			),
 		),
 	)
