@@ -12,6 +12,13 @@
  *  close: () => void;
  * }}
  *
+ * @typedef Utils
+ * @type {{
+ *  setOnlineIndicator: (state: boolean) => void;
+ *  powerButtonClickHandler: (ev: Event & { currentTarget: HTMLButtonElement }) => Promise<void>;
+ *  registerServiceWorker: () => void;
+ * }}
+ *
  * @typedef Device
  * @type {{
  *  server: Server

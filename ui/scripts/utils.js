@@ -89,10 +89,13 @@
         });
     }
 
-    // @ts-ignore
-    window.utils = {
+    /** @type {Utils} */
+    const utils = {
         setOnlineIndicator,
         powerButtonClickHandler,
         registerServiceWorker,
     };
+
+    // @ts-ignore
+    window.utils = utils;
 })();

@@ -81,6 +81,7 @@ func basePageLayout(o LayoutBaseOptions, children ...Node) Node {
 			Script(
 				Raw("window.utils.setOnlineIndicator(true)"),
 			),
+			Script(Src(o.ServerPathPrefix+"/js/base-layout.js")),
 		),
 	)
 }

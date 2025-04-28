@@ -17,6 +17,10 @@ type RequestDevicesColorData struct {
 //   - GET - "/api/devices"
 //   - POST - "/api/devices/color" - { devices: Device[]; color: number[] }
 func apiDevices(e *echo.Echo, o Options) {
+	e.GET(o.ServerPathPrefix+"/api/ping", func(c echo.Context) error {
+		return c.String(http.StatusOK, "pong")
+	})
+
 	e.GET(o.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, api.GetDevices(o.Api))
 	})
