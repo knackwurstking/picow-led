@@ -15,22 +15,22 @@ const manifest = `
     "id": "",
     "icons": [
         {
-            "src": "{{ .ServerPathPrefix }}/static/icons/pwa-64x64.png",
+            "src": "{{ .ServerPathPrefix }}/icons/pwa-64x64.png",
             "sizes": "64x64",
             "type": "image/png"
         },
         {
-            "src": "{{ .ServerPathPrefix }}/static/icons/pwa-192x192.png",
+            "src": "{{ .ServerPathPrefix }}/icons/pwa-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "{{ .ServerPathPrefix }}/static/icons/pwa-512x512.png",
+            "src": "{{ .ServerPathPrefix }}/icons/pwa-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         },
         {
-            "src": "{{ .ServerPathPrefix }}/static/icons/maskable-icon-512x512.png",
+            "src": "{{ .ServerPathPrefix }}/icons/maskable-icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
@@ -38,14 +38,14 @@ const manifest = `
     ],
     "screenshots": [
         {
-            "src": "{{ .ServerPathPrefix }}/static/screenshots/626x338.png",
+            "src": "{{ .ServerPathPrefix }}/screenshots/626x338.png",
             "sizes": "626x338",
             "type": "image/png",
             "form_factor": "wide",
             "label": "App Preview"
         },
         {
-            "src": "{{ .ServerPathPrefix }}/static/screenshots/328x626.png",
+            "src": "{{ .ServerPathPrefix }}/screenshots/328x626.png",
             "sizes": "328x626",
             "type": "image/png",
             "form_factor": "narrow",
