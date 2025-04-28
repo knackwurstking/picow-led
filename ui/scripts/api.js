@@ -1,49 +1,54 @@
-function getUrl() {
-    return ``; // TODO: Add the server prefix somehow, or just move this crap back to templ
-}
-
-/**
- * @param {MicroColor | undefined | null} color
- * @param {Device[]} devices
- * @returns {Promise<void>}
- */
-async function color(color, ...devices) {
-    if (!color) {
-        color = [255, 255, 255, 255];
+(() => {
+    function getUrl() {
+        return ``; // TODO: Add the server prefix somehow, or just move this crap back to templ
     }
 
-    const url = getUrl() + "/api/devices/color";
-    const data = { devices, color };
-    console.debug(`POST "${url}":`, data);
+    /**
+     * @param {MicroColor | undefined | null} color
+     * @param {Device[]} devices
+     * @returns {Promise<Device[]>}
+     */
+    async function setDevicesColor(color, ...devices) {
+        if (!color) {
+            color = [255, 255, 255, 255];
+        }
 
-    /** @type {number} */
-    let status;
-    fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    })
-        .then((resp) => {
-            status = resp.status;
-            return resp.json();
-        })
-        .then((data) => {
-            console.debug(`Got data from "${url}":`, data);
+        const url = getUrl() + "/api/devices/color";
+        const data = { devices, color };
+        console.debug(`POST "${url}":`, data);
 
-            if ("message" in data) {
-                throw new Error(`${status}: ${data.message}`);
-            }
-
-            console.warn(data); // TODO: Response handling
-        })
-        .catch((err) => {
-            console.error(err); // TODO: Error handling, (notifications)
+        const resp = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
         });
-}
+        const status = resp.status;
 
-// @ts-ignore
-window.api = {
-    color,
-};
+        /** @type {any} */
+        let respData;
+        try {
+            respData = await resp.json();
+        } catch (err) {
+            console.error(err); // TODO: Error handling, (notifications)
+        }
+
+        console.debug(`Got data from "${url}":`, respData);
+
+        if ("message" in respData) {
+            console.error(`${status}: ${respData.message}`); // TODO: Error handling, (notifications)
+            return;
+        }
+
+        return respData;
+    }
+
+    /** @type {Api} */
+    const api = {
+        setDevicesColor,
+    };
+
+    // @ts-ignore
+    window.api = api;
+})();

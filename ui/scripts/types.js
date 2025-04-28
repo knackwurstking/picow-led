@@ -1,4 +1,17 @@
 /**
+ * @typedef Api
+ * @type {{
+ *  setDevicesColor: (color: MicroColor | undefined | null, ...devices: Device[]) => Promise<Device[]>
+ * }}
+ *
+ * @typedef WS
+ * @type {{
+ *  addr: () => string;
+ *  isOpen: () => boolean;
+ *  connect: () => void;
+ *  close: () => void;
+ * }}
+ *
  * @typedef Device
  * @type {{
  *  server: Server

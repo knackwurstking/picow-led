@@ -1,63 +1,69 @@
-/**
- * @param {boolean} state
- * @returns {void}
- */
-function setOnlineIndicator(state) {
-    const el = document.querySelector(`.online-indicator`);
+(() => {
+    /** @type {Api} */
+    // @ts-ignore
+    const api = window.api;
 
-    if (state) {
-        el.setAttribute(`data-state`, "online");
-    } else {
-        el.setAttribute(`data-state`, "offline");
+    /**
+     * @param {boolean} state
+     * @returns {void}
+     */
+    function setOnlineIndicator(state) {
+        const el = document.querySelector(`.online-indicator`);
+
+        if (state) {
+            el.setAttribute(`data-state`, "online");
+        } else {
+            el.setAttribute(`data-state`, "offline");
+        }
     }
-}
 
-/**
- * @param {Event} _ev
- * @param {Device} device
- * @returns {void}
- */
-function powerButtonClickHandler(_ev, device) {
-    /** @type {MicroColor} */
-    let color;
-    if (!device.color || !device.color.find((c) => c > 0)) {
-        color = [255, 255, 255, 255];
-    } else {
-        color = [0, 0, 0, 0];
+    /**
+     * @param {Event} _ev
+     * @param {Device} device
+     * @returns {void}
+     */
+    function powerButtonClickHandler(_ev, device) {
+        /** @type {MicroColor} */
+        let color;
+        if (!device.color || !device.color.find((c) => c > 0)) {
+            color = [255, 255, 255, 255];
+        } else {
+            color = [0, 0, 0, 0];
+        }
+
+        const devices = api.setDevicesColor(color, device);
+        console.debug(devices); // TODO: Update devices list somehow
+    }
+
+    /**
+     * @param {string} serverPathPrefix
+     * @returns {void}
+     */
+    function registerServiceWorker(serverPathPrefix) {
+        // NOTE: Currently not in use, the service-worker is still missing
+
+        // Check if the browser supports service workers, otherwise abort.
+        if (!("serviceWorker" in navigator)) {
+            console.warn("Browser doesn't support service workers");
+            return;
+        }
+
+        window.addEventListener("load", function () {
+            navigator.serviceWorker
+                .register(serverPathPrefix + "/service-worker.js")
+                .then(function (reg) {
+                    console.info("Service worker registered", reg);
+                })
+                .catch(function (err) {
+                    console.error("Service worker registration failed:", err);
+                });
+        });
     }
 
     // @ts-ignore
-    window.api.color(color, device);
-}
-
-/**
- * @param {string} serverPathPrefix
- * @returns {void}
- */
-function registerServiceWorker(serverPathPrefix) {
-    // NOTE: Currently not in use, the service-worker is still missing
-
-    // Check if the browser supports service workers, otherwise abort.
-    if (!("serviceWorker" in navigator)) {
-        console.warn("Browser doesn't support service workers");
-        return;
-    }
-
-    window.addEventListener("load", function () {
-        navigator.serviceWorker
-            .register(serverPathPrefix + "/service-worker.js")
-            .then(function (reg) {
-                console.info("Service worker registered", reg);
-            })
-            .catch(function (err) {
-                console.error("Service worker registration failed:", err);
-            });
-    });
-}
-
-// @ts-ignore
-window.utils = {
-    setOnlineIndicator,
-    powerButtonClickHandler,
-    registerServiceWorker,
-};
+    window.utils = {
+        setOnlineIndicator,
+        powerButtonClickHandler,
+        registerServiceWorker,
+    };
+})();
