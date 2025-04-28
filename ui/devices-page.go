@@ -48,8 +48,8 @@ func deviceListItem(d *api.Device) Node {
 		Style("width: 100%;"),
 		Attr("data-ui-theme", "dark"),
 		Attr("data-json", string(toJSON(d))),
-		H4(
-			Class("title ui-outline-text ui-padding"),
+		H3(
+			Class("title ui-padding"),
 			Text(name),
 		),
 		Span(

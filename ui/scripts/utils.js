@@ -49,7 +49,8 @@
             return;
         }
 
-        deviceListItem.querySelector("h4").innerText =
+        // @ts-ignore
+        deviceListItem.querySelector(".title").innerText =
             device.server.name || device.server.addr;
 
         deviceListItem.setAttribute("data-json", JSON.stringify(device));
