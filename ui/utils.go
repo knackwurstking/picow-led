@@ -22,6 +22,7 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 			Script(Src(serverPathPrefix + "/js/api.js")),
 			Script(Src(serverPathPrefix + "/js/ws.js")),
 			Script(Src(serverPathPrefix + "/js/utils.js")),
+			Script(Raw(`window.utils.registerServiceWorker()`)),
 		},
 		Body: []Node{
 			Group(children),

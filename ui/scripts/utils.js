@@ -66,12 +66,9 @@
     }
 
     /**
-     * @param {string} serverPathPrefix
      * @returns {void}
      */
-    function registerServiceWorker(serverPathPrefix) {
-        // NOTE: Currently not in use, the service-worker is still missing
-
+    function registerServiceWorker() {
         // Check if the browser supports service workers, otherwise abort.
         if (!("serviceWorker" in navigator)) {
             console.warn("Browser doesn't support service workers");
@@ -80,7 +77,9 @@
 
         window.addEventListener("load", function () {
             navigator.serviceWorker
-                .register(serverPathPrefix + "/service-worker.js")
+                .register(__SERVER_PATH_PREFIX__ + "/js/service-worker.js", {
+                    scope: __SERVER_PATH_PREFIX__,
+                })
                 .then(function (reg) {
                     console.info("Service worker registered", reg);
                 })
