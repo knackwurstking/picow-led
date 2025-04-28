@@ -43,6 +43,7 @@ func deviceListItem(d *api.Device) Node {
 		name = d.Server.Addr
 	}
 
+	// TODO: I need a new page for device control (ex: edit color)
 	return Section(
 		Class("device-list-item ui-flex row gap justify-between align-center ui-padding"),
 		Style("width: 100%;"),
