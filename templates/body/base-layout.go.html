@@ -2,5 +2,31 @@
 <main>
     {{ block "content" . }}
     {{ end }}
+
+    <div class="ui-app-bar" data-ui-position="top">
+        <span class="ui-app-bar-left">
+            <button style="display: none;" data-ui-variant="ghost" onclick="history.back()">
+                Back
+            </button>
+
+            {{ block "component-online-indicator" }}
+            {{ end }}
+        </span>
+
+        <span class="ui-app-bar-center">
+            <span>
+                <h3 style="display: none;" class="app-bar-title"></h3>
+            </span>
+        </span>
+
+        <span class="ui-app-bar-right">
+            <button style="display: none;" data-ui-variant="ghost"
+                onclick="location.pathname = '{{ .ServerPathPrefix }}/settings'">
+                Settings
+            </button>
+        </span>
+    </div>
+
+    <script src="{{ .ServerPathPrefix }}/js/base-layout.js"></script>
 </main>
 {{ end }}
