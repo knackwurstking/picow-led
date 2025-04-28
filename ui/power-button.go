@@ -14,7 +14,7 @@ func powerButton(device *api.Device) Node {
 		Attr("data-ui-variant", "ghost"),
 		Attr("data-ui-icon"),
 		Attr("onclick", fmt.Sprintf(
-			"window.utils.powerButtonoClickHandler(event, %s)",
+			"window.utils.powerButtonClickHandler(event, %s)",
 			toJSON(device),
 		)),
 		Raw(`<svg style="color: inherit" viewBox="0 0 64 64" fill="transparent" xmlns="http://www.w3.org/2000/svg">
