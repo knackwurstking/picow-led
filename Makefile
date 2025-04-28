@@ -36,9 +36,7 @@ build:
 generate-pwa-assets:
 	npx pwa-assets-generator
 
-# TODO: Add all "rpi-server-project" related commands here
-
-# NOTE: Standard rpi-server-project part
+# NOTE: Standard systemd stuff
 
 define SYSTEMD_SERVICE_FILE
 [Unit]
@@ -46,8 +44,8 @@ Description=Control my fucking lights
 After=network.target
 
 [Service]
-EnvironmentFile=%h/.config/rpi-server-project/.env
-ExecStart=${SERVER_APP_NAME}
+EnvironmentFile=%h/.config/picow-led/.env
+ExecStart=${SERVER_APP_NAME} server
 
 [Install]
 WantedBy=default.target
