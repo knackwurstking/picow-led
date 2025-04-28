@@ -7,18 +7,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func frontend(e *echo.Echo, data Options) {
-	// Page Data: "/" - devices
-	devices := []*api.Device{}
-	for _, s := range data.Api.Servers {
-		devices = append(devices, &api.Device{Server: s})
-	}
+var FrontendCache []*api.Device
 
+func frontend(e *echo.Echo, data Options) {
 	e.GET(data.ServerPathPrefix+"", func(c echo.Context) error {
-		return ui.DevicesPage(data.ServerPathPrefix, devices...).Render(c.Response().Writer)
+		return ui.DevicesPage(data.ServerPathPrefix, FrontendCache...).Render(c.Response().Writer)
 	})
 
 	e.GET(data.ServerPathPrefix+"/settings", func(c echo.Context) error {
-		return ui.SettingsPage(data.ServerPathPrefix, devices...).Render(c.Response().Writer)
+		return ui.SettingsPage(data.ServerPathPrefix, FrontendCache...).Render(c.Response().Writer)
 	})
 }

@@ -22,28 +22,38 @@
      * @returns {Promise<void>}
      */
     async function powerButtonClickHandler(ev) {
-        const deviceListItem = ev.currentTarget.closest(".device-list-item");
-        /** @type {Device} */
-        let device = JSON.parse(deviceListItem.getAttribute("data-json"));
-
-        /** @type {MicroColor} */
-        let color;
-        if (!device.color || !device.color.find((c) => c > 0)) {
-            color = [255, 255, 255, 255];
-        } else {
-            color = [0, 0, 0, 0];
-        }
+        // Disable rapid fire clicks
+        const target = ev.currentTarget;
+        target.setAttribute("disabled", "");
 
         try {
-            device = (await api.setDevicesColor(color, device))[0];
-        } catch (err) {
-            console.error(err); // TODO: Error handling, notification?
+            const deviceListItem =
+                ev.currentTarget.closest(".device-list-item");
+            /** @type {Device} */
+            let device = JSON.parse(deviceListItem.getAttribute("data-json"));
+
+            /** @type {MicroColor} */
+            let color;
+            if (!device.color || !device.color.find((c) => c > 0)) {
+                color = [255, 255, 255, 255];
+            } else {
+                color = [0, 0, 0, 0];
+            }
+
+            try {
+                device = (await api.setDevicesColor(color, device))[0];
+            } catch (err) {
+                console.error(err); // TODO: Error handling, notification?
+                return;
+            }
+
+            deviceListItem.querySelector("h4").innerText =
+                device.server.name || device.server.addr;
+
+            deviceListItem.setAttribute("data-json", JSON.stringify(device));
+        } finally {
+            target.removeAttribute("disabled");
         }
-
-        deviceListItem.querySelector("h4").innerText =
-            device.server.name || device.server.addr;
-
-        deviceListItem.setAttribute("data-json", JSON.stringify(device));
     }
 
     /**

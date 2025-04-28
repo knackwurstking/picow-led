@@ -7,11 +7,13 @@ import (
 )
 
 type Options struct {
-	ServerPathPrefix string      `json,yaml:"server-path-prefix"`
-	Api              *api.Config `json,yaml:"api"`
+	ServerPathPrefix string      `json:"server-path-prefix" yaml:"server-path-prefix"`
+	Api              *api.Config `json:"api" yaml:"api"`
 }
 
 func Create(e *echo.Echo, data Options) {
+	FrontendCache = api.GetDevices(data.Api)
+
 	apiDevices(e, data)
 	frontend(e, data)
 }

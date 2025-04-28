@@ -28,8 +28,23 @@ func apiDevices(e *echo.Echo, o Options) {
 			return err
 		}
 
-		return c.JSON(http.StatusOK,
-			api.PostDevicesColor(o.Api, data.Color, data.Devices...),
-		)
+		data.Devices = api.PostDevicesColor(o.Api, data.Color, data.Devices...)
+		for di, dd := range data.Devices {
+			for _, fd := range FrontendCache {
+				if dd.Server.Addr != fd.Server.Addr {
+					continue
+				}
+
+				// Only merge things changed after PostDevicesColor call
+				fd.Color = dd.Color
+				fd.Error = dd.Error
+				fd.Online = dd.Online
+
+				// Data to return
+				data.Devices[di] = fd
+			}
+		}
+
+		return c.JSON(http.StatusOK, data.Devices)
 	})
 }

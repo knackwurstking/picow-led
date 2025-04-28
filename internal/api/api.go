@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	Servers []*Server `json,yaml:"servers,omitempty"`
+	Servers []*Server `json:"servers,omitempty" yaml:"servers,omitempty"`
 }
 
 type Device struct {
@@ -27,9 +27,9 @@ type Device struct {
 
 // Server contains host and port in use from a Device
 type Server struct {
-	Addr string `json,yaml:"addr"`
+	Addr string `json:"addr" yaml:"addr"`
 	// Name could be empty (optional)
-	Name string `json,yaml:"name"`
+	Name string `json:"name" yaml:"name"`
 }
 
 func GetApiConfig(paths ...string) (*Config, error) {
