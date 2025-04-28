@@ -43,7 +43,8 @@
         try {
             device = (await api.setDevicesColor(color, device))[0];
         } catch (err) {
-            console.error(err); // TODO: Error handling, notification?
+            console.error(err);
+            alert(err); // TODO: Error handling, notification?
             target.setAttribute("data-state", prevState);
             return;
         }
