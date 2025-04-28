@@ -6,8 +6,7 @@ function setOnlineIndicator(state) {
     el.setAttribute(`data-state`, "offline");
   }
 }
-function powerButtonClickHandler(ev, device) {
-  console.debug({ ev, device });
+function powerButtonClickHandler(_ev, device) {
   let color;
   if (!device.color || !device.color.find((c) => c > 0)) {
     color = [255, 255, 255, 255];

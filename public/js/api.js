@@ -40,7 +40,7 @@ function color(color2, ...devices) {
       status = resp.status;
       return resp.json();
     }).then((data2) => {
-      console.debug(`fetch "${url}":`, data2);
+      console.debug(`Got data from "${url}":`, data2);
       if ("message" in data2) {
         throw new Error(`${status}: ${data2.message}`);
       }

@@ -24,7 +24,7 @@ async function color(color, ...devices) {
             return resp.json();
         })
         .then((data) => {
-            console.debug(`fetch "${url}":`, data);
+            console.debug(`Got data from "${url}":`, data);
 
             if ("message" in data) {
                 throw new Error(`${status}: ${data.message}`);

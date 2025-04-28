@@ -31,9 +31,6 @@ func DevicesPage(serverPathPrefix string, devices ...*api.Device) Node {
 				Map(devices, deviceListItem),
 			),
 
-			// Templates for later
-			// deviceListItemTemplate()
-
 			// Scripts section
 			Script(
 				Raw("window.utils.setOnlineIndicator(true)"),
