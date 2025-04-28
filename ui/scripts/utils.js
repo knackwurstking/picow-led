@@ -24,36 +24,43 @@
     async function powerButtonClickHandler(ev) {
         // Disable rapid fire clicks
         const target = ev.currentTarget;
-        target.setAttribute("disabled", "");
+        const prevState = target.getAttribute("data-state");
+        if (prevState === "processing") return;
+        target.setAttribute("data-state", "processing");
+
+        const deviceListItem = ev.currentTarget.closest(".device-list-item");
+        /** @type {Device} */
+        let device = JSON.parse(deviceListItem.getAttribute("data-json"));
+
+        /** @type {MicroColor} */
+        let color;
+        if (!device.color || !device.color.find((c) => c > 0)) {
+            color = [255, 255, 255, 255];
+        } else {
+            color = [0, 0, 0, 0];
+        }
 
         try {
-            const deviceListItem =
-                ev.currentTarget.closest(".device-list-item");
-            /** @type {Device} */
-            let device = JSON.parse(deviceListItem.getAttribute("data-json"));
-
-            /** @type {MicroColor} */
-            let color;
-            if (!device.color || !device.color.find((c) => c > 0)) {
-                color = [255, 255, 255, 255];
-            } else {
-                color = [0, 0, 0, 0];
-            }
-
-            try {
-                device = (await api.setDevicesColor(color, device))[0];
-            } catch (err) {
-                console.error(err); // TODO: Error handling, notification?
-                return;
-            }
-
-            deviceListItem.querySelector("h4").innerText =
-                device.server.name || device.server.addr;
-
-            deviceListItem.setAttribute("data-json", JSON.stringify(device));
-        } finally {
-            target.removeAttribute("disabled");
+            device = (await api.setDevicesColor(color, device))[0];
+        } catch (err) {
+            console.error(err); // TODO: Error handling, notification?
+            target.setAttribute("data-state", prevState);
+            return;
         }
+
+        deviceListItem.querySelector("h4").innerText =
+            device.server.name || device.server.addr;
+
+        deviceListItem.setAttribute("data-json", JSON.stringify(device));
+        if (Math.max(...device.color) > 0) {
+            target.setAttribute("data-state", "on");
+        } else {
+            target.setAttribute("data-state", "off");
+        }
+
+        /** @type {HTMLElement} */
+        const bg = deviceListItem.querySelector("div.background");
+        bg.style.backgroundColor = `rgb(${device.color.slice(0, 3).join(", ")})`;
     }
 
     /**

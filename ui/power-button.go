@@ -1,17 +1,28 @@
 package ui
 
 import (
+	"fmt"
+	"strings"
+
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
 
-func powerButton() Node {
+func powerButton(powerState string, colorS []string) Node {
 	return Button(
-		Style("color: black; width: 3rem; height: 3rem;"),
+		Class("power-button"),
+		Style("width: 3rem; height: 3rem; overflow: visible;"),
 		Attr("data-ui-variant", "ghost"),
 		Attr("data-ui-icon"),
+		Attr("data-state", powerState),
 		Attr("onclick",
 			`window.utils.powerButtonClickHandler(event)`,
+		),
+		Div(
+			Class("background"),
+			Style(fmt.Sprintf(
+				"background-color: rgb(%s);", strings.Join(colorS, ", "),
+			)),
 		),
 		Raw(`<svg style="color: inherit" viewBox="0 0 64 64" fill="transparent" xmlns="http://www.w3.org/2000/svg">
 	<g id="SVGRepo_bgCarrier" stroke-width="0"></g>

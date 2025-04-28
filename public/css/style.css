@@ -33,3 +33,35 @@ main {
     content: "Offline";
     color: red;
 }
+
+.device-list-item {
+    z-index: 0;
+    border-radius: var(--ui-radius);
+}
+
+.device-list-item .background {
+    position: absolute;
+    z-index: -1;
+    top: 0.25rem;
+    right: 0.25rem;
+    bottom: 0.25rem;
+    left: 0.25rem;
+    border-radius: var(--ui-radius);
+    filter: blur(0.5rem);
+}
+
+.power-button {
+    color: inherit;
+}
+
+.power-button[data-state="on"] {
+    color: rgb(0, 225, 0) !important;
+}
+
+.power-button[data-state="processing"] {
+    color: yellow !important;
+}
+
+.power-button[data-state="off"] {
+    color: rgb(0, 0, 0) !important;
+}
