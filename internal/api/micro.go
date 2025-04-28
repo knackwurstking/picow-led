@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -60,12 +61,12 @@ type MicroRequest struct {
 	//
 	// 	if type is `MicroTypeSET` and group is `MicroGroupConfig`
 	//		if command is "led":
-	// 			[]uint8 - range between 0-28
+	// 			[]uint8 - range between 0-28 converted to a slice with strings
 	//					  https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2024/02/Raspberry-Pi-Pico-W-RP2040-Rev3-Board-Pinout-GPIOs.png?quality=100&strip=all&ssl=1
 	//
 	// 	elif type is `MicroTypeSET` and group is `MicroGroupLED`
 	//		if command is "color":
-	// 			[]uint8 - range between 0-255
+	// 			[]uint8 - range between 0-255 converted to a slice with strings
 	//
 	// 	else
 	// 		nil
@@ -162,6 +163,31 @@ func (mr *MicroRequest) Color(d *Device) (MicroColor, error) {
 		d.Error = err.Error()
 	}
 	return color, err
+}
+
+func (mr *MicroRequest) SetColor(d *Device, c MicroColor) error {
+	mr.ID = MicroIDDefault
+	mr.Type = MicroTypeSET
+	mr.Group = MicroGroupLED
+	mr.Command = "color"
+	mr.CommandArgs = []string{}
+	for _, n := range c {
+		mr.CommandArgs = append(mr.CommandArgs, strconv.Itoa(int(n)))
+	}
+
+	data, err := mr.Send(d)
+	if err != nil {
+		return err
+	}
+	if d.Error != "" {
+		return errors.New(d.Error)
+	}
+
+	_, err = ParseMicroResponse[any](data)
+	if err != nil {
+		d.Error = err.Error()
+	}
+	return err
 }
 
 type (

@@ -93,3 +93,23 @@ func GetDevices(o *Config) []*Device {
 
 	return devices
 }
+
+func PostDevicesColor(o *Config, c MicroColor, devices ...*Device) []*Device {
+	wg := &sync.WaitGroup{}
+	for _, d := range devices {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			r := &MicroRequest{}
+			if err := r.SetColor(d, c); err != nil {
+				d.Error = err.Error()
+			} else {
+				d.Color = c
+			}
+		}()
+	}
+	wg.Wait()
+
+	return devices
+}
