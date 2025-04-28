@@ -18,11 +18,14 @@
     }
 
     /**
-     * @param {Event} _ev
-     * @param {Device} device
-     * @returns {void}
+     * @param {Event & { currentTarget: HTMLButtonElement }} ev
+     * @returns {Promise<void>}
      */
-    function powerButtonClickHandler(_ev, device) {
+    async function powerButtonClickHandler(ev) {
+        const deviceListItem = ev.currentTarget.closest(".device-list-item");
+        /** @type {Device} */
+        let device = JSON.parse(deviceListItem.getAttribute("data-json"));
+
         /** @type {MicroColor} */
         let color;
         if (!device.color || !device.color.find((c) => c > 0)) {
@@ -31,8 +34,16 @@
             color = [0, 0, 0, 0];
         }
 
-        const devices = api.setDevicesColor(color, device);
-        console.debug(devices); // TODO: Update devices list somehow
+        try {
+            device = (await api.setDevicesColor(color, device))[0];
+        } catch (err) {
+            console.error(err); // TODO: Error handling, notification?
+        }
+
+        deviceListItem.querySelector("h4").innerText =
+            device.server.name || device.server.addr;
+
+        deviceListItem.setAttribute("data-json", JSON.stringify(device));
     }
 
     /**

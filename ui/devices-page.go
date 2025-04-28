@@ -23,12 +23,13 @@ func deviceListItem(d *api.Device) Node {
 	return Section(
 		Class("device-list-item ui-flex row gap justify-between align-center ui-padding"),
 		Style("width: 100%;"),
+		Attr("data-json", string(toJSON(d))),
 		If(d.Server.Name != "", H4(Text(d.Server.Name))),
 		If(d.Server.Name == "", H4(Text(d.Server.Addr))),
 		Span(
 			Class("ui-flex-item"),
 			Style("flex: 0;"),
-			powerButton(d),
+			powerButton(),
 		),
 	)
 }

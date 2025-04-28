@@ -1,22 +1,18 @@
 package ui
 
 import (
-	"fmt"
-	"picow-led/internal/api"
-
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
 
-func powerButton(device *api.Device) Node {
+func powerButton() Node {
 	return Button(
 		Style("color: black; width: 3rem; height: 3rem;"),
 		Attr("data-ui-variant", "ghost"),
 		Attr("data-ui-icon"),
-		Attr("onclick", fmt.Sprintf(
-			"window.utils.powerButtonClickHandler(event, %s)",
-			toJSON(device),
-		)),
+		Attr("onclick",
+			`window.utils.powerButtonClickHandler(event)`,
+		),
 		Raw(`<svg style="color: inherit" viewBox="0 0 64 64" fill="transparent" xmlns="http://www.w3.org/2000/svg">
 	<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
 	<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>

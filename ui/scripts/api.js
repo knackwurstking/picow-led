@@ -27,18 +27,12 @@
         const status = resp.status;
 
         /** @type {any} */
-        let respData;
-        try {
-            respData = await resp.json();
-        } catch (err) {
-            console.error(err); // TODO: Error handling, (notifications)
-        }
+        const respData = await resp.json();
 
         console.debug(`Got data from "${url}":`, respData);
 
         if ("message" in respData) {
-            console.error(`${status}: ${respData.message}`); // TODO: Error handling, (notifications)
-            return;
+            throw new Error(`${status}: ${respData.message}`);
         }
 
         return respData;
