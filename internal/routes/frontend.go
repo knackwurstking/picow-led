@@ -19,7 +19,6 @@ func frontend(e *echo.Echo, data Options) {
 	})
 
 	e.GET(data.ServerPathPrefix+"/settings", func(c echo.Context) error {
-		// TODO: Settings page missing
-		return ui.DevicesPage(data.ServerPathPrefix, devices...).Render(c.Response().Writer)
+		return ui.SettingsPage(data.ServerPathPrefix, devices...).Render(c.Response().Writer)
 	})
 }
