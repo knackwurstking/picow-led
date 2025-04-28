@@ -37,6 +37,11 @@ main {
 .device-list-item {
     z-index: 0;
     border-radius: var(--ui-radius);
+
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    overflow: visible
 }
 
 .device-list-item .background {
@@ -47,7 +52,9 @@ main {
     bottom: 0.25rem;
     left: 0.25rem;
     border-radius: var(--ui-radius);
+
     filter: blur(0.5rem);
+    -webkit-backdrop-filter: blur(0.5rem);
 }
 
 .power-button {
