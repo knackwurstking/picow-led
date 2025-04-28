@@ -1,12 +1,12 @@
-package ui
+package components
 
 import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
 
-// onlineIndicator styles in "public/css/style.css"
-func onlineIndicator(state bool) Node {
+// OnlineIndicator styles in "public/css/style.css"
+func OnlineIndicator(state bool) Node {
 	return Span(
 		Class("online-indicator"),
 		Style("--mono: 1;"),

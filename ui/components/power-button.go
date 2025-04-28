@@ -1,4 +1,4 @@
-package ui
+package components
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func powerButton(powerState string, colorS []string) Node {
+func PowerButton(powerState string, colorS []string) Node {
 	return Button(
 		Class("power-button"),
 		Style("width: 3rem; height: 3rem; overflow: visible;"),

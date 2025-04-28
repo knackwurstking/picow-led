@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/url"
 	"picow-led/internal/api"
+	"picow-led/ui/components"
+	"picow-led/ui/utils"
 	"slices"
 	"strconv"
 
@@ -72,7 +74,7 @@ func deviceListItem(o deviceListItemOption) Node {
 		Class("device-list-item ui-flex row gap justify-between align-center ui-padding"),
 		Style("width: 100%;"),
 		Attr("data-ui-theme", "dark"),
-		Attr("data-json", string(toJSON(o.Device))),
+		Attr("data-json", string(utils.ToJSON(o.Device))),
 
 		H3(
 			Class("title ui-padding"),
@@ -104,7 +106,7 @@ func deviceListItem(o deviceListItemOption) Node {
 				Class("ui-flex-item"),
 				Style("flex: 0;"),
 
-				powerButton(powerButtonState, colorS),
+				components.PowerButton(powerButtonState, colorS),
 			),
 		),
 	)
