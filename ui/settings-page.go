@@ -8,7 +8,7 @@ import (
 )
 
 func SettingsPage(serverPathPrefix string, devices ...*api.Device) Node {
-	return page("PicoW LED | Settings", serverPathPrefix,
+	return basePageLayout("PicoW LED | Settings", serverPathPrefix,
 		Main(
 		// TODO: Settings page content here
 		),
