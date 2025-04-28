@@ -33,7 +33,7 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 func basePageLayout(title string, serverPathPrefix string, children ...Node) Node {
 	return page(title, serverPathPrefix,
 		Main(
-			Style("padding-top: var(--ui-app-bar-height);"),
+			Group(children),
 
 			// UI App Bar
 			Div(
@@ -50,8 +50,6 @@ func basePageLayout(title string, serverPathPrefix string, children ...Node) Nod
 					Class("ui-app-bar-right"),
 				),
 			),
-
-			Group(children),
 
 			// Scripts section
 			Script(
