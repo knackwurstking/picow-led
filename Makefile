@@ -1,6 +1,7 @@
 all: init build
 
 BINARY_NAME := "picow-led"
+SERVER_APP_NAME := ${BINARY_NAME}
 
 clean:
 	git clean -xfd
@@ -36,3 +37,41 @@ generate-pwa-assets:
 	npx pwa-assets-generator
 
 # TODO: Add all "rpi-server-project" related commands here
+
+# NOTE: Standard rpi-server-project part
+
+define SYSTEMD_SERVICE_FILE
+[Unit]
+Description=Control my fucking lights
+After=network.target
+
+[Service]
+EnvironmentFile=%h/.config/rpi-server-project/.env
+ExecStart=${SERVER_APP_NAME}
+
+[Install]
+WantedBy=default.target
+endef
+
+UNAME := $(shell uname)
+check-linux:
+ifneq ($(UNAME), Linux)
+	@echo 'This won’t work here since you’re not on Linux.'
+	@exit 1
+endif
+
+export SYSTEMD_SERVICE_FILE
+install: check-linux
+	echo "$$SYSTEMD_SERVICE_FILE" > ${HOME}/.config/systemd/user/${SERVER_APP_NAME}.service 
+	systemctl --user daemon-reload 
+	echo "--> Created a service file @ ${HOME}/.config/systemd/user/${SERVER_APP_NAME}.service"
+	sudo cp ./bin/${SERVER_APP_NAME} /usr/local/bin/
+
+start: check-linux
+	systemctl --user restart ${SERVER_APP_NAME}
+
+stop: check-linux
+	systemctl --user stop ${SERVER_APP_NAME}
+
+log: check-linux
+	journalctl --user -u ${SERVER_APP_NAME} --follow --output cat
