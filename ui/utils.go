@@ -16,7 +16,7 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 			Meta(Charset("UTF-8")),
 			Meta(Name("viewport"), Content("width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover")),
 			Link(Rel("icon"), Href(serverPathPrefix+"/icons/favicon.ico")),
-			Link(Rel("icon"), Href(serverPathPrefix+"/icons/apple-touch-icon-180x180.png")),
+			Link(Rel("apple-touch-icon"), Href(serverPathPrefix+"/icons/apple-touch-icon-180x180.png")),
 			Link(Rel("stylesheet"), Href(serverPathPrefix+"/css/ui-v4.1.0.css")),
 			Link(Rel("stylesheet"), Href(serverPathPrefix+"/css/style.css")),
 			Link(Rel("manifest"), Href(serverPathPrefix+"/manifest.json")),
