@@ -20,6 +20,7 @@ func DevicesPage(serverPathPrefix string, devices ...*api.Device) Node {
 	)
 }
 
+// TODO: Need some highlighting for color, should work with light and dark theme
 func deviceListItem(d *api.Device) Node {
 	return Section(
 		Class("device-list-item ui-flex row gap justify-between align-center ui-padding"),
