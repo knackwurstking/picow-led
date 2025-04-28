@@ -7,8 +7,9 @@ import (
 )
 
 type Options struct {
-	ServerPathPrefix string      `json:"server-path-prefix" yaml:"server-path-prefix"`
-	Api              *api.Config `json:"api" yaml:"api"`
+	ServerPathPrefix string      `json:"server-path-prefix"`
+	Version          string      `json:"version"`
+	Api              *api.Config `json:"api"`
 }
 
 func Create(e *echo.Echo, data Options) {
@@ -16,4 +17,5 @@ func Create(e *echo.Echo, data Options) {
 
 	apiDevices(e, data)
 	frontend(e, data)
+	pwa(e, data)
 }

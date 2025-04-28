@@ -97,6 +97,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 
 		routes.Create(e, routes.Options{
 			ServerPathPrefix: serverPathPrefix,
+			Version:          version,
 			Api:              apiConfig,
 		})
 
