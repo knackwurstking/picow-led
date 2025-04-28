@@ -24,7 +24,7 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 			Script(Src(serverPathPrefix + "/js/utils.js")),
 		},
 		Body: []Node{
-			Class("ui-container ui-debug"),
+			Class("ui-container"),
 			Group(children),
 		},
 	})
