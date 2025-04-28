@@ -6,7 +6,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
     build: {
-        target: "es6",
         minify: false,
         copyPublicDir: false,
         rollupOptions: {
