@@ -16,7 +16,6 @@ import (
 
 var (
 	serverPathPrefix      = os.Getenv("SERVER_PATH_PREFIX")
-	serverAddr            = os.Getenv("SERVER_ADDR")
 	version               = "v1.0.0"
 	apiConfigPath         = "api.yaml"
 	apiConfigFallbackPath = ""
@@ -53,10 +52,9 @@ func main() {
 						cmd, "addr",
 						cli.WithShort("a"),
 						cli.Usage("Set server address (<host>:<port>)"),
-						cli.Required,
 					)
 
-					*addr = serverAddr
+					*addr = os.Getenv("SERVER_ADDR")
 
 					return cliServerAction(addr)
 				}),
