@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"encoding/json"
+
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
@@ -22,8 +24,13 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 			Script(Src(serverPathPrefix + "/js/utils.js")),
 		},
 		Body: []Node{
-			Class("ui-container"),
+			Class("ui-container ui-debug"),
 			Group(children),
 		},
 	})
+}
+
+func toJSON(data any) []byte {
+	d, _ := json.Marshal(data)
+	return d
 }
