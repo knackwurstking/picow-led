@@ -21,10 +21,12 @@ func DevicesPage(serverPathPrefix string, devices ...*api.Device) Node {
 	}
 
 	return basePageLayout(
-		basePageLayoutOptions{
-			Title:                    "PicoW LED | Devices",
+		LayoutBaseOptions{
+			PageOptions: PageOptions{
+				Title:            "PicoW LED | Devices",
+				ServerPathPrefix: serverPathPrefix,
+			},
 			AppBarTitle:              "Devices",
-			ServerPathPrefix:         serverPathPrefix,
 			EnableGoToSettingsButton: true,
 		},
 

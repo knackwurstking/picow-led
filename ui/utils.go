@@ -9,21 +9,26 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func page(title string, serverPathPrefix string, children ...Node) Node {
+type PageOptions struct {
+	Title            string
+	ServerPathPrefix string
+}
+
+func page(o PageOptions, children ...Node) Node {
 	return HTML5(HTML5Props{
-		Title:    title,
+		Title:    o.Title,
 		Language: "en",
 		Head: []Node{
 			Meta(Charset("UTF-8")),
 			Meta(Name("viewport"), Content("width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover")),
-			Link(Rel("icon"), Href(serverPathPrefix+"/icons/favicon.ico"), Attr("sizes", "any")),
-			Link(Rel("apple-touch-icon"), Href(serverPathPrefix+"/icons/apple-touch-icon-180x180.png")),
-			Link(Rel("stylesheet"), Href(serverPathPrefix+"/css/ui-v4.1.0.css")),
-			Link(Rel("stylesheet"), Href(serverPathPrefix+"/css/style.css")),
-			Link(Rel("manifest"), Href(serverPathPrefix+"/manifest.json")),
-			Script(Src(serverPathPrefix + "/js/api.js")),
-			Script(Src(serverPathPrefix + "/js/ws.js")),
-			Script(Src(serverPathPrefix + "/js/utils.js")),
+			Link(Rel("icon"), Href(o.ServerPathPrefix+"/icons/favicon.ico"), Attr("sizes", "any")),
+			Link(Rel("apple-touch-icon"), Href(o.ServerPathPrefix+"/icons/apple-touch-icon-180x180.png")),
+			Link(Rel("stylesheet"), Href(o.ServerPathPrefix+"/css/ui-v4.1.0.css")),
+			Link(Rel("stylesheet"), Href(o.ServerPathPrefix+"/css/style.css")),
+			Link(Rel("manifest"), Href(o.ServerPathPrefix+"/manifest.json")),
+			Script(Src(o.ServerPathPrefix + "/js/api.js")),
+			Script(Src(o.ServerPathPrefix + "/js/ws.js")),
+			Script(Src(o.ServerPathPrefix + "/js/utils.js")),
 			Script(Raw(`window.utils.registerServiceWorker()`)),
 		},
 		Body: []Node{
@@ -32,10 +37,10 @@ func page(title string, serverPathPrefix string, children ...Node) Node {
 	})
 }
 
-type basePageLayoutOptions struct {
-	Title            string
-	AppBarTitle      string
-	ServerPathPrefix string
+type LayoutBaseOptions struct {
+	PageOptions
+
+	AppBarTitle string
 
 	EnableBackButton   bool
 	BackButtonCallback string
@@ -44,8 +49,13 @@ type basePageLayoutOptions struct {
 }
 
 // basePageLayout will call page(...)
-func basePageLayout(o basePageLayoutOptions, children ...Node) Node {
-	return page(o.Title, o.ServerPathPrefix,
+func basePageLayout(o LayoutBaseOptions, children ...Node) Node {
+	return page(
+		PageOptions{
+			Title:            o.Title,
+			ServerPathPrefix: o.ServerPathPrefix,
+		},
+
 		Main(
 			Group(children),
 
@@ -86,7 +96,6 @@ func basePageLayout(o basePageLayoutOptions, children ...Node) Node {
 
 					If(o.EnableGoToSettingsButton, Button(
 						Attr("data-ui-variant", "ghost"),
-						Attr("data-ui-color", "secondary"),
 						Attr("onclick", fmt.Sprintf(
 							"location.pathname = \"%s/settings\"",
 							o.ServerPathPrefix,

@@ -15,10 +15,12 @@ func DevicesAddrPage(serverPathPrefix string, d *api.Device) Node {
 	}
 
 	return basePageLayout(
-		basePageLayoutOptions{
-			Title:              fmt.Sprintf("PicoW LED | %s", d.Server.Addr),
+		LayoutBaseOptions{
+			PageOptions: PageOptions{
+				Title:            fmt.Sprintf("PicoW LED | %s", d.Server.Addr),
+				ServerPathPrefix: serverPathPrefix,
+			},
 			AppBarTitle:        appBarTitle,
-			ServerPathPrefix:   serverPathPrefix,
 			EnableBackButton:   true,
 			BackButtonCallback: fmt.Sprintf("location.pathname = \"%s\"", serverPathPrefix),
 		},

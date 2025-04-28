@@ -9,10 +9,12 @@ import (
 
 func SettingsPage(serverPathPrefix string) Node {
 	return basePageLayout(
-		basePageLayoutOptions{
-			Title:              "PicoW LED | Settings",
+		LayoutBaseOptions{
+			PageOptions: PageOptions{
+				Title:            "PicoW LED | Settings",
+				ServerPathPrefix: serverPathPrefix,
+			},
 			AppBarTitle:        "Settings",
-			ServerPathPrefix:   serverPathPrefix,
 			EnableBackButton:   true,
 			BackButtonCallback: fmt.Sprintf("location.pathname = \"%s\"", serverPathPrefix),
 		},
