@@ -13,7 +13,7 @@ func DevicesPage(serverPathPrefix string, devices ...*api.Device) Node {
 	return basePageLayout("PicoW LED | Devices", serverPathPrefix,
 		Div(
 			Class("ui-container ui-auto-scroll ui-hide-scrollbar"),
-			Style("max-height: 100%; padding-top: var(--ui-app-bar-height);"),
+			Style("height: 100%; padding-top: var(--ui-app-bar-height);"),
 			// Devices List
 			Span(
 				Class("ui-flex column gap align-center"),
