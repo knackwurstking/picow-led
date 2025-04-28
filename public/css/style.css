@@ -1,8 +1,9 @@
-html,
+jtml,
 body,
 main {
     width: 100%;
     height: 100%;
+    overscroll-behavior-y: none !important;
 }
 
 .online-indicator[data-state] {
