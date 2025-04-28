@@ -9,6 +9,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type Config struct {
+	Servers []*Server `json,yaml:"servers,omitempty"`
+}
+
 type Device struct {
 	Server *Server `json:"server"`
 
@@ -19,6 +23,13 @@ type Device struct {
 	Color MicroColor `json:"color"`
 	// Pins can be nil
 	Pins MicroPins `json:"pins"`
+}
+
+// Server contains host and port in use from a Device
+type Server struct {
+	Addr string `json,yaml:"addr"`
+	// Name could be empty (optional)
+	Name string `json,yaml:"name"`
 }
 
 func GetApiConfig(paths ...string) (*Config, error) {

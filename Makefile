@@ -14,10 +14,6 @@ generate:
 	# NOTE: Install eslint with `npm init @eslint/config@latest`
 	npx vite build --config vite.config.js
 	go mod tidy -v
-	templ generate 
-
-watch-templ:
-	templ generate --watch
 
 dev:
 	make generate

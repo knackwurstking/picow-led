@@ -8,7 +8,6 @@ import (
 
 type Options struct {
 	ServerPathPrefix string      `json,yaml:"server-path-prefix"`
-	Version          string      `json,yaml:"version"`
 	Api              *api.Config `json,yaml:"api"`
 }
 

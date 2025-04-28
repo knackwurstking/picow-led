@@ -4,7 +4,6 @@ go 1.24
 
 require (
 	github.com/SuperPaintman/nice v0.0.0-20211001214957-a29cd3367b17
-	github.com/a-h/templ v0.3.857
 	github.com/labstack/echo/v4 v4.13.3
 	gopkg.in/yaml.v3 v3.0.1
 	maragu.dev/gomponents v1.1.0
