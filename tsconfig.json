@@ -1,8 +1,7 @@
 {
     "compilerOptions": {
-        "moduleResolution": "esnext",
         "target": "ES6",
-        "module": "umd",
+        "module": "CommonJS",
         "allowJs": true,
         "checkJs": true,
         "noImplicitAny": true
