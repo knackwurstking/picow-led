@@ -187,7 +187,7 @@
         window.addEventListener("load", function () {
             navigator.serviceWorker
                 .register("{{ .ServerPathPrefix }}/js/service-worker.js", {
-                    scope: "{{ .ServerPathPrefix }}",
+                    scope: "{{ .ServerPathPrefix }}/",
                 })
                 .then(function (reg) {
                     console.info("Service worker registered", reg);
