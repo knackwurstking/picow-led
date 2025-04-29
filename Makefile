@@ -14,13 +14,12 @@ init:
 
 generate:
 	# NOTE: Install eslint with `npm init @eslint/config@latest`
-	npx vite build --config vite.config.js
 	go mod tidy -v
 
 dev:
 	make generate
 	which gow || (echo 'gow is not installed, install with: `go install github.com/mitranim/gow@latest`' && exit 1)
-	gow -v -r run . server -a :8887
+	gow -e=go,html,js,json -v -r run . server -a :8887
 
 run:
 	make generate
