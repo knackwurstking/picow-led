@@ -64,18 +64,24 @@
 
         /** @type {NodeListOf<HTMLElement>} */
         const items = document.querySelectorAll(`.ui-app-bar [data-name]`);
+        let match = false;
         for (const item of items) {
             const dataName = item.getAttribute("data-name") || "";
 
+            match = false;
             for (const name of itemNames) {
                 if (name === dataName) {
-                    // Enable
-                    item.style.display = "inline-flex";
-                    enabledItems[name] = item;
-                } else {
-                    // Disable
-                    item.style.display = "none";
+                    match = true;
                 }
+            }
+
+            if (match) {
+                // Enable
+                item.style.display = "inline-flex";
+                enabledItems[dataName] = item;
+            } else {
+                // Disable
+                item.style.display = "none";
             }
         }
 
