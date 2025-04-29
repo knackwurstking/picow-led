@@ -16,14 +16,20 @@
 
     <title>{{ .Title }}</title>
 
-    {{ block "script-window-api" . }}
-    {{ end }}
+    <script>
+        //{{ block "script-window-api". }}
+        //{{end}}
+    </script>
 
-    {{ block "script-window-ws" . }}
-    {{ end }}
+    <script>
+        //{{ block "script-window-ws". }}
+        //{{end}}
+    </script>
 
-    {{ block "script-window-utils" . }}
-    {{ end }}
+    <script>
+        //{{ block "script-window-utils" . }}
+        //{{ end }}
+    </script>
 
     <script>
         window.utils.registerServiceWorker()

@@ -28,10 +28,6 @@ type Frontend struct {
 
 func (f *Frontend) BasicPatterns() []string {
 	return []string{
-		// TODO: Need to test this: (not sure if this works)
-		// "/components/*.go.html",
-		// "/scripts/*.js",
-
 		"components/online-indicator.go.html",
 		"components/power-button.go.html",
 		"scripts/base-layout.js",
@@ -43,30 +39,37 @@ func (f *Frontend) BasicPatterns() []string {
 
 // serve template data
 func (f *Frontend) serve(c echo.Context, content content, data frontendTemplateData) error {
-	patterns := f.BasicPatterns()
-	patterns = append(patterns,
+	patterns := []string{
 		"page.go.html",               // There is only one page for now
 		"layout/base-layout.go.html", // There is also only on layout for now
 		fmt.Sprintf("layout/content/%s.go.html", content),
-	)
+	}
+	patterns = append(patterns, f.BasicPatterns()...)
 
 	t, err := template.ParseFS(f.Templates, patterns...)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	c.Response().Header().Add("Content-Type", "text/html")
-	return t.Execute(c.Response().Writer, data)
+	c.Response().Header().Add("Content-Type", "text/html; charset=utf-8")
+	err = t.Execute(c.Response().Writer, data)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return nil
 }
 
 type frontendTemplateData struct {
 	ServerPathPrefix string
+	Title            string
 }
 
 func frontend(e *echo.Echo, o Frontend) {
 	e.GET(o.ServerPathPrefix+"/", func(c echo.Context) error {
 		return o.serve(c, contentDevices, frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
+			Title:            "PicoW LED | Devices",
 		})
 	})
 
@@ -90,12 +93,14 @@ func frontend(e *echo.Echo, o Frontend) {
 
 		return o.serve(c, contentDevicesAddr, frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
+			Title:            fmt.Sprintf("PicoW LED | %s", addr),
 		})
 	})
 
 	e.GET(o.ServerPathPrefix+"/settings", func(c echo.Context) error {
 		return o.serve(c, contentSettings, frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
+			Title:            "PicoW LED | Settings",
 		})
 	})
 }
