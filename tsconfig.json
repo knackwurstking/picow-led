@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "moduleResolution": "esnext",
         "target": "ES6",
         "module": "umd",
         "allowJs": true,

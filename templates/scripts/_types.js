@@ -1,4 +1,7 @@
 /**
+ * @typedef UI
+ * @type {import("ui")}
+ *
  * @typedef Api
  * @type {{
  *  devices: () => Promise<Device[]>;
