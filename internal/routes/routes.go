@@ -9,7 +9,6 @@ import (
 type Options struct {
 	Api      Api
 	Frontend Frontend
-	PWA      PWA
 }
 
 func Create(e *echo.Echo, o Options) {
@@ -17,5 +16,4 @@ func Create(e *echo.Echo, o Options) {
 
 	apiDevices(e, o.Api)
 	frontend(e, o.Frontend)
-	pwa(e, o.PWA)
 }

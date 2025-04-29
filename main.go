@@ -114,11 +114,8 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			},
 			Frontend: routes.Frontend{
 				ServerPathPrefix: serverPathPrefix,
-				Templates:        templatesFS(),
-			},
-			PWA: routes.PWA{
-				ServerPathPrefix: serverPathPrefix,
 				Version:          version,
+				Templates:        templatesFS(),
 			},
 		})
 
