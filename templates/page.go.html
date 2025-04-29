@@ -16,9 +16,14 @@
 
     <title>{{ .Title }}</title>
 
-    <script src="{{ .ServerPathPrefix }}/js/window-api.js"></script>
-    <script src="{{ .ServerPathPrefix }}/js/window-ws.js"></script>
-    <script src="{{ .ServerPathPrefix }}/js/window-utils.js"></script>
+    {{ block "script-window-api" . }}
+    {{ end }}
+
+    {{ block "script-window-ws" . }}
+    {{ end }}
+
+    {{ block "script-window-utils" . }}
+    {{ end }}
 
     <script>
         window.utils.registerServiceWorker()

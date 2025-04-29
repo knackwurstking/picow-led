@@ -27,6 +27,7 @@
         </span>
     </div>
 
-    <script src="{{ .ServerPathPrefix }}/js/base-layout.js"></script>
+    {{ block "script-base-layout" . }}
+    {{ end }}
 </main>
 {{ end }}
