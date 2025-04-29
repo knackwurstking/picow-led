@@ -9,7 +9,7 @@ clean:
 init:
 	npm install
 	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.1.0.css
-	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/css/ui-v4.1.0.min.umd.cjs
+	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/js/ui-v4.1.0.min.umd.cjs
 	go mod tidy -v
 
 generate:
