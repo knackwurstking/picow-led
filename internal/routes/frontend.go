@@ -2,6 +2,8 @@ package routes
 
 import (
 	"fmt"
+	"html/template"
+	"io/fs"
 	"net/http"
 	"net/url"
 	"picow-led/internal/api"
@@ -9,20 +11,55 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	contentDevices     content = "devices"
+	contentDevicesAddr content = "devices-addr"
+	contentSettings    content = "settings"
+)
+
 var FrontendCache []*api.Device
+
+type content string
 
 type Frontend struct {
 	ServerPathPrefix string
+	Templates        fs.FS
 }
 
-// TODO: gomponents "../../ui" kicked and replaces with "../../templates"
-func frontend(e *echo.Echo, data Frontend) {
-	e.GET(data.ServerPathPrefix+"/", func(c echo.Context) error {
-		// return ui.DevicesPage(data.ServerPathPrefix, FrontendCache...).Render(c.Response().Writer)
-		return fmt.Errorf("under construction")
+func (f *Frontend) BasicPatterns() []string {
+	return []string{}
+}
+
+// serve template data
+func (f *Frontend) serve(c echo.Context, content content, data frontendTemplateData) error {
+	patterns := f.BasicPatterns()
+	patterns = append(patterns,
+		"page.go.html",               // There is only one page for now
+		"layout/base-layout.go.html", // There is also only on layout for now
+		fmt.Sprintf("layout/content/%s.go.html", content),
+	)
+
+	t, err := template.ParseFS(f.Templates, patterns...)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	c.Response().Header().Add("Content-Type", "text/html")
+	return t.Execute(c.Response().Writer, data)
+}
+
+type frontendTemplateData struct {
+	ServerPathPrefix string
+}
+
+func frontend(e *echo.Echo, o Frontend) {
+	e.GET(o.ServerPathPrefix+"/", func(c echo.Context) error {
+		return o.serve(c, contentDevices, frontendTemplateData{
+			ServerPathPrefix: o.ServerPathPrefix,
+		})
 	})
 
-	e.GET(data.ServerPathPrefix+"/devices/:addr", func(c echo.Context) error {
+	e.GET(o.ServerPathPrefix+"/devices/:addr", func(c echo.Context) error {
 		addr, err := url.QueryUnescape(c.Param("addr"))
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
@@ -40,12 +77,14 @@ func frontend(e *echo.Echo, data Frontend) {
 			return c.String(http.StatusNotFound, fmt.Sprintf("device \"%s\" not found", addr))
 		}
 
-		// return ui.DevicesAddrPage(data.ServerPathPrefix, device).Render(c.Response().Writer)
-		return fmt.Errorf("under construction")
+		return o.serve(c, contentDevicesAddr, frontendTemplateData{
+			ServerPathPrefix: o.ServerPathPrefix,
+		})
 	})
 
-	e.GET(data.ServerPathPrefix+"/settings", func(c echo.Context) error {
-		// return ui.SettingsPage(data.ServerPathPrefix).Render(c.Response().Writer)
-		return fmt.Errorf("under construction")
+	e.GET(o.ServerPathPrefix+"/settings", func(c echo.Context) error {
+		return o.serve(c, contentSettings, frontendTemplateData{
+			ServerPathPrefix: o.ServerPathPrefix,
+		})
 	})
 }

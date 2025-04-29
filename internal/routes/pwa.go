@@ -2,6 +2,7 @@ package routes
 
 import (
 	"html/template"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -151,7 +152,7 @@ func pwa(e *echo.Echo, data PWA) {
 	e.GET(data.ServerPathPrefix+"/manifest.json", func(c echo.Context) error {
 		t, err := template.New("manifest.json").Parse(manifest)
 		if err != nil {
-			return err
+			return c.String(http.StatusInternalServerError, err.Error())
 		}
 		c.Response().Header().Add("Content-Type", "application/json")
 		return t.Execute(c.Response().Writer, data)
@@ -160,7 +161,7 @@ func pwa(e *echo.Echo, data PWA) {
 	e.GET(data.ServerPathPrefix+"/js/service-worker.js", func(c echo.Context) error {
 		t, err := template.New("service-worker.js").Parse(serviceWorker)
 		if err != nil {
-			return err
+			return c.String(http.StatusInternalServerError, err.Error())
 		}
 		c.Response().Header().Add("Content-Type", "application/javascript")
 		c.Response().Header().Add("Service-Worker-Allowed", "/")
