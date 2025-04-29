@@ -1,5 +1,40 @@
 //{{ define "script-devices" }}
 window.addEventListener("load", async () => {
+    /** @type {UI} */
+    // @ts-ignore
+    const ui = window.ui;
+
+    /** @type {UIStore} */
+    const store = new ui.Store("picow-led");
+    store.set("devices", [], true);
+    store.listen(
+        "devices",
+        (devices) => {
+            /** @type {HTMLElement} */
+            const devicesList = document.querySelector(
+                "._content.devices > .list",
+            );
+            devicesList.innerHTML = "";
+
+            /** @type {HTMLTemplateElement} */
+            const template = document.querySelector(
+                `template[name="device-list-item"]`,
+            );
+
+            devices.forEach((device) => {
+                /** @type {HTMLElement} */
+                const item = template.content
+                    .cloneNode(true)
+                    // @ts-ignore
+                    .querySelector(".device-list-item");
+
+                devicesList.appendChild(item);
+                utils.updateDeviceListItem(item, device);
+            });
+        },
+        true,
+    );
+
     /** @type {Utils} */
     // @ts-ignore
     const utils = window.utils;
@@ -18,25 +53,10 @@ window.addEventListener("load", async () => {
 
     items["title"].innerText = "Devices";
 
-    // Setup Devices List
+    // Fetch Devices from the api (if not offline)
 
-    /** @type {HTMLElement} */
-    const devicesList = document.querySelector("._content.devices > .list");
-    devicesList.innerHTML = "";
-
-    /** @type {HTMLTemplateElement} */
-    const template = document.querySelector(
-        `template[name="device-list-item"]`,
-    );
-    (await api.devices()).forEach((device) => {
-        /** @type {HTMLElement} */
-        const item = template.content
-            .cloneNode(true)
-            // @ts-ignore
-            .querySelector(".device-list-item");
-
-        devicesList.appendChild(item);
-        utils.updateDeviceListItem(item, device);
+    api.devices().then((devices) => {
+        store.set("devices", devices);
     });
 });
 //{{ end }}

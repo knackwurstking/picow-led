@@ -2,6 +2,9 @@
  * @typedef UI
  * @type {import("ui")}
  *
+ * @typedef UIStore
+ * @type {import("ui").Store<{ devices: Device[] }>}
+ *
  * @typedef Api
  * @type {{
  *  devices: () => Promise<Device[]>;

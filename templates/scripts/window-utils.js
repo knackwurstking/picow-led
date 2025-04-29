@@ -4,9 +4,11 @@
     // @ts-ignore
     const api = window.api;
 
+    /** @type {UI} */
+    // @ts-ignore
+    const ui = window.ui;
+
     /**
-     * TODO: Out of Date
-     *
      * @param {Event & { currentTarget: HTMLButtonElement }} ev
      * @returns {Promise<void>}
      */
@@ -27,15 +29,28 @@
         /** @type {string} */
         const addr = JSON.parse(deviceListItem.getAttribute("data-addr"));
 
-        // TODO: Get the color for this device from the storage somehow
-        /** @type {Device} */
-        let device = {
-            // @ts-ignore
-            server: {
-                addr: addr,
-            },
-        };
+        // Search the local storage for this device
+        /** @type {Device | null} */
+        let device = null;
 
+        /** @type {UIStore} */
+        const store = new ui.Store("picow-led");
+        const storeDevices = store.get("devices") || [];
+
+        for (const storeDevice of storeDevices) {
+            if (storeDevice.server.addr === addr) {
+                device = storeDevice;
+                break;
+            }
+        }
+
+        if (device === null) {
+            throw new Error(
+                `device for address ${device.server.addr} not found`,
+            );
+        }
+
+        // Set color
         /** @type {MicroColor} */
         let newColor;
         if (!device.color || !device.color.find((c) => c > 0)) {
@@ -44,6 +59,7 @@
             newColor = [0, 0, 0, 0];
         }
 
+        // Request to api
         try {
             device = (await api.setDevicesColor(newColor, device))[0];
         } catch (err) {
@@ -53,6 +69,17 @@
             return;
         }
 
+        // Update storage
+        store.update("devices", (storeDevices) => {
+            for (let x = 0; x < storeDevices.length; x++) {
+                if (storeDevices[x].server.addr === device.server.addr) {
+                    storeDevices[x] = device;
+                }
+            }
+            return storeDevices;
+        });
+
+        // Update .device-list-item
         /** @type {HTMLElement | null} */
         const item = document.querySelector(
             `.device-list-item[data-addr="${device.server.addr}"]`,
@@ -64,13 +91,12 @@
         }
         updateDeviceListItem(item, device);
 
+        // Set power button state
         if (Math.max(...device.color)) {
             target.setAttribute("data-state", "on");
         } else {
             target.setAttribute("data-state", "off");
         }
-
-        // TODO: Update storage, but for now i don't have any storage for this
     }
 
     /**
