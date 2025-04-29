@@ -15,17 +15,7 @@ type Options struct {
 func Create(e *echo.Echo, o Options) {
 	FrontendCache = api.GetDevices(o.Api.Config)
 
-	apiDevices(e, Api{
-		ServerPathPrefix: o.Api.ServerPathPrefix,
-		Config:           o.Api.Config,
-	})
-
-	frontend(e, Frontend{
-		ServerPathPrefix: o.Frontend.ServerPathPrefix,
-	})
-
-	pwa(e, PWA{
-		ServerPathPrefix: o.PWA.ServerPathPrefix,
-		Version:          o.PWA.Version,
-	})
+	apiDevices(e, o.Api)
+	frontend(e, o.Frontend)
+	pwa(e, o.PWA)
 }

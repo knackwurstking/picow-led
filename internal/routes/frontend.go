@@ -32,12 +32,12 @@ func (f *Frontend) BasicPatterns() []string {
 		// "/components/*.go.html",
 		// "/scripts/*.js",
 
-		"/components/online-indicator.go.html",
-		"/components/power-button.go.html",
-		"/scripts/base-layout.js",
-		"/scripts/window-api.js",
-		"/scripts/window-utils.js",
-		"/scripts/window-ws.js",
+		"components/online-indicator.go.html",
+		"components/power-button.go.html",
+		"scripts/base-layout.js",
+		"scripts/window-api.js",
+		"scripts/window-utils.js",
+		"scripts/window-ws.js",
 	}
 }
 
