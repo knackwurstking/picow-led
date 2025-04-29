@@ -27,7 +27,7 @@
         const deviceListItem = ev.currentTarget.closest(".device-list-item");
 
         /** @type {string} */
-        const addr = JSON.parse(deviceListItem.getAttribute("data-addr"));
+        const addr = deviceListItem.getAttribute("data-addr");
 
         // Search the local storage for this device
         /** @type {Device | null} */
