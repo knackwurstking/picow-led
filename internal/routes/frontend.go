@@ -32,6 +32,7 @@ func (f *Frontend) BasicPatterns() []string {
 	return []string{
 		"components/online-indicator.go.html",
 		"components/power-button.go.html",
+		"scripts/settings.js",
 		"scripts/base-layout.js",
 		"scripts/window-api.js",
 		"scripts/window-utils.js",
@@ -148,7 +149,7 @@ func frontend(e *echo.Echo, o Frontend) {
 	})
 
 	e.GET(o.ServerPathPrefix+"/js/service-worker.js", func(c echo.Context) error {
-		return o.serve(c, "pwa/service-worker", "text/javascript", frontendTemplateData{
+		return o.serve(c, "pwa/service-worker.js", "text/javascript", frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
 			Title:            "PicoW LED | Settings",
 		})

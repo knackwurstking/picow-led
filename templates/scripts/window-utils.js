@@ -56,24 +56,30 @@
 
     /**
      * @param {AppBarItemName[]} itemNames
-     * @returns {void}
+     * @returns {AppBarItems}
      */
     function setupAppBarItems(...itemNames) {
+        /** @type {AppBarItems} */
+        const enabledItems = {};
+
         /** @type {NodeListOf<HTMLElement>} */
-        const items = document.querySelectorAll(`.ui-app-bar .app-bar-item`);
+        const items = document.querySelectorAll(`.ui-app-bar [data-name]`);
         for (const item of items) {
             const dataName = item.getAttribute("data-name") || "";
 
-            for (const selector of itemNames) {
-                if (selector === dataName) {
+            for (const name of itemNames) {
+                if (name === dataName) {
                     // Enable
                     item.style.display = "inline-flex";
+                    enabledItems[name] = item;
                 } else {
                     // Disable
                     item.style.display = "none";
                 }
             }
         }
+
+        return enabledItems;
     }
 
     /**

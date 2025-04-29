@@ -9,13 +9,13 @@
             const resp = await fetch("{{ .ServerPathPrefix }}/api/ping");
             const data = await resp.text();
             if (data === "pong") {
-                utils.setOnlineIndicator(true);
+                utils.setOnlineIndicatorState(true);
             } else {
-                utils.setOnlineIndicator(false);
+                utils.setOnlineIndicatorState(false);
             }
         } catch (err) {
             console.error(err);
-            utils.setOnlineIndicator(false);
+            utils.setOnlineIndicatorState(false);
         }
     });
 })();
