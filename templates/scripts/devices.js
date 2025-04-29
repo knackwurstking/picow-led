@@ -36,7 +36,7 @@ window.addEventListener("load", async () => {
             .querySelector(".device-list-item");
 
         devicesList.appendChild(item);
-        utils.updateDeviceListItem(device);
+        utils.updateDeviceListItem(item, device);
     });
 });
 //{{ end }}
