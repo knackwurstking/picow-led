@@ -5,16 +5,17 @@ import (
 	"net/http"
 	"net/url"
 	"picow-led/internal/api"
-	"picow-led/ui"
 
 	"github.com/labstack/echo/v4"
 )
 
 var FrontendCache []*api.Device
 
+// TODO: gomponents "../../ui" kicked and replaces with "../../templates"
 func frontend(e *echo.Echo, data Options) {
-	e.GET(data.ServerPathPrefix+"", func(c echo.Context) error {
-		return ui.DevicesPage(data.ServerPathPrefix, FrontendCache...).Render(c.Response().Writer)
+	e.GET(data.ServerPathPrefix+"/", func(c echo.Context) error {
+		// return ui.DevicesPage(data.ServerPathPrefix, FrontendCache...).Render(c.Response().Writer)
+		return fmt.Errorf("under construction")
 	})
 
 	e.GET(data.ServerPathPrefix+"/devices/:addr", func(c echo.Context) error {
@@ -35,10 +36,12 @@ func frontend(e *echo.Echo, data Options) {
 			return c.String(http.StatusNotFound, fmt.Sprintf("device \"%s\" not found", addr))
 		}
 
-		return ui.DevicesAddrPage(data.ServerPathPrefix, device).Render(c.Response().Writer)
+		// return ui.DevicesAddrPage(data.ServerPathPrefix, device).Render(c.Response().Writer)
+		return fmt.Errorf("under construction")
 	})
 
 	e.GET(data.ServerPathPrefix+"/settings", func(c echo.Context) error {
-		return ui.SettingsPage(data.ServerPathPrefix).Render(c.Response().Writer)
+		// return ui.SettingsPage(data.ServerPathPrefix).Render(c.Response().Writer)
+		return fmt.Errorf("under construction")
 	})
 }

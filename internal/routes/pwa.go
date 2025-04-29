@@ -67,7 +67,7 @@ const CACHE_VERSION = "{{ .Version }}";
 const CURRENT_CACHE = "picow-led-" + "${CACHE_VERSION}";
 
 const cacheFiles = [
-    "{{ .ServerPathPrefix }}",
+    "{{ .ServerPathPrefix }}/",
     "{{ .ServerPathPrefix }}/settings",
     "{{ .ServerPathPrefix }}/css/style.css",
     "{{ .ServerPathPrefix }}/css/ui-v4.1.0.css",
