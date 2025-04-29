@@ -1,9 +1,9 @@
 {{ define "content" }}
 <div class="_content settings ui-container" style="height: 100%; padding-top: var(--ui-app-bar-height);">
-
-    <!-- TODO: Maybe add a script which will enable all app bar buttons needed,
-            and disable all app bar buttons not needed, need and utils for this
-            app bar stuff -->
-
 </div>
+
+<script>
+    {{ block "script-settings". } }
+    {{end} }
+</script>
 {{ end }}
