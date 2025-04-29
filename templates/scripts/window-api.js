@@ -9,6 +9,40 @@
     }
 
     /**
+     * @param {Response} resp
+     * @param {string} url
+     * @returns {Promise<any>}
+     */
+    async function _handleResponse(resp, url) {
+        const status = resp.status;
+
+        if (!resp.ok) {
+            throw new Error(`${status}: ${(await resp.text()) || "???"}`);
+        }
+
+        /** @type {any | { message: string }} */
+        const respData = await resp.json();
+
+        console.debug(`Got data from "${url}":`, respData);
+
+        if (typeof respData === "object" && "message" in respData) {
+            throw new Error(`${status}: ${respData.message}`);
+        }
+
+        return respData;
+    }
+
+    /**
+     * @returns {Promise<Device[]>}
+     */
+    async function devices() {
+        const url = getUrl("/api/devices");
+
+        const resp = await fetch(url);
+        return await _handleResponse(resp, url);
+    }
+
+    /**
      * @param {MicroColor | undefined | null} color
      * @param {Device[]} devices
      * @returns {Promise<Device[]>}
@@ -29,21 +63,12 @@
             },
             body: JSON.stringify(data),
         });
-        const status = resp.status;
-
-        /** @type {any} */
-        const respData = await resp.json();
-
-        console.debug(`Got data from "${url}":`, respData);
-
-        if ("message" in respData) {
-            throw new Error(`${status}: ${respData.message}`);
-        }
-
-        return respData;
+        return _handleResponse(resp, url);
     }
 
+    /** @type {Api} */
     const api = {
+        devices,
         setDevicesColor,
     };
 

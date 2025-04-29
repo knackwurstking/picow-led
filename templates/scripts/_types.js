@@ -1,6 +1,7 @@
 /**
  * @typedef Api
  * @type {{
+ *  devices: () => Promise<Device[]>;
  *  setDevicesColor: (color: MicroColor | undefined | null, ...devices: Device[]) => Promise<Device[]>
  * }}
  *
@@ -14,7 +15,8 @@
  *
  * @typedef Utils
  * @type {{
- *  powerButtonClickHandler: (ev: Event & { currentTarget: HTMLButtonElement }) => Promise<void>;
+ *  onClickPowerButton: (ev: Event & { currentTarget: HTMLButtonElement }) => Promise<void>;
+ *  updateDeviceListItem: (item: HTMLElement, device: Device) => void;
  *  setupAppBarItems: (...itemNames: AppBarItemName[]) => AppBarItems;
  *  setOnlineIndicatorState: (state: boolean) => void;
  *  registerServiceWorker: () => void;

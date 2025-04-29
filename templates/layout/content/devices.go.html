@@ -1,21 +1,23 @@
 {{ define "content" }}
-<div class="_content devices ui-container" style="height: 100%; padding-top: var(--ui-app-bar-height);">
+<div class="_content devices ui-container ui-auto-scroll ui-hide-scrollbar"
+    style="height: 100%; padding-top: var(--ui-app-bar-height);">
     <span class="list ui-flex column gap align-center"></span>
 </div>
 
 <template name="device-list-item">
 
     <!--
-        data-key: `Device.Addr` string
+        data-addr: `Device.Addr` string
 
         Important selectors:
             - section.device-list-item: root element
                 - title: item title
                 - button.edit: route to "/devices/:addr"
                     data-addr: string, will be used for the default onclick handler
+                - button.power-button: (component)
     -->
     <section class="device-list-item ui-flex row gap justify-between align-center ui-padding" style="width: 100%"
-        data-ui-theme="dark" data-key>
+        data-ui-theme="dark" data-addr>
 
         <h3 class="title ui-padding"></h3>
 
