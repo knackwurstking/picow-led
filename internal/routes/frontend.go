@@ -28,6 +28,10 @@ type Frontend struct {
 
 func (f *Frontend) BasicPatterns() []string {
 	return []string{
+		// TODO: Need to test this: (not sure if this works)
+		// "/components/*.go.html",
+		// "/scripts/*.js",
+
 		"/components/online-indicator.go.html",
 		"/components/power-button.go.html",
 		"/scripts/base-layout.js",
