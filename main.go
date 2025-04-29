@@ -27,11 +27,23 @@ func init() {
 	}
 }
 
-//go:embed public
-var _public embed.FS
+//go:embed templates
+var templates embed.FS
 
-func public() fs.FS {
-	fs, err := fs.Sub(_public, "public")
+//go:embed public
+var public embed.FS
+
+func templatesFS() fs.FS {
+	fs, err := fs.Sub(templates, "templates")
+	if err != nil {
+		panic(err)
+	}
+
+	return fs
+}
+
+func publicFS() fs.FS {
+	fs, err := fs.Sub(public, "public")
 	if err != nil {
 		panic(err)
 	}
@@ -80,7 +92,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		}))
 
 		// Echo: Static File Server
-		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(public(), false))
+		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(publicFS(), false))
 
 		// Api Configuration
 		apiConfig, err := api.GetApiConfig(
@@ -102,6 +114,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			},
 			Frontend: routes.Frontend{
 				ServerPathPrefix: serverPathPrefix,
+				Templates:        templatesFS(),
 			},
 			PWA: routes.PWA{
 				ServerPathPrefix: serverPathPrefix,
