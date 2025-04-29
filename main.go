@@ -96,9 +96,17 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		}
 
 		routes.Create(e, routes.Options{
-			ServerPathPrefix: serverPathPrefix,
-			Version:          version,
-			Api:              apiConfig,
+			Api: routes.Api{
+				ServerPathPrefix: serverPathPrefix,
+				Config:           apiConfig,
+			},
+			Frontend: routes.Frontend{
+				ServerPathPrefix: serverPathPrefix,
+			},
+			PWA: routes.PWA{
+				ServerPathPrefix: serverPathPrefix,
+				Version:          version,
+			},
 		})
 
 		return e.Start(*addr)

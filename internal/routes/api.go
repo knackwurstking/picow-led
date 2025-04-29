@@ -8,6 +8,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type Api struct {
+	ServerPathPrefix string
+	Config           *api.Config
+}
+
 type RequestDevicesColorData struct {
 	Devices []*api.Device  `json:"devices"`
 	Color   api.MicroColor `json:"color"`
@@ -16,13 +21,13 @@ type RequestDevicesColorData struct {
 // apiDevices
 //   - GET - "/api/devices"
 //   - POST - "/api/devices/color" - { devices: Device[]; color: number[] }
-func apiDevices(e *echo.Echo, o Options) {
+func apiDevices(e *echo.Echo, o Api) {
 	e.GET(o.ServerPathPrefix+"/api/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	})
 
 	e.GET(o.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, api.GetDevices(o.ApiConfig))
+		return c.JSON(http.StatusOK, api.GetDevices(o.Config))
 	})
 
 	e.POST(o.ServerPathPrefix+"/api/devices/color", func(c echo.Context) error {
@@ -32,7 +37,7 @@ func apiDevices(e *echo.Echo, o Options) {
 			return err
 		}
 
-		data.Devices = api.PostDevicesColor(o.ApiConfig, data.Color, data.Devices...)
+		data.Devices = api.PostDevicesColor(o.Config, data.Color, data.Devices...)
 		for di, dd := range data.Devices {
 			for _, fd := range FrontendCache {
 				if dd.Server.Addr != fd.Server.Addr {

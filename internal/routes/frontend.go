@@ -11,8 +11,12 @@ import (
 
 var FrontendCache []*api.Device
 
+type Frontend struct {
+	ServerPathPrefix string
+}
+
 // TODO: gomponents "../../ui" kicked and replaces with "../../templates"
-func frontend(e *echo.Echo, data Options) {
+func frontend(e *echo.Echo, data Frontend) {
 	e.GET(data.ServerPathPrefix+"/", func(c echo.Context) error {
 		// return ui.DevicesPage(data.ServerPathPrefix, FrontendCache...).Render(c.Response().Writer)
 		return fmt.Errorf("under construction")

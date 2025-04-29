@@ -142,7 +142,12 @@ self.addEventListener("fetch", (evt) => {
 });
 `
 
-func pwa(e *echo.Echo, data Options) {
+type PWA struct {
+	ServerPathPrefix string
+	Version          string
+}
+
+func pwa(e *echo.Echo, data PWA) {
 	e.GET(data.ServerPathPrefix+"/manifest.json", func(c echo.Context) error {
 		t, err := template.New("manifest.json").Parse(manifest)
 		if err != nil {
