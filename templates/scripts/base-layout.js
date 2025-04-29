@@ -1,6 +1,7 @@
 //{{ define "script-base-layout" }}
 (() => {
     /** @type {Utils} */
+    // @ts-ignore
     const utils = window.utils;
 
     window.addEventListener("focus", async () => {

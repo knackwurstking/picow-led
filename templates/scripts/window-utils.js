@@ -1,6 +1,7 @@
 //{{ define "script-window-utils" }}
 (() => {
     /** @type {Api} */
+    // @ts-ignore
     const api = window.api;
 
     /**
@@ -96,6 +97,7 @@
         registerServiceWorker,
     };
 
+    // @ts-ignore
     window.utils = utils;
 })();
 //{{ end }}

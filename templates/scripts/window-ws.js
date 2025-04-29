@@ -72,6 +72,7 @@
         close,
     };
 
+    // @ts-ignore
     window.ws = ws;
 })();
 //{{ end }}

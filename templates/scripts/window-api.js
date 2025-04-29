@@ -1,7 +1,7 @@
 //{{ define "script-window-api" }}
 (() => {
     /**
-     * @path {string} path
+     * @param {string} path
      * @returns {string}
      */
     function getUrl(path) {
@@ -47,6 +47,7 @@
         setDevicesColor,
     };
 
+    // @ts-ignore
     window.api = api;
 })();
 //{{ end }}
