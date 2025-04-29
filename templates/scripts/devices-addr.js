@@ -4,6 +4,10 @@ window.addEventListener("load", async () => {
     // @ts-ignore
     const utils = window.utils;
 
+    /** @type {UI} */
+    // @ts-ignore
+    const ui = window.ui;
+
     // Setup AppBar Items
 
     const items = utils.setupAppBarItems(
@@ -17,8 +21,16 @@ window.addEventListener("load", async () => {
         location.pathname = `{{ .ServerPathPrefix }}/`;
     };
 
-    items["title"].innerText = decodeURIComponent(
-        location.pathname.split("/").reverse()[0],
-    );
+    const addr = decodeURIComponent(location.pathname.split("/").reverse()[0]);
+
+    /** @type {UIStore} */
+    const store = new ui.Store("picow-led");
+
+    /** @type {Device | undefined} */
+    const device = (store.get("devices") || []).find((device) => {
+        return device.server.addr === addr;
+    });
+
+    items["title"].innerText = device ? device.server.name : "";
 });
 //{{ end }}
