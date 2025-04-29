@@ -5,20 +5,8 @@
     const api = window.api;
 
     /**
-     * @param {boolean} state
-     * @returns {void}
-     */
-    function setOnlineIndicator(state) {
-        const el = document.querySelector(`.online-indicator`);
-
-        if (state) {
-            el.setAttribute(`data-state`, "online");
-        } else {
-            el.setAttribute(`data-state`, "offline");
-        }
-    }
-
-    /**
+     * TODO: Out of Date
+     *
      * @param {Event & { currentTarget: HTMLButtonElement }} ev
      * @returns {Promise<void>}
      */
@@ -67,6 +55,42 @@
     }
 
     /**
+     * @param {AppBarItemName[]} itemNames
+     * @returns {void}
+     */
+    function setupAppBarItems(...itemNames) {
+        /** @type {NodeListOf<HTMLElement>} */
+        const items = document.querySelectorAll(`.ui-app-bar .app-bar-item`);
+        for (const item of items) {
+            const dataName = item.getAttribute("data-name") || "";
+
+            for (const selector of itemNames) {
+                if (selector === dataName) {
+                    // Enable
+                    item.style.display = "inline-flex";
+                } else {
+                    // Disable
+                    item.style.display = "none";
+                }
+            }
+        }
+    }
+
+    /**
+     * @param {boolean} state
+     * @returns {void}
+     */
+    function setOnlineIndicatorState(state) {
+        const el = document.querySelector(`.online-indicator`);
+
+        if (state) {
+            el.setAttribute(`data-state`, "online");
+        } else {
+            el.setAttribute(`data-state`, "offline");
+        }
+    }
+
+    /**
      * @returns {void}
      */
     function registerServiceWorker() {
@@ -92,8 +116,9 @@
 
     /** @type {Utils} */
     const utils = {
-        setOnlineIndicator,
         powerButtonClickHandler,
+        setupAppBarItems,
+        setOnlineIndicatorState,
         registerServiceWorker,
     };
 

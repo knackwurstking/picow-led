@@ -14,10 +14,14 @@
  *
  * @typedef Utils
  * @type {{
- *  setOnlineIndicator: (state: boolean) => void;
  *  powerButtonClickHandler: (ev: Event & { currentTarget: HTMLButtonElement }) => Promise<void>;
+ *  setupAppBarItems: (...itemNames: string[]) => void;
+ *  setOnlineIndicatorState: (state: boolean) => void;
  *  registerServiceWorker: () => void;
  * }}
+ *
+ * @typedef AppBarItemName
+ * @type {"back-button" | "online-indicator" | "title" | "settings-button"}
  *
  * @typedef Device
  * @type {{

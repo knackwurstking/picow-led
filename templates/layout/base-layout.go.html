@@ -5,7 +5,7 @@
 
     <div class="ui-app-bar" data-ui-position="top">
         <span class="ui-app-bar-left">
-            <button style="display: none;" data-ui-variant="ghost" onclick="history.back()">
+            <button data-name="back-button" style="display: none;" data-ui-variant="ghost" onclick="history.back()">
                 Back
             </button>
 
@@ -15,12 +15,12 @@
 
         <span class="ui-app-bar-center">
             <span>
-                <h3 class="app-bar-title" style="display: none;"></h3>
+                <h3 data-name="title" class="app-bar-title" style="display: none;"></h3>
             </span>
         </span>
 
         <span class="ui-app-bar-right">
-            <button style="display: none;" data-ui-variant="ghost"
+            <button data-name="settings-button" style="display: none;" data-ui-variant="ghost"
                 onclick="location.pathname = '{{ .ServerPathPrefix }}/settings'">
                 Settings
             </button>
