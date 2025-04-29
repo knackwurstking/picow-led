@@ -32,6 +32,7 @@ func (f *Frontend) BasicPatterns() []string {
 	return []string{
 		"components/online-indicator.go.html",
 		"components/power-button.go.html",
+		"scripts/devices.js",
 		"scripts/settings.js",
 		"scripts/base-layout.js",
 		"scripts/window-api.js",

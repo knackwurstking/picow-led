@@ -14,5 +14,7 @@ window.addEventListener("load", () => {
         ev.preventDefault();
         location.pathname = `{{ .ServerPathPrefix }}/`;
     };
+
+    items["title"].innerText = "Settings";
 });
 //{{ end }}
