@@ -55,8 +55,19 @@ async function setupColorCache() {
             // @ts-ignore
             .querySelector(`.color-cache-item`);
 
+        item.setAttribute("data-color", `${colorCache[name].join(",")}`);
+
         colorCacheContainer.appendChild(item);
         w.utils.updateColorCacheItem(item, name, colorCache[name], (color) => {
+            const colorString = color.join(",");
+            Array.from(colorCacheContainer.children).forEach((child) => {
+                if (child.getAttribute("data-color") === colorString) {
+                    child.classList.add("active");
+                } else {
+                    child.classList.remove("active");
+                }
+            });
+
             // TODO: Update color picker here
         });
     }
