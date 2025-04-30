@@ -9,8 +9,10 @@ const cacheFiles = [
     "{{ .ServerPathPrefix }}/js/ui-v4.1.0.min.umd.cjs",
 ];
 
+const blackList = ["/api/ping"];
+
 self.addEventListener("activate", (evt) => {
-    console.debug("activate:", evt);
+    //console.debug("activate:", evt);
 
     evt.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -26,7 +28,7 @@ self.addEventListener("activate", (evt) => {
 });
 
 self.addEventListener("install", (evt) => {
-    console.debug("install:", evt);
+    //console.debug("install:", evt);
 
     evt.waitUntil(
         (() => {
@@ -49,12 +51,13 @@ self.addEventListener("install", (evt) => {
 });
 
 const fromNetwork = (request, timeout) => {
-    return new Promise((fulfill, reject) => {
+    return new Promise((resolve, reject) => {
         const timeoutId = setTimeout(reject, timeout);
+
         fetch(request).then((response) => {
             clearTimeout(timeoutId);
-            fulfill(response);
-            update(request);
+            update(request, response.clone());
+            resolve(response);
         }, reject);
     });
 };
@@ -69,28 +72,26 @@ const fromCache = (request) => {
         );
 };
 
-const update = (request) => {
+const update = (request, response) => {
     if (
-        !cacheFiles.find((file) =>
-            new RegExp(".*" + file + "$").test(request.url),
+        blackList.find((path) =>
+            new RegExp(".*" + path + "$").test(request.url),
         )
     ) {
         return new Promise(() =>
-            console.warn(`nope, no caching for: ${request.url}`),
+            console.warn(`Nope, no caching for: ${request.url}`),
         );
     }
 
     return caches.open(CURRENT_CACHE).then((cache) => {
-        fetch(request).then((response) => cache.put(request, response));
+        cache.put(request, response);
     });
 };
 
 self.addEventListener("fetch", (evt) => {
-    console.debug("fetch:", evt);
+    //console.debug("fetch:", evt);
 
     evt.respondWith(
         fromNetwork(evt.request, 1e4).catch(() => fromCache(evt.request)),
     );
-
-    evt.waitUntil(update(evt.request));
 });
