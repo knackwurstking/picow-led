@@ -6,6 +6,37 @@ main {
     overscroll-behavior-y: none !important;
 }
 
+.color-cache-item {
+    outline: 0.25rem solid transparent;
+}
+
+.color-cache-item.active {
+    outline: 0.25rem solid var(--ui-primary);
+}
+
+.device-list-item {
+    z-index: 0;
+    border-radius: var(--ui-radius);
+
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    overflow: visible
+}
+
+.device-list-item .background {
+    position: absolute;
+    z-index: -1;
+    top: 0.25rem;
+    right: 0.25rem;
+    bottom: 0.25rem;
+    left: 0.25rem;
+    border-radius: var(--ui-radius);
+
+    filter: blur(0.5rem);
+    -webkit-backdrop-filter: blur(0.5rem);
+}
+
 .online-indicator[data-state] {
     display: none;
 }
@@ -35,28 +66,7 @@ main {
     color: red;
 }
 
-.device-list-item {
-    z-index: 0;
-    border-radius: var(--ui-radius);
 
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-
-    overflow: visible
-}
-
-.device-list-item .background {
-    position: absolute;
-    z-index: -1;
-    top: 0.25rem;
-    right: 0.25rem;
-    bottom: 0.25rem;
-    left: 0.25rem;
-    border-radius: var(--ui-radius);
-
-    filter: blur(0.5rem);
-    -webkit-backdrop-filter: blur(0.5rem);
-}
 
 .power-button {
     color: inherit;
