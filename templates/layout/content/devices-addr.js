@@ -1,16 +1,21 @@
 //{{ define "script-devices-addr" }}
-window.addEventListener("load", async () => {
-    /** @type {Utils} */
-    // @ts-ignore
-    const utils = window.utils;
+/** @type {PageWindow} */
+// @ts-ignore
+const w = window;
 
-    /** @type {UI} */
-    // @ts-ignore
-    const ui = window.ui;
+/**
+ * @returns {string}
+ */
+function getDeviceAddress() {
+    return decodeURIComponent(location.pathname.split("/").reverse()[0]);
+}
 
-    // Setup AppBar Items
-
-    const items = utils.setupAppBarItems(
+/**
+ * @param {UIStore} store
+ * @returns {void}
+ */
+function setupAppBar(store) {
+    const items = w.utils.setupAppBarItems(
         "back-button",
         "online-indicator",
         "title",
@@ -21,16 +26,19 @@ window.addEventListener("load", async () => {
         location.pathname = `{{ .ServerPathPrefix }}/`;
     };
 
-    const addr = decodeURIComponent(location.pathname.split("/").reverse()[0]);
-
-    /** @type {UIStore} */
-    const store = new ui.Store("picow-led");
-
+    const addr = getDeviceAddress();
     /** @type {Device | undefined} */
     const device = (store.get("devices") || []).find((device) => {
         return device.server.addr === addr;
     });
 
     items["title"].innerText = device ? device.server.name : "";
+}
+
+window.addEventListener("load", async () => {
+    /** @type {UIStore} */
+    const store = new w.ui.Store("picow-led");
+
+    setupAppBar(store);
 });
 //{{ end }}

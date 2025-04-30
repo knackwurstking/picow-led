@@ -1,10 +1,12 @@
 //{{ define "script-settings" }}
-window.addEventListener("load", () => {
-    /** @type {Utils} */
-    // @ts-ignore
-    const utils = window.utils;
+/** @type {PageWindow} */
+const w = window;
 
-    const items = utils.setupAppBarItems(
+/**
+ * @returns {void}
+ */
+function setupAppBar() {
+    const items = w.utils.setupAppBarItems(
         "online-indicator",
         "title",
         "back-button",
@@ -16,5 +18,9 @@ window.addEventListener("load", () => {
     };
 
     items["title"].innerText = "Settings";
+}
+
+window.addEventListener("load", () => {
+    setupAppBar();
 });
 //{{ end }}

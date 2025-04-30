@@ -1,11 +1,25 @@
 //{{ define "script-devices" }}
-window.addEventListener("load", async () => {
-    /** @type {UI} */
-    // @ts-ignore
-    const ui = window.ui;
+/** @type {PageWindow} */
+// @ts-ignore
+const w = window;
 
+/**
+ * @returns {void}
+ */
+function setupAppBar() {
+    const items = w.utils.setupAppBarItems(
+        "online-indicator",
+        "title",
+        "settings-button",
+    );
+
+    items["title"].innerText = "Devices";
+}
+
+window.addEventListener("load", async () => {
     /** @type {UIStore} */
-    const store = new ui.Store("picow-led");
+    const store = new w.ui.Store("picow-led");
+
     store.set("devices", [], true);
     store.listen(
         "devices",
@@ -29,33 +43,16 @@ window.addEventListener("load", async () => {
                     .querySelector(".device-list-item");
 
                 devicesList.appendChild(item);
-                utils.updateDeviceListItem(item, device);
+                w.utils.updateDeviceListItem(item, device);
             });
         },
         true,
     );
 
-    /** @type {Utils} */
-    // @ts-ignore
-    const utils = window.utils;
+    setupAppBar();
 
-    /** @type {Api} */
-    // @ts-ignore
-    const api = window.api;
-
-    // Setup AppBar Items
-
-    const items = utils.setupAppBarItems(
-        "online-indicator",
-        "title",
-        "settings-button",
-    );
-
-    items["title"].innerText = "Devices";
-
-    // Fetch Devices from the api (if not offline)
-
-    api.devices().then((devices) => {
+    w.api.devices().then((devices) => {
+        // Fetch Devices from the api (if not offline)
         store.set("devices", devices);
     });
 });
