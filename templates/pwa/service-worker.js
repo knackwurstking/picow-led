@@ -70,9 +70,14 @@ const fromCache = (request) => {
 };
 
 const update = (request) => {
-    if (!cacheFiles.find((c) => c === request.url)) {
-        console.warn(`nope, no caching for this file: ${request.url}`);
-        return new Promise(() => {});
+    if (
+        !cacheFiles.find((file) =>
+            new RegExp(".*" + file + "$").test(request.url),
+        )
+    ) {
+        return new Promise(() =>
+            console.warn(`nope, no caching for: ${request.url}`),
+        );
     }
 
     return caches.open(CURRENT_CACHE).then((cache) => {
