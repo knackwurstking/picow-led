@@ -99,6 +99,7 @@ func frontend(e *echo.Echo, o Frontend) {
 	e.GET(o.ServerPathPrefix+"/", func(c echo.Context) error {
 		err := o.servePage(c, contentDevices, frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
+			Version:          o.Version,
 			Title:            "PicoW LED | Devices",
 		})
 		if err != nil {
@@ -132,6 +133,7 @@ func frontend(e *echo.Echo, o Frontend) {
 
 		return o.servePage(c, contentDevicesAddr, frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
+			Version:          o.Version,
 			Title:            fmt.Sprintf("PicoW LED | %s", addr),
 		})
 	})
@@ -139,6 +141,7 @@ func frontend(e *echo.Echo, o Frontend) {
 	e.GET(o.ServerPathPrefix+"/settings", func(c echo.Context) error {
 		return o.servePage(c, contentSettings, frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
+			Version:          o.Version,
 			Title:            "PicoW LED | Settings",
 		})
 	})
@@ -155,6 +158,7 @@ func frontend(e *echo.Echo, o Frontend) {
 	e.GET(o.ServerPathPrefix+"/service-worker.js", func(c echo.Context) error {
 		return o.serve(c, "pwa/service-worker.js", "text/javascript", frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
+			Version:          o.Version,
 			Title:            "PicoW LED | Settings",
 		})
 	})
