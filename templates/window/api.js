@@ -20,15 +20,8 @@
             throw new Error(`${status}: ${(await resp.text()) || "???"}`);
         }
 
-        /** @type {any | { message: string }} */
         const respData = await resp.json();
-
         console.debug(`Got data from "${url}":`, respData);
-
-        if (typeof respData === "object" && "message" in respData) {
-            throw new Error(`${status}: ${respData.message}`);
-        }
-
         return respData;
     }
 
