@@ -29,9 +29,22 @@ self.addEventListener("install", (evt) => {
     console.debug("install:", evt);
 
     evt.waitUntil(
-        caches.open(CURRENT_CACHE).then((cache) => {
-            return cache.addAll(cacheFiles);
-        }),
+        (() => {
+            caches
+                .keys()
+                .then((keyList) => {
+                    return Promise.all(
+                        keyList.map(function (key) {
+                            return caches.delete(key);
+                        }),
+                    );
+                })
+                .then(() => {
+                    caches.open(CURRENT_CACHE).then((cache) => {
+                        return cache.addAll(cacheFiles);
+                    });
+                });
+        })(),
     );
 });
 
@@ -57,11 +70,14 @@ const fromCache = (request) => {
 };
 
 const update = (request) => {
-    return caches
-        .open(CURRENT_CACHE)
-        .then((cache) =>
-            fetch(request).then((response) => cache.put(request, response)),
-        );
+    if (!cacheFiles.find((c) => c === request.url)) {
+        console.warn(`nope, no caching for this file: ${request.url}`);
+        return new Promise(() => {});
+    }
+
+    return caches.open(CURRENT_CACHE).then((cache) => {
+        fetch(request).then((response) => cache.put(request, response));
+    });
 };
 
 self.addEventListener("fetch", (evt) => {
