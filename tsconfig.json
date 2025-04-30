@@ -7,6 +7,6 @@
         "noImplicitAny": true
     },
     "include": [
-        "./templates/scripts"
+        "templates"
     ]
 }
