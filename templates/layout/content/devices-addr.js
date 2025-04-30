@@ -58,6 +58,7 @@ async function setupColorCache() {
         item.setAttribute("data-color", `${colorCache[name].join(",")}`);
 
         colorCacheContainer.appendChild(item);
+
         w.utils.updateColorCacheItem(item, name, colorCache[name], (color) => {
             const colorString = color.join(",");
             Array.from(colorCacheContainer.children).forEach((child) => {
