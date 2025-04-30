@@ -2,7 +2,10 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
+	"net/url"
 	"picow-led/internal/api"
 
 	"github.com/labstack/echo/v4"
@@ -18,23 +21,43 @@ type RequestDevicesColorData struct {
 	Color   api.MicroColor `json:"color"`
 }
 
-// apiDevices
-//   - GET - "/api/devices"
-//   - POST - "/api/devices/color" - { devices: Device[]; color: number[] }
-//   - TODO: Add color cache somehow
-func apiDevices(e *echo.Echo, o Api) {
-	e.GET(o.ServerPathPrefix+"/api/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
+// apiRoutes
+//   - apiSetupPing: 	GET 	- "/api/ping"
+//   - apiSetupDevices: GET 	- "/api/devices"
+//   - apiSetupDevices: POST 	- "/api/devices/color" <- { devices: Device[]; color: number[] }
+//   - apiSetupColor: 	GET 	- "/api/color"
+//   - apiSetupColor: 	GET 	- "/api/color/:name"
+//   - TODO: apiSetupColor: 	POST 	- "/api/color/:name" <- `number[]`
+func apiRoutes(e *echo.Echo, o Api) {
+	apiSetupPing(e, o)
+	apiSetupDevices(e, o)
+	apiSetupColor(e, o)
+}
 
+func apiSetupPing(e *echo.Echo, o Api) {
+	e.GET(o.ServerPathPrefix+"/api/ping", func(c echo.Context) error {
+		err := c.String(http.StatusOK, "pong")
+		if err != nil {
+			log.Println(err)
+		}
+		return err
+	})
+}
+
+func apiSetupDevices(e *echo.Echo, o Api) {
 	e.GET(o.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, api.GetDevices(o.Config))
+		err := c.JSON(http.StatusOK, api.GetDevices(o.Config))
+		if err != nil {
+			log.Println(err)
+		}
+		return err
 	})
 
 	e.POST(o.ServerPathPrefix+"/api/devices/color", func(c echo.Context) error {
 		var data RequestDevicesColorData
 		err := json.NewDecoder(c.Request().Body).Decode(&data)
 		if err != nil {
+			log.Println(err)
 			return err
 		}
 
@@ -55,6 +78,38 @@ func apiDevices(e *echo.Echo, o Api) {
 			}
 		}
 
-		return c.JSON(http.StatusOK, data.Devices)
+		err = c.JSON(http.StatusOK, data.Devices)
+		if err != nil {
+			log.Println(err)
+		}
+		return err
+	})
+}
+
+func apiSetupColor(e *echo.Echo, o Api) {
+	e.GET(o.ServerPathPrefix+"/api/color", func(c echo.Context) error {
+		err := c.JSON(http.StatusOK, cache.Color)
+		if err != nil {
+			log.Println(err)
+		}
+		return err
+	})
+
+	e.GET(o.ServerPathPrefix+"/api/color/:name", func(c echo.Context) error {
+		name := url.QueryEscape(c.Param("name"))
+		color, ok := cache.Color[name]
+		if !ok {
+			err := c.String(http.StatusBadRequest, fmt.Sprintf("Color for \"%s\" not found", name))
+			if err != nil {
+				log.Println(err)
+			}
+			return err
+		}
+
+		err := c.JSON(http.StatusOK, color)
+		if err != nil {
+			log.Println(err)
+		}
+		return err
 	})
 }
