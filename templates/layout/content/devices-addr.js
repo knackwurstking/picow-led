@@ -35,10 +35,33 @@ function setupAppBar(store) {
     items["title"].innerText = device ? device.server.name : "";
 }
 
+async function setupColorCache() {
+    const colorCacheContainer = document.querySelector(
+        `.color-cache-container`,
+    );
+    colorCacheContainer.innerHTML = "";
+
+    const colorCache = await w.api.color();
+
+    /** @type {HTMLTemplateElement} */
+    const template = document.querySelector(
+        `template[name="color-cache-item"]`,
+    );
+
+    for (const name in colorCache) {
+        /** @type {HTMLElement} */
+        // @ts-ignore
+        const item = template.content.cloneNode(true);
+        colorCacheContainer.appendChild(item);
+        w.utils.updateColorCacheItem(item, name, colorCache[name]);
+    }
+}
+
 window.addEventListener("load", async () => {
     /** @type {UIStore} */
     const store = new w.ui.Store("picow-led");
 
     setupAppBar(store);
+    setupColorCache();
 });
 //{{ end }}

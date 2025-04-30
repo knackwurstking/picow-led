@@ -51,7 +51,7 @@
         }
 
         // Set color
-        /** @type {MicroColor} */
+        /** @type {Color} */
         let newColor;
         if (!device.color || !device.color.find((c) => c > 0)) {
             newColor = [255, 255, 255, 255];
@@ -127,6 +127,16 @@
     }
 
     /**
+     * @param {HTMLElement} item
+     * @param {string} name
+     * @param {Color} color
+     * @returns {void}
+     */
+    function updateColorCacheItem(item, name, color) {
+        // TODO: ...
+    }
+
+    /**
      * @param {AppBarItemName[]} itemNames
      * @returns {AppBarItems}
      */
@@ -138,6 +148,8 @@
         const items = document.querySelectorAll(`.ui-app-bar [data-name]`);
         let match = false;
         for (const item of items) {
+            /** @type {AppBarItemName} */
+            // @ts-ignore
             const dataName = item.getAttribute("data-name") || "";
 
             match = false;
@@ -200,6 +212,7 @@
     const utils = {
         onClickPowerButton,
         updateDeviceListItem,
+        updateColorCacheItem,
         setupAppBarItems,
         setOnlineIndicatorState,
         registerServiceWorker,

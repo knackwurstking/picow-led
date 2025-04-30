@@ -36,7 +36,7 @@
     }
 
     /**
-     * @param {MicroColor | undefined | null} color
+     * @param {Color | undefined | null} color
      * @param {Device[]} devices
      * @returns {Promise<Device[]>}
      */
@@ -59,10 +59,20 @@
         return _handleResponse(resp, url);
     }
 
+    /**
+     * @returns {Promise<ColorCache>}
+     */
+    async function color() {
+        // TODO: ...
+
+        return {};
+    }
+
     /** @type {Api} */
     const api = {
         devices,
         setDevicesColor,
+        color,
     };
 
     // @ts-ignore

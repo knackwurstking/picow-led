@@ -11,7 +11,8 @@ declare type UIStore = import("ui").Store<{ devices: Device[] }>;
 
 declare type Api = {
     devices: () => Promise<Device[]>;
-    setDevicesColor: (color: MicroColor | undefined | null, ...devices: Device[]) => Promise<Device[]>;
+    setDevicesColor: (color: Color | undefined | null, ...devices: Device[]) => Promise<Device[]>;
+    color: () => Promise<ColorCache>
 };
 
 declare type WS = {
@@ -24,6 +25,7 @@ declare type WS = {
 declare type Utils = {
     onClickPowerButton: (ev: Event & { currentTarget: HTMLButtonElement }) => Promise<void>;
     updateDeviceListItem: (item: HTMLElement, device: Device) => void;
+    updateColorCacheItem: (item: HTMLElement, name: string, color: Color) => void;
     setupAppBarItems: (...itemNames: AppBarItemName[]) => AppBarItems;
     setOnlineIndicatorState: (state: boolean) => void;
     registerServiceWorker: () => void;
@@ -41,8 +43,8 @@ declare type Device = {
     server: Server;
     online: boolean;
     error: string;
-    color: MicroColor;
-    pins: MicroPins;
+    color: Color;
+    pins: Pins;
 };
 
 declare type Server = {
@@ -50,5 +52,7 @@ declare type Server = {
     name: string;
 };
 
-declare type MicroColor = number[]
-declare type MicroPins = number[] 
+declare type Color = number[]
+declare type Pins = number[]
+
+declare type ColorCache = Record<string, Color>
