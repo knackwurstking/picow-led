@@ -12,7 +12,7 @@ type Options struct {
 }
 
 func Create(e *echo.Echo, o Options) {
-	FrontendCache = api.GetDevices(o.Api.Config)
+	cache.Devices = api.GetDevices(o.Api.Config)
 
 	apiDevices(e, o.Api)
 	frontend(e, o.Frontend)

@@ -21,6 +21,7 @@ type RequestDevicesColorData struct {
 // apiDevices
 //   - GET - "/api/devices"
 //   - POST - "/api/devices/color" - { devices: Device[]; color: number[] }
+//   - TODO: Add color cache somehow
 func apiDevices(e *echo.Echo, o Api) {
 	e.GET(o.ServerPathPrefix+"/api/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
@@ -39,7 +40,7 @@ func apiDevices(e *echo.Echo, o Api) {
 
 		data.Devices = api.PostDevicesColor(o.Config, data.Color, data.Devices...)
 		for di, dd := range data.Devices {
-			for _, fd := range FrontendCache {
+			for _, fd := range cache.Devices {
 				if dd.Server.Addr != fd.Server.Addr {
 					continue
 				}

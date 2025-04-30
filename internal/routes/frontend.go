@@ -18,7 +18,10 @@ const (
 	contentSettings    content = "settings"
 )
 
-var FrontendCache []*api.Device
+var cache = &Cache{
+	Devices: make([]*api.Device, 0),
+	Color:   make(map[string]api.MicroColor),
+}
 
 type content string
 
@@ -26,6 +29,11 @@ type Frontend struct {
 	ServerPathPrefix string
 	Version          string
 	Templates        fs.FS
+}
+
+type Cache struct {
+	Devices []*api.Device
+	Color   map[string]api.MicroColor
 }
 
 func (f *Frontend) BasicPatterns() []string {
@@ -117,7 +125,7 @@ func frontend(e *echo.Echo, o Frontend) {
 		}
 
 		var device *api.Device
-		for _, d := range FrontendCache {
+		for _, d := range cache.Devices {
 			if d.Server.Addr == addr {
 				device = d
 				break
