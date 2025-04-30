@@ -24,6 +24,6 @@ type Cache struct {
 func Create(e *echo.Echo, o Options) {
 	cache.Devices = api.GetDevices(o.Api.Config)
 
-	apiDevices(e, o.Api)
-	frontend(e, o.Frontend)
+	apiRoutes(e, o.Api)
+	frontendRoutes(e, o.Frontend)
 }

@@ -93,7 +93,7 @@ type frontendTemplateData struct {
 	Title            string
 }
 
-func frontend(e *echo.Echo, o Frontend) {
+func frontendRoutes(e *echo.Echo, o Frontend) {
 	e.GET(o.ServerPathPrefix+"/", func(c echo.Context) error {
 		err := o.servePage(c, contentDevices, frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
