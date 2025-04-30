@@ -4,11 +4,16 @@
 
     <div class="ui-flex column gap">
 
-        <!-- TODO: Add color picker -->
-        <div class="color-picker"></div>
+        <h2>Color Picker</h2>
 
-        <!-- TODO: Add color cache container -->
-        <div class="color-cache-container ui-flex row gap wrap justify-center"></div>
+        <!-- TODO: Add color picker -->
+        <div class="color-picker">
+            <i class="ui-padding-x">Under Construction</i>
+        </div>
+
+        <h2>Color Cache</h2>
+
+        <div class="color-cache-container ui-flex row gap wrap"></div>
 
     </div>
 
@@ -17,12 +22,14 @@
 
 <template name="color-cache-item">
     <!--
-        .color-cache-item
+        .color-cache-item: just set the current color and call it a day, the 
+                           title attribute should be set to the color name
     -->
 
-    <span class="color-cache-item">
-        <!-- TODO: Create the color cache item here -->
-    </span>
+    <div class="color-cache-item ui-border" style="width: 2.5rem; height: 2.5rem;" title="">
+        <div style="background-color: currentColor; color: inherit; width: 100%; height: 100%; border-radius: inherit;">
+        </div>
+    </div>
 
 </template>
 
