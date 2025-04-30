@@ -136,10 +136,15 @@
     function updateColorCacheItem(item, name, color, onClick) {
         if (color.length < 3) color = [...color, 0, 0, 0];
         color = color.slice(0, 3);
-        item.title = name;
         item.style.color = `rgb(${color.join(", ")})`;
-        if (onClick) item.onclick = () => onClick(color);
-        else item.onclick = null;
+
+        item.title = name;
+
+        if (onClick) {
+            item.onclick = () => {
+                onClick(color);
+            };
+        } else item.onclick = null;
     }
 
     /**
