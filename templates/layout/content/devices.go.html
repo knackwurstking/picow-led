@@ -7,14 +7,10 @@
 <template name="device-list-item">
 
     <!--
-        data-addr: `Device.Addr` string
-
-        Important selectors:
-            - section.device-list-item: root element
-                - title: item title
-                - button.edit: route to "/devices/:addr"
-                    data-addr: string, will be used for the default onclick handler
-                - button.power-button: (component)
+        .device-list-item: root element: data-addr (string)
+            .title
+            button.edit: data-addr (string), routes to "/devices/:addr"
+            .power-button (component)
     -->
     <section class="device-list-item ui-flex row gap justify-between align-center ui-padding" style="width: 100%"
         data-addr>
