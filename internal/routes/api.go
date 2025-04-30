@@ -16,18 +16,13 @@ type Api struct {
 	Config           *api.Config
 }
 
-type RequestDevicesColorData struct {
-	Devices []*api.Device  `json:"devices"`
-	Color   api.MicroColor `json:"color"`
-}
-
 // apiRoutes
 //   - apiSetupPing: 	GET 	- "/api/ping"
 //   - apiSetupDevices: GET 	- "/api/devices"
 //   - apiSetupDevices: POST 	- "/api/devices/color" <- { devices: Device[]; color: number[] }
 //   - apiSetupColor: 	GET 	- "/api/color"
 //   - apiSetupColor: 	GET 	- "/api/color/:name"
-//   - TODO: apiSetupColor: 	POST 	- "/api/color/:name" <- `number[]`
+//   - apiSetupColor: 	POST 	- "/api/color/:name" <- `number[]`
 func apiRoutes(e *echo.Echo, o Api) {
 	apiSetupPing(e, o)
 	apiSetupDevices(e, o)
@@ -54,15 +49,18 @@ func apiSetupDevices(e *echo.Echo, o Api) {
 	})
 
 	e.POST(o.ServerPathPrefix+"/api/devices/color", func(c echo.Context) error {
-		var data RequestDevicesColorData
-		err := json.NewDecoder(c.Request().Body).Decode(&data)
+		var reqData struct {
+			Devices []*api.Device  `json:"devices"`
+			Color   api.MicroColor `json:"color"`
+		}
+		err := json.NewDecoder(c.Request().Body).Decode(&reqData)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 
-		data.Devices = api.PostDevicesColor(o.Config, data.Color, data.Devices...)
-		for di, dd := range data.Devices {
+		reqData.Devices = api.PostDevicesColor(o.Config, reqData.Color, reqData.Devices...)
+		for di, dd := range reqData.Devices {
 			for _, fd := range cache.Devices {
 				if dd.Server.Addr != fd.Server.Addr {
 					continue
@@ -74,11 +72,11 @@ func apiSetupDevices(e *echo.Echo, o Api) {
 				fd.Online = dd.Online
 
 				// Data to return
-				data.Devices[di] = fd
+				reqData.Devices[di] = fd
 			}
 		}
 
-		err = c.JSON(http.StatusOK, data.Devices)
+		err = c.JSON(http.StatusOK, reqData.Devices)
 		if err != nil {
 			log.Println(err)
 		}
@@ -111,5 +109,19 @@ func apiSetupColor(e *echo.Echo, o Api) {
 			log.Println(err)
 		}
 		return err
+	})
+
+	e.POST(o.ServerPathPrefix+"/api/color/:name", func(c echo.Context) error {
+		name := url.QueryEscape(c.Param("name"))
+
+		var reqData api.MicroColor
+		err := json.NewDecoder(c.Request().Body).Decode(&reqData)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		cache.Color[name] = reqData
+		return nil
 	})
 }
