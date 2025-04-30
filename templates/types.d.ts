@@ -25,7 +25,7 @@ declare type WS = {
 declare type Utils = {
     onClickPowerButton: (ev: Event & { currentTarget: HTMLButtonElement }) => Promise<void>;
     updateDeviceListItem: (item: HTMLElement, device: Device) => void;
-    updateColorCacheItem: (item: HTMLElement, name: string, color: Color) => void;
+    updateColorCacheItem: (item: HTMLElement, name: string, color: Color, onClick: (color: Color) => void | Promise<void>) => void;
     setupAppBarItems: (...itemNames: AppBarItemName[]) => AppBarItems;
     setOnlineIndicatorState: (state: boolean) => void;
     registerServiceWorker: () => void;

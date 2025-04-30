@@ -56,7 +56,9 @@ async function setupColorCache() {
             .querySelector(`.color-cache-item`);
 
         colorCacheContainer.appendChild(item);
-        w.utils.updateColorCacheItem(item, name, colorCache[name]);
+        w.utils.updateColorCacheItem(item, name, colorCache[name], (color) => {
+            // TODO: Update color picker here
+        });
     }
 }
 
