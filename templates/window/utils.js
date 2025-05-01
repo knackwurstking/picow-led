@@ -9,6 +9,8 @@
     const ui = window.ui;
 
     /**
+     * TODO: Move this to devices.js
+     *
      * @param {Event & { currentTarget: HTMLButtonElement }} ev
      * @returns {Promise<void>}
      */
@@ -100,6 +102,8 @@
     }
 
     /**
+     * TODO: Move this to devices
+     *
      * @param {HTMLElement} item
      * @param {Device} device
      * @returns {void}
@@ -124,39 +128,6 @@
         // @ts-ignore
         powerButton.querySelector(`.background`).style.backgroundColor =
             `rgb(${device.color.slice(0, 3).join(", ")})`;
-    }
-
-    /**
-     * @param {HTMLElement} item
-     * @param {string} name
-     * @param {Color} color
-     * @param {(color: Color) => void|Promise<void>} onClick
-     * @returns {void}
-     */
-    function updateColorCacheItem(item, name, color, onClick) {
-        if (color.length < 3) color = [...color, 0, 0, 0];
-        color = color.slice(0, 3);
-        item.style.color = `rgb(${color.join(", ")})`;
-        item.setAttribute("data-color", `${color.join(",")}`);
-
-        item.title = name;
-
-        if (onClick) {
-            item.onclick = () => {
-                onClick(color);
-            };
-        } else item.onclick = null;
-
-        const input = item.querySelector(`input`);
-        input.onchange = () => {
-            const value = (input.value || "#FFFFFF").slice(1);
-            const color = [];
-            for (let x = 0; x < value.length; x += 2) {
-                color.push(parseInt(value.slice(x, x + 2), 16));
-            }
-
-            updateColorCacheItem(item, name, color, onClick);
-        };
     }
 
     /**
@@ -235,7 +206,6 @@
     const utils = {
         onClickPowerButton,
         updateDeviceListItem,
-        updateColorCacheItem,
         setupAppBarItems,
         setOnlineIndicatorState,
         registerServiceWorker,
