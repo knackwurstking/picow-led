@@ -1,4 +1,4 @@
-//!{{ define "script-page-addr" }}
+//!{{ define "script-page-devices-addr" }}
 /** @type {PageWindow} */
 // @ts-ignore
 const w = window;
