@@ -23,8 +23,6 @@ declare type WS = {
 };
 
 declare type Utils = {
-    onClickPowerButton: (ev: Event & { currentTarget: HTMLButtonElement }) => Promise<void>;
-    updateDeviceListItem: (item: HTMLElement, device: Device) => void;
     setupAppBarItems: (...itemNames: AppBarItemName[]) => AppBarItems;
     setOnlineIndicatorState: (state: boolean) => void;
     registerServiceWorker: () => void;

@@ -69,12 +69,16 @@ window.addEventListener("load", async () => {
 });
 
 /**
+ * @param {string} name
+ * @param {Color} color
+ * @param {(color: Color) => void|Promise<void>} onClick
  * @returns {HTMLElement}
  */
 function createColorCacheItem(name, color, onClick) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="color-cache-item"]`);
     /** @type {HTMLElement} */
+    // @ts-ignore
     const item = t.content.cloneNode(true).querySelector(`*`);
     updateColorCacheItem(item, name, color, onClick);
     return item;

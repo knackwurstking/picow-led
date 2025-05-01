@@ -29,7 +29,7 @@ type Frontend struct {
 func (f *Frontend) BasicPatterns() []string {
 	return []string{
 		"components/online-indicator.go.html",
-		"components/power-button.go.html",
+		"components/svg-power.go.html",
 
 		"window/api.js",
 		"window/utils.js",
