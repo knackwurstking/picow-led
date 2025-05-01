@@ -1,3 +1,4 @@
+//!{{ define "script-window" }}
 /**
  * @param {string} path
  * @returns {string}
@@ -78,5 +79,4 @@ const api = {
     color,
 };
 
-// @ts-ignore
-window.api = api;
+export default api;

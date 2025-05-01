@@ -77,5 +77,4 @@ const utils = {
     registerServiceWorker,
 };
 
-// @ts-ignore
-window.utils = utils;
+export default utils;

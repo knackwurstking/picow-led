@@ -1,4 +1,4 @@
-//{{ define "script-devices" }}
+//!{{ define "script-page-devices" }}
 /** @type {PageWindow} */
 // @ts-ignore
 const w = window;
@@ -180,4 +180,4 @@ function updateDeviceListItem(item, device) {
     powerButton.querySelector(`.background`).style.backgroundColor =
         `rgb(${device.color.slice(0, 3).join(", ")})`;
 }
-//{{ end }}
+//!{{ end }}

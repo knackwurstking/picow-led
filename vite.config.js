@@ -25,4 +25,8 @@ export default defineConfig({
             },
         },
     },
+
+    esbuild: {
+        legalComments: "inline",
+    },
 });

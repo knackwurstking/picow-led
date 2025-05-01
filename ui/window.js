@@ -1,5 +1,8 @@
-//{{ define "script-window" }}
-import "./api.js";
-import "./ws.js";
-import "./utils.js";
-//{{ end }}
+import api from "./window/api.js";
+import ws from "./window/ws.js";
+import utils from "./window/utils.js";
+
+window.api = api;
+window.ws = ws;
+window.utils = utils;
+//!{{ end }}

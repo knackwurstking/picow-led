@@ -1,4 +1,4 @@
-//{{ define "script-devices-addr" }}
+//!{{ define "script-page-addr" }}
 /** @type {PageWindow} */
 // @ts-ignore
 const w = window;
@@ -121,4 +121,4 @@ function updateColorCacheItem(item, name, color, onClick) {
         updateColorCacheItem(item, name, color, onClick);
     };
 }
-//{{ end }}
+//!{{ end }}

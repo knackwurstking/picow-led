@@ -1,4 +1,4 @@
-//{{ define "script-settings" }}
+//!{{ define "script-page-settings" }}
 /** @type {PageWindow} */
 const w = window;
 
@@ -23,4 +23,4 @@ function setupAppBar() {
 window.addEventListener("load", () => {
     setupAppBar();
 });
-//{{ end }}
+//!{{ end }}

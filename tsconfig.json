@@ -4,7 +4,8 @@
         "module": "CommonJS",
         "allowJs": true,
         "checkJs": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "removeComments": false
     },
     "include": [
         "templates"

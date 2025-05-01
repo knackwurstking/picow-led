@@ -31,14 +31,11 @@ func (f *Frontend) BasicPatterns() []string {
 		"components/online-indicator.go.html",
 		"components/svg-power.go.html",
 
-		"window/api.js",
-		"window/utils.js",
-		"window/ws.js",
-
-		"layout/base-layout.js",
-		"layout/content/devices-addr.js",
-		"layout/content/devices.js",
-		"layout/content/settings.js",
+		"js/layouts/base.js",
+		"js/pages/devices-addr.js",
+		"js/pages/devices.js",
+		"js/pages/settings.js",
+		"js/window.js",
 	}
 }
 

@@ -1,4 +1,4 @@
-//{{ define "script-base-layout" }}
+//!{{ define "script-layout-base" }}
 (() => {
     /** @type {PageWindow} */
     // @ts-ignore
@@ -36,4 +36,4 @@
         window.dispatchEvent(new Event("focus"));
     });
 })();
-//{{ end }}
+//!{{ end }}
