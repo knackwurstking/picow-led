@@ -17,6 +17,20 @@ main {
     outline: var(--ui-border-width) solid var(--ui-primary);
 }
 
+.color-cache-item input[type="color"] {
+    display: none;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.color-cache-item.active input[type="color"] {
+    display: block;
+    position: absolute;
+}
+
 .device-list-item {
     z-index: 0;
     border-radius: var(--ui-radius);

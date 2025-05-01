@@ -137,6 +137,7 @@
         if (color.length < 3) color = [...color, 0, 0, 0];
         color = color.slice(0, 3);
         item.style.color = `rgb(${color.join(", ")})`;
+        item.setAttribute("data-color", `${color.join(",")}`);
 
         item.title = name;
 
@@ -145,6 +146,17 @@
                 onClick(color);
             };
         } else item.onclick = null;
+
+        const input = item.querySelector(`input`);
+        input.onchange = () => {
+            const value = (input.value || "#FFFFFF").slice(1);
+            const color = [];
+            for (let x = 0; x < value.length; x += 2) {
+                color.push(parseInt(value.slice(x, x + 2), 16));
+            }
+
+            updateColorCacheItem(item, name, color, onClick);
+        };
     }
 
     /**
