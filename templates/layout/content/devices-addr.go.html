@@ -4,14 +4,7 @@
 
     <div class="ui-flex column gap">
 
-        <h2>Color Picker</h2>
-
-        <!-- TODO: Add color picker -->
-        <div class="color-picker">
-            <i class="ui-padding-x">Under Construction</i>
-        </div>
-
-        <h2>Color Cache</h2>
+        <h2>Color Storage</h2>
 
         <div class="color-cache-container ui-flex row gap wrap"></div>
 
@@ -21,12 +14,9 @@
 
 
 <template name="color-cache-item">
-    <!--
-        .color-cache-item: just set the current color and call it a day, the 
-                           title attribute should be set to the color name
-    -->
+    <!-- TODO: Add input type color (hidden), but only open the color picker if item is active (class: ".active") -->
 
-    <div class="color-cache-item ui-border" style="width: 2.5rem; height: 2.5rem; cursor: pointer;" title="">
+    <div class="color-cache-item ui-border ui-padding" style="width: 7rem; height: 3.5rem;" title="">
         <div style="background-color: currentColor; color: inherit; width: 100%; height: 100%; border-radius: inherit;">
         </div>
     </div>
