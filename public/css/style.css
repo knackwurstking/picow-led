@@ -7,11 +7,14 @@ main {
 }
 
 .color-cache-item {
-    outline: 0.25rem solid transparent;
+    outline: var(--ui-border-width) solid transparent;
+    outline-offset: var(--ui-border-width);
+    border-radius: var(--ui-radius);
+    cursor: pointer;
 }
 
 .color-cache-item.active {
-    outline: 0.25rem solid var(--ui-primary);
+    outline: var(--ui-border-width) solid var(--ui-primary);
 }
 
 .device-list-item {
