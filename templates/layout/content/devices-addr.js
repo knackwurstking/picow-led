@@ -35,7 +35,7 @@ function setupAppBar(store) {
     items["title"].innerText = device ? device.server.name : "";
 }
 
-async function setupColorCache() {
+async function setupColorStorage() {
     const colorCacheContainer = document.querySelector(
         `.color-cache-container`,
     );
@@ -49,7 +49,10 @@ async function setupColorCache() {
 
             Array.from(colorCacheContainer.children).forEach((child) => {
                 if (child.getAttribute("data-color") === colorString) {
-                    child.classList.add("active");
+                    if (!child.classList.contains("active")) {
+                        child.classList.add("active");
+                        // TODO: api: Update device color
+                    }
                 } else {
                     child.classList.remove("active");
                 }
@@ -65,7 +68,7 @@ window.addEventListener("load", async () => {
     const store = new w.ui.Store("picow-led");
 
     setupAppBar(store);
-    setupColorCache();
+    setupColorStorage();
 });
 
 /**
@@ -112,6 +115,8 @@ function updateColorCacheItem(item, name, color, onClick) {
         for (let x = 0; x < value.length; x += 2) {
             color.push(parseInt(value.slice(x, x + 2), 16));
         }
+
+        // TODO: api: Update color storage and device color
 
         updateColorCacheItem(item, name, color, onClick);
     };
