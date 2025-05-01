@@ -9,7 +9,7 @@ const cacheFiles = [
     "{{ .ServerPathPrefix }}/js/ui-v4.1.0.min.umd.cjs",
 ];
 
-const blackList = ["/api/ping"];
+const blackList = ["/api/.*"];
 
 self.addEventListener("activate", (evt) => {
     //console.debug("activate:", evt);
