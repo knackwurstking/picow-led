@@ -37,7 +37,7 @@ function setupAppBar(store) {
 
 async function setupColorStorage() {
     const colorCacheContainer = document.querySelector(
-        `.color-cache-container`,
+        `.color-storage-container`,
     );
     colorCacheContainer.innerHTML = "";
 
@@ -79,7 +79,7 @@ window.addEventListener("load", async () => {
  */
 function createColorCacheItem(name, color, onClick) {
     /** @type {HTMLTemplateElement} */
-    const t = document.querySelector(`template[name="color-cache-item"]`);
+    const t = document.querySelector(`template[name="color-storage-item"]`);
     /** @type {HTMLElement} */
     // @ts-ignore
     const item = t.content.cloneNode(true).querySelector(`*`);

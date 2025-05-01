@@ -6,18 +6,18 @@ main {
     overscroll-behavior-y: none !important;
 }
 
-.color-cache-item {
+.color-storage-item {
     outline: var(--ui-border-width) solid transparent;
     outline-offset: var(--ui-border-width);
     border-radius: var(--ui-radius);
     cursor: pointer;
 }
 
-.color-cache-item.active {
+.color-storage-item.active {
     outline: var(--ui-border-width) solid var(--ui-primary);
 }
 
-.color-cache-item input[type="color"] {
+.color-storage-item input[type="color"] {
     display: none;
     opacity: 0;
     top: 0;
@@ -26,7 +26,7 @@ main {
     height: 100%;
 }
 
-.color-cache-item.active input[type="color"] {
+.color-storage-item.active input[type="color"] {
     display: block;
     position: absolute;
 }
