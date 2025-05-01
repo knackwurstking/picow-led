@@ -7,3 +7,4 @@ bin
 dist
 public/css/ui*.css
 public/js/ui*js
+templates/js
