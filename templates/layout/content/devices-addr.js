@@ -44,10 +44,7 @@ async function setupColorCache() {
     const colorCache = await w.api.color();
 
     for (const name in colorCache) {
-        const item = createColorCacheItem();
-        colorCacheContainer.appendChild(item);
-
-        updateColorCacheItem(item, name, colorCache[name], (color) => {
+        const item = createColorCacheItem(name, colorCache[name], (color) => {
             const colorString = color.join(",");
 
             Array.from(colorCacheContainer.children).forEach((child) => {
@@ -58,6 +55,8 @@ async function setupColorCache() {
                 }
             });
         });
+
+        colorCacheContainer.appendChild(item);
     }
 }
 
