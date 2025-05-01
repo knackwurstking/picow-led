@@ -50,10 +50,7 @@ async function setupColorCache() {
 
     for (const name in colorCache) {
         /** @type {HTMLElement} */
-        const item = template.content
-            .cloneNode(true)
-            // @ts-ignore
-            .querySelector(`.color-cache-item`);
+        const item = template.content.cloneNode(true).querySelector(`*`);
         colorCacheContainer.appendChild(item);
 
         w.utils.updateColorCacheItem(item, name, colorCache[name], (color) => {
