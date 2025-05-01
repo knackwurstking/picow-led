@@ -65,7 +65,7 @@ async function setupColorStorage() {
 
 window.addEventListener("load", async () => {
     /** @type {UIStore} */
-    const store = new w.ui.Store("picow-led");
+    const store = new w.ui.Store("picow-led:");
 
     setupAppBar(store);
     setupColorStorage();

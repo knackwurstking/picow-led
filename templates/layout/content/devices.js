@@ -18,7 +18,7 @@ function setupAppBar() {
 
 window.addEventListener("load", async () => {
     /** @type {UIStore} */
-    const store = new w.ui.Store("picow-led");
+    const store = new w.ui.Store("picow-led:");
 
     store.set("devices", [], true);
     store.listen(
@@ -72,7 +72,7 @@ async function onClickPowerButton(ev) {
     let device = null;
 
     /** @type {UIStore} */
-    const store = new w.ui.Store("picow-led");
+    const store = new w.ui.Store("picow-led:");
     const storeDevices = store.get("devices") || [];
 
     for (const storeDevice of storeDevices) {
