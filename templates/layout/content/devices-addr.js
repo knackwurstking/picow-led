@@ -63,7 +63,11 @@ async function setupColorCache() {
             const colorString = color.join(",");
             Array.from(colorCacheContainer.children).forEach((child) => {
                 if (child.getAttribute("data-color") === colorString) {
-                    child.classList.add("active");
+                    if (child.classList.contains("active")) {
+                        // TODO: Add input type color (hidden), but only open the color picker if item is active (class: ".active")
+                    } else {
+                        child.classList.add("active");
+                    }
                 } else {
                     child.classList.remove("active");
                 }
