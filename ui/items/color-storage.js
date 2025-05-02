@@ -38,9 +38,10 @@ export function updateColorStorageItem(item, index, color, device, onClick) {
         };
     } else item.onclick = null;
 
-    const input = item.querySelector(`input`);
-    input.onchange = () => {
-        const value = (input.value || "#FFFFFF").slice(1);
+    item.querySelector(`input`).onchange = (
+        /** @type {Event & { currentTarget: HTMLInputElement }} */ ev,
+    ) => {
+        const value = (ev.currentTarget.value || "#FFFFFF").slice(1);
         const color = [];
         for (let x = 0; x < value.length; x += 2) {
             color.push(parseInt(value.slice(x, x + 2), 16));
