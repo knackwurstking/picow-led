@@ -3,12 +3,17 @@ export declare type PageWindow = Window & typeof globalThis & {
     api: Api;
     ws: WS;
     utils: Utils;
-    store: UIStore;
+    store: Store;
 };
 
 export declare type UI = typeof import("ui");
 
-export declare type UIStore = import("ui").Store<{ devices: Device[] }>;
+export declare type Store = {
+    obj: UIStore;
+    device: (addr: string) => Device;
+}
+
+export declare type UIStore = import("ui").Store<{ devices: Device[] }>
 
 export declare type Api = {
     devices: () => Promise<Device[]>;

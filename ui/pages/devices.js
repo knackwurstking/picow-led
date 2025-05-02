@@ -19,7 +19,7 @@
     }
 
     window.addEventListener("load", async () => {
-        w.store.listen("devices", (devices) => {
+        w.store.obj.listen("devices", (devices) => {
             /** @type {HTMLElement} */
             const devicesList = document.querySelector(
                 "._content.devices > .list",
@@ -36,7 +36,7 @@
 
         w.api.devices().then((devices) => {
             // Fetch Devices from the api (if not offline)
-            w.store.set("devices", devices);
+            w.store.obj.set("devices", devices);
         });
     });
 })();

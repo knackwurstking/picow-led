@@ -19,11 +19,7 @@
      * @returns {import("../types.d.ts").Device}
      */
     function getDevice() {
-        const addr = getDeviceAddress();
-
-        return (w.store.get("devices") || []).find((device) => {
-            return device.server.addr === addr;
-        });
+        return w.store.device(getDeviceAddress());
     }
 
     /**

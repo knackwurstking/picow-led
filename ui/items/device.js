@@ -80,18 +80,7 @@ async function onClickPowerButton(ev) {
         .getAttribute("data-addr");
 
     // Search the local storage for this device
-    /** @type {import("../types.d.ts").Device | null} */
-    let device = null;
-    for (const storeDevice of w.store.get("devices") || []) {
-        if (storeDevice.server.addr === addr) {
-            device = storeDevice;
-            break;
-        }
-    }
-
-    if (device === null) {
-        throw new Error(`device for address ${device.server.addr} not found`);
-    }
+    let device = w.store.device(addr);
 
     // Set color
     /** @type {import("../types.d.ts").Color} */
@@ -112,7 +101,7 @@ async function onClickPowerButton(ev) {
     }
 
     // Update storage
-    w.store.update("devices", (storeDevices) => {
+    w.store.obj.update("devices", (storeDevices) => {
         for (let x = 0; x < storeDevices.length; x++) {
             if (storeDevices[x].server.addr === device.server.addr) {
                 storeDevices[x] = device;
@@ -120,17 +109,6 @@ async function onClickPowerButton(ev) {
         }
         return storeDevices;
     });
-
-    // TODO: Remove this after testing
-    //// Update .device-list-item
-    ///** @type {HTMLElement | null} */
-    //const item = document.querySelector(
-    //    `.device-list-item[data-addr="${device.server.addr}"]`,
-    //);
-    //if (!item) {
-    //    throw new Error(`device-list-item for ${device.server.addr} not found`);
-    //}
-    //updateDeviceItem(item, device);
 
     return defer();
 }
