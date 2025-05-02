@@ -18,22 +18,18 @@
     }
 
     window.addEventListener("load", async () => {
-        w.store.listen(
-            "devices",
-            (devices) => {
-                /** @type {HTMLElement} */
-                const devicesList = document.querySelector(
-                    "._content.devices > .list",
-                );
-                devicesList.innerHTML = "";
+        w.store.listen("devices", (devices) => {
+            /** @type {HTMLElement} */
+            const devicesList = document.querySelector(
+                "._content.devices > .list",
+            );
+            devicesList.innerHTML = "";
 
-                devices.forEach((device) => {
-                    const item = createDeviceListItem(device);
-                    devicesList.appendChild(item);
-                });
-            },
-            true,
-        );
+            devices.forEach((device) => {
+                const item = createDeviceListItem(device);
+                devicesList.appendChild(item);
+            });
+        });
 
         setupAppBar();
 
