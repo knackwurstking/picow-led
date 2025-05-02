@@ -8,7 +8,12 @@ import (
 
 var cache = &Cache{
 	Devices: make([]*api.Device, 0),
-	Color:   make(map[string]api.MicroColor),
+	Color: []api.MicroColor{
+		{255, 255, 255, 255},
+		{255, 0, 0, 0},
+		{0, 255, 0, 0},
+		{0, 0, 255, 0},
+	},
 }
 
 type Options struct {
@@ -18,7 +23,7 @@ type Options struct {
 
 type Cache struct {
 	Devices []*api.Device
-	Color   map[string]api.MicroColor
+	Color   []api.MicroColor
 }
 
 func Create(e *echo.Echo, o Options) {

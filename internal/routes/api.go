@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"picow-led/internal/api"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -21,8 +21,8 @@ type Api struct {
 //   - apiSetupDevices: GET 	- "/api/devices"
 //   - apiSetupDevices: POST 	- "/api/devices/color" <- { devices: Device[]; color: number[] }
 //   - apiSetupColor: 	GET 	- "/api/color"
-//   - apiSetupColor: 	GET 	- "/api/color/:name"
-//   - apiSetupColor: 	POST 	- "/api/color/:name" <- `number[]`
+//   - apiSetupColor: 	GET 	- "/api/color/:index"
+//   - apiSetupColor: 	POST 	- "/api/color/:index" <- `number[]`
 func apiRoutes(e *echo.Echo, o Api) {
 	apiSetupPing(e, o)
 	apiSetupDevices(e, o)
@@ -93,35 +93,45 @@ func apiSetupColor(e *echo.Echo, o Api) {
 		return err
 	})
 
-	e.GET(o.ServerPathPrefix+"/api/color/:name", func(c echo.Context) error {
-		name := url.QueryEscape(c.Param("name"))
-		color, ok := cache.Color[name]
-		if !ok {
-			err := c.String(http.StatusBadRequest, fmt.Sprintf("Color for \"%s\" not found", name))
-			if err != nil {
-				log.Println(err)
-			}
-			return err
+	e.GET(o.ServerPathPrefix+"/api/color/:index", func(c echo.Context) error {
+		index, err := strconv.Atoi(c.Param("index"))
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		err := c.JSON(http.StatusOK, color)
+		if len(cache.Color)-1 < index {
+			return c.String(http.StatusBadRequest, fmt.Sprintf("color index %d not found", index))
+		}
+		color := cache.Color[index]
+
+		err = c.JSON(http.StatusOK, color)
 		if err != nil {
 			log.Println(err)
+			return c.String(http.StatusBadRequest, err.Error())
 		}
-		return err
+
+		return nil
 	})
 
-	e.POST(o.ServerPathPrefix+"/api/color/:name", func(c echo.Context) error {
-		name := url.QueryEscape(c.Param("name"))
+	e.POST(o.ServerPathPrefix+"/api/color/:index", func(c echo.Context) error {
+		index, err := strconv.Atoi(c.Param("index"))
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+
+		if len(cache.Color)-1 < index {
+			return c.String(http.StatusBadRequest, fmt.Sprintf("index %d not exists", index))
+		}
 
 		var reqData api.MicroColor
-		err := json.NewDecoder(c.Request().Body).Decode(&reqData)
+		err = json.NewDecoder(c.Request().Body).Decode(&reqData)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 
-		cache.Color[name] = reqData
+		cache.Color[index] = reqData
+
 		return nil
 	})
 }
