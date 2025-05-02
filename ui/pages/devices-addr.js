@@ -1,6 +1,6 @@
 //!{{ define "script-page-devices-addr" }}
 /** @type {import("../types.d.ts").PageWindow} */
-// @ts-ignore
+// @ts-expect-error
 const w = window;
 
 /**
@@ -52,7 +52,7 @@ async function setupColorStorage() {
                 if (child.getAttribute("data-color") === colorString) {
                     if (!child.classList.contains("active")) {
                         child.classList.add("active");
-                        // TODO: api: Update device color
+                        // TODO: api: Update device color, Continue here...
                     }
                 } else {
                     child.classList.remove("active");
@@ -83,7 +83,7 @@ function createColorCacheItem(name, color, onClick) {
     const t = document.querySelector(`template[name="color-storage-item"]`);
 
     /** @type {HTMLElement} */
-    // @ts-ignore
+    // @ts-expect-error
     const item = t.content.cloneNode(true).querySelector(`*`);
     updateColorCacheItem(item, name, color, onClick);
     return item;
