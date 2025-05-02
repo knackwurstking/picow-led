@@ -50,7 +50,7 @@ export function updateColorStorageItem(item, index, color, device, onClick) {
         // @ts-ignore
         const w = window;
         w.api.setColor(index, color);
-        if (!device) w.api.setDevicesColor(color, device);
+        if (device) w.api.setDevicesColor(color, device);
 
         updateColorStorageItem(item, index, color, device, onClick);
     };

@@ -93,22 +93,11 @@ async function onClickPowerButton(ev) {
 
     // Request to api
     try {
-        device = (await w.api.setDevicesColor(newColor, device))[0];
+        await w.api.setDevicesColor(newColor, device);
     } catch (err) {
         console.error(err);
         alert(err); // TODO: Error handling, notification?
-        return defer();
     }
-
-    // Update storage
-    w.store.obj.update("devices", (storeDevices) => {
-        for (let x = 0; x < storeDevices.length; x++) {
-            if (storeDevices[x].server.addr === device.server.addr) {
-                storeDevices[x] = device;
-            }
-        }
-        return storeDevices;
-    });
 
     return defer();
 }

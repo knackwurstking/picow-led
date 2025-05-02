@@ -2,6 +2,10 @@
  * @returns {import("../types.d.ts").Api}
  */
 export function create() {
+    /** @type {import("../types.d.ts").PageWindow} */
+    // @ts-ignore
+    const w = window;
+
     /**
      * @param {string} path
      * @returns {string}
@@ -59,7 +63,23 @@ export function create() {
             },
             body: JSON.stringify(data),
         });
-        return _handleResponse(resp, url);
+
+        /** @type {import("../types.d.ts").Device[]} */
+        devices = await _handleResponse(resp, url);
+
+        w.store.obj.update("devices", (d) => {
+            for (let sI = 0; sI < d.length; sI++) {
+                for (let i = 0; i < devices.length; i++) {
+                    if (d[sI].server.addr === devices[i].server.addr) {
+                        d[sI] = devices[i];
+                    }
+                }
+            }
+
+            return d;
+        });
+
+        return devices;
     }
 
     /**

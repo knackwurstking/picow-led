@@ -19,18 +19,22 @@
     }
 
     window.addEventListener("pageshow", async () => {
-        w.store.obj.listen("devices", (devices) => {
-            /** @type {HTMLElement} */
-            const devicesList = document.querySelector(
-                "._content.devices > .list",
-            );
-            devicesList.innerHTML = "";
+        w.store.obj.listen(
+            "devices",
+            (devices) => {
+                /** @type {HTMLElement} */
+                const devicesList = document.querySelector(
+                    "._content.devices > .list",
+                );
+                devicesList.innerHTML = "";
 
-            devices.forEach((device) => {
-                const item = createDeviceItem(device);
-                devicesList.appendChild(item);
-            });
-        });
+                devices.forEach((device) => {
+                    const item = createDeviceItem(device);
+                    devicesList.appendChild(item);
+                });
+            },
+            true,
+        );
 
         setupAppBar();
 
