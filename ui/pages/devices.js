@@ -1,5 +1,5 @@
 //!{{ define "script-page-devices" }}
-/** @type {PageWindow} */
+/** @type {import("../types.d.ts").PageWindow} */
 // @ts-ignore
 const w = window;
 
@@ -17,7 +17,7 @@ function setupAppBar() {
 }
 
 window.addEventListener("load", async () => {
-    /** @type {UIStore} */
+    /** @type {import("../types.d.ts").UIStore} */
     const store = new w.ui.Store("picow-led:");
 
     store.set("devices", [], true);
@@ -68,10 +68,10 @@ async function onClickPowerButton(ev) {
     const addr = deviceListItem.getAttribute("data-addr");
 
     // Search the local storage for this device
-    /** @type {Device | null} */
+    /** @type {import("../types.d.ts").Device | null} */
     let device = null;
 
-    /** @type {UIStore} */
+    /** @type {import("../types.d.ts").UIStore} */
     const store = new w.ui.Store("picow-led:");
     const storeDevices = store.get("devices") || [];
 
@@ -87,8 +87,7 @@ async function onClickPowerButton(ev) {
     }
 
     // Set color
-    /** @type {Color} */
-    let newColor;
+    /** @type {import("../types.d.ts").Color} */ let newColor;
     if (!device.color || !device.color.find((c) => c > 0)) {
         newColor = [255, 255, 255, 255];
     } else {
@@ -134,7 +133,7 @@ async function onClickPowerButton(ev) {
 }
 
 /**
- * @param {Device} device
+ * @param {import("../types.d.ts").Device} device
  * @returns {HTMLElement}
  */
 function createDeviceListItem(device) {
@@ -156,7 +155,7 @@ function createDeviceListItem(device) {
 
 /**
  * @param {HTMLElement} item
- * @param {Device} device
+ * @param {import("../types.d.ts").Device} device
  * @returns {void}
  */
 function updateDeviceListItem(item, device) {

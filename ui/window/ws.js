@@ -62,7 +62,7 @@ function close() {
     }
 }
 
-/** @type {WS} */
+/** @type {import("../types.d.ts").WS} */
 const ws = {
     addr,
     isOpen,

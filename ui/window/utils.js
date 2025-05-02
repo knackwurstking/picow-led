@@ -1,16 +1,16 @@
 /**
- * @param {AppBarItemName[]} itemNames
- * @returns {AppBarItems}
+ * @param {import("../types.d.ts").AppBarItemName[]} itemNames
+ * @returns {import("../types.d.ts").AppBarItems}
  */
 function setupAppBarItems(...itemNames) {
-    /** @type {AppBarItems} */
+    /** @type {import("../types.d.ts").AppBarItems} */
     const enabledItems = {};
 
     /** @type {NodeListOf<HTMLElement>} */
     const items = document.querySelectorAll(`.ui-app-bar [data-name]`);
     let match = false;
     for (const item of items) {
-        /** @type {AppBarItemName} */
+        /** @type {import("../types.d.ts").AppBarItemName} */
         // @ts-ignore
         const dataName = item.getAttribute("data-name") || "";
 
@@ -40,6 +40,7 @@ function setupAppBarItems(...itemNames) {
  */
 function setOnlineIndicatorState(state) {
     const el = document.querySelector(`.online-indicator`);
+    if (!el) return;
 
     if (state) {
         el.setAttribute(`data-state`, "online");
@@ -70,7 +71,7 @@ function registerServiceWorker() {
     });
 }
 
-/** @type {Utils} */
+/** @type {import("../types.d.ts").Utils} */
 const utils = {
     setupAppBarItems,
     setOnlineIndicatorState,

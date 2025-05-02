@@ -1,5 +1,6 @@
 //!{{ define "script-page-settings" }}
-/** @type {PageWindow} */
+/** @type {import("../types.d.ts").PageWindow} */
+// @ts-ignore
 const w = window;
 
 /**

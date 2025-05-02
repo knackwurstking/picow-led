@@ -1,6 +1,6 @@
 //!{{ define "script-layout-base" }}
 (() => {
-    /** @type {PageWindow} */
+    /** @type {import("../types.d.ts").PageWindow} */
     // @ts-ignore
     const w = window;
 

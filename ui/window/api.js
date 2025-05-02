@@ -25,7 +25,7 @@ async function _handleResponse(resp, url) {
 }
 
 /**
- * @returns {Promise<Device[]>}
+ * @returns {Promise<import("../types.d.ts").Device[]>}
  */
 async function devices() {
     const url = getUrl("/api/devices");
@@ -35,9 +35,9 @@ async function devices() {
 }
 
 /**
- * @param {Color | undefined | null} color
- * @param {Device[]} devices
- * @returns {Promise<Device[]>}
+ * @param {import("../types.d.ts").Color | undefined | null} color
+ * @param {import("../types.d.ts").Device[]} devices
+ * @returns {Promise<import("../types.d.ts").Device[]>}
  */
 async function setDevicesColor(color, ...devices) {
     if (!color) {
@@ -59,7 +59,7 @@ async function setDevicesColor(color, ...devices) {
 }
 
 /**
- * @returns {Promise<ColorCache>}
+ * @returns {Promise<import("../types.d.ts").ColorCache>}
  */
 async function color() {
     // TODO: ...
@@ -72,7 +72,7 @@ async function color() {
     };
 }
 
-/** @type {Api} */
+/** @type {import("../types.d.ts").Api} */
 const api = {
     devices,
     setDevicesColor,

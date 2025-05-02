@@ -1,5 +1,5 @@
 //!{{ define "script-page-devices-addr" }}
-/** @type {PageWindow} */
+/** @type {import("../types.d.ts").PageWindow} */
 // @ts-ignore
 const w = window;
 
@@ -11,7 +11,7 @@ function getDeviceAddress() {
 }
 
 /**
- * @param {UIStore} store
+ * @param {import("../types.d.ts").UIStore} store
  * @returns {void}
  */
 function setupAppBar(store) {
@@ -27,7 +27,7 @@ function setupAppBar(store) {
     };
 
     const addr = getDeviceAddress();
-    /** @type {Device | undefined} */
+
     const device = (store.get("devices") || []).find((device) => {
         return device.server.addr === addr;
     });
@@ -36,6 +36,7 @@ function setupAppBar(store) {
 }
 
 async function setupColorStorage() {
+    /** @type {HTMLElement} */
     const colorCacheContainer = document.querySelector(
         `.color-storage-container`,
     );
@@ -64,7 +65,7 @@ async function setupColorStorage() {
 }
 
 window.addEventListener("load", async () => {
-    /** @type {UIStore} */
+    /** @type {import("../types.d.ts").UIStore} */
     const store = new w.ui.Store("picow-led:");
 
     setupAppBar(store);
@@ -73,13 +74,14 @@ window.addEventListener("load", async () => {
 
 /**
  * @param {string} name
- * @param {Color} color
- * @param {(color: Color) => void|Promise<void>} onClick
+ * @param {import("../types.d.ts").Color} color
+ * @param {(color: import("../types.d.ts").Color) => void|Promise<void>} onClick
  * @returns {HTMLElement}
  */
 function createColorCacheItem(name, color, onClick) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="color-storage-item"]`);
+
     /** @type {HTMLElement} */
     // @ts-ignore
     const item = t.content.cloneNode(true).querySelector(`*`);
@@ -90,8 +92,8 @@ function createColorCacheItem(name, color, onClick) {
 /**
  * @param {HTMLElement} item
  * @param {string} name
- * @param {Color} color
- * @param {(color: Color) => void|Promise<void>} onClick
+ * @param {import("../types.d.ts").Color} color
+ * @param {(color: import("../types.d.ts").Color) => void|Promise<void>} onClick
  * @returns {void}
  */
 function updateColorCacheItem(item, name, color, onClick) {
