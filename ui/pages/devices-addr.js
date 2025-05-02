@@ -11,6 +11,20 @@ function getDeviceAddress() {
 }
 
 /**
+ * @param {import("../types.d.ts").UIStore} [store]
+ * @returns {import("../types.d.ts").Device}
+ */
+function getDevice(store) {
+    if (!store) store = new w.ui.Store("picow-led:");
+
+    const addr = getDeviceAddress();
+
+    return (store.get("devices") || []).find((device) => {
+        return device.server.addr === addr;
+    });
+}
+
+/**
  * @param {import("../types.d.ts").UIStore} store
  * @returns {void}
  */
@@ -26,12 +40,7 @@ function setupAppBar(store) {
         location.pathname = `{{ .ServerPathPrefix }}/`;
     };
 
-    const addr = getDeviceAddress();
-
-    const device = (store.get("devices") || []).find((device) => {
-        return device.server.addr === addr;
-    });
-
+    const device = getDevice(store);
     items["title"].innerText = device ? device.server.name : "";
 }
 
@@ -52,7 +61,15 @@ async function setupColorStorage() {
                 if (child.getAttribute("data-color") === colorString) {
                     if (!child.classList.contains("active")) {
                         child.classList.add("active");
-                        // TODO: api: Update device color, Continue here...
+
+                        w.api.setDevicesColor(
+                            JSON.parse(child.getAttribute(`data-color`))
+                                .split(",")
+                                .map((/** @type{string} */ c) =>
+                                    parseInt(c, 10),
+                                ),
+                            getDevice(),
+                        );
                     }
                 } else {
                     child.classList.remove("active");
