@@ -24,7 +24,8 @@
          * @returns {string}
          */
         function getUrl(path) {
-            return `{{ .ServerPathPrefix }}${path}`;
+            // @ts-ignore
+            return process.env.SERVER_PATH_PREFIX + `${path}`;
         }
 
         /**
@@ -269,7 +270,10 @@
 
             window.addEventListener("load", function () {
                 navigator.serviceWorker
-                    .register("{{ .ServerPathPrefix }}/service-worker.js")
+                    .register(
+                        // @ts-ignore
+                        process.env.SERVER_PATH_PREFIX + "/service-worker.js",
+                    )
                     .then(function (reg) {
                         console.info("Service worker registered", reg);
                     })
