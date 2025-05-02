@@ -13,24 +13,20 @@ function getDeviceAddress() {
 }
 
 /**
- * @param {import("../types.d.ts").UIStore} [store]
  * @returns {import("../types.d.ts").Device}
  */
-function getDevice(store) {
-    if (!store) store = new w.ui.Store("picow-led:");
-
+function getDevice() {
     const addr = getDeviceAddress();
 
-    return (store.get("devices") || []).find((device) => {
+    return (w.store.get("devices") || []).find((device) => {
         return device.server.addr === addr;
     });
 }
 
 /**
- * @param {import("../types.d.ts").UIStore} store
  * @returns {void}
  */
-function setupAppBar(store) {
+function setupAppBar() {
     const items = w.utils.setupAppBarItems(
         "back-button",
         "online-indicator",
@@ -42,7 +38,7 @@ function setupAppBar(store) {
         location.pathname = `{{ .ServerPathPrefix }}/`;
     };
 
-    const device = getDevice(store);
+    const device = getDevice();
     items["title"].innerText = device ? device.server.name : "";
 }
 
@@ -89,10 +85,7 @@ async function setupColorStorage() {
 }
 
 window.addEventListener("load", async () => {
-    /** @type {import("../types.d.ts").UIStore} */
-    const store = new w.ui.Store("picow-led:");
-
-    setupAppBar(store);
+    setupAppBar();
     setupColorStorage();
 });
 

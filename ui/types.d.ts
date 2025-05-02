@@ -3,6 +3,7 @@ export declare type PageWindow = Window & typeof globalThis & {
     api: Api;
     ws: WS;
     utils: Utils;
+    store: UIStore;
 };
 
 export declare type UI = typeof import("ui");

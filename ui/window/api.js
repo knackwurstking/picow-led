@@ -1,4 +1,3 @@
-//!{{ define "script-window" }}
 /**
  * @param {string} path
  * @returns {string}

@@ -3,9 +3,6 @@
 // @ts-ignore
 const w = window;
 
-/** @type {import("../types.d.ts").UIStore} */
-const store = new w.ui.Store("picow-led:");
-
 /** @type {number | null} */
 let timeout = null;
 window.addEventListener("focus", () => {
@@ -44,7 +41,7 @@ window.addEventListener("load", () => {
 
 function updateStorage() {
     w.api.devices().then((devices) => {
-        store.set("devices", devices);
+        w.store.set("devices", devices);
     });
 }
 //!{{ end }}

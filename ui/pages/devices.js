@@ -17,13 +17,7 @@ function setupAppBar() {
 }
 
 window.addEventListener("load", async () => {
-    // FIXME: I need a global store @ `window.store`
-    //
-    /** @type {import("../types.d.ts").UIStore} */
-    const store = new w.ui.Store("picow-led:");
-
-    store.set("devices", [], true);
-    store.listen(
+    w.store.listen(
         "devices",
         (devices) => {
             /** @type {HTMLElement} */
@@ -46,7 +40,7 @@ window.addEventListener("load", async () => {
     //
     //w.api.devices().then((devices) => {
     //    // Fetch Devices from the api (if not offline)
-    //    store.set("devices", devices);
+    //    w.store.set("devices", devices);
     //});
 });
 
@@ -75,9 +69,7 @@ async function onClickPowerButton(ev) {
     /** @type {import("../types.d.ts").Device | null} */
     let device = null;
 
-    /** @type {import("../types.d.ts").UIStore} */
-    const store = new w.ui.Store("picow-led:");
-    const storeDevices = store.get("devices") || [];
+    const storeDevices = w.store.get("devices") || [];
 
     for (const storeDevice of storeDevices) {
         if (storeDevice.server.addr === addr) {
@@ -109,7 +101,7 @@ async function onClickPowerButton(ev) {
     }
 
     // Update storage
-    store.update("devices", (storeDevices) => {
+    w.store.update("devices", (storeDevices) => {
         for (let x = 0; x < storeDevices.length; x++) {
             if (storeDevices[x].server.addr === device.server.addr) {
                 storeDevices[x] = device;
