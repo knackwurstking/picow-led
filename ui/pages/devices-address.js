@@ -1,10 +1,12 @@
-// TODO: Clean up this mess
 (() => {
+    const {
+        colorSeparator,
+        createColorStorageItem,
+    } = require("../items/color-storage.js");
+
     /** @type {import("../types.d.ts").PageWindow} */
     // @ts-expect-error
     const w = window;
-
-    const dataColorSeparator = ",";
 
     /**
      * @returns {string}
@@ -43,35 +45,45 @@
         const colorCache = await w.api.colors();
 
         for (let x = 0; x < colorCache.length; x++) {
-            const item = createColorCacheItem(x, colorCache[x], (color) => {
-                const colorString = color.join(dataColorSeparator);
+            const item = createColorStorageItem(
+                x,
+                colorCache[x],
+                getDevice(),
+                (color) => {
+                    const colorString = color.join(colorSeparator);
 
-                Array.from(colorCacheContainer.children).forEach((child) => {
-                    if (child.getAttribute("data-color") === colorString) {
-                        if (!child.classList.contains("active")) {
-                            child.classList.add("active");
-
-                            const color = child
-                                .getAttribute(`data-color`)
-                                .split(dataColorSeparator)
-                                .map((/** @type{string} */ c) =>
-                                    parseInt(c, 10),
-                                );
-
+                    Array.from(colorCacheContainer.children).forEach(
+                        (child) => {
                             if (
-                                color.length < 4 &&
-                                color.filter((c) => c === color[0]).length === 3
+                                child.getAttribute("data-color") === colorString
                             ) {
-                                color.push(color[0]); // NOTE: Just some workaround for auto the missing white value (4. Pin)
-                            }
+                                if (!child.classList.contains("active")) {
+                                    child.classList.add("active");
 
-                            w.api.setDevicesColor(color, getDevice());
-                        }
-                    } else {
-                        child.classList.remove("active");
-                    }
-                });
-            });
+                                    const color = child
+                                        .getAttribute(`data-color`)
+                                        .split(colorSeparator)
+                                        .map((/** @type{string} */ c) =>
+                                            parseInt(c, 10),
+                                        );
+
+                                    if (
+                                        color.length < 4 &&
+                                        color.filter((c) => c === color[0])
+                                            .length === 3
+                                    ) {
+                                        color.push(color[0]); // NOTE: Just some workaround for auto the missing white value (4. Pin)
+                                    }
+
+                                    w.api.setDevicesColor(color, getDevice());
+                                }
+                            } else {
+                                child.classList.remove("active");
+                            }
+                        },
+                    );
+                },
+            );
 
             colorCacheContainer.appendChild(item);
         }
@@ -81,55 +93,4 @@
         setupAppBar();
         setupColorStorage();
     });
-
-    /**
-     * @param {number} index
-     * @param {import("../types.d.ts").Color} color
-     * @param {(color: import("../types.d.ts").Color) => void|Promise<void>} onClick
-     * @returns {HTMLElement}
-     */
-    function createColorCacheItem(index, color, onClick) {
-        /** @type {HTMLTemplateElement} */
-        const t = document.querySelector(`template[name="color-storage-item"]`);
-
-        /** @type {HTMLElement} */
-        // @ts-expect-error
-        const item = t.content.cloneNode(true).querySelector(`*`);
-        updateColorCacheItem(item, index, color, onClick);
-        return item;
-    }
-
-    /**
-     * @param {HTMLElement} item
-     * @param {number} index
-     * @param {import("../types.d.ts").Color} color
-     * @param {(color: import("../types.d.ts").Color) => void|Promise<void>} onClick
-     * @returns {void}
-     */
-    function updateColorCacheItem(item, index, color, onClick) {
-        if (color.length < 3) color = [...color, 0, 0, 0];
-        color = color.slice(0, 3);
-        item.style.color = `rgb(${color.join(", ")})`;
-        item.setAttribute("data-color", `${color.join(dataColorSeparator)}`);
-
-        if (onClick) {
-            item.onclick = () => {
-                onClick(color);
-            };
-        } else item.onclick = null;
-
-        const input = item.querySelector(`input`);
-        input.onchange = () => {
-            const value = (input.value || "#FFFFFF").slice(1);
-            const color = [];
-            for (let x = 0; x < value.length; x += 2) {
-                color.push(parseInt(value.slice(x, x + 2), 16));
-            }
-
-            w.api.setColor(index, color);
-            w.api.setDevicesColor(color, getDevice());
-
-            updateColorCacheItem(item, index, color, onClick);
-        };
-    }
 })();
