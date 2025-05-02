@@ -8,17 +8,7 @@
      * @returns {void}
      */
     function setupAppBar() {
-        const items = w.utils.setupAppBarItems(
-            "online-indicator",
-            "title",
-            "back-button",
-        );
-
-        items["back-button"].onclick = (ev) => {
-            ev.preventDefault();
-            location.pathname = `{{ .ServerPathPrefix }}/`;
-        };
-
+        const items = w.utils.setupAppBarItems("online-indicator", "title");
         items["title"].innerText = "Settings";
     }
 

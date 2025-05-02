@@ -32,7 +32,6 @@ export declare type Utils = {
 };
 
 export declare type AppBarItemName =
-    | "back-button"
     | "online-indicator"
     | "title"
     | "settings-button";

@@ -28,18 +28,8 @@
      * @returns {void}
      */
     function setupAppBar() {
-        const items = w.utils.setupAppBarItems(
-            "back-button",
-            "online-indicator",
-            "title",
-        );
-
-        items["back-button"].onclick = (ev) => {
-            ev.preventDefault();
-            location.pathname = `{{ .ServerPathPrefix }}/`;
-        };
-
         const device = getDevice();
+        const items = w.utils.setupAppBarItems("online-indicator", "title");
         items["title"].innerText = device ? device.server.name : "";
     }
 
