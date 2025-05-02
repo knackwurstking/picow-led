@@ -19,10 +19,6 @@
                 const data = await resp.text();
                 if (data === "pong") {
                     w.utils.setOnlineIndicatorState(true);
-
-                    // NOTE: Can be removed if websockets are in use...
-                    // ...only reconnect to the websocket here
-                    updateStorage();
                 } else {
                     w.utils.setOnlineIndicatorState(false);
                 }
@@ -39,11 +35,5 @@
         // Trigger the focus event once
         window.dispatchEvent(new Event("focus"));
     });
-
-    function updateStorage() {
-        w.api.devices().then((devices) => {
-            w.store.set("devices", devices);
-        });
-    }
 })();
 //!{{ end }}
