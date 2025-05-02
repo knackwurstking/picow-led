@@ -1,3 +1,4 @@
+//!{{ define "script-page-settings" }}
 (() => {
     /** @type {import("../types.d.ts").PageWindow} */
     // @ts-ignore
@@ -15,3 +16,4 @@
         setupAppBar();
     });
 })();
+//!{{ end }}

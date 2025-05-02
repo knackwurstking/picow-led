@@ -30,12 +30,6 @@ func (f *Frontend) BasicPatterns() []string {
 	return []string{
 		"components/online-indicator.go.html",
 		"components/svg-power.go.html",
-
-		"js/layouts/base.js",
-		"js/pages/devices-addr.js",
-		"js/pages/devices.js",
-		"js/pages/settings.js",
-		"js/window.js",
 	}
 }
 

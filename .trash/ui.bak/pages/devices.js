@@ -1,3 +1,4 @@
+//!{{ define "script-page-devices" }}
 (() => {
     /** @type {import("../types.d.ts").PageWindow} */
     // @ts-expect-error
@@ -185,3 +186,4 @@
         }
     }
 })();
+//!{{ end }}

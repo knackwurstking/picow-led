@@ -1,32 +1,49 @@
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { babel } from "@rollup/plugin-babel";
 
 export default defineConfig({
+    plugins: [
+        babel({
+            babelHelpers: "bundled",
+            presets: [
+                [
+                    "@babel/preset-env",
+                    {
+                        targets: {
+                            browsers: ["chrome >= 55"],
+                        },
+                    },
+                ],
+            ],
+        }),
+    ],
+
     build: {
         minify: false,
         copyPublicDir: false,
+        emptyOutDir: false,
         rollupOptions: {
             input: {
-                window: resolve(__dirname, "ui/window.js"),
-                "layouts/base": resolve(__dirname, "ui/layouts/base.js"),
-                "pages/devices": resolve(__dirname, "ui/pages/devices.js"),
-                "pages/devices-addr": resolve(
-                    __dirname,
-                    "ui/pages/devices-addr.js",
-                ),
-                "pages/settings": resolve(__dirname, "ui/pages/settings.js"),
+                main: "./ui/main.js",
+                layout: "./ui/layout.js",
+                settings: "./ui/pages/settings.js",
+                devices: "./ui/pages/devices.js",
+                "devices-address": "./ui/pages/devices-address.js",
             },
             output: {
-                dir: "templates/js/",
+                dir: "./public/js/",
                 entryFileNames: "[name].js",
             },
         },
     },
 
-    esbuild: {
-        legalComments: "inline",
+    //esbuild: {
+    //    legalComments: "inline",
+    //},
+
+    define: {
+        "process.env.SERVER_PATH_PREFIX": JSON.stringify(
+            process.env.SERVER_PATH_PREFIX,
+        ),
     },
 });

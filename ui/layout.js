@@ -1,6 +1,5 @@
-//!{{ define "script-layout-base" }}
 (() => {
-    /** @type {import("../types.d.ts").PageWindow} */
+    /** @type {import("./types").PageWindow} */
     // @ts-ignore
     const w = window;
 
@@ -15,7 +14,10 @@
         //       this is just a workaround to prevent this
         timeout = setTimeout(async () => {
             try {
-                const resp = await fetch("{{ .ServerPathPrefix }}/api/ping");
+                const resp = await fetch(
+                    // @ts-ignore
+                    process.env.SERVER_PATH_PREFIX + "/api/ping",
+                );
                 const data = await resp.text();
                 if (data === "pong") {
                     w.utils.setOnlineIndicatorState(true);
@@ -36,4 +38,3 @@
         window.dispatchEvent(new Event("focus"));
     });
 })();
-//!{{ end }}
