@@ -71,7 +71,7 @@ async function setupColorStorage() {
 
                         if (
                             color.length < 4 &&
-                            color.filter((c) => c !== color[0]).length === 1
+                            color.filter((c) => c === color[0]).length === 3
                         ) {
                             color.push(color[0]); // NOTE: Just some workaround for auto the missing white value (4. Pin)
                         }
