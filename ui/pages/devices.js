@@ -37,12 +37,10 @@
 
         setupAppBar();
 
-        // NOTE: No need to fetch devices here, will be done onfocus in "../layouts/base"
-        //
-        //w.api.devices().then((devices) => {
-        //    // Fetch Devices from the api (if not offline)
-        //    w.store.set("devices", devices);
-        //});
+        w.api.devices().then((devices) => {
+            // Fetch Devices from the api (if not offline)
+            w.store.set("devices", devices);
+        });
     });
 
     /**
