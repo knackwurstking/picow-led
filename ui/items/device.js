@@ -57,19 +57,13 @@ export function updateDeviceItem(item, device) {
 }
 
 /**
- * TODO: Clean up this stupid function
- *
  * @param {Event & { currentTarget: HTMLButtonElement }} ev
  * @returns {Promise<void>}
  */
 async function onClickPowerButton(ev) {
-    // Disable rapid fire clicks
     const target = ev.currentTarget;
 
-    // Backup state
     if (target.getAttribute("data-state") === "processing") return;
-
-    // Lock, prevent rapid fire clicking
     target.setAttribute("data-state", "processing");
 
     const defer = () => {
@@ -80,19 +74,15 @@ async function onClickPowerButton(ev) {
         }
     };
 
-    // Get the device list item belonging to this button
-    const deviceListItem = ev.currentTarget.closest(".device-list-item");
-
     /** @type {string} */
-    const addr = deviceListItem.getAttribute("data-addr");
+    const addr = ev.currentTarget
+        .closest(".device-list-item")
+        .getAttribute("data-addr");
 
     // Search the local storage for this device
     /** @type {import("../types.d.ts").Device | null} */
     let device = null;
-
-    const storeDevices = w.store.get("devices") || [];
-
-    for (const storeDevice of storeDevices) {
+    for (const storeDevice of w.store.get("devices") || []) {
         if (storeDevice.server.addr === addr) {
             device = storeDevice;
             break;
@@ -104,7 +94,8 @@ async function onClickPowerButton(ev) {
     }
 
     // Set color
-    /** @type {import("../types.d.ts").Color} */ let newColor;
+    /** @type {import("../types.d.ts").Color} */
+    let newColor;
     if (!device.color || !device.color.find((c) => c > 0)) {
         newColor = [255, 255, 255, 255];
     } else {
@@ -130,15 +121,16 @@ async function onClickPowerButton(ev) {
         return storeDevices;
     });
 
-    // Update .device-list-item
-    /** @type {HTMLElement | null} */
-    const item = document.querySelector(
-        `.device-list-item[data-addr="${device.server.addr}"]`,
-    );
-    if (!item) {
-        throw new Error(`device-list-item for ${device.server.addr} not found`);
-    }
-    updateDeviceItem(item, device);
+    // TODO: Remove this after testing
+    //// Update .device-list-item
+    ///** @type {HTMLElement | null} */
+    //const item = document.querySelector(
+    //    `.device-list-item[data-addr="${device.server.addr}"]`,
+    //);
+    //if (!item) {
+    //    throw new Error(`device-list-item for ${device.server.addr} not found`);
+    //}
+    //updateDeviceItem(item, device);
 
     return defer();
 }
