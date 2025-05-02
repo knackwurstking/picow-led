@@ -62,7 +62,7 @@ async function setDevicesColor(color, ...devices) {
  * @returns {Promise<import("../types.d.ts").ColorCache>}
  */
 async function color() {
-    // TODO: ...
+    // TODO: Get color from "/api/color"
 
     return {
         white: [255, 255, 255],
@@ -71,6 +71,9 @@ async function color() {
         blue: [0, 0, 255],
     };
 }
+
+// TODO: Add: GET "/api/color/:name"
+// TODO: Add: POST "/api/color/:name" <- `number[]`
 
 /** @type {import("../types.d.ts").Api} */
 const api = {
