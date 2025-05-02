@@ -3,6 +3,8 @@
 // @ts-expect-error
 const w = window;
 
+const dataColorSeparator = ",";
+
 /**
  * @returns {string}
  */
@@ -55,7 +57,7 @@ async function setupColorStorage() {
 
     for (const name in colorCache) {
         const item = createColorCacheItem(name, colorCache[name], (color) => {
-            const colorString = color.join(",");
+            const colorString = color.join(dataColorSeparator);
 
             Array.from(colorCacheContainer.children).forEach((child) => {
                 if (child.getAttribute("data-color") === colorString) {
@@ -64,7 +66,7 @@ async function setupColorStorage() {
 
                         w.api.setDevicesColor(
                             JSON.parse(child.getAttribute(`data-color`))
-                                .split(",")
+                                .split(dataColorSeparator)
                                 .map((/** @type{string} */ c) =>
                                     parseInt(c, 10),
                                 ),
@@ -117,7 +119,7 @@ function updateColorCacheItem(item, name, color, onClick) {
     if (color.length < 3) color = [...color, 0, 0, 0];
     color = color.slice(0, 3);
     item.style.color = `rgb(${color.join(", ")})`;
-    item.setAttribute("data-color", `${color.join(",")}`);
+    item.setAttribute("data-color", `${color.join(dataColorSeparator)}`);
 
     item.title = name;
 
