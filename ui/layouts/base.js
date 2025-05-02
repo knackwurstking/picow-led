@@ -22,6 +22,9 @@
                 const data = await resp.text();
                 if (data === "pong") {
                     w.utils.setOnlineIndicatorState(true);
+
+                    // NOTE: Can be removed if websockets are in use...
+                    // ...only reconnect to the websocket here
                     updateStorage();
                 } else {
                     w.utils.setOnlineIndicatorState(false);
