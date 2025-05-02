@@ -64,15 +64,19 @@ async function setupColorStorage() {
                     if (!child.classList.contains("active")) {
                         child.classList.add("active");
 
-                        w.api.setDevicesColor(
-                            child
-                                .getAttribute(`data-color`)
-                                .split(dataColorSeparator)
-                                .map((/** @type{string} */ c) =>
-                                    parseInt(c, 10),
-                                ),
-                            getDevice(),
-                        );
+                        const color = child
+                            .getAttribute(`data-color`)
+                            .split(dataColorSeparator)
+                            .map((/** @type{string} */ c) => parseInt(c, 10));
+
+                        if (
+                            color.length < 4 &&
+                            color.filter((c) => c !== color[0]).length === 1
+                        ) {
+                            color.push(color[0]); // NOTE: Just some workaround for auto the missing white value (4. Pin)
+                        }
+
+                        w.api.setDevicesColor(color, getDevice());
                     }
                 } else {
                     child.classList.remove("active");
