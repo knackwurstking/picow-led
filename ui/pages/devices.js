@@ -1,6 +1,6 @@
 //!{{ define "script-page-devices" }}
 /** @type {import("../types.d.ts").PageWindow} */
-// @ts-ignore
+// @ts-expect-error
 const w = window;
 
 /**
@@ -145,7 +145,7 @@ function createDeviceListItem(device) {
     /** @type {HTMLElement} */
     const item = template.content
         .cloneNode(true)
-        // @ts-ignore
+        // @ts-expect-error
         .querySelector(".device-list-item");
 
     updateDeviceListItem(item, device);
@@ -172,10 +172,10 @@ function updateDeviceListItem(item, device) {
     /** @type {HTMLButtonElement} */
     const powerButton = item.querySelector(`button.power-button`);
 
-    // @ts-ignore
+    // @ts-expect-error
     powerButton.onclick = onClickPowerButton;
 
-    // @ts-ignore
+    // @ts-expect-error
     powerButton.querySelector(`.background`).style.backgroundColor =
         `rgb(${device.color.slice(0, 3).join(", ")})`;
 }
