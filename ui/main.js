@@ -6,5 +6,5 @@
     // @ts-ignore
     window.ws = require("./window/ws").create();
     // @ts-ignore
-    window.utils = require("./window/ws").create();
+    window.utils = require("./window/utils").create();
 })();
