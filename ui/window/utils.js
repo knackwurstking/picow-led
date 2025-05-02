@@ -63,7 +63,7 @@ export function create() {
             return;
         }
 
-        window.addEventListener("load", function () {
+        window.addEventListener("pageshow", function () {
             navigator.serviceWorker
                 .register(
                     // @ts-ignore

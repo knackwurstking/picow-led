@@ -11,7 +11,7 @@
         items["title"].innerText = "Settings";
     }
 
-    window.addEventListener("load", () => {
+    window.addEventListener("pageshow", () => {
         setupAppBar();
     });
 })();

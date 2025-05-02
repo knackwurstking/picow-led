@@ -33,7 +33,7 @@
         }, 100);
     });
 
-    window.addEventListener("load", () => {
+    window.addEventListener("pageshow", () => {
         // Trigger the focus event once
         window.dispatchEvent(new Event("focus"));
     });

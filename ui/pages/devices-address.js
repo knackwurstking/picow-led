@@ -85,7 +85,7 @@
         }
     }
 
-    window.addEventListener("load", async () => {
+    window.addEventListener("pageshow", async () => {
         setupAppBar();
         setupColorStorage();
     });

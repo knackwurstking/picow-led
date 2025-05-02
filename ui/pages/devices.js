@@ -18,7 +18,7 @@
         items["title"].innerText = "Devices";
     }
 
-    window.addEventListener("load", async () => {
+    window.addEventListener("pageshow", async () => {
         w.store.obj.listen("devices", (devices) => {
             /** @type {HTMLElement} */
             const devicesList = document.querySelector(
