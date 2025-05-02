@@ -17,6 +17,8 @@ function setupAppBar() {
 }
 
 window.addEventListener("load", async () => {
+    // FIXME: I need a global store @ `window.store`
+    //
     /** @type {import("../types.d.ts").UIStore} */
     const store = new w.ui.Store("picow-led:");
 
