@@ -40,10 +40,12 @@ window.addEventListener("load", async () => {
 
     setupAppBar();
 
-    w.api.devices().then((devices) => {
-        // Fetch Devices from the api (if not offline)
-        store.set("devices", devices);
-    });
+    // NOTE: No need to fetch devices here, will be done onfocus in "../layouts/base"
+    //
+    //w.api.devices().then((devices) => {
+    //    // Fetch Devices from the api (if not offline)
+    //    store.set("devices", devices);
+    //});
 });
 
 /**
