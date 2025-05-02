@@ -64,7 +64,7 @@ export default () => {
     /**
      * @returns {Promise<import("../types.d.ts").ColorCache>}
      */
-    async function color() {
+    async function colors() {
         const url = getUrl("/api/color");
         const resp = await fetch(url);
         return _handleResponse(resp, url);
@@ -74,7 +74,7 @@ export default () => {
      * @param {string} name
      * @returns {Promise<import("../types.d.ts").Color>}
      */
-    async function colorForName(name) {
+    async function color(name) {
         const url = getUrl(`/api/color/${name}`);
         const resp = await fetch(url);
         return _handleResponse(resp, url);
@@ -85,7 +85,7 @@ export default () => {
     return {
         devices,
         setDevicesColor,
+        colors,
         color,
-        colorForName,
     };
 };

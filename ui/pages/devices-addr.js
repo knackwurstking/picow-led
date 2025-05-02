@@ -50,7 +50,7 @@
         );
         colorCacheContainer.innerHTML = "";
 
-        const colorCache = await w.api.color();
+        const colorCache = await w.api.colors();
 
         for (const name in colorCache) {
             const item = createColorCacheItem(
