@@ -16,7 +16,7 @@ type Api struct {
 	Config           *api.Config
 }
 
-// apiRoutes
+// API Routes:
 //   - apiSetupPing: 	GET 	- "/api/ping"
 //   - apiSetupDevices: GET 	- "/api/devices"
 //   - apiSetupDevices: POST 	- "/api/devices/color" <- { devices: Device[]; color: number[] }
