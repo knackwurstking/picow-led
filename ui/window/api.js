@@ -65,22 +65,27 @@ export default () => {
      * @returns {Promise<import("../types.d.ts").ColorCache>}
      */
     async function color() {
-        // TODO: Get color from "/api/color"
-
-        return {
-            white: [255, 255, 255],
-            red: [255, 0, 0],
-            green: [0, 255, 0],
-            blue: [0, 0, 255],
-        };
+        const url = getUrl("/api/color");
+        const resp = await fetch(url);
+        return _handleResponse(resp, url);
     }
 
-    // TODO: Add: GET "/api/color/:name"
+    /**
+     * @param {string} name
+     * @returns {Promise<import("../types.d.ts").Color>}
+     */
+    async function colorForName(name) {
+        const url = getUrl(`/api/color/${name}`);
+        const resp = await fetch(url);
+        return _handleResponse(resp, url);
+    }
+
     // TODO: Add: POST "/api/color/:name" <- `number[]`
 
     return {
         devices,
         setDevicesColor,
         color,
+        colorForName,
     };
 };

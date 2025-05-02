@@ -13,7 +13,8 @@ export declare type UIStore = import("ui").Store<{ devices: Device[] }>;
 export declare type Api = {
     devices: () => Promise<Device[]>;
     setDevicesColor: (color: Color | undefined | null, ...devices: Device[]) => Promise<Device[]>;
-    color: () => Promise<ColorCache>
+    color: () => Promise<ColorCache>;
+    colorForName: (name: string) => Promise<Color>;
 };
 
 export declare type WS = {
