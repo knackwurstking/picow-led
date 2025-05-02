@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { babel } from "@rollup/plugin-babel";
+import { viteRequire } from "vite-require";
 
 export default defineConfig({
     plugins: [
@@ -16,6 +17,7 @@ export default defineConfig({
                 ],
             ],
         }),
+        viteRequire(),
     ],
 
     build: {
