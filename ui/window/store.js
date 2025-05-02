@@ -1,11 +1,16 @@
 //!{{ define "script-window" }}
-/** @type {import("../types.d.ts").PageWindow} */
-// @ts-expect-error
-const w = window;
+/**
+ * @return {import("../types.d.ts").UIStore}
+ */
+export default () => {
+    /** @type {import("../types.d.ts").PageWindow} */
+    // @ts-expect-error
+    const w = window;
 
-const store = new w.ui.Store("picow-led:");
+    /** @type {import("../types.d.ts").UIStore} */
+    const store = new w.ui.Store("picow-led:");
 
-w.store.set("devices", [], true);
+    store.set("devices", [], true);
 
-// @ts-ignore
-window.store = store;
+    return store;
+};

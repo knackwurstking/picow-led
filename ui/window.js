@@ -4,11 +4,11 @@ import ws from "./window/ws.js";
 import utils from "./window/utils.js";
 
 // @ts-expect-error
-window.store = store;
+window.store = store();
 // @ts-expect-error
-window.api = api;
+window.api = api();
 // @ts-expect-error
-window.ws = ws;
+window.ws = ws();
 // @ts-expect-error
-window.utils = utils;
+window.utils = utils();
 //!{{ end }}

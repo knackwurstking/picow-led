@@ -1,84 +1,86 @@
 /**
- * @param {string} path
- * @returns {string}
+ * @return {import("../types.d.ts").Api}
  */
-function getUrl(path) {
-    return `{{ .ServerPathPrefix }}${path}`;
-}
-
-/**
- * @param {Response} resp
- * @param {string} url
- * @returns {Promise<any>}
- */
-async function _handleResponse(resp, url) {
-    const status = resp.status;
-
-    if (!resp.ok) {
-        throw new Error(`${status}: ${(await resp.text()) || "???"}`);
+export default () => {
+    /**
+     * @param {string} path
+     * @returns {string}
+     */
+    function getUrl(path) {
+        return `{{ .ServerPathPrefix }}${path}`;
     }
 
-    const respData = await resp.json();
-    console.debug(`Got data from "${url}":`, respData);
-    return respData;
-}
+    /**
+     * @param {Response} resp
+     * @param {string} url
+     * @returns {Promise<any>}
+     */
+    async function _handleResponse(resp, url) {
+        const status = resp.status;
 
-/**
- * @returns {Promise<import("../types.d.ts").Device[]>}
- */
-async function devices() {
-    const url = getUrl("/api/devices");
+        if (!resp.ok) {
+            throw new Error(`${status}: ${(await resp.text()) || "???"}`);
+        }
 
-    const resp = await fetch(url);
-    return await _handleResponse(resp, url);
-}
-
-/**
- * @param {import("../types.d.ts").Color | undefined | null} color
- * @param {import("../types.d.ts").Device[]} devices
- * @returns {Promise<import("../types.d.ts").Device[]>}
- */
-async function setDevicesColor(color, ...devices) {
-    if (!color) {
-        color = [255, 255, 255, 255];
+        const respData = await resp.json();
+        console.debug(`Got data from "${url}":`, respData);
+        return respData;
     }
 
-    const url = getUrl("/api/devices/color");
-    const data = { devices, color };
-    console.debug(`POST "${url}":`, data);
+    /**
+     * @returns {Promise<import("../types.d.ts").Device[]>}
+     */
+    async function devices() {
+        const url = getUrl("/api/devices");
 
-    const resp = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    });
-    return _handleResponse(resp, url);
-}
+        const resp = await fetch(url);
+        return await _handleResponse(resp, url);
+    }
 
-/**
- * @returns {Promise<import("../types.d.ts").ColorCache>}
- */
-async function color() {
-    // TODO: Get color from "/api/color"
+    /**
+     * @param {import("../types.d.ts").Color | undefined | null} color
+     * @param {import("../types.d.ts").Device[]} devices
+     * @returns {Promise<import("../types.d.ts").Device[]>}
+     */
+    async function setDevicesColor(color, ...devices) {
+        if (!color) {
+            color = [255, 255, 255, 255];
+        }
+
+        const url = getUrl("/api/devices/color");
+        const data = { devices, color };
+        console.debug(`POST "${url}":`, data);
+
+        const resp = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+        return _handleResponse(resp, url);
+    }
+
+    /**
+     * @returns {Promise<import("../types.d.ts").ColorCache>}
+     */
+    async function color() {
+        // TODO: Get color from "/api/color"
+
+        return {
+            white: [255, 255, 255],
+            red: [255, 0, 0],
+            green: [0, 255, 0],
+            blue: [0, 0, 255],
+        };
+    }
+
+    // TODO: Add: GET "/api/color/:name"
+    // TODO: Add: POST "/api/color/:name" <- `number[]`
 
     return {
-        white: [255, 255, 255],
-        red: [255, 0, 0],
-        green: [0, 255, 0],
-        blue: [0, 0, 255],
+        devices,
+        setDevicesColor,
+        color,
     };
-}
-
-// TODO: Add: GET "/api/color/:name"
-// TODO: Add: POST "/api/color/:name" <- `number[]`
-
-/** @type {import("../types.d.ts").Api} */
-const api = {
-    devices,
-    setDevicesColor,
-    color,
 };
-
-export default api;
