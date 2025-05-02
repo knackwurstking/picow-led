@@ -1,3 +1,4 @@
+// TODO: Clean up this mess
 (() => {
     /** @type {import("../types.d.ts").PageWindow} */
     // @ts-expect-error

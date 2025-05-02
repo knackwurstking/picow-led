@@ -1,3 +1,4 @@
+// TODO: Clean up this mess
 (() => {
     /**
      * @returns {import("./types.d.ts").UIStore}
