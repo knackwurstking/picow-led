@@ -147,7 +147,8 @@
                 color.push(parseInt(value.slice(x, x + 2), 16));
             }
 
-            // TODO: api: Update color storage and device color
+            w.api.setColor(name, color);
+            w.api.setDevicesColor(color, getDevice());
 
             updateColorCacheItem(item, name, color, onClick);
         };
