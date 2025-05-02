@@ -4,6 +4,9 @@
     // @ts-ignore
     const w = window;
 
+    /** @type {import("../types.d.ts").UIStore} */
+    const store = new w.ui.Store("picow-led:");
+
     /** @type {number | null} */
     let timeout = null;
     window.addEventListener("focus", () => {
@@ -19,6 +22,7 @@
                 const data = await resp.text();
                 if (data === "pong") {
                     w.utils.setOnlineIndicatorState(true);
+                    updateStorage();
                 } else {
                     w.utils.setOnlineIndicatorState(false);
                 }
@@ -35,5 +39,11 @@
         // Trigger the focus event once
         window.dispatchEvent(new Event("focus"));
     });
+
+    function updateStorage() {
+        w.api.devices().then((devices) => {
+            store.set("devices", devices);
+        });
+    }
 })();
 //!{{ end }}
