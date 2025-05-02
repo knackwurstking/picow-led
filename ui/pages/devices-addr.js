@@ -65,7 +65,8 @@ async function setupColorStorage() {
                         child.classList.add("active");
 
                         w.api.setDevicesColor(
-                            JSON.parse(child.getAttribute(`data-color`))
+                            child
+                                .getAttribute(`data-color`)
                                 .split(dataColorSeparator)
                                 .map((/** @type{string} */ c) =>
                                     parseInt(c, 10),
