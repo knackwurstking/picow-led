@@ -52,45 +52,36 @@
 
         const colorCache = await w.api.colors();
 
-        for (const name in colorCache) {
-            const item = createColorCacheItem(
-                name,
-                colorCache[name],
-                (color) => {
-                    const colorString = color.join(dataColorSeparator);
+        for (let x = 0; x < colorCache.length; x++) {
+            const item = createColorCacheItem(x, colorCache[x], (color) => {
+                const colorString = color.join(dataColorSeparator);
 
-                    Array.from(colorCacheContainer.children).forEach(
-                        (child) => {
+                Array.from(colorCacheContainer.children).forEach((child) => {
+                    if (child.getAttribute("data-color") === colorString) {
+                        if (!child.classList.contains("active")) {
+                            child.classList.add("active");
+
+                            const color = child
+                                .getAttribute(`data-color`)
+                                .split(dataColorSeparator)
+                                .map((/** @type{string} */ c) =>
+                                    parseInt(c, 10),
+                                );
+
                             if (
-                                child.getAttribute("data-color") === colorString
+                                color.length < 4 &&
+                                color.filter((c) => c === color[0]).length === 3
                             ) {
-                                if (!child.classList.contains("active")) {
-                                    child.classList.add("active");
-
-                                    const color = child
-                                        .getAttribute(`data-color`)
-                                        .split(dataColorSeparator)
-                                        .map((/** @type{string} */ c) =>
-                                            parseInt(c, 10),
-                                        );
-
-                                    if (
-                                        color.length < 4 &&
-                                        color.filter((c) => c === color[0])
-                                            .length === 3
-                                    ) {
-                                        color.push(color[0]); // NOTE: Just some workaround for auto the missing white value (4. Pin)
-                                    }
-
-                                    w.api.setDevicesColor(color, getDevice());
-                                }
-                            } else {
-                                child.classList.remove("active");
+                                color.push(color[0]); // NOTE: Just some workaround for auto the missing white value (4. Pin)
                             }
-                        },
-                    );
-                },
-            );
+
+                            w.api.setDevicesColor(color, getDevice());
+                        }
+                    } else {
+                        child.classList.remove("active");
+                    }
+                });
+            });
 
             colorCacheContainer.appendChild(item);
         }
@@ -102,36 +93,34 @@
     });
 
     /**
-     * @param {string} name
+     * @param {number} index
      * @param {import("../types.d.ts").Color} color
      * @param {(color: import("../types.d.ts").Color) => void|Promise<void>} onClick
      * @returns {HTMLElement}
      */
-    function createColorCacheItem(name, color, onClick) {
+    function createColorCacheItem(index, color, onClick) {
         /** @type {HTMLTemplateElement} */
         const t = document.querySelector(`template[name="color-storage-item"]`);
 
         /** @type {HTMLElement} */
         // @ts-expect-error
         const item = t.content.cloneNode(true).querySelector(`*`);
-        updateColorCacheItem(item, name, color, onClick);
+        updateColorCacheItem(item, index, color, onClick);
         return item;
     }
 
     /**
      * @param {HTMLElement} item
-     * @param {string} name
+     * @param {number} index
      * @param {import("../types.d.ts").Color} color
      * @param {(color: import("../types.d.ts").Color) => void|Promise<void>} onClick
      * @returns {void}
      */
-    function updateColorCacheItem(item, name, color, onClick) {
+    function updateColorCacheItem(item, index, color, onClick) {
         if (color.length < 3) color = [...color, 0, 0, 0];
         color = color.slice(0, 3);
         item.style.color = `rgb(${color.join(", ")})`;
         item.setAttribute("data-color", `${color.join(dataColorSeparator)}`);
-
-        item.title = name;
 
         if (onClick) {
             item.onclick = () => {
@@ -147,10 +136,10 @@
                 color.push(parseInt(value.slice(x, x + 2), 16));
             }
 
-            w.api.setColor(name, color);
+            w.api.setColor(index, color);
             w.api.setDevicesColor(color, getDevice());
 
-            updateColorCacheItem(item, name, color, onClick);
+            updateColorCacheItem(item, index, color, onClick);
         };
     }
 })();

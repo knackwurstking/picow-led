@@ -14,8 +14,8 @@ export declare type Api = {
     devices: () => Promise<Device[]>;
     setDevicesColor: (color: Color | undefined | null, ...devices: Device[]) => Promise<Device[]>;
     colors: () => Promise<ColorCache>;
-    color: (name: string) => Promise<Color>;
-    setColor: (name: string, color: Color) => Promise<void>;
+    color: (index: number) => Promise<Color>;
+    setColor: (index: number, color: Color) => Promise<void>;
 };
 
 export declare type WS = {
@@ -55,4 +55,4 @@ export declare type Server = {
 export declare type Color = number[]
 export declare type Pins = number[]
 
-export declare type ColorCache = Record<string, Color>
+export declare type ColorCache = Color[]

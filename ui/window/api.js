@@ -71,22 +71,22 @@ export default () => {
     }
 
     /**
-     * @param {string} name
+     * @param {number} index
      * @returns {Promise<import("../types.d.ts").Color>}
      */
-    async function color(name) {
-        const url = getUrl(`/api/color/${name}`);
+    async function color(index) {
+        const url = getUrl(`/api/color/${index}`);
         const resp = await fetch(url);
         return _handleResponse(resp, url);
     }
 
     /**
-     * @param {string} name
+     * @param {number} index
      * @param {import("../types.d.ts").Color} color
      * @returns {Promise<void>}
      */
-    async function setColor(name, color) {
-        const url = getUrl(`/api/color/${name}`);
+    async function setColor(index, color) {
+        const url = getUrl(`/api/color/${index}`);
 
         const resp = await fetch(url, {
             method: "POST",
