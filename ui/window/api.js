@@ -80,12 +80,30 @@ export default () => {
         return _handleResponse(resp, url);
     }
 
-    // TODO: Add: POST "/api/color/:name" <- `number[]`
+    /**
+     * @param {string} name
+     * @param {import("../types.d.ts").Color} color
+     * @returns {Promise<void>}
+     */
+    async function setColor(name, color) {
+        const url = getUrl(`/api/color/${name}`);
+
+        const resp = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(color),
+        });
+
+        return _handleResponse(resp, url);
+    }
 
     return {
         devices,
         setDevicesColor,
         colors,
         color,
+        setColor,
     };
 };
