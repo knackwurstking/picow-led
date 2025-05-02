@@ -54,11 +54,18 @@
         const target = ev.currentTarget;
 
         // Backup state
-        const prevState = target.getAttribute("data-state");
-        if (prevState === "processing") return;
+        if (target.getAttribute("data-state") === "processing") return;
 
         // Lock, prevent rapid fire clicking
         target.setAttribute("data-state", "processing");
+
+        const defer = () => {
+            if (device && Math.max(...device.color)) {
+                target.setAttribute("data-state", "on");
+            } else {
+                target.setAttribute("data-state", "off");
+            }
+        };
 
         // Get the device list item belonging to this button
         const deviceListItem = ev.currentTarget.closest(".device-list-item");
@@ -99,8 +106,7 @@
         } catch (err) {
             console.error(err);
             alert(err); // TODO: Error handling, notification?
-            target.setAttribute("data-state", prevState);
-            return;
+            return defer();
         }
 
         // Update storage
@@ -125,12 +131,7 @@
         }
         updateDeviceListItem(item, device);
 
-        // Set power button state
-        if (Math.max(...device.color)) {
-            target.setAttribute("data-state", "on");
-        } else {
-            target.setAttribute("data-state", "off");
-        }
+        return defer();
     }
 
     /**
@@ -179,6 +180,12 @@
         // @ts-expect-error
         powerButton.querySelector(`.background`).style.backgroundColor =
             `rgb(${device.color.slice(0, 3).join(", ")})`;
+
+        if (Math.max(...device.color)) {
+            powerButton.setAttribute("data-state", "on");
+        } else {
+            powerButton.setAttribute("data-state", "off");
+        }
     }
 })();
 //!{{ end }}
