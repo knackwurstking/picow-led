@@ -19,6 +19,7 @@ generate:
 	# NOTE: Install eslint with `npm init @eslint/config@latest`
 	go mod tidy -v
 	npx vite build --config ./vite.config.js
+	npx vite build --config ./vite.pwa.config.js
 
 dev:
 	make generate

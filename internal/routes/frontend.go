@@ -143,12 +143,4 @@ func frontendRoutes(e *echo.Echo, o Frontend) {
 			Title:            "PicoW LED | Settings",
 		})
 	})
-
-	e.GET(o.ServerPathPrefix+"/service-worker.js", func(c echo.Context) error {
-		return o.serve(c, "pwa/service-worker.js", "text/javascript", frontendTemplateData{
-			ServerPathPrefix: o.ServerPathPrefix,
-			Version:          o.Version,
-			Title:            "PicoW LED | Settings",
-		})
-	})
 }
