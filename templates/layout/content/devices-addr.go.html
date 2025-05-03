@@ -1,28 +1,74 @@
 {{ define "content" }}
-<div class="_content devices-addr ui-container ui-auto-scroll ui-hide-scrollbar"
-    style="height: 100%; padding-top: var(--ui-app-bar-height);">
-
+<div
+    class="_content devices-addr ui-container ui-auto-scroll ui-hide-scrollbar"
+    style="height: 100%; padding-top: var(--ui-app-bar-height)"
+>
     <div class="ui-flex column gap">
-
         <h2>Color Storage</h2>
 
+        <!-- TODO: Need to add some range sliders here for each pin above index 2 -->
+        <div
+            class="range-sliders ui-flex column gap nowrap"
+            style="display: none"
+        ></div>
+
         <div class="color-storage-container ui-flex row gap wrap"></div>
-
     </div>
-
 </div>
 
 <!-- TODO: Need an add new item color storage item -->
 
 <template name="color-storage-item">
     <!-- TODO: Need a remove button somewhere -->
-
-    <div class="color-storage-item ui-border ui-padding" style="width: 7rem; height: 3.5rem;" data-color>
-        <div style="background-color: currentColor; color: inherit; width: 100%; height: 100%; border-radius: inherit;">
-        </div>
-        <input type="color">
+    <div
+        class="color-storage-item ui-border ui-padding"
+        style="width: 7rem; height: 3.5rem"
+        data-color
+    >
+        <div
+            style="
+                background-color: currentColor;
+                color: inherit;
+                width: 100%;
+                height: 100%;
+                border-radius: inherit;
+            "
+        ></div>
+        <input type="color" />
     </div>
+</template>
 
+<template name="color-range-slider">
+    <!--
+        .color-range-slider
+            .title
+            .container
+                .range
+                    .circle
+                input[type="number"]
+    -->
+
+    <span
+        class="color-range-slider ui-flex column justify-start"
+        style="height: fit-content"
+    >
+        <span class="title" style="width: fit-content"></span>
+
+        <!-- TODO: Adding missing styles here if possible (inline) -->
+        <span style="height: 2.5rem" class="container ui-flex row gap nowrap">
+            <div style="height: 100%" class="range">
+                <div class="circle"></div>
+            </div>
+            <input
+                style="height: 100%"
+                type="number"
+                min="0"
+                max="255"
+                step="1"
+                value="255"
+            />
+        </span>
+    </span>
 </template>
 
 <script src="{{ .ServerPathPrefix }}/js/devices-address.js"></script>
