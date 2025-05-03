@@ -4,6 +4,10 @@
         createColorStorageItem,
     } = require("../items/color-storage.js");
 
+    const {
+        createColorRangeSlider,
+    } = require("../components/color-range-slider.js");
+
     /** @type {import("../types.d.ts").PageWindow} */
     // @ts-expect-error
     const w = window;
@@ -33,13 +37,14 @@
 
     async function setupColorStorage() {
         /** @type {HTMLElement} */
-        const colorCacheContainer = document.querySelector(
+        const colorStorageContainer = document.querySelector(
             `.color-storage-container`,
         );
-        colorCacheContainer.innerHTML = "";
+        colorStorageContainer.innerHTML = "";
 
         const colorCache = await w.api.colors();
 
+        // Create color storage items
         for (let x = 0; x < colorCache.length; x++) {
             const item = createColorStorageItem(
                 x,
@@ -48,7 +53,7 @@
                 (color) => {
                     const colorString = color.join(colorSeparator);
 
-                    Array.from(colorCacheContainer.children).forEach(
+                    Array.from(colorStorageContainer.children).forEach(
                         (child) => {
                             if (
                                 child.getAttribute("data-color") === colorString
@@ -68,7 +73,7 @@
                                         color.filter((c) => c === color[0])
                                             .length === 3
                                     ) {
-                                        color.push(color[0]); // NOTE: Just some workaround for auto the missing white value (4. Pin)
+                                        color.push(color[0]); // NOTE: Just some workaround for auto fixing the missing 4. value (white)
                                     }
 
                                     w.api.setDevicesColor(color, getDevice());
@@ -81,12 +86,28 @@
                 },
             );
 
-            colorCacheContainer.appendChild(item);
+            colorStorageContainer.appendChild(item);
         }
+    }
+
+    async function setupRangeSliders() {
+        const container = document.querySelector(".range-sliders");
+
+        const device = getDevice();
+        if (device.pins) {
+            device.pins.forEach((pin) => {
+                const slider = createColorRangeSlider();
+
+                // TODO: Create a slider for each pin
+            });
+        }
+
+        // TODO: Add some event listener to the slider input element or whatever else
     }
 
     window.addEventListener("pageshow", async () => {
         setupAppBar();
         setupColorStorage();
+        setupRangeSliders();
     });
 })();
