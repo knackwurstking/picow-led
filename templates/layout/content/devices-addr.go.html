@@ -54,13 +54,39 @@
     >
         <span class="title" style="width: fit-content"></span>
 
-        <!-- TODO: Adding missing styles here if possible (inline) -->
-        <span style="height: 2.5rem" class="container ui-flex row gap nowrap">
-            <div style="height: 100%" class="range">
-                <div class="circle"></div>
+        <span
+            style="height: 2.5rem; width: 100%"
+            class="container ui-flex row gap nowrap"
+        >
+            <div
+                style="
+                    border: var(--ui-border-width) var(--ui-border-style)
+                        var(--ui-border-color);
+                    border-radius: 2.5rem;
+                    height: 100%;
+                    width: 100%;
+                    cursor: pointer;
+                "
+                class="range"
+            >
+                <div
+                    style="
+                        border: var(--ui-border-width) var(--ui-border-style)
+                            var(--ui-border-color);
+                        border-width: 2px;
+                        border-radius: 50%;
+                        position: absolute;
+                        top: 1px;
+                        right: 1px;
+                        width: calc(2.5rem - 2px);
+                        height: calc(100% - 2px);
+                        cursor: pointer;
+                    "
+                    class="circle"
+                ></div>
             </div>
             <input
-                style="height: 100%"
+                style="height: 100%; width: 6ch; text-align: center"
                 type="number"
                 min="0"
                 max="255"
