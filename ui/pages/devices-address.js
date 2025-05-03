@@ -99,10 +99,9 @@
                 const slider = createColorRangeSlider();
 
                 // TODO: Create a slider for each pin
+                // TODO: Add some event listener to the slider input element or whatever else
             });
         }
-
-        // TODO: Add some event listener to the slider input element or whatever else
     }
 
     window.addEventListener("pageshow", async () => {
