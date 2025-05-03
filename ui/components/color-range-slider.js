@@ -1,8 +1,24 @@
 /**
+ * TODO: Need to pass some options here, like: title, ...
+ *
+ * @returns {HTMLElement} item
+ */
+export function createColorRangeSlider() {
+    /** @type {HTMLTemplateElement} */
+    const t = document.querySelector(`template[name="color-range-slider"]`);
+    // @ts-expect-error
+    const item = t.content.cloneNode(true).querySelector("*");
+    updateColorRangeSlider(item);
+    return item;
+}
+
+/**
+ * TODO: Need to pass some options here, like: title, ...
+ *
  * @param {HTMLElement} item
  * @returns {void}
  */
-export function update(item) {
+export function updateColorRangeSlider(item) {
     /** @type {HTMLElement} */
     const circle = item.querySelector(`.circle`);
     /** @type {HTMLElement} */
