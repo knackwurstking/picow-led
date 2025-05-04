@@ -27,13 +27,10 @@ function getDevice() {
 }
 
 /**
- * @param {import("../types.d.ts").Device} device
+ * @param {import("../types.d.ts").Color | null} [color]
  * @returns {import("../types.d.ts").Color | null}
  */
-function getColor(device) {
-    /** @type {import("../types.d.ts").Color} */
-    const color = [];
-
+function getColor(color) {
     // Get color from active item, or use device color as fallback, or use [255,255,255] as default
     /** @type {HTMLElement | null} */
     const activeItem = document.querySelector(`.color-storage-item.active`);
@@ -42,18 +39,25 @@ function getColor(device) {
     } else {
         color.push(
             // Ok, please don't ask questions here
-            ...[...(device.color || [255, 255, 255]), 0, 0, 0].slice(0, 3),
+            ...[...(color || [255, 255, 255]), 0, 0, 0].slice(0, 3),
         );
     }
 
     // Get range slider values
-    document
-        .querySelectorAll(".range-sliders .color-range-slider input")
-        .forEach((/**@type {HTMLInputElement}*/ input) => {
-            color.push(parseInt(input.value || "0", 10));
-        });
+    color.push(...getRangeSliderValues());
 
-    return [];
+    return color;
+}
+
+/**
+ * @returns {number[]}
+ */
+function getRangeSliderValues() {
+    return Array.from(
+        document.querySelectorAll(".range-sliders .color-range-slider input"),
+    ).map((/**@type {HTMLInputElement}*/ input) => {
+        return parseInt(input.value || "0", 10);
+    });
 }
 
 /**
@@ -92,15 +96,10 @@ async function setupColorStorage() {
                                 child.getAttribute("data-color"),
                             );
 
-                            // TODO: This fix is no longer needed, instead update the range sliders?
-                            if (
-                                color.length < 4 &&
-                                color.filter((c) => c === color[0]).length === 3
-                            ) {
-                                color.push(color[0]); // NOTE: Just some workaround for auto fixing the missing 4. value (white)
-                            }
-
-                            w.api.setDevicesColor(color, getDevice());
+                            w.api.setDevicesColor(
+                                [...color, ...getRangeSliderValues()],
+                                getDevice(),
+                            );
                         }
                     } else {
                         child.classList.remove("active");
@@ -137,7 +136,7 @@ async function setupRangeSliders() {
                     // NOTE: Update device color (api) with some timeout
                     //       (250ms?), i should use websockets for this later
                     setTimeout(() => {
-                        w.api.setDevicesColor(getColor(device), device);
+                        w.api.setDevicesColor(getColor(device.color), device);
                     }, 250);
                 },
             );
