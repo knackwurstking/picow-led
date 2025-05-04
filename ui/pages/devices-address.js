@@ -97,7 +97,7 @@
 
         const device = getDevice();
 
-        if (device.pins.length > 0) {
+        if (device.pins.length > 3) {
             container.style.display = "block";
         } else {
             container.style.display = "none";
@@ -105,7 +105,8 @@
         }
 
         if (device.pins) {
-            device.pins.forEach((pin, index) => {
+            device.pins.slice(3).forEach((pin, index) => {
+                index += 3;
                 const slider = createColorRangeSlider(
                     pin.toString(),
                     device.color[index] || 0,
