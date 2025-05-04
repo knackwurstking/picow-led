@@ -1,6 +1,14 @@
 export const colorSeparator = ",";
 
 /**
+ * @param {string} v
+ * @return {import("../types.d.ts").Color}
+ */
+export function splitDataColor(v) {
+    return v.split(colorSeparator).map((c) => parseInt(c, 10));
+}
+
+/**
  * @param {number} index
  * @param {import("../types").Color} color
  * @param {import("../types").Device} [device]
