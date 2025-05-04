@@ -1,7 +1,7 @@
 /**
  * @param {string} title
  * @param {number} value
- * @param {(ev: Event & { currentTarget: HTMLInputElement }) => void|Promise<void>} onChange
+ * @param {(value: number) => void|Promise<void>} onChange
  * @returns {import("../types.d.ts").Component}
  */
 export function createColorRangeSlider(title, value, onChange) {
@@ -26,7 +26,7 @@ export function createColorRangeSlider(title, value, onChange) {
  * @param {HTMLElement} item
  * @param {string} title
  * @param {number} value
- * @param {(ev: Event & { currentTarget: HTMLInputElement }) => void|Promise<void>} onChange
+ * @param {(value: number) => void|Promise<void>} onChange
  * @returns {import("ui").CleanUpFunction}
  */
 export function updateColorRangeSlider(item, title, value, onChange) {
@@ -101,6 +101,7 @@ export function updateColorRangeSlider(item, title, value, onChange) {
         const max = (100 - c.minRange) * (c.trackWidth / 100); // 255
         const current = (100 - right) * (c.trackWidth / 100);
         input.value = `${Math.round(((current - min) / ((max - min) / 100)) * 2.55)}`;
+        onChange(parseInt(input.value, 10));
     };
 
     const pointerEnd = (/** @type {PointerEvent} */ ev) => {
@@ -138,8 +139,7 @@ export function updateColorRangeSlider(item, title, value, onChange) {
         window.addEventListener("pointermove", pointerMove);
     };
 
-    /** @param {PointerEvent & { currentTarget: HTMLInputElement } | null} ev */
-    input.onchange = (ev) => {
+    input.onchange = () => {
         updateRects();
         const c = calculations();
 
@@ -153,8 +153,6 @@ export function updateColorRangeSlider(item, title, value, onChange) {
         }
 
         circle.style.right = `${100 - (100 - (100 - c.maxRange) - c.minRange) / (255 / value) - cR.width / (c.trackWidth / 100)}%`;
-
-        if (ev) onChange(ev);
     };
 
     circle.onpointerdown = pointerStart;
@@ -164,8 +162,7 @@ export function updateColorRangeSlider(item, title, value, onChange) {
 
     // NOTE: This only works with a `setTimeout` for now it seems
     setTimeout(() => {
-        // @ts-expect-error
-        input.onchange();
+        input.dispatchEvent(new Event("change"));
     });
 
     return () => {
