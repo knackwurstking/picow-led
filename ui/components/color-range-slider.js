@@ -162,6 +162,7 @@ export function updateColorRangeSlider(item, title, value, onChange) {
     titleElement.innerText = title;
     input.value = value.toString();
 
+    // NOTE: This only works with a `setTimeout` for now it seems
     setTimeout(() => {
         // @ts-expect-error
         input.onchange();
