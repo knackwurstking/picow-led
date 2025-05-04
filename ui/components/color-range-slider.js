@@ -1,24 +1,38 @@
 /**
- * TODO: Need to pass some options here, like: title, ...
- *
- * @returns {HTMLElement} item
+ * @param {string} title
+ * @param {number} value
+ * @param {(ev: Event & { currentTarget: HTMLInputElement }) => void|Promise<void>} onChange
+ * @returns {import("../types.d.ts").Component}
  */
-export function createColorRangeSlider() {
+export function createColorRangeSlider(title, value, onChange) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="color-range-slider"]`);
+    if (!t) {
+        throw new Error(
+            `Nope, template with name "color-range-slider" not found`,
+        );
+    }
+
     // @ts-expect-error
     const item = t.content.cloneNode(true).querySelector("*");
-    updateColorRangeSlider(item);
-    return item;
+
+    return {
+        element: item,
+        destroy: updateColorRangeSlider(item, title, value, onChange),
+    };
 }
 
 /**
- * TODO: Need to pass some options here, like: title, ...
- *
  * @param {HTMLElement} item
- * @returns {void}
+ * @param {string} title
+ * @param {number} value
+ * @param {(ev: Event & { currentTarget: HTMLInputElement }) => void|Promise<void>} onChange
+ * @returns {import("ui").CleanUpFunction}
  */
-export function updateColorRangeSlider(item) {
+export function updateColorRangeSlider(item, title, value, onChange) {
+    /** @type {HTMLElement} */
+    const titleElement = item.querySelector(`.title`);
+
     /** @type {HTMLElement} */
     const circle = item.querySelector(`.circle`);
     /** @type {HTMLElement} */
@@ -124,26 +138,35 @@ export function updateColorRangeSlider(item) {
         window.addEventListener("pointermove", pointerMove);
     };
 
-    input.addEventListener(
-        "change",
-        (
-            /** @type {PointerEvent & { currentTarget: HTMLInputElement }} */ ev,
-        ) => {
-            updateRects();
-            const c = calculations();
+    /** @param {PointerEvent & { currentTarget: HTMLInputElement }} ev */
+    input.onchange = (ev) => {
+        updateRects();
+        const c = calculations();
 
-            let value = parseInt(ev.currentTarget.value || "0", 10);
-            if (value < 0) {
-                value = 0;
-                ev.currentTarget.value = value.toString();
-            } else if (value > 255) {
-                value = 255;
-                ev.currentTarget.value = value.toString();
-            }
+        let value = parseInt(ev.currentTarget.value || "0", 10);
+        if (value < 0) {
+            value = 0;
+            ev.currentTarget.value = value.toString();
+        } else if (value > 255) {
+            value = 255;
+            ev.currentTarget.value = value.toString();
+        }
 
-            circle.style.right = `${100 - (100 - (100 - c.maxRange) - c.minRange) / (255 / value) - cR.width / (c.trackWidth / 100)}%`;
-        },
-    );
+        circle.style.right = `${100 - (100 - (100 - c.maxRange) - c.minRange) / (255 / value) - cR.width / (c.trackWidth / 100)}%`;
 
-    circle.addEventListener("pointerdown", pointerStart);
+        onChange(ev);
+    };
+
+    circle.onpointerdown = pointerStart;
+
+    titleElement.innerText = title;
+    input.value = value.toString();
+
+    return () => {
+        window.removeEventListener("pointerup", pointerEnd);
+        window.removeEventListener("pointermove", pointerMove);
+
+        circle.onpointerdown = null;
+        input.onchange = null;
+    };
 }

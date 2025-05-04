@@ -2,7 +2,7 @@
     const {
         colorSeparator,
         createColorStorageItem,
-    } = require("../items/color-storage.js");
+    } = require("../components/color-storage-item.js");
 
     const {
         createColorRangeSlider,
@@ -86,20 +86,38 @@
                 },
             );
 
-            colorStorageContainer.appendChild(item);
+            colorStorageContainer.appendChild(item.element);
         }
     }
 
     async function setupRangeSliders() {
+        /** @type {HTMLElement} */
         const container = document.querySelector(".range-sliders");
+        container.innerHTML = "";
 
         const device = getDevice();
-        if (device.pins) {
-            device.pins.forEach((pin) => {
-                const slider = createColorRangeSlider();
 
-                // TODO: Create a slider for each pin
-                // TODO: Add some event listener to the slider input element or whatever else
+        if (device.pins.length > 0) {
+            container.style.display = "block";
+        } else {
+            container.style.display = "none";
+            return;
+        }
+
+        if (device.pins) {
+            device.pins.forEach((pin, index) => {
+                const slider = createColorRangeSlider(
+                    pin.toString(),
+                    device.color[index] || 0,
+                    (ev) => {
+                        const value = ev.currentTarget.value;
+                        if (device.color[index] !== undefined && value) {
+                            device.color[index] = parseInt(value, 10);
+                        }
+                    },
+                );
+
+                container.appendChild(slider.element);
             });
         }
     }
