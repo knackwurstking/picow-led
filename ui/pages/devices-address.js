@@ -39,9 +39,11 @@ function getColor(color) {
     } else {
         color.push(
             // Ok, please don't ask questions here
-            ...[...(color || [255, 255, 255]), 0, 0, 0].slice(0, 3),
+            ...[...(color || [255, 255, 255]), 0, 0, 0],
         );
     }
+
+    color = color.slice(0, 3);
 
     // Get range slider values
     color.push(...getRangeSliderValues());
