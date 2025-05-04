@@ -68,6 +68,7 @@
                                             parseInt(c, 10),
                                         );
 
+                                    // TODO: This fix no longer needed, instead update the range sliders?
                                     if (
                                         color.length < 4 &&
                                         color.filter((c) => c === color[0])
