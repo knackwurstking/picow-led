@@ -1,5 +1,6 @@
 const {
     colorSeparator,
+    splitDataColor,
     createColorStorageItem,
 } = require("../components/color-storage-item.js");
 
@@ -36,7 +37,9 @@ function getColor(device) {
     // Get color from active item, or use device color as fallback, or use [255,255,255] as default
     /** @type {HTMLElement | null} */
     const activeItem = document.querySelector(`.color-storage-item.active`);
-    if (!activeItem) {
+    if (activeItem) {
+        color.push(...splitDataColor(activeItem.getAttribute("data-color")));
+    } else {
         color.push(
             // Ok, please don't ask questions here
             ...[...(device.color || [255, 255, 255]), 0, 0, 0].slice(0, 3),
@@ -85,12 +88,9 @@ async function setupColorStorage() {
                         if (!child.classList.contains("active")) {
                             child.classList.add("active");
 
-                            const color = child
-                                .getAttribute(`data-color`)
-                                .split(colorSeparator)
-                                .map((/** @type{string} */ c) =>
-                                    parseInt(c, 10),
-                                );
+                            const color = splitDataColor(
+                                child.getAttribute("data-color"),
+                            );
 
                             // TODO: This fix is no longer needed, instead update the range sliders?
                             if (
