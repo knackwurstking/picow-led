@@ -116,6 +116,9 @@
                         if (device.color[index] !== undefined && value) {
                             device.color[index] = parseInt(value, 10);
                         }
+
+                        // TODO: Update device color (api) with some timeout
+                        //       (250ms?), i should use websockets for this later
                     },
                 );
 
