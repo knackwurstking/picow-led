@@ -138,29 +138,34 @@ export function updateColorRangeSlider(item, title, value, onChange) {
         window.addEventListener("pointermove", pointerMove);
     };
 
-    /** @param {PointerEvent & { currentTarget: HTMLInputElement }} ev */
+    /** @param {PointerEvent & { currentTarget: HTMLInputElement } | null} ev */
     input.onchange = (ev) => {
         updateRects();
         const c = calculations();
 
-        let value = parseInt(ev.currentTarget.value || "0", 10);
+        let value = parseInt(input.value || "0", 10);
         if (value < 0) {
             value = 0;
-            ev.currentTarget.value = value.toString();
+            input.value = value.toString();
         } else if (value > 255) {
             value = 255;
-            ev.currentTarget.value = value.toString();
+            input.value = value.toString();
         }
 
         circle.style.right = `${100 - (100 - (100 - c.maxRange) - c.minRange) / (255 / value) - cR.width / (c.trackWidth / 100)}%`;
 
-        onChange(ev);
+        if (ev) onChange(ev);
     };
 
     circle.onpointerdown = pointerStart;
 
     titleElement.innerText = title;
     input.value = value.toString();
+
+    setTimeout(() => {
+        // @ts-expect-error
+        input.onchange();
+    });
 
     return () => {
         window.removeEventListener("pointerup", pointerEnd);
