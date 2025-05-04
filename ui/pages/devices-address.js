@@ -27,27 +27,29 @@ function getDevice() {
 }
 
 /**
- * @param {import("../types.d.ts").Color | null} [color]
  * @returns {import("../types.d.ts").Color | null}
  */
-function getColor(color) {
-    // Get color from active item, or use device color as fallback, or use [255,255,255] as default
-    /** @type {HTMLElement | null} */
-    const activeItem = document.querySelector(`.color-storage-item.active`);
-    if (activeItem) {
-        color.push(...splitDataColor(activeItem.getAttribute("data-color")));
-    } else {
-        color.push(
-            // Ok, please don't ask questions here
-            ...[...(color || [255, 255, 255]), 0, 0, 0],
-        );
-    }
-
-    color = color.slice(0, 3);
+function getColor() {
+    // Get color from active item
+    const color = getActiveColor().slice(0, 3);
 
     // Get range slider values
     color.push(...getRangeSliderValues());
 
+    return color;
+}
+
+/**
+ * @returns {import("../types.d.ts").Color}
+ */
+function getActiveColor() {
+    let color = [];
+    const activeItem = document.querySelector(`.color-storage-item.active`);
+    if (activeItem) {
+        color.push(...splitDataColor(activeItem.getAttribute("data-color")));
+    } else {
+        color = [255, 255, 255];
+    }
     return color;
 }
 
@@ -129,6 +131,7 @@ async function setupRangeSliders() {
     }
 
     if (device.pins) {
+        let timeout = null;
         device.pins.slice(3).forEach((pin, index) => {
             index += 3;
             const slider = createColorRangeSlider(
@@ -137,8 +140,14 @@ async function setupRangeSliders() {
                 () => {
                     // NOTE: Update device color (api) with some timeout
                     //       (250ms?), i should use websockets for this later
-                    setTimeout(() => {
-                        w.api.setDevicesColor(getColor(device.color), device);
+                    console.debug(`range slider input change event`);
+                    if (timeout !== null) {
+                        clearTimeout(timeout);
+                        timeout = null;
+                    }
+                    timeout = setTimeout(() => {
+                        timeout = null;
+                        w.api.setDevicesColor(getColor(), device);
                     }, 250);
                 },
             );
