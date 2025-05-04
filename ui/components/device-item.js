@@ -1,32 +1,36 @@
-/** @type {import("../types.d.ts").PageWindow} */
+/** @type {import("../types").PageWindow} */
 // @ts-ignore
 const w = window;
 
 /**
- * @param {import("../types.d.ts").Device} device
- * @returns {HTMLElement}
+ * @param {import("../types").Device} device
+ * @returns {import("../types.d.ts").Component}
  */
 export function createDeviceItem(device) {
     /** @type {HTMLTemplateElement} */
-    const template = document.querySelector(
-        `template[name="device-list-item"]`,
-    );
+    const t = document.querySelector(`template[name="device-list-item"]`);
+    if (!t) {
+        throw new Error(
+            `Nope, template with name "color-range-slider" not found`,
+        );
+    }
 
     /** @type {HTMLElement} */
-    const item = template.content
+    const item = t.content
         .cloneNode(true)
         // @ts-expect-error
         .querySelector(".device-list-item");
 
-    updateDeviceItem(item, device);
-
-    return item;
+    return {
+        element: item,
+        destroy: updateDeviceItem(item, device),
+    };
 }
 
 /**
  * @param {HTMLElement} item
- * @param {import("../types.d.ts").Device} device
- * @returns {void}
+ * @param {import("../types").Device} device
+ * @returns {null}
  */
 export function updateDeviceItem(item, device) {
     item.setAttribute("data-addr", device.server.addr);
@@ -42,8 +46,7 @@ export function updateDeviceItem(item, device) {
     /** @type {HTMLButtonElement} */
     const powerButton = item.querySelector(`button.power-button`);
 
-    // @ts-expect-error
-    powerButton.onclick = onClickPowerButton;
+    powerButton.addEventListener("click", onClickPowerButton);
 
     // @ts-expect-error
     powerButton.querySelector(`.background`).style.backgroundColor =
@@ -54,6 +57,8 @@ export function updateDeviceItem(item, device) {
     } else {
         powerButton.setAttribute("data-state", "off");
     }
+
+    return null;
 }
 
 /**
@@ -83,7 +88,7 @@ async function onClickPowerButton(ev) {
     let device = w.store.device(addr);
 
     // Set color
-    /** @type {import("../types.d.ts").Color} */
+    /** @type {import("../types").Color} */
     let newColor;
     if (!device.color || !device.color.find((c) => c > 0)) {
         newColor = [255, 255, 255, 255];
@@ -100,4 +105,8 @@ async function onClickPowerButton(ev) {
     }
 
     return defer();
+}
+
+function test() {
+    console.warn("clicked....");
 }

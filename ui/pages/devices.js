@@ -1,5 +1,5 @@
 (() => {
-    const { createDeviceItem } = require("../items/device");
+    const { createDeviceItem } = require("../components/device-item");
 
     /** @type {import("../types.d.ts").PageWindow} */
     // @ts-expect-error
@@ -30,7 +30,7 @@
 
                 devices.forEach((device) => {
                     const item = createDeviceItem(device);
-                    devicesList.appendChild(item);
+                    devicesList.appendChild(item.element);
                 });
             },
             true,

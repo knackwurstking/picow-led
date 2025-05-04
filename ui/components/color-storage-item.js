@@ -5,17 +5,24 @@ export const colorSeparator = ",";
  * @param {import("../types").Color} color
  * @param {import("../types").Device} [device]
  * @param {(color: import("../types").Color) => void|Promise<void>} [onClick]
- * @returns {HTMLElement}
+ * @returns {import("../types.d.ts").Component}
  */
 export function createColorStorageItem(index, color, device, onClick) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="color-storage-item"]`);
+    if (!t) {
+        throw new Error(
+            `Nope, template with name "color-range-slider" not found`,
+        );
+    }
 
     /** @type {HTMLElement} */
     // @ts-expect-error
     const item = t.content.cloneNode(true).querySelector(`*`);
-    updateColorStorageItem(item, index, color, device, onClick);
-    return item;
+    return {
+        element: item,
+        destroy: updateColorStorageItem(item, index, color, device, onClick),
+    };
 }
 
 /**
@@ -24,7 +31,7 @@ export function createColorStorageItem(index, color, device, onClick) {
  * @param {import("../types").Color} color
  * @param {import("../types").Device | null} [device]
  * @param {(color: import("../types").Color) => void|Promise<void>} [onClick]
- * @returns {void}
+ * @returns {null}
  */
 export function updateColorStorageItem(item, index, color, device, onClick) {
     if (color.length < 3) color = [...color, 0, 0, 0];
@@ -47,7 +54,7 @@ export function updateColorStorageItem(item, index, color, device, onClick) {
             color.push(parseInt(value.slice(x, x + 2), 16));
         }
 
-        /** @type {import("../types.d.ts").PageWindow} */
+        /** @type {import("../types").PageWindow} */
         // @ts-ignore
         const w = window;
         w.api.setColor(index, color);
@@ -55,4 +62,6 @@ export function updateColorStorageItem(item, index, color, device, onClick) {
 
         updateColorStorageItem(item, index, color, device, onClick);
     };
+
+    return null;
 }
