@@ -130,7 +130,7 @@ async function setupRangeSliders() {
         device.pins.slice(3).forEach((pin, index) => {
             index += 3;
             const slider = createColorRangeSlider(
-                pin.toString(),
+                `Pin: ${pin.toString()}`,
                 device.color[index] || 0,
                 () => {
                     // NOTE: Update device color (api) with some timeout
