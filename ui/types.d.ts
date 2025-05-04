@@ -1,23 +1,27 @@
-export declare type PageWindow = Window & typeof globalThis & {
-    ui: UI;
-    api: Api;
-    ws: WS;
-    utils: Utils;
-    store: Store;
-};
+export declare type PageWindow = Window &
+    typeof globalThis & {
+        ui: UI;
+        api: Api;
+        ws: WS;
+        utils: Utils;
+        store: Store;
+    };
 
 export declare type UI = typeof import("ui");
 
 export declare type Store = {
     obj: UIStore;
     device: (addr: string) => Device;
-}
+};
 
-export declare type UIStore = import("ui").Store<{ devices: Device[] }>
+export declare type UIStore = import("ui").Store<{ devices: Device[] }>;
 
 export declare type Api = {
     devices: () => Promise<Device[]>;
-    setDevicesColor: (color: Color | undefined | null, ...devices: Device[]) => Promise<Device[]>;
+    setDevicesColor: (
+        color: Color | undefined | null,
+        ...devices: Device[]
+    ) => Promise<Device[]>;
     colors: () => Promise<ColorCache>;
     color: (index: number) => Promise<Color>;
     setColor: (index: number, color: Color) => Promise<void>;
@@ -56,7 +60,12 @@ export declare type Server = {
     name: string;
 };
 
-export declare type Color = number[]
-export declare type Pins = number[]
+export declare type Color = number[];
+export declare type Pins = number[];
 
-export declare type ColorCache = Color[]
+export declare type ColorCache = Color[];
+
+export declare type Component = {
+    element: HTMLElement;
+    destroy: import("ui").CleanUpFunction | null;
+};
