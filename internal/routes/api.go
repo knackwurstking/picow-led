@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"picow-led/internal/api"
 	"strconv"
+	"sync"
 
 	"github.com/labstack/echo/v4"
 )
@@ -40,6 +41,8 @@ func apiSetupPing(e *echo.Echo, o Api) {
 }
 
 func apiSetupDevices(e *echo.Echo, o Api) {
+	// TODO: Use a mutex lock for all api calls
+
 	e.GET(o.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
 		err := c.JSON(http.StatusOK, api.GetDevices(o.Config))
 		if err != nil {
@@ -85,7 +88,12 @@ func apiSetupDevices(e *echo.Echo, o Api) {
 }
 
 func apiSetupColor(e *echo.Echo, o Api) {
+	mutex := &sync.Mutex{}
+
 	e.GET(o.ServerPathPrefix+"/api/color", func(c echo.Context) error {
+		mutex.Lock()
+		defer mutex.Unlock()
+
 		err := c.JSON(http.StatusOK, cache.Color)
 		if err != nil {
 			log.Println(err)
@@ -98,6 +106,9 @@ func apiSetupColor(e *echo.Echo, o Api) {
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
+
+		mutex.Lock()
+		defer mutex.Unlock()
 
 		if len(cache.Color)-1 < index {
 			return c.String(http.StatusBadRequest, fmt.Sprintf("color index %d not found", index))
@@ -118,6 +129,9 @@ func apiSetupColor(e *echo.Echo, o Api) {
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
+
+		mutex.Lock()
+		defer mutex.Unlock()
 
 		if len(cache.Color)-1 < index {
 			return c.String(http.StatusBadRequest, fmt.Sprintf("index %d not exists", index))
