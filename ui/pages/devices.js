@@ -30,7 +30,7 @@
 
                 devices.forEach((device) => {
                     const item = createDeviceItem(device);
-                    devicesList.appendChild(item.element);
+                    devicesList.appendChild(item);
                 });
             },
             true,

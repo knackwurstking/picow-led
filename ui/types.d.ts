@@ -64,8 +64,3 @@ export declare type Color = number[];
 export declare type Pins = number[];
 
 export declare type ColorCache = Color[];
-
-export declare type Component = {
-    element: HTMLElement;
-    destroy: import("ui").CleanUpFunction | null;
-};

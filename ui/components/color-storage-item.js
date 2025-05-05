@@ -13,7 +13,7 @@ export function splitDataColor(v) {
  * @param {import("../types").Color} color
  * @param {import("../types").Device} [device]
  * @param {(color: import("../types").Color) => void|Promise<void>} [onClick]
- * @returns {import("../types.d.ts").Component}
+ * @returns {HTMLElement}
  */
 export function createColorStorageItem(index, color, device, onClick) {
     /** @type {HTMLTemplateElement} */
@@ -27,10 +27,8 @@ export function createColorStorageItem(index, color, device, onClick) {
     /** @type {HTMLElement} */
     // @ts-expect-error
     const item = t.content.cloneNode(true).querySelector(`*`);
-    return {
-        element: item,
-        destroy: updateColorStorageItem(item, index, color, device, onClick),
-    };
+
+    return updateColorStorageItem(item, index, color, device, onClick);
 }
 
 /**
@@ -39,7 +37,7 @@ export function createColorStorageItem(index, color, device, onClick) {
  * @param {import("../types").Color} color
  * @param {import("../types").Device | null} [device]
  * @param {(color: import("../types").Color) => void|Promise<void>} [onClick]
- * @returns {null}
+ * @returns {HTMLElement}
  */
 export function updateColorStorageItem(item, index, color, device, onClick) {
     if (color.length < 3) color = [...color, 0, 0, 0];
@@ -71,5 +69,5 @@ export function updateColorStorageItem(item, index, color, device, onClick) {
         updateColorStorageItem(item, index, color, device, onClick);
     };
 
-    return null;
+    return item;
 }

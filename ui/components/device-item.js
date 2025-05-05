@@ -4,7 +4,7 @@ const w = window;
 
 /**
  * @param {import("../types").Device} device
- * @returns {import("../types.d.ts").Component}
+ * @returns {HTMLElement}
  */
 export function createDeviceItem(device) {
     /** @type {HTMLTemplateElement} */
@@ -21,16 +21,13 @@ export function createDeviceItem(device) {
         // @ts-expect-error
         .querySelector(".device-list-item");
 
-    return {
-        element: item,
-        destroy: updateDeviceItem(item, device),
-    };
+    return updateDeviceItem(item, device);
 }
 
 /**
  * @param {HTMLElement} item
  * @param {import("../types").Device} device
- * @returns {null}
+ * @returns {HTMLElement}
  */
 export function updateDeviceItem(item, device) {
     item.setAttribute("data-addr", device.server.addr);
@@ -58,7 +55,7 @@ export function updateDeviceItem(item, device) {
         powerButton.setAttribute("data-state", "off");
     }
 
-    return null;
+    return item;
 }
 
 /**
@@ -105,8 +102,4 @@ async function onClickPowerButton(ev) {
     }
 
     return defer();
-}
-
-function test() {
-    console.warn("clicked....");
 }
