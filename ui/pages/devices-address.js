@@ -16,26 +16,36 @@
     /**
      * @returns {string}
      */
-    function getDeviceAddress() {
+    function pageDeviceAddress() {
         return decodeURIComponent(location.pathname.split("/").reverse()[0]);
     }
 
     /**
      * @returns {import("../types.d.ts").Device}
      */
-    function getDevice() {
-        return w.store.device(getDeviceAddress());
+    function pageDevice() {
+        return w.store.device(pageDeviceAddress());
+    }
+
+    /**
+     * @returns {import("../types.d.ts").Color}
+     */
+    function pageCurrentColor() {
+        return (
+            w.store.currentColor(pageDeviceAddress()) ||
+            (pageDevice().pins || []).map(() => 255)
+        );
     }
 
     /**
      * @returns {import("../types.d.ts").Color | null}
      */
-    function getColor() {
+    function pagePickedColor() {
         // Get color from active item
-        const color = getActiveColor().slice(0, 3);
+        const color = pageActiveColor().slice(0, 3);
 
         // Get range slider values
-        color.push(...getRangeSliderValues());
+        color.push(...pageRangeSliderValues());
 
         return color;
     }
@@ -43,7 +53,7 @@
     /**
      * @returns {import("../types.d.ts").Color}
      */
-    function getActiveColor() {
+    function pageActiveColor() {
         let color = [];
         const activeItem = document.querySelector(`.color-storage-item.active`);
         if (activeItem) {
@@ -59,10 +69,10 @@
     /**
      * @returns {number[]}
      */
-    function getRangeSliderValues() {
+    function pageRangeSliderValues() {
         return Array.from(
             document.querySelectorAll(
-                ".range-sliders .color-range-slider input",
+                `.range-sliders .color-range-slider input[type="range"]`,
             ),
         ).map((/**@type {HTMLInputElement}*/ input) => {
             return parseInt(input.value || "0", 10);
@@ -73,7 +83,7 @@
      * @returns {void}
      */
     function setupAppBar() {
-        const device = getDevice();
+        const device = pageDevice();
         const items = w.utils.setupAppBarItems("online-indicator", "title");
         items["title"].innerText = device ? device.server.name : "";
     }
@@ -86,13 +96,19 @@
         colorStorageContainer.innerHTML = "";
 
         const colorCache = await w.api.colors();
+        const device = pageDevice();
+
+        const currentColor = pageCurrentColor();
+        const currentColorString = currentColor
+            .slice(0, 3)
+            .join(colorSeparator);
 
         // Create color storage items
         for (let x = 0; x < colorCache.length; x++) {
             const item = createColorStorageItem(
                 x,
                 colorCache[x],
-                getDevice(),
+                device,
                 (color) => {
                     const colorString = color.join(colorSeparator);
 
@@ -109,8 +125,8 @@
                                     );
 
                                     w.api.setDevicesColor(
-                                        [...color, ...getRangeSliderValues()],
-                                        getDevice(),
+                                        [...color, ...pageRangeSliderValues()],
+                                        device,
                                     );
                                 }
                             } else {
@@ -121,6 +137,10 @@
                 },
             );
 
+            if (item.getAttribute("data-color") === currentColorString) {
+                item.classList.add("active");
+            }
+
             colorStorageContainer.appendChild(item);
         }
     }
@@ -130,7 +150,7 @@
         const container = document.querySelector(".range-sliders");
         container.innerHTML = "";
 
-        const device = getDevice();
+        const device = pageDevice();
 
         if (device.pins.length > 3) {
             container.style.display = "block";
@@ -140,23 +160,23 @@
         }
 
         if (device.pins) {
+            const currentColor = pageCurrentColor();
             let timeout = null;
             device.pins.slice(3).forEach((pin, index) => {
                 index += 3;
                 const slider = createColorRangeSlider(
                     `Pin: ${pin.toString()}`,
-                    device.color[index] || 0,
+                    currentColor[index] || 0,
                     () => {
                         // NOTE: Update device color (api) with some timeout
                         //       (250ms?), i should use websockets for this later
-                        console.debug(`range slider input change event`);
                         if (timeout !== null) {
                             clearTimeout(timeout);
                             timeout = null;
                         }
                         timeout = setTimeout(() => {
                             timeout = null;
-                            w.api.setDevicesColor(getColor(), device);
+                            w.api.setDevicesColor(pagePickedColor(), device);
                         }, 250);
                     },
                 );
@@ -170,5 +190,13 @@
         setupAppBar();
         setupColorStorage();
         setupRangeSliders();
+
+        console.debug("device address:", pageDevice());
+        console.table({
+            activeColor: pageActiveColor(),
+            currentColor: pageCurrentColor(),
+            pickedColor: pagePickedColor(),
+            rangeSliderValues: pageRangeSliderValues(),
+        });
     });
 })();
