@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"picow-led/internal/api"
 	"strconv"
-	"sync"
 
 	"github.com/labstack/echo/v4"
 )
@@ -41,13 +40,20 @@ func apiSetupPing(e *echo.Echo, o Api) {
 }
 
 func apiSetupDevices(e *echo.Echo, o Api) {
-	// TODO: Use a mutex lock for all api calls
-
 	e.GET(o.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
-		err := c.JSON(http.StatusOK, api.GetDevices(o.Config))
+		devices := api.GetDevices(o.Config)
+		err := c.JSON(http.StatusOK, devices)
 		if err != nil {
 			log.Println(err)
 		}
+
+		go func() {
+			cache.Mutex.Lock()
+			defer cache.Mutex.Unlock()
+
+			cache.Devices = devices
+		}()
+
 		return err
 	})
 
@@ -63,21 +69,27 @@ func apiSetupDevices(e *echo.Echo, o Api) {
 		}
 
 		reqData.Devices = api.PostDevicesColor(o.Config, reqData.Color, reqData.Devices...)
-		for di, dd := range reqData.Devices {
-			for _, fd := range cache.Devices {
-				if dd.Server.Addr != fd.Server.Addr {
-					continue
+
+		func() {
+			cache.Mutex.Lock()
+			defer cache.Mutex.Unlock()
+
+			for di, dd := range reqData.Devices {
+				for _, fd := range cache.Devices {
+					if dd.Server.Addr != fd.Server.Addr {
+						continue
+					}
+
+					// Only merge things changed after PostDevicesColor call
+					fd.Color = dd.Color
+					fd.Error = dd.Error
+					fd.Online = dd.Online
+
+					// Data to return
+					reqData.Devices[di] = fd
 				}
-
-				// Only merge things changed after PostDevicesColor call
-				fd.Color = dd.Color
-				fd.Error = dd.Error
-				fd.Online = dd.Online
-
-				// Data to return
-				reqData.Devices[di] = fd
 			}
-		}
+		}()
 
 		err = c.JSON(http.StatusOK, reqData.Devices)
 		if err != nil {
@@ -88,11 +100,9 @@ func apiSetupDevices(e *echo.Echo, o Api) {
 }
 
 func apiSetupColor(e *echo.Echo, o Api) {
-	mutex := &sync.Mutex{}
-
 	e.GET(o.ServerPathPrefix+"/api/color", func(c echo.Context) error {
-		mutex.Lock()
-		defer mutex.Unlock()
+		cache.Mutex.Lock()
+		defer cache.Mutex.Unlock()
 
 		err := c.JSON(http.StatusOK, cache.Color)
 		if err != nil {
@@ -107,8 +117,8 @@ func apiSetupColor(e *echo.Echo, o Api) {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		mutex.Lock()
-		defer mutex.Unlock()
+		cache.Mutex.Lock()
+		defer cache.Mutex.Unlock()
 
 		if len(cache.Color)-1 < index {
 			return c.String(http.StatusBadRequest, fmt.Sprintf("color index %d not found", index))
@@ -130,8 +140,8 @@ func apiSetupColor(e *echo.Echo, o Api) {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		mutex.Lock()
-		defer mutex.Unlock()
+		cache.Mutex.Lock()
+		defer cache.Mutex.Unlock()
 
 		if len(cache.Color)-1 < index {
 			return c.String(http.StatusBadRequest, fmt.Sprintf("index %d not exists", index))

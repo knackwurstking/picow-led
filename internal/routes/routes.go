@@ -2,6 +2,7 @@ package routes
 
 import (
 	"picow-led/internal/api"
+	"sync"
 
 	"github.com/labstack/echo/v4"
 )
@@ -14,6 +15,7 @@ var cache = &Cache{
 		{0, 255, 0, 0},
 		{0, 0, 255, 0},
 	},
+	Mutex: &sync.Mutex{},
 }
 
 type Options struct {
@@ -24,6 +26,7 @@ type Options struct {
 type Cache struct {
 	Devices []*api.Device
 	Color   []api.MicroColor
+	Mutex   *sync.Mutex
 }
 
 func Create(e *echo.Echo, o Options) {
