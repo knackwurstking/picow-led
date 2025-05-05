@@ -49,8 +49,8 @@ export function updateColorRangeSlider(item, title, value, onChange) {
 
     /** @type {boolean} */
     let noneSelectBackup = false;
-    /** @type {string} */
-    let touchActionBackup = "";
+    /** @type {boolean} */
+    let touchActionBackup = false;
 
     /** @type {number | null} */
     let currentPointerID = null;
@@ -117,7 +117,9 @@ export function updateColorRangeSlider(item, title, value, onChange) {
             document.body.classList.remove("ui-none-select");
         }
 
-        item.style.touchAction = touchActionBackup;
+        if (!touchActionBackup) {
+            document.body.classList.remove("ui-disable-touch");
+        }
     };
 
     const pointerStart = (/** @type {PointerEvent} */ ev) => {
@@ -130,8 +132,9 @@ export function updateColorRangeSlider(item, title, value, onChange) {
         noneSelectBackup = document.body.classList.contains("ui-none-select");
         document.body.classList.add("ui-none-select");
 
-        touchActionBackup = document.body.style.touchAction;
-        item.style.touchAction = "none";
+        touchActionBackup =
+            document.body.classList.contains("ui-disable-touch");
+        document.body.classList.add("ui-disable-touch");
 
         updateRects();
 
