@@ -6,6 +6,16 @@
     const w = window;
 
     /**
+     * @param {import("../types.d.ts").Device} device
+     */
+    function currentColorForDevice(device) {
+        return (
+            w.store.currentColor(device.server.addr) ||
+            (device.pins || []).map(() => 255)
+        );
+    }
+
+    /**
      * @returns {void}
      */
     function setupAppBar() {
@@ -29,7 +39,20 @@
                 devicesList.innerHTML = "";
 
                 devices.forEach((device) => {
-                    const item = createDeviceItem(device);
+                    const item = createDeviceItem(device, async () => {
+                        let color = currentColorForDevice(device);
+                        if (Math.max(...device.color) > 0) {
+                            color = color.map(() => 0);
+                        }
+
+                        try {
+                            await w.api.setDevicesColor(color, device);
+                        } catch (err) {
+                            console.error(err);
+                            alert(err); // TODO: Error handling, notification?
+                        }
+                    });
+
                     devicesList.appendChild(item);
                 });
             },
