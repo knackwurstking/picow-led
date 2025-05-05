@@ -28,7 +28,7 @@ export declare type Api = {
     setDevicesColor: (
         color: Color | undefined | null,
         ...devices: Device[]
-    ) => Promise<void>;
+    ) => Promise<Device[]>;
     colors: () => Promise<ColorCache>;
     color: (index: number) => Promise<Color>;
     setColor: (index: number, color: Color) => Promise<void>;
