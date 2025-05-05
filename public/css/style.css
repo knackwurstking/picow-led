@@ -38,7 +38,7 @@ main {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 
-    overflow: visible
+    overflow: visible;
 }
 
 .device-list-item .background {
@@ -83,8 +83,6 @@ main {
     color: red;
 }
 
-
-
 .power-button {
     color: rgb(0, 0, 0) !important;
 }
@@ -99,4 +97,22 @@ main {
 
 .power-button[data-state="off"] {
     color: rgb(0, 0, 0) !important;
+}
+
+.color-range-slider input[type="range"]::-webkit-slider-runnable-track {
+    background: -webkit-linear-gradient(
+        right,
+        hsl(0, 0%, 100%) 0%,
+        hsl(0, 0%, 50%) 50%,
+        hsl(0, 0%, 0%) 100%
+    );
+}
+
+.color-range-slider input[type="range"]::-moz-range-track {
+    background: -moz-linear-gradient(
+        right,
+        hsl(0, 0%, 100%) 0%,
+        hsl(0, 0%, 50%) 50%,
+        hsl(0, 0%, 0%) 100%
+    );
 }
