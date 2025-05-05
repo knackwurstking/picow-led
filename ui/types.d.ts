@@ -12,9 +12,16 @@ export declare type UI = typeof import("ui");
 export declare type Store = {
     obj: UIStore;
     device: (addr: string) => Device;
+    currentColor: (addr: string) => Color;
 };
 
-export declare type UIStore = import("ui").Store<{ devices: Device[] }>;
+export declare type UIStore = import("ui").Store<{
+    devices: Device[];
+    color: {
+        api: ColorCache;
+        current: Record<string, Color>;
+    };
+}>;
 
 export declare type Api = {
     devices: () => Promise<Device[]>;
