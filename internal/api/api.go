@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var mutex = &sync.Mutex{}
+var microMutex = &sync.Mutex{}
 
 type Config struct {
 	Servers []*Server `json:"servers,omitempty" yaml:"servers,omitempty"`
@@ -70,16 +70,13 @@ func GetDevices(o *Config) []*Device {
 		devices = append(devices, d)
 	}
 
-	mutex.Lock()
-	defer mutex.Unlock()
-
 	wg := &sync.WaitGroup{}
 	for _, device := range devices {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 
-			r := &MicroRequest{}
+			r := NewMicroRequest(microMutex)
 
 			if pins, err := r.Pins(device); err != nil && !device.Online {
 				return
@@ -100,16 +97,13 @@ func GetDevices(o *Config) []*Device {
 }
 
 func PostDevicesColor(o *Config, c MicroColor, devices ...*Device) []*Device {
-	mutex.Lock()
-	defer mutex.Unlock()
-
 	wg := &sync.WaitGroup{}
 	for _, d := range devices {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 
-			r := &MicroRequest{}
+			r := NewMicroRequest(microMutex)
 			if err := r.SetColor(d, c); err != nil {
 				d.Error = err.Error()
 			} else {

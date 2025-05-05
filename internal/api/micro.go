@@ -73,7 +73,20 @@ type MicroRequest struct {
 	CommandArgs []string `json:"args"`
 }
 
+func NewMicroRequest(mutex *sync.Mutex) *MicroRequest {
+	return &MicroRequest{
+		MicroSocket: MicroSocket{
+			Mutex: mutex,
+		},
+	}
+}
+
 func (mr *MicroRequest) Send(d *Device) ([]byte, error) {
+	if mr.Mutex != nil {
+		mr.Mutex.Lock()
+		defer mr.Mutex.Unlock()
+	}
+
 	d.Online = true
 	d.Error = ""
 
@@ -202,8 +215,8 @@ type (
 )
 
 type MicroSocket struct {
+	Mutex  *sync.Mutex
 	socket net.Conn
-	mutex  sync.Mutex
 }
 
 func (ms *MicroSocket) IsConnected() bool {
