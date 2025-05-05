@@ -45,7 +45,7 @@ export function create() {
     /**
      * @param {import("../types.d.ts").Color | undefined | null} color
      * @param {import("../types.d.ts").Device[]} devices
-     * @returns {Promise<void>}
+     * @returns {Promise<import("../types.d.ts").Device[]>}
      */
     async function setDevicesColor(color, ...devices) {
         if (!color) {
@@ -65,7 +65,7 @@ export function create() {
         });
 
         /** @type {import("../types.d.ts").Device[]} */
-        await _handleResponse(resp, url);
+        devices = await _handleResponse(resp, url);
 
         w.store.obj.update("devices", (storeDevices) => {
             /** @type {import("../types.d.ts").Device} */
@@ -78,6 +78,20 @@ export function create() {
                     if (storeDevice.server.addr === devices[i].server.addr) {
                         storeDevice = devices[i];
 
+                        // Log device error
+                        if (storeDevice.error) {
+                            console.error(
+                                `Device ${
+                                    storeDevice.server.name ||
+                                    storeDevice.server.addr
+                                } is ${
+                                    storeDevice.online ? "online" : "offline"
+                                } with error:`,
+                                storeDevice.error,
+                            );
+                        }
+
+                        // Store current color
                         if (Math.max(...storeDevice.color) > 0) {
                             w.store.obj.update("color", (data) => {
                                 data.current[storeDevice.server.addr] =
@@ -91,6 +105,8 @@ export function create() {
 
             return storeDevices;
         });
+
+        return devices;
     }
 
     /**
