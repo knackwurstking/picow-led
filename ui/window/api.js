@@ -1,11 +1,11 @@
+/** @type {import("../types.d.ts").PageWindow} */
+// @ts-ignore
+const w = window;
+
 /**
  * @returns {import("../types.d.ts").Api}
  */
 export function create() {
-    /** @type {import("../types.d.ts").PageWindow} */
-    // @ts-ignore
-    const w = window;
-
     /**
      * @param {string} path
      * @returns {string}
@@ -66,48 +66,7 @@ export function create() {
 
         /** @type {import("../types.d.ts").Device[]} */
         devices = await _handleResponse(resp, url);
-
-        // TODO: Move to helper function
-        w.store.obj.update("devices", (storeDevices) => {
-            /** @type {import("../types.d.ts").Device} */
-            let storeDevice;
-
-            for (let sI = 0; sI < storeDevices.length; sI++) {
-                for (let i = 0; i < devices.length; i++) {
-                    storeDevice = storeDevices[sI];
-
-                    if (storeDevice.server.addr === devices[i].server.addr) {
-                        storeDevice = devices[i];
-
-                        // Log device error
-                        if (storeDevice.error) {
-                            console.error(
-                                `Device ${
-                                    storeDevice.server.name ||
-                                    storeDevice.server.addr
-                                } is ${
-                                    storeDevice.online ? "online" : "offline"
-                                } with error:`,
-                                storeDevice.error,
-                            );
-                        }
-
-                        // Store current color
-                        if (Math.max(...storeDevice.color) > 0) {
-                            w.store.obj.update("color", (data) => {
-                                data.current[storeDevice.server.addr] =
-                                    storeDevice.color;
-                                return data;
-                            });
-                        }
-                    }
-                }
-            }
-
-            return storeDevices;
-        });
-
-        return devices;
+        return updateStoreDevices(devices);
     }
 
     /**
@@ -155,4 +114,51 @@ export function create() {
         color,
         setColor,
     };
+}
+
+/**
+ * @param {import("../types.d.ts").Device[]} devices
+ * @returns {import("../types.d.ts").Device[]}
+ */
+function updateStoreDevices(devices) {
+    w.store.obj.update("devices", (storeDevices) => {
+        /** @type {import("../types.d.ts").Device} */
+        let storeDevice;
+
+        for (let sI = 0; sI < storeDevices.length; sI++) {
+            for (let i = 0; i < devices.length; i++) {
+                storeDevice = storeDevices[sI];
+
+                if (storeDevice.server.addr === devices[i].server.addr) {
+                    storeDevices[sI] = devices[i];
+
+                    // Log device error
+                    if (storeDevice.error) {
+                        console.error(
+                            `Device ${
+                                storeDevice.server.name ||
+                                storeDevice.server.addr
+                            } is ${
+                                storeDevice.online ? "online" : "offline"
+                            } with error:`,
+                            storeDevice.error,
+                        );
+                    }
+
+                    // Store current color
+                    if (Math.max(...storeDevice.color) > 0) {
+                        w.store.obj.update("color", (data) => {
+                            data.current[storeDevice.server.addr] =
+                                storeDevice.color;
+                            return data;
+                        });
+                    }
+                }
+            }
+        }
+
+        return storeDevices;
+    });
+
+    return devices;
 }
