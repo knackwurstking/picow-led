@@ -24,6 +24,8 @@ type Options struct {
 }
 
 type Cache struct {
+	// TODO: Handle the mutex lock internal, add methods for devices and
+	// 		 color, make fields private
 	Devices []*api.Device
 	Color   []api.MicroColor
 	Mutex   *sync.Mutex
