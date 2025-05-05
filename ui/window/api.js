@@ -45,7 +45,7 @@ export function create() {
     /**
      * @param {import("../types.d.ts").Color | undefined | null} color
      * @param {import("../types.d.ts").Device[]} devices
-     * @returns {Promise<import("../types.d.ts").Device[]>}
+     * @returns {Promise<void>}
      */
     async function setDevicesColor(color, ...devices) {
         if (!color) {
@@ -65,21 +65,32 @@ export function create() {
         });
 
         /** @type {import("../types.d.ts").Device[]} */
-        devices = await _handleResponse(resp, url);
+        await _handleResponse(resp, url);
 
-        w.store.obj.update("devices", (d) => {
-            for (let sI = 0; sI < d.length; sI++) {
+        w.store.obj.update("devices", (storeDevices) => {
+            /** @type {import("../types.d.ts").Device} */
+            let storeDevice;
+
+            for (let sI = 0; sI < storeDevices.length; sI++) {
                 for (let i = 0; i < devices.length; i++) {
-                    if (d[sI].server.addr === devices[i].server.addr) {
-                        d[sI] = devices[i];
+                    storeDevice = storeDevices[sI];
+
+                    if (storeDevice.server.addr === devices[i].server.addr) {
+                        storeDevice = devices[i];
+
+                        if (Math.max(...storeDevice.color) > 0) {
+                            w.store.obj.update("color", (data) => {
+                                data.current[storeDevice.server.addr] =
+                                    storeDevice.color;
+                                return data;
+                            });
+                        }
                     }
                 }
             }
 
-            return d;
+            return storeDevices;
         });
-
-        return devices;
     }
 
     /**

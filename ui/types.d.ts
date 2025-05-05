@@ -18,7 +18,7 @@ export declare type Store = {
 export declare type UIStore = import("ui").Store<{
     devices: Device[];
     color: {
-        api: ColorCache;
+        api: ColorCache; // TODO: Not handled for now (api)
         current: Record<string, Color>;
     };
 }>;
@@ -28,7 +28,7 @@ export declare type Api = {
     setDevicesColor: (
         color: Color | undefined | null,
         ...devices: Device[]
-    ) => Promise<Device[]>;
+    ) => Promise<void>;
     colors: () => Promise<ColorCache>;
     color: (index: number) => Promise<Color>;
     setColor: (index: number, color: Color) => Promise<void>;
