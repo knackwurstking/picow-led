@@ -4,9 +4,10 @@ const w = window;
 
 /**
  * @param {import("../types").Device} device
+ * @param {(item: HTMLElement) => void|Promise<void>} onClickPowerButton
  * @returns {HTMLElement}
  */
-export function createDeviceItem(device) {
+export function createDeviceItem(device, onClickPowerButton) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="device-list-item"]`);
     if (!t) {
@@ -21,15 +22,16 @@ export function createDeviceItem(device) {
         // @ts-expect-error
         .querySelector(".device-list-item");
 
-    return updateDeviceItem(item, device);
+    return updateDeviceItem(item, device, onClickPowerButton);
 }
 
 /**
  * @param {HTMLElement} item
  * @param {import("../types").Device} device
+ * @param {(item: HTMLElement) => void|Promise<void>} onClickPowerButton
  * @returns {HTMLElement}
  */
-export function updateDeviceItem(item, device) {
+export function updateDeviceItem(item, device, onClickPowerButton) {
     item.setAttribute("data-addr", device.server.addr);
 
     /** @type {HTMLElement} */
@@ -43,7 +45,16 @@ export function updateDeviceItem(item, device) {
     /** @type {HTMLButtonElement} */
     const powerButton = item.querySelector(`button.power-button`);
 
-    powerButton.addEventListener("click", onClickPowerButton);
+    powerButton.onclick = async (
+        /** @type {MouseEvent & { currentTarget: HTMLButtonElement }} */ ev,
+    ) => {
+        if (ev.currentTarget.getAttribute("data-state") === "processing") {
+            return;
+        }
+        ev.currentTarget.setAttribute("data-state", "processing");
+
+        await onClickPowerButton(item);
+    };
 
     // @ts-expect-error
     powerButton.querySelector(`.background`).style.backgroundColor =
@@ -56,50 +67,4 @@ export function updateDeviceItem(item, device) {
     }
 
     return item;
-}
-
-/**
- * @param {Event & { currentTarget: HTMLButtonElement }} ev
- * @returns {Promise<void>}
- */
-async function onClickPowerButton(ev) {
-    const target = ev.currentTarget;
-
-    if (target.getAttribute("data-state") === "processing") return;
-    target.setAttribute("data-state", "processing");
-
-    const defer = () => {
-        if (device && Math.max(...device.color)) {
-            target.setAttribute("data-state", "on");
-        } else {
-            target.setAttribute("data-state", "off");
-        }
-    };
-
-    /** @type {string} */
-    const addr = ev.currentTarget
-        .closest(".device-list-item")
-        .getAttribute("data-addr");
-
-    // Search the local storage for this device
-    let device = w.store.device(addr);
-
-    // Set color
-    /** @type {import("../types").Color} */
-    let newColor;
-    if (!device.color || !device.color.find((c) => c > 0)) {
-        newColor = [255, 255, 255, 255];
-    } else {
-        newColor = [0, 0, 0, 0];
-    }
-
-    // Request to api
-    try {
-        await w.api.setDevicesColor(newColor, device);
-    } catch (err) {
-        console.error(err);
-        alert(err); // TODO: Error handling, notification?
-    }
-
-    return defer();
 }
