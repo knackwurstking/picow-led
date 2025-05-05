@@ -156,6 +156,8 @@ export function updateColorRangeSlider(item, title, value, onChange) {
         }
 
         circle.style.right = `${100 - (100 - (100 - c.maxRange) - c.minRange) / (255 / value) - cR.width / (c.trackWidth / 100)}%`;
+
+        onChange(parseInt(input.value, 10));
     };
 
     circle.onpointerdown = pointerStart;
