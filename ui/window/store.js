@@ -24,7 +24,7 @@ export function create() {
 
         /**
          * @param {string} addr
-         * @returns {import("../types.d.ts").Device}
+         * @returns {import("../types.d.ts").Device | null}
          */
         device(addr) {
             for (const d of store.get("devices") || []) {
@@ -33,12 +33,12 @@ export function create() {
                 }
             }
 
-            throw new Error(`device ${addr} not found`);
+            return null;
         },
 
         /**
          * @param {string} addr
-         * @returns {import("../types.d.ts").Color}
+         * @returns {import("../types.d.ts").Color | null}
          */
         currentColor(addr) {
             const current = store.get("color").current;
@@ -48,7 +48,7 @@ export function create() {
                 }
             }
 
-            throw new Error(`current color for ${addr} not found`);
+            return null;
         },
     };
 }

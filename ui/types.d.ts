@@ -11,8 +11,8 @@ export declare type UI = typeof import("ui");
 
 export declare type Store = {
     obj: UIStore;
-    device: (addr: string) => Device;
-    currentColor: (addr: string) => Color;
+    device: (addr: string) => Device | null;
+    currentColor: (addr: string) => Color | null;
 };
 
 export declare type UIStore = import("ui").Store<{
