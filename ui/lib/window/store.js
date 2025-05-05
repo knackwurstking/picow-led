@@ -1,13 +1,9 @@
 /**
- * @returns {import("../types.d.ts").Store}
+ * @returns {import("../../types").Store}
  */
 export function create() {
-    /** @type {import("../types.d.ts").PageWindow} */
-    // @ts-expect-error
-    const w = window;
-
-    /** @type {import("../types.d.ts").UIStore} */
-    const store = new w.ui.Store("picow-led:");
+    /** @type {import("../../types").UIStore} */
+    const store = new window.ui.Store("picow-led:");
 
     store.set("devices", [], true);
     store.set(
@@ -24,7 +20,7 @@ export function create() {
 
         /**
          * @param {string} addr
-         * @returns {import("../types.d.ts").Device | null}
+         * @returns {import("../../types").Device | null}
          */
         device(addr) {
             for (const d of store.get("devices") || []) {
@@ -38,7 +34,7 @@ export function create() {
 
         /**
          * @param {string} addr
-         * @returns {import("../types.d.ts").Color | null}
+         * @returns {import("../../types").Color | null}
          */
         currentColor(addr) {
             const current = store.get("color").current;

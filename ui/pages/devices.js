@@ -1,16 +1,14 @@
 (() => {
-    const { createDeviceItem } = require("../components/device-item");
-
-    /** @type {import("../types.d.ts").PageWindow} */
-    // @ts-expect-error
-    const w = window;
+    const utils = require("../lib/utils");
+    const api = require("../lib/api");
+    const { createDeviceItem } = require("../lib/components/device-item");
 
     /**
-     * @param {import("../types.d.ts").Device} device
+     * @param {import("../types").Device} device
      */
     function currentColorForDevice(device) {
         return (
-            w.store.currentColor(device.server.addr) ||
+            window.store.currentColor(device.server.addr) ||
             (device.pins || []).map(() => 255)
         );
     }
@@ -19,7 +17,7 @@
      * @returns {void}
      */
     function setupAppBar() {
-        const items = w.utils.setupAppBarItems(
+        const items = utils.setupAppBarItems(
             "online-indicator",
             "title",
             "settings-button",
@@ -29,7 +27,7 @@
     }
 
     window.addEventListener("pageshow", async () => {
-        w.store.obj.listen(
+        window.store.obj.listen(
             "devices",
             (devices) => {
                 /** @type {HTMLElement} */
@@ -46,7 +44,7 @@
                         }
 
                         try {
-                            await w.api.setDevicesColor(color, device);
+                            await api.setDevicesColor(color, device);
                         } catch (err) {
                             console.error(err);
                             alert(err); // TODO: Error handling, notification?
@@ -61,9 +59,9 @@
 
         setupAppBar();
 
-        w.api.devices().then((devices) => {
+        api.devices().then((devices) => {
             // Fetch Devices from the api (if not offline)
-            w.store.obj.set("devices", devices);
+            window.store.obj.set("devices", devices);
         });
     });
 })();

@@ -1,11 +1,10 @@
-export declare type PageWindow = Window &
-    typeof globalThis & {
+export declare global {
+    interface Window {
         ui: UI;
-        api: Api;
-        ws: WS;
-        utils: Utils;
         store: Store;
-    };
+        ws: WS;
+    }
+}
 
 export declare type UI = typeof import("ui");
 

@@ -1,9 +1,6 @@
 (() => {
-    /** @type {import("./types").PageWindow} */
-    // @ts-ignore
-    const w = window;
+    const utils = require("../lib/utils");
 
-    /** @type {number | null} */
     let timeout = null;
     window.addEventListener("focus", () => {
         if (timeout !== null) {
@@ -20,13 +17,13 @@
                 );
                 const data = await resp.text();
                 if (data === "pong") {
-                    w.utils.setOnlineIndicatorState(true);
+                    utils.setOnlineIndicatorState(true);
                 } else {
-                    w.utils.setOnlineIndicatorState(false);
+                    utils.setOnlineIndicatorState(false);
                 }
             } catch (err) {
                 console.error(err);
-                w.utils.setOnlineIndicatorState(false);
+                utils.setOnlineIndicatorState(false);
             }
 
             timeout = null;

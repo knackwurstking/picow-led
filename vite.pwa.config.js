@@ -26,7 +26,7 @@ export default defineConfig({
         emptyOutDir: false,
         rollupOptions: {
             input: {
-                "service-worker": "./ui/service-worker.js",
+                "service-worker": "./ui/pwa/service-worker.js",
             },
             output: {
                 dir: "./public/",

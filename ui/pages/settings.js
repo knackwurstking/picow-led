@@ -1,13 +1,11 @@
 (() => {
-    /** @type {import("../types.d.ts").PageWindow} */
-    // @ts-ignore
-    const w = window;
+    const utils = require("../lib/utils");
 
     /**
      * @returns {void}
      */
     function setupAppBar() {
-        const items = w.utils.setupAppBarItems("online-indicator", "title");
+        const items = utils.setupAppBarItems("online-indicator", "title");
         items["title"].innerText = "Settings";
     }
 

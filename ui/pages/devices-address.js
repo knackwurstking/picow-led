@@ -1,17 +1,16 @@
 (() => {
+    const api = require("../lib/api");
+    const utils = require("../lib/utils");
+
     const {
         colorSeparator,
         splitDataColor,
         createColorStorageItem,
-    } = require("../components/color-storage-item.js");
+    } = require("../lib/components/color-storage-item.js");
 
     const {
         createColorRangeSlider,
-    } = require("../components/color-range-slider.js");
-
-    /** @type {import("../types.d.ts").PageWindow} */
-    // @ts-expect-error
-    const w = window;
+    } = require("../lib/components/color-range-slider.js");
 
     /**
      * @returns {string}
@@ -21,24 +20,24 @@
     }
 
     /**
-     * @returns {import("../types.d.ts").Device}
+     * @returns {import("../types").Device}
      */
     function pageDevice() {
-        return w.store.device(pageDeviceAddress());
+        return window.store.device(pageDeviceAddress());
     }
 
     /**
-     * @returns {import("../types.d.ts").Color}
+     * @returns {import("../types").Color}
      */
     function pageCurrentColor() {
         return (
-            w.store.currentColor(pageDeviceAddress()) ||
+            window.store.currentColor(pageDeviceAddress()) ||
             (pageDevice().pins || []).map(() => 255)
         );
     }
 
     /**
-     * @returns {import("../types.d.ts").Color | null}
+     * @returns {import("../types").Color | null}
      */
     function pagePickedColor() {
         // Get color from active item
@@ -51,7 +50,7 @@
     }
 
     /**
-     * @returns {import("../types.d.ts").Color}
+     * @returns {import("../types").Color}
      */
     function pageActiveColor() {
         let color = [];
@@ -84,7 +83,7 @@
      */
     function setupAppBar() {
         const device = pageDevice();
-        const items = w.utils.setupAppBarItems("online-indicator", "title");
+        const items = utils.setupAppBarItems("online-indicator", "title");
         items["title"].innerText = device ? device.server.name : "";
     }
 
@@ -95,7 +94,7 @@
         );
         colorStorageContainer.innerHTML = "";
 
-        const colorCache = await w.api.colors();
+        const colorCache = await api.colors();
         const device = pageDevice();
 
         const currentColor = pageCurrentColor();
@@ -124,7 +123,7 @@
                                         child.getAttribute("data-color"),
                                     );
 
-                                    w.api.setDevicesColor(
+                                    api.setDevicesColor(
                                         [...color, ...pageRangeSliderValues()],
                                         device,
                                     );
@@ -176,7 +175,7 @@
                         }
                         timeout = setTimeout(() => {
                             timeout = null;
-                            w.api.setDevicesColor(pagePickedColor(), device);
+                            api.setDevicesColor(pagePickedColor(), device);
                         }, 250);
                     },
                 );

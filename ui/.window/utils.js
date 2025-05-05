@@ -1,20 +1,20 @@
 /**
- * @returns {import("../types.d.ts").Utils}
+ * @returns {import("../types").Utils}
  */
 export function create() {
     /**
-     * @param {import("../types.d.ts").AppBarItemName[]} itemNames
-     * @returns {import("../types.d.ts").AppBarItems}
+     * @param {import("../types").AppBarItemName[]} itemNames
+     * @returns {import("../types").AppBarItems}
      */
     function setupAppBarItems(...itemNames) {
-        /** @type {import("../types.d.ts").AppBarItems} */
+        /** @type {import("../types").AppBarItems} */
         const enabledItems = {};
 
         /** @type {NodeListOf<HTMLElement>} */
         const items = document.querySelectorAll(`.ui-app-bar [data-name]`);
         let match = false;
         for (const item of items) {
-            /** @type {import("../types.d.ts").AppBarItemName} */
+            /** @type {import("../types").AppBarItemName} */
             // @ts-ignore
             const dataName = item.getAttribute("data-name") || "";
 

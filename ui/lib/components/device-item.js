@@ -1,9 +1,5 @@
-/** @type {import("../types").PageWindow} */
-// @ts-ignore
-const w = window;
-
 /**
- * @param {import("../types").Device} device
+ * @param {import("../../types").Device} device
  * @param {(item: HTMLElement) => void|Promise<void>} onClickPowerButton
  * @returns {HTMLElement}
  */
@@ -27,7 +23,7 @@ export function createDeviceItem(device, onClickPowerButton) {
 
 /**
  * @param {HTMLElement} item
- * @param {import("../types").Device} device
+ * @param {import("../../types").Device} device
  * @param {(item: HTMLElement) => void|Promise<void>} onClickPowerButton
  * @returns {HTMLElement}
  */

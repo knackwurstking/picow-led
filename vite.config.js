@@ -26,11 +26,13 @@ export default defineConfig({
         emptyOutDir: false,
         rollupOptions: {
             input: {
-                main: "./ui/main.js",
-                layout: "./ui/layout.js",
-                settings: "./ui/pages/settings.js",
-                devices: "./ui/pages/devices.js",
+                // Layouts
+                layout: "./ui/layouts/base.js",
+
+                // Pages
                 "devices-address": "./ui/pages/devices-address.js",
+                devices: "./ui/pages/devices.js",
+                settings: "./ui/pages/settings.js",
             },
             output: {
                 dir: "./public/js/",

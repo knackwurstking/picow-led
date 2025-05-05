@@ -1,9 +1,9 @@
-/** @type {import("../types.d.ts").PageWindow} */
+/** @type {import("../types").PageWindow} */
 // @ts-ignore
 const w = window;
 
 /**
- * @returns {import("../types.d.ts").Api}
+ * @returns {import("../types").Api}
  */
 export function create() {
     /**
@@ -33,7 +33,7 @@ export function create() {
     }
 
     /**
-     * @returns {Promise<import("../types.d.ts").Device[]>}
+     * @returns {Promise<import("../types").Device[]>}
      */
     async function devices() {
         const url = getUrl("/api/devices");
@@ -43,9 +43,9 @@ export function create() {
     }
 
     /**
-     * @param {import("../types.d.ts").Color | undefined | null} color
-     * @param {import("../types.d.ts").Device[]} devices
-     * @returns {Promise<import("../types.d.ts").Device[]>}
+     * @param {import("../types").Color | undefined | null} color
+     * @param {import("../types").Device[]} devices
+     * @returns {Promise<import("../types").Device[]>}
      */
     async function setDevicesColor(color, ...devices) {
         if (!color) {
@@ -64,13 +64,13 @@ export function create() {
             body: JSON.stringify(data),
         });
 
-        /** @type {import("../types.d.ts").Device[]} */
+        /** @type {import("../types").Device[]} */
         devices = await _handleResponse(resp, url);
         return updateStoreDevices(devices);
     }
 
     /**
-     * @returns {Promise<import("../types.d.ts").ColorCache>}
+     * @returns {Promise<import("../types").ColorCache>}
      */
     async function colors() {
         const url = getUrl("/api/color");
@@ -80,7 +80,7 @@ export function create() {
 
     /**
      * @param {number} index
-     * @returns {Promise<import("../types.d.ts").Color>}
+     * @returns {Promise<import("../types").Color>}
      */
     async function color(index) {
         const url = getUrl(`/api/color/${index}`);
@@ -90,7 +90,7 @@ export function create() {
 
     /**
      * @param {number} index
-     * @param {import("../types.d.ts").Color} color
+     * @param {import("../types").Color} color
      * @returns {Promise<void>}
      */
     async function setColor(index, color) {
@@ -117,12 +117,12 @@ export function create() {
 }
 
 /**
- * @param {import("../types.d.ts").Device[]} devices
- * @returns {import("../types.d.ts").Device[]}
+ * @param {import("../types").Device[]} devices
+ * @returns {import("../types").Device[]}
  */
 function updateStoreDevices(devices) {
     w.store.obj.update("devices", (storeDevices) => {
-        /** @type {import("../types.d.ts").Device} */
+        /** @type {import("../types").Device} */
         let storeDevice;
 
         for (let sI = 0; sI < storeDevices.length; sI++) {

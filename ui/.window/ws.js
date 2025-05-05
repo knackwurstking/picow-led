@@ -1,5 +1,5 @@
 /**
- * @returns {import("../types.d.ts").WS}
+ * @returns {import("../types").WS}
  */
 export function create() {
     /** @type {WebSocket | null} */
@@ -66,7 +66,7 @@ export function create() {
         }
     }
 
-    /** @type {import("../types.d.ts").WS} */
+    /** @type {import("../types").WS} */
     return {
         addr,
         isOpen,
