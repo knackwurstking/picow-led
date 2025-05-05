@@ -70,14 +70,14 @@ func GetDevices(o *Config) []*Device {
 		devices = append(devices, d)
 	}
 
+	mutex.Lock()
+	defer mutex.Unlock()
+
 	wg := &sync.WaitGroup{}
 	for _, device := range devices {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-
-			mutex.Lock()
-			defer mutex.Unlock()
 
 			r := &MicroRequest{}
 
@@ -100,14 +100,14 @@ func GetDevices(o *Config) []*Device {
 }
 
 func PostDevicesColor(o *Config, c MicroColor, devices ...*Device) []*Device {
+	mutex.Lock()
+	defer mutex.Unlock()
+
 	wg := &sync.WaitGroup{}
 	for _, d := range devices {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-
-			mutex.Lock()
-			defer mutex.Unlock()
 
 			r := &MicroRequest{}
 			if err := r.SetColor(d, c); err != nil {
