@@ -44,48 +44,22 @@
         .color-range-slider
             .title
             .container
-                .range
-                    .circle
+                input[type="range"]
                 input[type="number"]
     -->
 
     <span
         class="color-range-slider ui-flex column justify-start"
-        style="height: fit-content"
+        style="height: fit-content; width: 100%"
     >
-        <span class="title" style="width: fit-content"></span>
-
         <span
-            style="height: 2.5rem; width: 100%"
-            class="container ui-flex row gap nowrap"
-        >
-            <div
-                style="
-                    border: var(--ui-border-width) var(--ui-border-style)
-                        var(--ui-border-color);
-                    border-radius: 2.5rem;
-                    height: 100%;
-                    width: 100%;
-                    cursor: pointer;
-                "
-                class="range"
-            >
-                <div
-                    style="
-                        border: var(--ui-border-width) var(--ui-border-style)
-                            var(--ui-border-color);
-                        border-width: 2px;
-                        border-radius: 50%;
-                        position: absolute;
-                        top: 1px;
-                        right: 1px;
-                        width: calc(2.5rem - 2px);
-                        height: calc(100% - 2px);
-                        cursor: pointer;
-                    "
-                    class="circle"
-                ></div>
-            </div>
+            class="title"
+            style="--slnt: -15; width: fit-content; font-size: 0.9rem"
+        ></span>
+
+        <span style="width: 100%" class="container ui-flex row gap nowrap">
+            <input type="range" min="0" max="255" step="1" />
+
             <input
                 style="height: 100%; width: 6ch; text-align: center"
                 type="number"
