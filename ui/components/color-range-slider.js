@@ -117,7 +117,7 @@ export function updateColorRangeSlider(item, title, value, onChange) {
             document.body.classList.remove("ui-none-select");
         }
 
-        document.body.style.touchAction = touchActionBackup;
+        item.style.touchAction = touchActionBackup;
     };
 
     const pointerStart = (/** @type {PointerEvent} */ ev) => {
@@ -131,7 +131,7 @@ export function updateColorRangeSlider(item, title, value, onChange) {
         document.body.classList.add("ui-none-select");
 
         touchActionBackup = document.body.style.touchAction;
-        document.body.style.touchAction = "none";
+        item.style.touchAction = "none";
 
         updateRects();
 
