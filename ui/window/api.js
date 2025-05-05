@@ -67,6 +67,7 @@ export function create() {
         /** @type {import("../types.d.ts").Device[]} */
         devices = await _handleResponse(resp, url);
 
+        // TODO: Move to helper function
         w.store.obj.update("devices", (storeDevices) => {
             /** @type {import("../types.d.ts").Device} */
             let storeDevice;
