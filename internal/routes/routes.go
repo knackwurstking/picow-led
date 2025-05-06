@@ -102,7 +102,10 @@ func Create(e *echo.Echo, o Options) {
 		Config:           o.Config,
 	})
 
-	wsRoutes(e, api.NewWS(), wsOptions{
+	ws := api.NewWS()
+	ws.Start()
+
+	wsRoutes(e, ws, wsOptions{
 		ServerPathPrefix: o.ServerPathPrefix,
 	})
 
