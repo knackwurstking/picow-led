@@ -37,7 +37,16 @@ type Cache struct {
 func Create(e *echo.Echo, o Options) {
 	cache.Devices = api.GetDevices(o.Config)
 
-	apiRoutes(e, Api{})
-	wsRoutes(e, WS{})
-	frontendRoutes(e, Frontend{})
+	apiRoutes(e, Api{
+		ServerPathPrefix: o.ServerPathPrefix,
+		Config:           o.Config,
+	})
+	wsRoutes(e, WS{
+		ServerPathPrefix: o.ServerPathPrefix,
+	})
+	frontendRoutes(e, Frontend{
+		ServerPathPrefix: o.ServerPathPrefix,
+		Version:          o.Version,
+		Templates:        o.Templates,
+	})
 }
