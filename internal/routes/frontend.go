@@ -25,13 +25,13 @@ const (
 
 type content string
 
-type Frontend struct {
+type frontendOptions struct {
 	ServerPathPrefix string
 	Version          string
 	Templates        fs.FS
 }
 
-func (f *Frontend) BasicPatterns() []string {
+func (f *frontendOptions) BasicPatterns() []string {
 	return []string{
 		"components/online-indicator.go.html",
 		"components/svg-power.go.html",
@@ -39,7 +39,7 @@ func (f *Frontend) BasicPatterns() []string {
 }
 
 // serve template data
-func (f *Frontend) serve(c echo.Context, pattern string, mimeType string, data frontendTemplateData) error {
+func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string, data frontendTemplateData) error {
 	t, err := template.ParseFS(f.Templates, pattern)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
@@ -57,7 +57,7 @@ func (f *Frontend) serve(c echo.Context, pattern string, mimeType string, data f
 }
 
 // servePage template data
-func (f *Frontend) servePage(c echo.Context, content content, data frontendTemplateData) error {
+func (f *frontendOptions) servePage(c echo.Context, content content, data frontendTemplateData) error {
 	patterns := []string{
 		"main.go.html",         // There is only one page for now
 		"layouts/base.go.html", // There is also only on layout for now
@@ -89,7 +89,7 @@ type frontendTemplateData struct {
 	Title            string
 }
 
-func frontendRoutes(e *echo.Echo, o Frontend) {
+func frontendRoutes(e *echo.Echo, o frontendOptions) {
 	e.GET(o.ServerPathPrefix+"/", func(c echo.Context) error {
 		err := o.servePage(c, contentDevices, frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
@@ -111,7 +111,7 @@ func frontendRoutes(e *echo.Echo, o Frontend) {
 		}
 
 		var device *api.Device
-		for _, d := range cache.Devices {
+		for _, d := range cache.Devices() {
 			if d.Server.Addr == addr {
 				device = d
 				break
