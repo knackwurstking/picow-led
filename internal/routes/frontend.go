@@ -1,3 +1,8 @@
+// Frontend Routes:
+//   - GET - "/"
+//   - GET - "/devices/:addr"
+//   - GET - "/settings"
+//   - GET - "/manifest.json"
 package routes
 
 import (

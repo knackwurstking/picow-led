@@ -1,3 +1,10 @@
+// API Routes:
+//   - apiSetupPing: 	GET 	- "/api/ping"
+//   - apiSetupDevices: GET 	- "/api/devices"
+//   - apiSetupDevices: POST 	- "/api/devices/color" <- { devices: Device[]; color: number[] }
+//   - apiSetupColor: 	GET 	- "/api/color"
+//   - apiSetupColor: 	GET 	- "/api/color/:index"
+//   - apiSetupColor: 	POST 	- "/api/color/:index" <- `number[]`
 package routes
 
 import (
@@ -16,13 +23,6 @@ type Api struct {
 	Config           *api.Config
 }
 
-// API Routes:
-//   - apiSetupPing: 	GET 	- "/api/ping"
-//   - apiSetupDevices: GET 	- "/api/devices"
-//   - apiSetupDevices: POST 	- "/api/devices/color" <- { devices: Device[]; color: number[] }
-//   - apiSetupColor: 	GET 	- "/api/color"
-//   - apiSetupColor: 	GET 	- "/api/color/:index"
-//   - apiSetupColor: 	POST 	- "/api/color/:index" <- `number[]`
 func apiRoutes(e *echo.Echo, o Api) {
 	apiSetupPing(e, o)
 	apiSetupDevices(e, o)
