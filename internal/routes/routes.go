@@ -32,25 +32,25 @@ func newCache() *_cache {
 	}
 }
 
-func (c _cache) Devices() []*api.Device {
+func (c *_cache) Devices() []*api.Device {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	return c.devices
 }
 
-func (c _cache) SetDevices(devices ...*api.Device) {
+func (c *_cache) SetDevices(devices ...*api.Device) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	c.devices = devices
 }
 
-func (c _cache) UpdateDevice(addr string, device *api.Device) (*api.Device, error) {
+func (c *_cache) UpdateDevice(addr string, device *api.Device) (*api.Device, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	for _, d := range cache.devices {
+	for _, d := range c.devices {
 		if d.Server.Addr != addr {
 			continue
 		}
@@ -67,14 +67,14 @@ func (c _cache) UpdateDevice(addr string, device *api.Device) (*api.Device, erro
 	return nil, fmt.Errorf("device \"%s\" not found", addr)
 }
 
-func (c _cache) Color() []api.MicroColor {
+func (c *_cache) Color() []api.MicroColor {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	return c.color
 }
 
-func (c _cache) UpdateColor(index int, color api.MicroColor) error {
+func (c *_cache) UpdateColor(index int, color api.MicroColor) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -102,11 +102,10 @@ func Create(e *echo.Echo, o Options) {
 		Config:           o.Config,
 	})
 
-	ws := api.NewWS()
-	ws.Start()
-
-	wsRoutes(e, ws, wsOptions{
+	o.Config.WS.Start()
+	wsRoutes(e, wsOptions{
 		ServerPathPrefix: o.ServerPathPrefix,
+		WS:               o.Config.WS,
 	})
 
 	frontendRoutes(e, frontendOptions{
