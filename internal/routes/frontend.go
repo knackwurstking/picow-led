@@ -54,9 +54,9 @@ func (f *Frontend) serve(c echo.Context, pattern string, mimeType string, data f
 // servePage template data
 func (f *Frontend) servePage(c echo.Context, content content, data frontendTemplateData) error {
 	patterns := []string{
-		"page.go.html",               // There is only one page for now
-		"layout/base-layout.go.html", // There is also only on layout for now
-		fmt.Sprintf("layout/content/%s.go.html", content),
+		"main.go.html",         // There is only one page for now
+		"layouts/base.go.html", // There is also only on layout for now
+		fmt.Sprintf("pages/%s.go.html", content),
 	}
 	patterns = append(patterns, f.BasicPatterns()...)
 
