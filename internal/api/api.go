@@ -11,6 +11,7 @@ import (
 
 type Config struct {
 	Servers []*Server `json:"servers,omitempty" yaml:"servers,omitempty"`
+	WS      *WS       `json:"-" yaml:"-"`
 }
 
 type Device struct {
@@ -35,6 +36,7 @@ type Server struct {
 func GetApiConfig(paths ...string) (*Config, error) {
 	o := &Config{
 		Servers: []*Server{},
+		WS:      NewWS(),
 	}
 
 	for _, path := range paths {
