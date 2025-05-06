@@ -2,6 +2,8 @@ export declare global {
     interface Window {
         ui: UI;
         store: Store;
+        api: Api;
+        utils: Utils;
         ws: WS;
     }
 }

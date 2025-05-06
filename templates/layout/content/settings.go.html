@@ -1,7 +1,8 @@
 {{ define "content" }}
-<div class="_content settings ui-container ui-auto-scroll ui-hide-scrollbar"
-    style="height: 100%; padding-top: var(--ui-app-bar-height);">
-</div>
+<div
+    class="_content settings ui-container ui-auto-scroll ui-hide-scrollbar"
+    style="height: 100%; padding-top: var(--ui-app-bar-height)"
+></div>
 
-<script src="{{ .ServerPathPrefix }}/js/settings.js"></script>
+<script src="{{ .ServerPathPrefix }}/js/settings.js" type="module"></script>
 {{ end }}

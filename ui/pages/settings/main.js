@@ -1,11 +1,12 @@
 (() => {
-    const utils = require("../lib/utils");
-
     /**
      * @returns {void}
      */
     function setupAppBar() {
-        const items = utils.setupAppBarItems("online-indicator", "title");
+        const items = window.utils.setupAppBarItems(
+            "online-indicator",
+            "title",
+        );
         items["title"].innerText = "Settings";
     }
 

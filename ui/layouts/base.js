@@ -1,6 +1,4 @@
 (() => {
-    const utils = require("../lib/utils");
-
     let timeout = null;
     window.addEventListener("focus", () => {
         if (timeout !== null) {
@@ -17,13 +15,13 @@
                 );
                 const data = await resp.text();
                 if (data === "pong") {
-                    utils.setOnlineIndicatorState(true);
+                    window.utils.setOnlineIndicatorState(true);
                 } else {
-                    utils.setOnlineIndicatorState(false);
+                    window.utils.setOnlineIndicatorState(false);
                 }
             } catch (err) {
                 console.error(err);
-                utils.setOnlineIndicatorState(false);
+                window.utils.setOnlineIndicatorState(false);
             }
 
             timeout = null;

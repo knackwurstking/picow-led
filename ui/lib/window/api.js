@@ -1,51 +1,21 @@
-/** @type {import("../types").PageWindow} */
-// @ts-ignore
-const w = window;
-
 /**
- * @returns {import("../types").Api}
+ * @returns {import("../../types").Api}
  */
 export function create() {
     /**
-     * @param {string} path
-     * @returns {string}
-     */
-    function getUrl(path) {
-        // @ts-ignore
-        return process.env.SERVER_PATH_PREFIX + `${path}`;
-    }
-
-    /**
-     * @param {Response} resp
-     * @param {string} url
-     * @returns {Promise<any>}
-     */
-    async function _handleResponse(resp, url) {
-        const status = resp.status;
-
-        if (!resp.ok) {
-            throw new Error(`${status}: ${(await resp.text()) || "???"}`);
-        }
-
-        const respData = await resp.json();
-        console.debug(`Got data from "${url}":`, respData);
-        return respData;
-    }
-
-    /**
-     * @returns {Promise<import("../types").Device[]>}
+     * @returns {Promise<import("../../types").Device[]>}
      */
     async function devices() {
         const url = getUrl("/api/devices");
 
         const resp = await fetch(url);
-        return await _handleResponse(resp, url);
+        return await handleResponse(resp, url);
     }
 
     /**
-     * @param {import("../types").Color | undefined | null} color
-     * @param {import("../types").Device[]} devices
-     * @returns {Promise<import("../types").Device[]>}
+     * @param {import("../../types").Color | undefined | null} color
+     * @param {import("../../types").Device[]} devices
+     * @returns {Promise<import("../../types").Device[]>}
      */
     async function setDevicesColor(color, ...devices) {
         if (!color) {
@@ -64,33 +34,33 @@ export function create() {
             body: JSON.stringify(data),
         });
 
-        /** @type {import("../types").Device[]} */
-        devices = await _handleResponse(resp, url);
+        /** @type {import("../../types").Device[]} */
+        devices = await handleResponse(resp, url);
         return updateStoreDevices(devices);
     }
 
     /**
-     * @returns {Promise<import("../types").ColorCache>}
+     * @returns {Promise<import("../../types").ColorCache>}
      */
     async function colors() {
         const url = getUrl("/api/color");
         const resp = await fetch(url);
-        return _handleResponse(resp, url);
+        return handleResponse(resp, url);
     }
 
     /**
      * @param {number} index
-     * @returns {Promise<import("../types").Color>}
+     * @returns {Promise<import("../../types").Color>}
      */
     async function color(index) {
         const url = getUrl(`/api/color/${index}`);
         const resp = await fetch(url);
-        return _handleResponse(resp, url);
+        return handleResponse(resp, url);
     }
 
     /**
      * @param {number} index
-     * @param {import("../types").Color} color
+     * @param {import("../../types").Color} color
      * @returns {Promise<void>}
      */
     async function setColor(index, color) {
@@ -104,7 +74,7 @@ export function create() {
             body: JSON.stringify(color),
         });
 
-        return _handleResponse(resp, url);
+        return handleResponse(resp, url);
     }
 
     return {
@@ -117,12 +87,37 @@ export function create() {
 }
 
 /**
- * @param {import("../types").Device[]} devices
- * @returns {import("../types").Device[]}
+ * @param {string} path
+ * @returns {string}
+ */
+function getUrl(path) {
+    return process.env.SERVER_PATH_PREFIX + `${path}`;
+}
+
+/**
+ * @param {Response} resp
+ * @param {string} url
+ * @returns {Promise<any>}
+ */
+async function handleResponse(resp, url) {
+    const status = resp.status;
+
+    if (!resp.ok) {
+        throw new Error(`${status}: ${(await resp.text()) || "???"}`);
+    }
+
+    const respData = await resp.json();
+    console.debug(`Got data from "${url}":`, respData);
+    return respData;
+}
+
+/**
+ * @param {import("../../types").Device[]} devices
+ * @returns {import("../../types").Device[]}
  */
 function updateStoreDevices(devices) {
-    w.store.obj.update("devices", (storeDevices) => {
-        /** @type {import("../types").Device} */
+    window.store.obj.update("devices", (storeDevices) => {
+        /** @type {import("../../types").Device} */
         let storeDevice;
 
         for (let sI = 0; sI < storeDevices.length; sI++) {
@@ -147,7 +142,7 @@ function updateStoreDevices(devices) {
 
                     // Store current color
                     if (Math.max(...storeDevice.color) > 0) {
-                        w.store.obj.update("color", (data) => {
+                        window.store.obj.update("color", (data) => {
                             data.current[storeDevice.server.addr] =
                                 storeDevice.color;
                             return data;

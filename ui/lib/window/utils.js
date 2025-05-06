@@ -1,21 +1,21 @@
 /**
- * @returns {import("../types").Utils}
+ * @returns {import("../../types").Utils}
  */
 export function create() {
     /**
-     * @param {import("../types").AppBarItemName[]} itemNames
-     * @returns {import("../types").AppBarItems}
+     * @param {import("../../types").AppBarItemName[]} itemNames
+     * @returns {import("../../types").AppBarItems}
      */
     function setupAppBarItems(...itemNames) {
-        /** @type {import("../types").AppBarItems} */
+        /** @type {import("../../types").AppBarItems} */
         const enabledItems = {};
 
         /** @type {NodeListOf<HTMLElement>} */
         const items = document.querySelectorAll(`.ui-app-bar [data-name]`);
         let match = false;
         for (const item of items) {
-            /** @type {import("../types").AppBarItemName} */
-            // @ts-ignore
+            /** @type {import("../../types").AppBarItemName} */
+            // @ts-expect-error
             const dataName = item.getAttribute("data-name") || "";
 
             match = false;
@@ -65,10 +65,7 @@ export function create() {
 
         window.addEventListener("pageshow", function () {
             navigator.serviceWorker
-                .register(
-                    // @ts-ignore
-                    process.env.SERVER_PATH_PREFIX + "/service-worker.js",
-                )
+                .register(process.env.SERVER_PATH_PREFIX + "/service-worker.js")
                 .then(function (reg) {
                     console.info("Service worker registered", reg);
                 })

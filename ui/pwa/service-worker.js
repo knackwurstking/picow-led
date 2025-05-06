@@ -6,9 +6,9 @@ const cacheFiles = [
     process.env.SERVER_PATH_PREFIX + "/settings",
 
     process.env.SERVER_PATH_PREFIX + "/css/style.css",
-    process.env.SERVER_PATH_PREFIX + "/css/ui-v4.1.0.css",
+    process.env.SERVER_PATH_PREFIX + "/css/ui-v4.1.1.css",
 
-    process.env.SERVER_PATH_PREFIX + "/js/ui-v4.1.0.min.umd.cjs",
+    process.env.SERVER_PATH_PREFIX + "/js/ui-v4.1.1.min.umd.cjs",
     process.env.SERVER_PATH_PREFIX + "/js/devices-address.js",
     process.env.SERVER_PATH_PREFIX + "/js/devices.js",
     process.env.SERVER_PATH_PREFIX + "/js/layout.js",

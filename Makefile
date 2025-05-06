@@ -10,14 +10,15 @@ clean:
 
 init:
 	npm install
-	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.1.0.css
+	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.1.1.css
 	mkdir -p ./public/js
-	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/js/ui-v4.1.0.min.umd.cjs
+	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/js/ui-v4.1.1.min.umd.cjs
 	go mod tidy -v
 
 generate:
 	# NOTE: Install eslint with `npm init @eslint/config@latest`
 	go mod tidy -v
+	rm -rf ./public/js/assets/*
 	npx vite build --config ./vite.config.js
 	npx vite build --config ./vite.pwa.config.js
 

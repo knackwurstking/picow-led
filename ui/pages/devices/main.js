@@ -1,10 +1,8 @@
 (() => {
-    const utils = require("../lib/utils");
-    const api = require("../lib/api");
-    const { createDeviceItem } = require("../lib/components/device-item");
+    const { createDeviceItem } = require("./device-item");
 
     /**
-     * @param {import("../types").Device} device
+     * @param {import("../../types").Device} device
      */
     function currentColorForDevice(device) {
         return (
@@ -17,7 +15,7 @@
      * @returns {void}
      */
     function setupAppBar() {
-        const items = utils.setupAppBarItems(
+        const items = window.utils.setupAppBarItems(
             "online-indicator",
             "title",
             "settings-button",
@@ -44,7 +42,7 @@
                         }
 
                         try {
-                            await api.setDevicesColor(color, device);
+                            await window.api.setDevicesColor(color, device);
                         } catch (err) {
                             console.error(err);
                             alert(err); // TODO: Error handling, notification?
@@ -59,7 +57,7 @@
 
         setupAppBar();
 
-        api.devices().then((devices) => {
+        window.api.devices().then((devices) => {
             // Fetch Devices from the api (if not offline)
             window.store.obj.set("devices", devices);
         });

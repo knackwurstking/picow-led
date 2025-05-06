@@ -1,10 +1,8 @@
-const api = require("../api");
-
 export const colorSeparator = ",";
 
 /**
  * @param {string} v
- * @return {import("../../types").Color}
+ * @return {import("../../../types").Color}
  */
 export function splitDataColor(v) {
     return v.split(colorSeparator).map((c) => parseInt(c, 10));
@@ -12,9 +10,9 @@ export function splitDataColor(v) {
 
 /**
  * @param {number} index
- * @param {import("../../types").Color} color
- * @param {import("../../types").Device} [device]
- * @param {(color: import("../../types").Color) => void|Promise<void>} [onClick]
+ * @param {import("../../../types").Color} color
+ * @param {import("../../../types").Device} [device]
+ * @param {(color: import("../../../types").Color) => void|Promise<void>} [onClick]
  * @returns {HTMLElement}
  */
 export function createColorStorageItem(index, color, device, onClick) {
@@ -36,9 +34,9 @@ export function createColorStorageItem(index, color, device, onClick) {
 /**
  * @param {HTMLElement} item
  * @param {number} index
- * @param {import("../../types").Color} color
- * @param {import("../../types").Device | null} [device]
- * @param {(color: import("../../types").Color) => void|Promise<void>} [onClick]
+ * @param {import("../../../types").Color} color
+ * @param {import("../../../types").Device | null} [device]
+ * @param {(color: import("../../../types").Color) => void|Promise<void>} [onClick]
  * @returns {HTMLElement}
  */
 export function updateColorStorageItem(item, index, color, device, onClick) {
@@ -62,8 +60,8 @@ export function updateColorStorageItem(item, index, color, device, onClick) {
             color.push(parseInt(value.slice(x, x + 2), 16));
         }
 
-        api.setColor(index, color);
-        if (device) api.setDevicesColor(color, device);
+        window.api.setColor(index, color);
+        if (device) window.api.setDevicesColor(color, device);
 
         updateColorStorageItem(item, index, color, device, onClick);
     };
