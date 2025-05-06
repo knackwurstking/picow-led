@@ -1,5 +1,5 @@
 // API Routes:
-//   - TODO: GET - "/ws"
+//   - GET - "/ws"
 package routes
 
 import (
