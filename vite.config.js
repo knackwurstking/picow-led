@@ -30,7 +30,7 @@ export default defineConfig({
                 main: "./ui/pages/main.js",
 
                 // Layouts
-                layout: "./ui/pages/layout-base.js",
+                "layout-base": "./ui/pages/layout-base.js",
 
                 // Pages
                 "devices-address": "./ui/pages/devices/address/main.js",
