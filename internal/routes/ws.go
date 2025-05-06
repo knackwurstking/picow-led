@@ -15,12 +15,23 @@ type wsOptions struct {
 
 func wsRoutes(e *echo.Echo, ws *api.WS, o wsOptions) {
 	e.GET(o.ServerPathPrefix+"/ws", func(c echo.Context) error {
-		ws.RegisterClient(&api.WSClient{}) // TODO: ...
+		websocket.Handler(func(conn *websocket.Conn) {
+			defer conn.Close()
 
-		websocket.Handler(func(c *websocket.Conn) {
-			defer c.Close()
+			client := &api.WSClient{
+				Conn: conn,
+			}
+			ws.RegisterClient(client)
+			defer ws.UnregisterClient(client)
+
 			for {
-				// TODO: Keep alive loop here, this websocket is readonly
+				// Keep alive loop here, this websocket is readonly
+				message := ""
+				if err := websocket.Message.Receive(conn, &message); err != nil {
+					c.Logger().Errorf("%s: %s", c.RealIP(), err)
+					break
+				}
+				c.Logger().Debugf("%s: message: %s", c.RealIP(), message)
 			}
 		}).ServeHTTP(c.Response(), c.Request())
 
