@@ -1,6 +1,11 @@
 package api
 
-import "sync"
+import (
+	"slices"
+	"sync"
+
+	"golang.org/x/net/websocket"
+)
 
 type WS struct {
 	clients []*WSClient
@@ -18,7 +23,22 @@ func (ws *WS) RegisterClient(c *WSClient) {
 	ws.mutex.Lock()
 	defer ws.mutex.Unlock()
 
+	if slices.Contains(ws.clients, c) {
+		return
+	}
+
 	ws.clients = append(ws.clients, c)
+}
+
+func (ws *WS) UnregisterClient(c *WSClient) {
+	ws.mutex.Lock()
+	defer ws.mutex.Unlock()
+
+	for i, client := range ws.clients {
+		if client == c {
+			ws.clients = slices.Delete(ws.clients, i, 0)
+		}
+	}
 }
 
 func (ws *WS) Start() {
@@ -26,4 +46,6 @@ func (ws *WS) Start() {
 	// 		 connected clients, for now just devices data (cache) changes
 }
 
-type WSClient struct{}
+type WSClient struct {
+	Conn *websocket.Conn
+}
