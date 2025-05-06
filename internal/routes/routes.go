@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"io/fs"
 	"picow-led/internal/api"
 	"sync"
 
@@ -19,8 +20,10 @@ var cache = &Cache{
 }
 
 type Options struct {
-	Api      Api
-	Frontend Frontend
+	ServerPathPrefix string
+	Version          string
+	Templates        fs.FS
+	Config           *api.Config
 }
 
 type Cache struct {
@@ -32,8 +35,9 @@ type Cache struct {
 }
 
 func Create(e *echo.Echo, o Options) {
-	cache.Devices = api.GetDevices(o.Api.Config)
+	cache.Devices = api.GetDevices(o.Config)
 
-	apiRoutes(e, o.Api)
-	frontendRoutes(e, o.Frontend)
+	apiRoutes(e, Api{})
+	wsRoutes(e, WS{})
+	frontendRoutes(e, Frontend{})
 }
