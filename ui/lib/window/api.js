@@ -43,7 +43,7 @@ export function create() {
      * @returns {Promise<import("../../types").ColorCache>}
      */
     async function colors() {
-        const url = getUrl("/api/color");
+        const url = getUrl("/api/colors");
         const resp = await fetch(url);
         return handleResponse(resp, url);
     }
@@ -53,7 +53,7 @@ export function create() {
      * @returns {Promise<import("../../types").Color>}
      */
     async function color(index) {
-        const url = getUrl(`/api/color/${index}`);
+        const url = getUrl(`/api/colors/${index}`);
         const resp = await fetch(url);
         return handleResponse(resp, url);
     }
@@ -64,7 +64,7 @@ export function create() {
      * @returns {Promise<void>}
      */
     async function setColor(index, color) {
-        const url = getUrl(`/api/color/${index}`);
+        const url = getUrl(`/api/colors/${index}`);
 
         const resp = await fetch(url, {
             method: "POST",

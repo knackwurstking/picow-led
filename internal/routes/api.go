@@ -2,9 +2,9 @@
 //   - apiSetupPing: 	GET 	- "/api/ping"
 //   - apiSetupDevices: GET 	- "/api/devices"
 //   - apiSetupDevices: POST 	- "/api/devices/color" <- { devices: Device[]; color: number[] }
-//   - apiSetupColor: 	GET 	- "/api/color"
-//   - apiSetupColor: 	GET 	- "/api/color/:index"
-//   - apiSetupColor: 	POST 	- "/api/color/:index" <- `number[]`
+//   - apiSetupColors: 	GET 	- "/api/colors"
+//   - apiSetupColors: 	GET 	- "/api/colors/:index"
+//   - apiSetupColors 	POST 	- "/api/colors:index" <- `number[]`
 package routes
 
 import (
@@ -81,11 +81,11 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 }
 
 func apiSetupColor(e *echo.Echo, o apiOptions) {
-	e.GET(o.ServerPathPrefix+"/api/color", func(c echo.Context) error {
+	e.GET(o.ServerPathPrefix+"/api/colors", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, cache.Color())
 	})
 
-	e.GET(o.ServerPathPrefix+"/api/color/:index", func(c echo.Context) error {
+	e.GET(o.ServerPathPrefix+"/api/colors/:index", func(c echo.Context) error {
 		index, err := strconv.Atoi(c.Param("index"))
 		if err != nil {
 			c.Logger().Warn(err)
@@ -107,7 +107,7 @@ func apiSetupColor(e *echo.Echo, o apiOptions) {
 		return nil
 	})
 
-	e.POST(o.ServerPathPrefix+"/api/color/:index", func(c echo.Context) error {
+	e.POST(o.ServerPathPrefix+"/api/colors/:index", func(c echo.Context) error {
 		index, err := strconv.Atoi(c.Param("index"))
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
