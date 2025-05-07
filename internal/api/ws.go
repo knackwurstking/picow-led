@@ -11,7 +11,7 @@ import (
 
 const (
 	BroadcastTypeDevices BroadcastType = "devices"
-	BroadcastTypeColors  BroadcastType = "color"
+	BroadcastTypeColors  BroadcastType = "colors"
 )
 
 type BroadcastType string
@@ -122,6 +122,28 @@ func (ws *WS) Broadcast(t BroadcastType, v any) {
 	ws.broadcast <- BroadcastData{
 		Type: t,
 		Data: v,
+	}
+}
+
+func (ws *WS) BroadcastDevices(d []*Device) {
+	if !ws.running {
+		return
+	}
+
+	ws.broadcast <- BroadcastData{
+		Type: BroadcastTypeDevices,
+		Data: d,
+	}
+}
+
+func (ws *WS) BroadcastColors(c []MicroColor) {
+	if !ws.running {
+		return
+	}
+
+	ws.broadcast <- BroadcastData{
+		Type: BroadcastTypeDevices,
+		Data: c,
 	}
 }
 
