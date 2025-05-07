@@ -31,6 +31,15 @@ func NewCache(ws *api.WS) *Cache {
 	}
 }
 
+func (c *Cache) Close() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if c.ws != nil {
+		c.ws.Stop()
+	}
+}
+
 func (c *Cache) Devices() []*api.Device {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
