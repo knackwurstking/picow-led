@@ -26,6 +26,7 @@ type WS struct {
 
 	logger echo.Logger
 
+	running   bool
 	broadcast chan BroadcastData
 	done      chan any
 
@@ -63,6 +64,11 @@ func (ws *WS) UnregisterClient(c *WSClient) {
 }
 
 func (ws *WS) Start() error {
+	ws.running = true
+	defer func() {
+		ws.running = false
+	}()
+
 	ws.broadcast = make(chan BroadcastData)
 	ws.done = make(chan any)
 
@@ -101,10 +107,18 @@ func (ws *WS) Start() error {
 }
 
 func (ws *WS) Stop() {
+	if !ws.running {
+		return
+	}
+
 	ws.done <- nil
 }
 
 func (ws *WS) Broadcast(t BroadcastType, v any) {
+	if !ws.running {
+		return
+	}
+
 	ws.broadcast <- BroadcastData{
 		Type: t,
 		Data: v,
