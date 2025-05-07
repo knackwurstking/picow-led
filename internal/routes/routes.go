@@ -15,6 +15,10 @@ type Options struct {
 }
 
 func Create(e *echo.Echo, o Options) {
+	if cache != nil {
+		cache.Close()
+	}
+
 	ws := api.NewWS(e.Logger)
 
 	cache = NewCache(ws)
