@@ -58,7 +58,7 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		reqData.Devices = api.PostDevicesColor(o.Config, reqData.Color, reqData.Devices...)
+		reqData.Devices = api.SetColor(o.Config, reqData.Color, reqData.Devices...)
 
 		for i, d := range reqData.Devices {
 			d, err := cache.UpdateDevice(d.Server.Addr, d)
