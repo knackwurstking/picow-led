@@ -41,6 +41,7 @@ func (c *Cache) SetDevices(devices ...*api.Device) {
 	defer c.mutex.Unlock()
 
 	c.devices = devices
+	// TODO: Broadcast...
 }
 
 func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, error) {
@@ -57,7 +58,7 @@ func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, erro
 		d.Error = device.Error
 		d.Online = device.Online
 
-		// Data to return
+		// TODO: Broadcast...
 		return d, nil
 	}
 
@@ -81,5 +82,6 @@ func (c *Cache) UpdateColor(index int, color api.MicroColor) error {
 
 	c.color[index] = color
 
+	// TODO: Broadcast...
 	return nil
 }
