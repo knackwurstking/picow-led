@@ -2,15 +2,17 @@ package api
 
 import (
 	"encoding/json"
-	"log"
 	"slices"
 	"sync"
 
+	"github.com/labstack/echo/v4"
 	"golang.org/x/net/websocket"
 )
 
 type WS struct {
-	clients []*WSClient
+	Clients []*WSClient
+
+	logger echo.Logger
 
 	broadcast chan any
 	done      chan any
@@ -18,9 +20,11 @@ type WS struct {
 	mutex *sync.Mutex
 }
 
-func NewWS() *WS {
+func NewWS(logger echo.Logger) *WS {
 	return &WS{
-		mutex: &sync.Mutex{},
+		Clients: make([]*WSClient, 0),
+		logger:  logger,
+		mutex:   &sync.Mutex{},
 	}
 }
 
@@ -28,43 +32,51 @@ func (ws *WS) RegisterClient(c *WSClient) {
 	ws.mutex.Lock()
 	defer ws.mutex.Unlock()
 
-	if slices.Contains(ws.clients, c) {
+	if slices.Contains(ws.Clients, c) {
 		return
 	}
 
-	ws.clients = append(ws.clients, c)
+	ws.Clients = append(ws.Clients, c)
 }
 
 func (ws *WS) UnregisterClient(c *WSClient) {
 	ws.mutex.Lock()
 	defer ws.mutex.Unlock()
 
-	for i, client := range ws.clients {
+	for i, client := range ws.Clients {
 		if client == c {
-			ws.clients = slices.Delete(ws.clients, i, 0)
+			ws.Clients = slices.Delete(ws.Clients, i, 0)
 		}
 	}
 }
 
 func (ws *WS) Start() error {
+	ws.broadcast = make(chan any)
+	ws.done = make(chan any)
+
+	defer func() {
+		close(ws.broadcast)
+		close(ws.done)
+	}()
+
 	for {
 		select {
 		case v := <-ws.broadcast:
 			{
 				wg := &sync.WaitGroup{}
-				for _, c := range ws.clients {
+				for _, c := range ws.Clients {
 					wg.Add(1)
 					go func() {
 						defer wg.Done()
 
 						d, err := json.Marshal(v)
 						if err != nil {
-							log.Println(err, c.Conn)
+							ws.logger.Error(err, c)
 						}
 
 						err = websocket.Message.Send(c.Conn, d)
 						if err != nil {
-							log.Println(err, c.Conn)
+							ws.logger.Warn(err, c)
 						}
 					}()
 				}
@@ -76,12 +88,12 @@ func (ws *WS) Start() error {
 	}
 }
 
-func (ws *WS) Broadcast(v any) {
-	ws.broadcast <- v
+func (ws *WS) Stop() {
+	ws.done <- nil
 }
 
-func (ws *WS) Done() {
-	ws.done <- nil
+func (ws *WS) Broadcast(v any) {
+	ws.broadcast <- v
 }
 
 type WSClient struct {
