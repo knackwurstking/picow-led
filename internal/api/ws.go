@@ -9,12 +9,24 @@ import (
 	"golang.org/x/net/websocket"
 )
 
+const (
+	BroadcastTypeDevices BroadcastType = "devices"
+	BroadcastTypeColors  BroadcastType = "color"
+)
+
+type BroadcastType string
+
+type BroadcastData struct {
+	Type BroadcastType
+	Data any
+}
+
 type WS struct {
 	Clients []*WSClient
 
 	logger echo.Logger
 
-	broadcast chan any
+	broadcast chan BroadcastData
 	done      chan any
 
 	mutex *sync.Mutex
@@ -51,7 +63,7 @@ func (ws *WS) UnregisterClient(c *WSClient) {
 }
 
 func (ws *WS) Start() error {
-	ws.broadcast = make(chan any)
+	ws.broadcast = make(chan BroadcastData)
 	ws.done = make(chan any)
 
 	defer func() {
@@ -92,8 +104,11 @@ func (ws *WS) Stop() {
 	ws.done <- nil
 }
 
-func (ws *WS) Broadcast(v any) {
-	ws.broadcast <- v
+func (ws *WS) Broadcast(t BroadcastType, v any) {
+	ws.broadcast <- BroadcastData{
+		Type: t,
+		Data: v,
+	}
 }
 
 type WSClient struct {
