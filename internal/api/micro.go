@@ -45,11 +45,11 @@ type MicroRequest struct {
 	// Command mappings:
 	//
 	// Type: "set":
-	// 		- Group: "config" Command: "led"
+	// 		- Group: "config" Command: "pins"
 	// 		- Group: "led"    Command: "color"
 	//
 	// Type: "get":
-	// 		- Group: "config" Command: "led"
+	// 		- Group: "config" Command: "pins"
 	// 		- Group: "led"    Command: "color"
 	// 		- Group: "info"   Command: "temp"
 	// 		- Group: "info"   Command: "disk-usage"
@@ -59,7 +59,7 @@ type MicroRequest struct {
 	// CommandArgs can be nil
 	//
 	// 	if type is `MicroTypeSET` and group is `MicroGroupConfig`
-	//		if command is "led":
+	//		if command is "pins":
 	// 			[]uint8 - range between 0-28 converted to a slice with strings
 	//					  https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2024/02/Raspberry-Pi-Pico-W-RP2040-Rev3-Board-Pinout-GPIOs.png?quality=100&strip=all&ssl=1
 	//
@@ -72,8 +72,10 @@ type MicroRequest struct {
 	CommandArgs []string `json:"args"`
 }
 
-func NewMicroRequest() *MicroRequest {
-	return &MicroRequest{}
+func NewMicroRequest(id MicroID) *MicroRequest {
+	return &MicroRequest{
+		ID: id,
+	}
 }
 
 func (mr *MicroRequest) Send(d *Device) ([]byte, error) {
@@ -125,10 +127,9 @@ func (mr *MicroRequest) Send(d *Device) ([]byte, error) {
 // RequestPins will change fields like "ID", "Type", "Group", "Command" or
 // "CommandArgs"
 func (mr *MicroRequest) Pins(d *Device) (MicroPins, error) {
-	mr.ID = MicroIDDefault
 	mr.Type = MicroTypeGET
 	mr.Group = MicroGroupConfig
-	mr.Command = "led"
+	mr.Command = "pins"
 	mr.CommandArgs = []string{}
 
 	data, err := mr.Send(d)
@@ -147,7 +148,6 @@ func (mr *MicroRequest) Pins(d *Device) (MicroPins, error) {
 }
 
 func (mr *MicroRequest) Color(d *Device) (MicroColor, error) {
-	mr.ID = MicroIDDefault
 	mr.Type = MicroTypeGET
 	mr.Group = MicroGroupLED
 	mr.Command = "color"
@@ -169,7 +169,6 @@ func (mr *MicroRequest) Color(d *Device) (MicroColor, error) {
 }
 
 func (mr *MicroRequest) SetColor(d *Device, c MicroColor) error {
-	mr.ID = MicroIDDefault
 	mr.Type = MicroTypeSET
 	mr.Group = MicroGroupLED
 	mr.Command = "color"
