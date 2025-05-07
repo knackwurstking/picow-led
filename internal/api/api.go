@@ -33,7 +33,7 @@ type Server struct {
 	Name string `json:"name" yaml:"name"`
 }
 
-func GetApiConfig(logger echo.Logger, paths ...string) (*Config, error) {
+func GetConfig(logger echo.Logger, paths ...string) (*Config, error) {
 	o := &Config{
 		Servers: []*Server{},
 	}
@@ -75,7 +75,7 @@ func GetDevices(o *Config) []*Device {
 		go func() {
 			defer wg.Done()
 
-			r := NewMicroRequest()
+			r := NewMicroRequest(MicroIDDefault)
 
 			if pins, err := r.Pins(device); err != nil && !device.Online {
 				return
@@ -95,14 +95,14 @@ func GetDevices(o *Config) []*Device {
 	return devices
 }
 
-func PostDevicesColor(o *Config, c MicroColor, devices ...*Device) []*Device {
+func SetColor(o *Config, c MicroColor, devices ...*Device) []*Device {
 	wg := &sync.WaitGroup{}
 	for _, d := range devices {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 
-			r := NewMicroRequest()
+			r := NewMicroRequest(MicroIDDefault)
 			if err := r.SetColor(d, c); err != nil {
 				d.Error = err.Error()
 			} else {
@@ -113,4 +113,24 @@ func PostDevicesColor(o *Config, c MicroColor, devices ...*Device) []*Device {
 	wg.Wait()
 
 	return devices
+}
+
+// SetColorForce will set color just like `SetColor`, but will skip the response
+func SetColorForce(o *Config, c MicroColor, devices ...*Device) {
+	wg := &sync.WaitGroup{}
+	for _, d := range devices {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			r := NewMicroRequest(MicroIDNoResponse)
+			r.ID = MicroIDNoResponse
+			if err := r.SetColor(d, c); err != nil {
+				d.Error = err.Error()
+			} else {
+				d.Color = c
+			}
+		}()
+	}
+	wg.Wait()
 }
