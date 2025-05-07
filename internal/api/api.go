@@ -34,7 +34,7 @@ type Server struct {
 	Name string `json:"name" yaml:"name"`
 }
 
-func GetApiConfig(logger *echo.Logger, paths ...string) (*Config, error) {
+func GetApiConfig(logger echo.Logger, paths ...string) (*Config, error) {
 	o := &Config{
 		Servers: []*Server{},
 		WS:      NewWS(logger),

@@ -98,7 +98,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 
 		// Api Configuration
 		apiConfig, err := api.GetApiConfig(
-			&e.Logger,
+			e.Logger,
 			apiConfigPath, apiConfigFallbackPath,
 		)
 		if err != nil {
