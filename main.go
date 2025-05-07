@@ -97,8 +97,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(publicFS(), false))
 
 		// Api Configuration
-		apiConfig, err := api.GetApiConfig(
-			e.Logger,
+		apiConfig, err := api.GetConfig(
 			apiConfigPath, apiConfigFallbackPath,
 		)
 		if err != nil {
