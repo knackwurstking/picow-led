@@ -29,7 +29,7 @@ func wsRoutes(e *echo.Echo, o wsOptions) {
 				// Keep alive loop here, this websocket is readonly
 				message := ""
 				if err := websocket.Message.Receive(conn, &message); err != nil {
-					c.Logger().Errorf("%s: %s", c.RealIP(), err)
+					c.Logger().Warn("%s: %s", c.RealIP(), err)
 					break
 				}
 				c.Logger().Debugf("%s: message: %s", c.RealIP(), message)

@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 	"picow-led/internal/api"
@@ -12,6 +11,7 @@ import (
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 )
 
 var (
@@ -85,6 +85,8 @@ func cliServerAction(addr *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		e := echo.New()
 
+		e.Logger.SetLevel(log.DEBUG)
+
 		// Echo: Middleware
 		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 			Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
@@ -96,12 +98,13 @@ func cliServerAction(addr *string) cli.ActionRunner {
 
 		// Api Configuration
 		apiConfig, err := api.GetApiConfig(
+			&e.Logger,
 			apiConfigPath, apiConfigFallbackPath,
 		)
 		if err != nil {
 			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
 		} else {
-			log.Printf(
+			e.Logger.Warnf(
 				"Loaded API config from: \"%s\", \"%s\"",
 				apiConfigPath, apiConfigFallbackPath,
 			)

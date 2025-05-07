@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/labstack/echo/v4"
 	"gopkg.in/yaml.v3"
 )
 
@@ -33,10 +34,10 @@ type Server struct {
 	Name string `json:"name" yaml:"name"`
 }
 
-func GetApiConfig(paths ...string) (*Config, error) {
+func GetApiConfig(logger *echo.Logger, paths ...string) (*Config, error) {
 	o := &Config{
 		Servers: []*Server{},
-		WS:      NewWS(),
+		WS:      NewWS(logger),
 	}
 
 	for _, path := range paths {

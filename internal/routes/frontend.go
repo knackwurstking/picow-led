@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/fs"
-	"log"
 	"net/http"
 	"net/url"
 	"picow-led/internal/api"
@@ -48,9 +47,8 @@ func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string,
 	c.Response().Header().Add("Content-Type", mimeType)
 	err = t.Execute(c.Response().Writer, data)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		log.Println(err)
-		return err
+		c.Logger().Error(err)
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	return nil
@@ -67,17 +65,15 @@ func (f *frontendOptions) servePage(c echo.Context, content content, data fronte
 
 	t, err := template.ParseFS(f.Templates, patterns...)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		log.Println(err)
-		return err
+		c.Logger().Error(err)
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	c.Response().Header().Add("Content-Type", "text/html; charset=utf-8")
 	err = t.Execute(c.Response().Writer, data)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		log.Println(err)
-		return err
+		c.Logger().Error(err)
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	return nil
@@ -97,7 +93,7 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 			Title:            "PicoW LED | Devices",
 		})
 		if err != nil {
-			log.Println(err)
+			c.Logger().Error(err)
 		}
 		return err
 	})
@@ -105,9 +101,8 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 	e.GET(o.ServerPathPrefix+"/devices/:addr", func(c echo.Context) error {
 		addr, err := url.QueryUnescape(c.Param("addr"))
 		if err != nil {
-			c.String(http.StatusBadRequest, err.Error())
-			log.Println(err)
-			return err
+			c.Logger().Warn(err)
+			return c.String(http.StatusBadRequest, err.Error())
 		}
 
 		var device *api.Device
@@ -120,9 +115,8 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 
 		if device == nil {
 			msg := fmt.Sprintf("device \"%s\" not found", addr)
-			c.String(http.StatusNotFound, msg)
-			log.Println(msg)
-			return err
+			c.Logger().Warn(err)
+			return c.String(http.StatusNotFound, msg)
 		}
 
 		return o.servePage(c, contentDevicesAddr, frontendTemplateData{
