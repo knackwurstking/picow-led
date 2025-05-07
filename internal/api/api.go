@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/labstack/echo/v4"
 	"gopkg.in/yaml.v3"
 )
 
@@ -33,7 +32,7 @@ type Server struct {
 	Name string `json:"name" yaml:"name"`
 }
 
-func GetConfig(logger echo.Logger, paths ...string) (*Config, error) {
+func GetConfig(paths ...string) (*Config, error) {
 	o := &Config{
 		Servers: []*Server{},
 	}
