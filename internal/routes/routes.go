@@ -24,7 +24,7 @@ func Create(e *echo.Echo, o Options) {
 	cache = NewCache(ws)
 	cache.SetDevices(api.GetDevices(o.Config)...)
 
-	ws.Start()
+	go ws.Start()
 
 	apiRoutes(e, apiOptions{
 		ServerPathPrefix: o.ServerPathPrefix,
