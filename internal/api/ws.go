@@ -82,12 +82,12 @@ func (ws *WS) Start() error {
 						defer wg.Done()
 
 						d, err := json.Marshal(v)
-						if err != nil {
+						if err != nil && ws.logger != nil {
 							ws.logger.Error(err, c)
 						}
 
 						err = websocket.Message.Send(c.Conn, d)
-						if err != nil {
+						if err != nil && ws.logger != nil {
 							ws.logger.Warn(err, c)
 						}
 					}()
