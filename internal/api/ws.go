@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/json"
+	"log"
 	"slices"
 	"sync"
 
@@ -9,6 +11,9 @@ import (
 
 type WS struct {
 	clients []*WSClient
+
+	broadcast chan any
+	done      chan any
 
 	mutex *sync.Mutex
 }
@@ -41,9 +46,42 @@ func (ws *WS) UnregisterClient(c *WSClient) {
 	}
 }
 
-func (ws *WS) Start() {
-	// TODO: Create a room and listen for api events, broatcast to all
-	// 		 connected clients, for now just devices data (cache) changes
+func (ws *WS) Start() error {
+	for {
+		select {
+		case v := <-ws.broadcast:
+			{
+				wg := &sync.WaitGroup{}
+				for _, c := range ws.clients {
+					wg.Add(1)
+					go func() {
+						defer wg.Done()
+
+						d, err := json.Marshal(v)
+						if err != nil {
+							log.Println(err, c.Conn)
+						}
+
+						err = websocket.Message.Send(c.Conn, d)
+						if err != nil {
+							log.Println(err, c.Conn)
+						}
+					}()
+				}
+				wg.Wait()
+			}
+		case <-ws.done:
+			break
+		}
+	}
+}
+
+func (ws *WS) Broadcast(v any) {
+	ws.broadcast <- v
+}
+
+func (ws *WS) Done() {
+	ws.done <- nil
 }
 
 type WSClient struct {
