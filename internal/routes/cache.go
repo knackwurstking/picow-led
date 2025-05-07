@@ -6,16 +6,17 @@ import (
 	"sync"
 )
 
-var cache = NewCache()
+var cache *Cache
 
 type Cache struct {
 	devices []*api.Device
 	color   []api.MicroColor
 
 	mutex *sync.Mutex
+	ws    *api.WS
 }
 
-func NewCache() *Cache {
+func NewCache(ws *api.WS) *Cache {
 	return &Cache{
 		devices: make([]*api.Device, 0),
 		color: []api.MicroColor{
@@ -26,6 +27,7 @@ func NewCache() *Cache {
 		},
 
 		mutex: &sync.Mutex{},
+		ws:    ws,
 	}
 }
 
@@ -41,7 +43,10 @@ func (c *Cache) SetDevices(devices ...*api.Device) {
 	defer c.mutex.Unlock()
 
 	c.devices = devices
-	// TODO: Broadcast...
+
+	if c.ws != nil {
+		// TODO: Broadcast...
+	}
 }
 
 func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, error) {
@@ -58,7 +63,10 @@ func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, erro
 		d.Error = device.Error
 		d.Online = device.Online
 
-		// TODO: Broadcast...
+		if c.ws != nil {
+			// TODO: Broadcast...
+		}
+
 		return d, nil
 	}
 
@@ -82,6 +90,9 @@ func (c *Cache) UpdateColor(index int, color api.MicroColor) error {
 
 	c.color[index] = color
 
-	// TODO: Broadcast...
+	if c.ws != nil {
+		// TODO: Broadcast...
+	}
+
 	return nil
 }

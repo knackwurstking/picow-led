@@ -15,17 +15,21 @@ type Options struct {
 }
 
 func Create(e *echo.Echo, o Options) {
+	ws := api.NewWS(e.Logger)
+
+	cache = NewCache(ws)
 	cache.SetDevices(api.GetDevices(o.Config)...)
+
+	ws.Start()
 
 	apiRoutes(e, apiOptions{
 		ServerPathPrefix: o.ServerPathPrefix,
 		Config:           o.Config,
 	})
 
-	o.Config.WS.Start()
 	wsRoutes(e, wsOptions{
 		ServerPathPrefix: o.ServerPathPrefix,
-		WS:               o.Config.WS,
+		WS:               ws,
 	})
 
 	frontendRoutes(e, frontendOptions{
