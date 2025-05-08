@@ -54,7 +54,7 @@ func (c *Cache) SetDevices(devices ...*api.Device) {
 	c.devices = devices
 
 	if c.ws != nil {
-		// TODO: Broadcast...
+		c.ws.BroadcastDevices(c.devices)
 	}
 }
 
@@ -73,7 +73,7 @@ func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, erro
 		d.Online = device.Online
 
 		if c.ws != nil {
-			// TODO: Broadcast...
+			c.ws.BroadcastDevice(d)
 		}
 
 		return d, nil
@@ -100,7 +100,7 @@ func (c *Cache) UpdateColor(index int, color api.MicroColor) error {
 	c.color[index] = color
 
 	if c.ws != nil {
-		// TODO: Broadcast...
+		c.ws.BroadcastColors(c.color)
 	}
 
 	return nil
