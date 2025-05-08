@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"picow-led/internal/api"
@@ -47,7 +48,8 @@ func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string,
 	c.Response().Header().Add("Content-Type", mimeType)
 	err = t.Execute(c.Response().Writer, data)
 	if err != nil {
-		c.Logger().Error(err)
+		slog.Error("Execute template",
+			"error", err, "path", c.Request().URL.Path)
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
@@ -65,14 +67,14 @@ func (f *frontendOptions) servePage(c echo.Context, content content, data fronte
 
 	t, err := template.ParseFS(f.Templates, patterns...)
 	if err != nil {
-		c.Logger().Error(err)
+		slog.Error("ParseFS (template) patterns", "error", err, "path", c.Request().URL.Path)
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	c.Response().Header().Add("Content-Type", "text/html; charset=utf-8")
 	err = t.Execute(c.Response().Writer, data)
 	if err != nil {
-		c.Logger().Error(err)
+		slog.Error("Execute template", "error", err, "path", c.Request().URL.Path)
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
@@ -93,7 +95,7 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 			Title:            "PicoW LED | Devices",
 		})
 		if err != nil {
-			c.Logger().Error(err)
+			slog.Error(err.Error(), "path", c.Request().URL.Path)
 		}
 		return err
 	})
@@ -101,7 +103,7 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 	e.GET(o.ServerPathPrefix+"/devices/:addr", func(c echo.Context) error {
 		addr, err := url.QueryUnescape(c.Param("addr"))
 		if err != nil {
-			c.Logger().Warn(err)
+			slog.Warn("Query unescape", "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
@@ -114,8 +116,8 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 		}
 
 		if device == nil {
-			msg := fmt.Sprintf("device \"%s\" not found", addr)
-			c.Logger().Warn(err)
+			msg := fmt.Sprintf("Device \"%s\" not found", addr)
+			slog.Warn(msg, "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusNotFound, msg)
 		}
 

@@ -3,6 +3,7 @@
 package routes
 
 import (
+	"log/slog"
 	"picow-led/internal/api"
 
 	"github.com/labstack/echo/v4"
@@ -29,10 +30,10 @@ func wsRoutes(e *echo.Echo, o wsOptions) {
 				// Keep alive loop here, this websocket is readonly
 				message := ""
 				if err := websocket.Message.Receive(conn, &message); err != nil {
-					c.Logger().Warn("%s: %s", c.RealIP(), err)
+					slog.Warn("Receive websocket message", "RealIP", c.RealIP(), "error", err, "path", c.Request().URL.Path)
 					break
 				}
-				c.Logger().Debugf("%s: message: %s", c.RealIP(), message)
+				slog.Debug("Received websocket message", "RealIP", c.RealIP(), "message", message, "path", c.Request().URL.Path)
 			}
 		}).ServeHTTP(c.Response(), c.Request())
 

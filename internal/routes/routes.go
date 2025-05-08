@@ -19,7 +19,7 @@ func Create(e *echo.Echo, o Options) {
 		cache.Close()
 	}
 
-	ws := api.NewWS(e.Logger)
+	ws := api.NewWS()
 
 	cache = NewCache(ws)
 	cache.SetDevices(api.GetDevices(o.Config)...)

@@ -3,15 +3,17 @@ package main
 import (
 	"embed"
 	"io/fs"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"picow-led/internal/api"
 	"picow-led/internal/routes"
+	"time"
 
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
+	"github.com/lmittmann/tint"
 )
 
 var (
@@ -85,7 +87,12 @@ func cliServerAction(addr *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		e := echo.New()
 
-		e.Logger.SetLevel(log.DEBUG)
+		logger := slog.New(tint.NewHandler(os.Stderr, &tint.Options{
+			Level:      slog.LevelDebug,
+			TimeFormat: time.DateTime,
+			AddSource:  true,
+		}))
+		slog.SetDefault(logger)
 
 		// Echo: Middleware
 		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -97,16 +104,12 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(publicFS(), false))
 
 		// Api Configuration
+		slog.Info("Load API configuration", "path", apiConfigPath, "fallbackPath", apiConfigFallbackPath)
 		apiConfig, err := api.GetConfig(
 			apiConfigPath, apiConfigFallbackPath,
 		)
 		if err != nil {
-			e.Logger.Warnf("Read API configuration failed: %s", err.Error())
-		} else {
-			e.Logger.Warnf(
-				"Loaded API config from: \"%s\", \"%s\"",
-				apiConfigPath, apiConfigFallbackPath,
-			)
+			slog.Warn("Read API configuration failed!", "error", err)
 		}
 
 		routes.Create(e, routes.Options{

@@ -2,10 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"log/slog"
 	"slices"
 	"sync"
 
-	"github.com/labstack/echo/v4"
 	"golang.org/x/net/websocket"
 )
 
@@ -25,8 +25,6 @@ type BroadcastData struct {
 type WS struct {
 	Clients []*WSClient
 
-	logger echo.Logger
-
 	running   bool
 	broadcast chan BroadcastData
 	done      chan any
@@ -34,10 +32,9 @@ type WS struct {
 	mutex *sync.Mutex
 }
 
-func NewWS(logger echo.Logger) *WS {
+func NewWS() *WS {
 	return &WS{
 		Clients: make([]*WSClient, 0),
-		logger:  logger,
 		mutex:   &sync.Mutex{},
 	}
 }
@@ -89,13 +86,13 @@ func (ws *WS) Start() error {
 						defer wg.Done()
 
 						d, err := json.Marshal(v)
-						if err != nil && ws.logger != nil {
-							ws.logger.Error(err, c)
+						if err != nil {
+							slog.Error("Marshal JSON", "error", err, "client", c)
 						}
 
 						err = websocket.Message.Send(c.Conn, d)
-						if err != nil && ws.logger != nil {
-							ws.logger.Warn(err, c)
+						if err != nil {
+							slog.Warn("Send message", "error", err, "client", c)
 						}
 					}()
 				}

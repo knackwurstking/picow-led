@@ -10,6 +10,7 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"picow-led/internal/api"
 	"strconv"
@@ -39,7 +40,7 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 		devices := api.GetDevices(o.Config)
 		err := c.JSON(http.StatusOK, devices)
 		if err != nil {
-			c.Logger().Warn(err)
+			slog.Warn("Parse JSON", "error", err, "path", c.Request().URL.Path)
 			return err
 		}
 
@@ -54,7 +55,7 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 		}
 		err := json.NewDecoder(c.Request().Body).Decode(&reqData)
 		if err != nil {
-			c.Logger().Warn(err)
+			slog.Warn("Decode client data", "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
@@ -63,7 +64,7 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 		for i, d := range reqData.Devices {
 			d, err := cache.UpdateDevice(d.Server.Addr, d)
 			if err != nil {
-				c.Logger().Warn(err)
+				slog.Warn("Update cached device", "error", err, "path", c.Request().URL.Path)
 				return c.String(http.StatusNotFound, err.Error())
 			}
 
@@ -72,7 +73,7 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 
 		err = c.JSON(http.StatusOK, reqData.Devices)
 		if err != nil {
-			c.Logger().Warn(err)
+			slog.Warn("Parse JSON", "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusInternalServerError, err.Error())
 		}
 
@@ -88,7 +89,7 @@ func apiSetupColor(e *echo.Echo, o apiOptions) {
 	e.GET(o.ServerPathPrefix+"/api/colors/:index", func(c echo.Context) error {
 		index, err := strconv.Atoi(c.Param("index"))
 		if err != nil {
-			c.Logger().Warn(err)
+			slog.Warn("Parse param \":index\"", "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
@@ -100,7 +101,7 @@ func apiSetupColor(e *echo.Echo, o apiOptions) {
 
 		err = c.JSON(http.StatusOK, color)
 		if err != nil {
-			c.Logger().Warn(err)
+			slog.Warn("Parse JSON", "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
@@ -116,13 +117,13 @@ func apiSetupColor(e *echo.Echo, o apiOptions) {
 		var reqData api.MicroColor
 		err = json.NewDecoder(c.Request().Body).Decode(&reqData)
 		if err != nil {
-			c.Logger().Warn(err)
+			slog.Warn("Decode client data", "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
 		err = cache.UpdateColor(index, reqData)
 		if err != nil {
-			c.Logger().Warn(err)
+			slog.Warn("Update (cache) color", "index", index, "data", reqData, "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
