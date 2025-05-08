@@ -82,7 +82,7 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 
 func apiSetupColor(e *echo.Echo, o apiOptions) {
 	e.GET(o.ServerPathPrefix+"/api/colors", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, cache.Color())
+		return c.JSON(http.StatusOK, cache.Colors())
 	})
 
 	e.GET(o.ServerPathPrefix+"/api/colors/:index", func(c echo.Context) error {
@@ -92,7 +92,7 @@ func apiSetupColor(e *echo.Echo, o apiOptions) {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		cacheColor := cache.Color()
+		cacheColor := cache.Colors()
 		if len(cacheColor)-1 < index {
 			return c.String(http.StatusBadRequest, fmt.Sprintf("color index %d not found", index))
 		}
