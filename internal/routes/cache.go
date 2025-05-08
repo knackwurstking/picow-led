@@ -10,7 +10,7 @@ var cache *Cache
 
 type Cache struct {
 	devices []*api.Device
-	color   []api.MicroColor
+	colors  []api.MicroColor
 
 	mutex *sync.Mutex
 	ws    *api.WS
@@ -19,7 +19,7 @@ type Cache struct {
 func NewCache(ws *api.WS) *Cache {
 	return &Cache{
 		devices: make([]*api.Device, 0),
-		color: []api.MicroColor{
+		colors: []api.MicroColor{
 			{255, 255, 255, 255},
 			{255, 0, 0, 0},
 			{0, 255, 0, 0},
@@ -82,25 +82,25 @@ func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, erro
 	return nil, fmt.Errorf("device \"%s\" not found", addr)
 }
 
-func (c *Cache) Color() []api.MicroColor {
+func (c *Cache) Colors() []api.MicroColor {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	return c.color
+	return c.colors
 }
 
 func (c *Cache) UpdateColor(index int, color api.MicroColor) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if len(c.color)-1 < index {
+	if len(c.colors)-1 < index {
 		return fmt.Errorf("no such index: %d", index)
 	}
 
-	c.color[index] = color
+	c.colors[index] = color
 
 	if c.ws != nil {
-		c.ws.BroadcastColors(c.color)
+		c.ws.BroadcastColors(c.colors)
 	}
 
 	return nil
