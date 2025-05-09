@@ -16,21 +16,25 @@ export function create() {
 
         // Reconnect here
         timeout = setTimeout(() => {
+            console.debug(`Try to reconnect to "${getURL()}"`);
             connect();
         }, timeoutDuration);
     };
 
     const onOpen = () => {
-        // TODO: Request devices
-        //const devices = window.api.devices();
+        console.debug(`WebSocket connected to "${getURL()}"`);
     };
 
-    const onMessage = () => {
-        // TODO: ...
+    /**
+     * @param {MessageEvent<import("../../types").WSMessage>} ev
+     * @returns {void}
+     */
+    const onMessage = (ev) => {
+        // TODO: Continue here
     };
 
-    function addr() {
-        return ``; // TODO: ...
+    function getURL() {
+        return process.env.SERVER_PATH_PREFIX + `/ws`;
     }
 
     function isOpen() {
@@ -41,7 +45,7 @@ export function create() {
     function connect() {
         if (socket) close();
 
-        const wsAddr = addr(); // origin + path
+        const wsAddr = getURL(); // origin + path
         console.debug(`Try to connect WebSocket to ${wsAddr}`);
 
         socket = new WebSocket(wsAddr);
@@ -67,7 +71,6 @@ export function create() {
 
     /** @type {import("../../types").WS} */
     return {
-        addr,
         isOpen,
         connect,
         close,
