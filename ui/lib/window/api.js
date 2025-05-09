@@ -6,7 +6,7 @@ export function create() {
      * @returns {Promise<import("../../types").Device[]>}
      */
     async function devices() {
-        const url = getUrl("/api/devices");
+        const url = getURL("/api/devices");
 
         const resp = await fetch(url);
         return await handleResponse(resp, url);
@@ -22,7 +22,7 @@ export function create() {
             color = [255, 255, 255, 255];
         }
 
-        const url = getUrl("/api/devices/color");
+        const url = getURL("/api/devices/color");
         const data = { devices, color };
         console.debug(`POST "${url}":`, data);
 
@@ -43,7 +43,7 @@ export function create() {
      * @returns {Promise<import("../../types").ColorCache>}
      */
     async function colors() {
-        const url = getUrl("/api/colors");
+        const url = getURL("/api/colors");
         const resp = await fetch(url);
         return handleResponse(resp, url);
     }
@@ -53,7 +53,7 @@ export function create() {
      * @returns {Promise<import("../../types").Color>}
      */
     async function color(index) {
-        const url = getUrl(`/api/colors/${index}`);
+        const url = getURL(`/api/colors/${index}`);
         const resp = await fetch(url);
         return handleResponse(resp, url);
     }
@@ -64,7 +64,7 @@ export function create() {
      * @returns {Promise<void>}
      */
     async function setColor(index, color) {
-        const url = getUrl(`/api/colors/${index}`);
+        const url = getURL(`/api/colors/${index}`);
 
         const resp = await fetch(url, {
             method: "POST",
@@ -90,7 +90,7 @@ export function create() {
  * @param {string} path
  * @returns {string}
  */
-function getUrl(path) {
+function getURL(path) {
     return process.env.SERVER_PATH_PREFIX + `${path}`;
 }
 
