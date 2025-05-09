@@ -35,13 +35,6 @@ export declare type Api = {
     setColor: (index: number, color: Color) => Promise<void>;
 };
 
-export declare type WS = {
-    addr: () => string;
-    isOpen: () => boolean;
-    connect: () => void;
-    close: () => void;
-};
-
 export declare type Utils = {
     setupAppBarItems: (...itemNames: AppBarItemName[]) => AppBarItems;
     setOnlineIndicatorState: (state: boolean) => void;
@@ -72,3 +65,23 @@ export declare type Color = number[];
 export declare type Pins = number[];
 
 export declare type ColorCache = Color[];
+
+export declare type WS = {
+    isOpen: () => boolean;
+    connect: () => void;
+    close: () => void;
+};
+
+export declare type WSMessage =
+    | {
+          type: "devices";
+          data: Device[];
+      }
+    | {
+          type: "device";
+          data: Device;
+      }
+    | {
+          type: "colors";
+          data: Color[];
+      };
