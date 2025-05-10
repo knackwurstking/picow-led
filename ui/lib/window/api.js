@@ -13,14 +13,13 @@ export function create() {
 
             try {
                 const data = await handleResponse(resp, url);
-
                 window.store.obj.set("devices", data);
                 return data;
             } catch (err) {
-                console.error(err);
+                console.error("Handle fetch response:", err);
             }
         } catch (err) {
-            console.error(err);
+            console.error("fetch:", err);
         }
 
         return window.store.obj.get("devices");
@@ -32,6 +31,8 @@ export function create() {
      * @returns {Promise<import("../../types").Device[]>}
      */
     async function setDevicesColor(color, ...devices) {
+        // TODO: Do the same thing like in devices and colors
+
         if (!color) {
             color = [255, 255, 255, 255];
         }
@@ -58,8 +59,22 @@ export function create() {
      */
     async function colors() {
         const url = getURL("/api/colors");
-        const resp = await fetch(url);
-        return handleResponse(resp, url);
+
+        try {
+            const resp = await fetch(url);
+
+            try {
+                const data = await handleResponse(resp, url);
+                window.store.obj.set("colors", data);
+                return data;
+            } catch (err) {
+                console.error("Handle fetch response:", err);
+            }
+        } catch (err) {
+            console.error("Fetch:", err);
+        }
+
+        return window.store.obj.get("colors");
     }
 
     /**
@@ -67,6 +82,7 @@ export function create() {
      * @returns {Promise<import("../../types").Color>}
      */
     async function color(index) {
+        // TODO: Do the same thing like in devices and colors
         const url = getURL(`/api/colors/${index}`);
         const resp = await fetch(url);
         return handleResponse(resp, url);
@@ -78,6 +94,7 @@ export function create() {
      * @returns {Promise<void>}
      */
     async function setColor(index, color) {
+        // TODO: Do the same thing like in devices and colors
         const url = getURL(`/api/colors/${index}`);
 
         const resp = await fetch(url, {
