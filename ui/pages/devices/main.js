@@ -3,6 +3,7 @@
 
     /**
      * @param {import("../../types").Device} device
+     * @returns {import("../../types").Color}
      */
     function currentColorForDevice(device) {
         return (
@@ -25,41 +26,33 @@
     }
 
     window.addEventListener("pageshow", async () => {
-        window.store.obj.listen(
-            "devices",
-            (devices) => {
-                /** @type {HTMLElement} */
-                const devicesList = document.querySelector(
-                    "._content.devices > .list",
-                );
-                devicesList.innerHTML = "";
-
-                devices.forEach((device) => {
-                    const item = createDeviceItem(device, async () => {
-                        let color = currentColorForDevice(device);
-                        if (Math.max(...device.color) > 0) {
-                            color = color.map(() => 0);
-                        }
-
-                        try {
-                            await window.api.setDevicesColor(color, device);
-                        } catch (err) {
-                            console.error(err);
-                            alert(err); // TODO: Error handling, notification?
-                        }
-                    });
-
-                    devicesList.appendChild(item);
-                });
-            },
-            true,
-        );
-
         setupAppBar();
 
-        window.api.devices().then((devices) => {
-            // Fetch Devices from the api (if not offline)
-            window.store.obj.set("devices", devices);
-        });
+        const devices = await window.api.devices();
+
+        /** @type {HTMLElement} */
+        const devicesList = document.querySelector("._content.devices > .list");
+        devicesList.innerHTML = "";
+
+        /** @param {import("../../types").Device} device */
+        const createItem = (device) => {
+            const onClick = async () => {
+                /** @type {import("../../types").Color} */
+                let color;
+                if (Math.max(...device.color) > 0) {
+                    color = color.map(() => 0);
+                } else {
+                    color = currentColorForDevice(device);
+                }
+
+                const devices = await window.api.setDevicesColor(color, device);
+                devices.forEach(createItem);
+            };
+
+            const item = createDeviceItem(device, onClick);
+            devicesList.appendChild(item);
+        };
+
+        devices.forEach(createItem);
     });
 })();
