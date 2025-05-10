@@ -6,14 +6,11 @@ export function create() {
     const store = new window.ui.Store("picow-led:");
 
     store.set("devices", [], true);
-    store.set(
-        "color",
-        {
-            api: [],
-            current: {},
-        },
-        true,
-    );
+    store.set("colors", [], true);
+    store.set("currentDeviceColors", {}, true);
+
+    // @ts-expect-error
+    store.delete("color"); // TODO: Just to clean up, can be removed before release
 
     return {
         obj: store,
@@ -36,11 +33,11 @@ export function create() {
          * @param {string} addr
          * @returns {import("../../types").Color | null}
          */
-        currentColor(addr) {
-            const current = store.get("color").current;
-            for (const a in current) {
-                if (a === addr) {
-                    return current[a];
+        currentDeviceColor(addr) {
+            const currentDeviceColors = store.get("currentDeviceColors");
+            for (const key in currentDeviceColors) {
+                if (key === addr) {
+                    return currentDeviceColors[key];
                 }
             }
 
