@@ -77,23 +77,27 @@ func GetDevices(o *Config) []*Device {
 
 			r := NewMicroRequest(MicroIDDefault)
 
-			// NOTE: Just log any error and continue
 			if pins, err := r.Pins(device); err != nil && !device.Online {
 				return
 			} else {
 				device.Pins = pins
 			}
+
 			if device.Error != "" {
 				slog.Error("Request pins", "error", device.Error, "device.server", device.Server)
 			}
+			pinsError := device.Error
 
 			if color, err := r.Color(device); err != nil && !device.Online {
 				return
 			} else {
 				device.Color = color
 			}
+
 			if device.Error != "" {
 				slog.Error("Request color", "error", device.Error, "device.server", device.Server)
+			} else {
+				device.Error = pinsError
 			}
 		}()
 	}
