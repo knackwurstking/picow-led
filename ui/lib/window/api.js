@@ -16,10 +16,10 @@ export function create() {
                 window.store.obj.set("devices", data);
                 return data;
             } catch (err) {
-                console.error("Handle fetch response:", err);
+                console.error(`Handle fetch response for ${url}:`, err);
             }
         } catch (err) {
-            console.error("fetch:", err);
+            console.error(`fetch ${url}:`, err);
         }
 
         return window.store.obj.get("devices");
@@ -68,10 +68,10 @@ export function create() {
                 window.store.obj.set("colors", data);
                 return data;
             } catch (err) {
-                console.error("Handle fetch response:", err);
+                console.error(`Handle fetch response for ${url}:`, err);
             }
         } catch (err) {
-            console.error("Fetch:", err);
+            console.error(`Fetch ${url}:`, err);
         }
 
         return window.store.obj.get("colors");
@@ -82,7 +82,7 @@ export function create() {
      * @returns {Promise<import("../../types").Color>}
      */
     async function color(index) {
-        // TODO: Do the same thing like in devices and colors
+        // TODO: Do the same thing like in devices and colors, Continue here...
         const url = getURL(`/api/colors/${index}`);
         const resp = await fetch(url);
         return handleResponse(resp, url);
