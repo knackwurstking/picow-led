@@ -9,6 +9,8 @@ export function splitDataColor(v) {
 }
 
 /**
+ * TODO: Add on change callback
+ *
  * @param {number} index
  * @param {import("../../../types").Color} color
  * @param {import("../../../types").Device} [device]
@@ -32,6 +34,8 @@ export function createColorStorageItem(index, color, device, onClick) {
 }
 
 /**
+ * TODO: Add on change callback
+ *
  * @param {HTMLElement} item
  * @param {number} index
  * @param {import("../../../types").Color} color
