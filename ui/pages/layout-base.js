@@ -1,4 +1,6 @@
 (() => {
+    // TODO: Starting the WebSocket handler either in "focus event" or in "pageshow"
+
     let timeout = null;
     window.addEventListener("focus", () => {
         if (timeout !== null) {
@@ -6,7 +8,7 @@
         }
 
         // NOTE: This focus event gets triggered twice after tab switching,
-        //       this is just a workaround to prevent this
+        //       this is just a workaround to prevent running this twice
         timeout = setTimeout(async () => {
             try {
                 const resp = await fetch(
@@ -25,7 +27,7 @@
             }
 
             timeout = null;
-        }, 100);
+        });
     });
 
     window.addEventListener("pageshow", () => {
