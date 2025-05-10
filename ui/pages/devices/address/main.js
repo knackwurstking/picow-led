@@ -92,19 +92,17 @@
         );
         colorStorageContainer.innerHTML = "";
 
-        const colorCache = await window.api.colors();
-        const device = pageDevice();
-
         const currentColor = pageCurrentColor();
         const currentColorString = currentColor
             .slice(0, 3)
             .join(colorSeparator);
 
         // Create color storage items
-        for (let x = 0; x < colorCache.length; x++) {
+        const device = pageDevice();
+        (await window.api.colors()).forEach((color, index) => {
             const item = createColorStorageItem(
-                x,
-                colorCache[x],
+                index,
+                color,
                 device,
                 (color) => {
                     const colorString = color.join(colorSeparator);
@@ -139,7 +137,7 @@
             }
 
             colorStorageContainer.appendChild(item);
-        }
+        });
     }
 
     async function setupRangeSliders() {
