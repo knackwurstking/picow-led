@@ -31,6 +31,7 @@ export function create() {
      */
     const onMessage = (ev) => {
         // TODO: Continue here
+        console.debug(`WebSocket message event:`, ev);
     };
 
     function getURL() {
