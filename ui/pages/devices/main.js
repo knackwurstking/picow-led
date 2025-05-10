@@ -7,7 +7,7 @@
      */
     function currentColorForDevice(device) {
         return (
-            window.store.currentColor(device.server.addr) ||
+            window.store.currentDeviceColor(device.server.addr) ||
             (device.pins || []).map(() => 255)
         );
     }

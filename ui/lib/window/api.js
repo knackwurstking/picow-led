@@ -54,7 +54,7 @@ export function create() {
     }
 
     /**
-     * @returns {Promise<import("../../types").ColorCache>}
+     * @returns {Promise<import("../../types").Colors>}
      */
     async function colors() {
         const url = getURL("/api/colors");
@@ -141,6 +141,19 @@ function updateStoreDevices(devices) {
                 if (storeDevice.server.addr === devices[i].server.addr) {
                     storeDevices[sI] = devices[i];
 
+                    // Store current color
+                    if (Math.max(...storeDevice.color) > 0) {
+                        window.store.obj.update(
+                            "currentDeviceColors",
+                            (data) => {
+                                data[storeDevice.server.addr] =
+                                    storeDevice.color;
+
+                                return data;
+                            },
+                        );
+                    }
+
                     // Log device error
                     if (storeDevice.error) {
                         console.error(
@@ -152,15 +165,6 @@ function updateStoreDevices(devices) {
                             } with error:`,
                             storeDevice.error,
                         );
-                    }
-
-                    // Store current color
-                    if (Math.max(...storeDevice.color) > 0) {
-                        window.store.obj.update("color", (data) => {
-                            data.current[storeDevice.server.addr] =
-                                storeDevice.color;
-                            return data;
-                        });
                     }
                 }
             }

@@ -15,24 +15,24 @@
     }
 
     /**
-     * @returns {import("../types.js").Device}
+     * @returns {import("../../../types").Device}
      */
     function pageDevice() {
         return window.store.device(pageDeviceAddress());
     }
 
     /**
-     * @returns {import("../types.js").Color}
+     * @returns {import("../../../types").Color}
      */
     function pageCurrentColor() {
         return (
-            window.store.currentColor(pageDeviceAddress()) ||
+            window.store.currentDeviceColor(pageDeviceAddress()) ||
             (pageDevice().pins || []).map(() => 255)
         );
     }
 
     /**
-     * @returns {import("../types.js").Color | null}
+     * @returns {import("../../../types").Color | null}
      */
     function pagePickedColor() {
         // Get color from active item
@@ -45,7 +45,7 @@
     }
 
     /**
-     * @returns {import("../types.js").Color}
+     * @returns {import("../../../types").Color}
      */
     function pageActiveColor() {
         let color = [];
