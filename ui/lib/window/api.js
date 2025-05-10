@@ -79,13 +79,31 @@ export function create() {
 
     /**
      * @param {number} index
-     * @returns {Promise<import("../../types").Color>}
+     * @returns {Promise<import("../../types").Color | undefined>}
      */
     async function color(index) {
-        // TODO: Do the same thing like in devices and colors, Continue here...
         const url = getURL(`/api/colors/${index}`);
-        const resp = await fetch(url);
-        return handleResponse(resp, url);
+
+        try {
+            const resp = await fetch(url);
+
+            try {
+                /** @type {import("../../types").Color} */
+                const color = await handleResponse(resp, url);
+
+                window.store.obj.update("colors", (colors) => {
+                    return colors.map((c, i) => (i === index ? color : c));
+                });
+
+                return color;
+            } catch (err) {
+                console.error(`Handle fetch response for ${url}:`, err);
+            }
+        } catch (err) {
+            console.error(`Fetch ${url}:`, err);
+        }
+
+        return window.store.obj.get("colors")[index]; // Could be undefined
     }
 
     /**
