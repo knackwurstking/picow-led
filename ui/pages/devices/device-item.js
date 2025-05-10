@@ -1,5 +1,5 @@
 /**
- * @param {import("../../types").Device} device
+ * @param {Device} device
  * @param {(item: HTMLElement) => void|Promise<void>} onClickPowerButton
  * @returns {HTMLElement}
  */
@@ -23,7 +23,7 @@ export function createDeviceItem(device, onClickPowerButton) {
 
 /**
  * @param {HTMLElement} item
- * @param {import("../../types").Device} device
+ * @param {Device} device
  * @param {(item: HTMLElement) => void|Promise<void>} onClickPowerButton
  * @returns {HTMLElement}
  */

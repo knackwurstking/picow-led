@@ -2,8 +2,8 @@
     const { createDeviceItem } = require("./device-item");
 
     /**
-     * @param {import("../../types").Device} device
-     * @returns {import("../../types").Color}
+     * @param {Device} device
+     * @returns {Color}
      */
     function currentColorForDevice(device) {
         return (
@@ -34,10 +34,10 @@
         const devicesList = document.querySelector("._content.devices > .list");
         devicesList.innerHTML = "";
 
-        /** @param {import("../../types").Device} device */
+        /** @param {Device} device */
         const createItem = (device) => {
             const onClick = async () => {
-                /** @type {import("../../types").Color} */
+                /** @type {Color} */
                 let color;
                 if (Math.max(...device.color) > 0) {
                     color = color.map(() => 0);

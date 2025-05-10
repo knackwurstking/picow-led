@@ -1,10 +1,10 @@
 /**
- * @returns {import("../../types").Api}
+ * @returns {Api}
  */
 export function create() {
     return {
         /**
-         * @returns {Promise<import("../../types").Device[]>}
+         * @returns {Promise<Device[]>}
          */
         async devices() {
             const url = getURL("/api/devices");
@@ -27,9 +27,9 @@ export function create() {
         },
 
         /**
-         * @param {import("../../types").Color | undefined | null} color
-         * @param {import("../../types").Device[]} devices
-         * @returns {Promise<import("../../types").Device[]>}
+         * @param {Color | undefined | null} color
+         * @param {Device[]} devices
+         * @returns {Promise<Device[]>}
          */
         async setDevicesColor(color, ...devices) {
             if (!color) {
@@ -50,7 +50,7 @@ export function create() {
                 });
 
                 try {
-                    /** @type {import("../../types").Device[]} */
+                    /** @type {Device[]} */
                     devices = await handleResponse(resp, url);
                 } catch (err) {
                     console.error(`Handle fetch response from ${url}:`, err);
@@ -63,7 +63,7 @@ export function create() {
         },
 
         /**
-         * @returns {Promise<import("../../types").Colors>}
+         * @returns {Promise<Colors>}
          */
         async colors() {
             const url = getURL("/api/colors");
@@ -87,7 +87,7 @@ export function create() {
 
         /**
          * @param {number} index
-         * @returns {Promise<import("../../types").Color>}
+         * @returns {Promise<Color>}
          */
         async color(index) {
             const url = getURL(`/api/colors/${index}`);
@@ -96,7 +96,7 @@ export function create() {
                 const resp = await fetch(url);
 
                 try {
-                    /** @type {import("../../types").Color} */
+                    /** @type {Color} */
                     const color = await handleResponse(resp, url);
 
                     window.store.obj.update("colors", (colors) => {
@@ -120,7 +120,7 @@ export function create() {
 
         /**
          * @param {number} index
-         * @param {import("../../types").Color} color
+         * @param {Color} color
          * @returns {Promise<void>}
          */
         async setColor(index, color) {
@@ -179,12 +179,12 @@ async function handleResponse(resp, url) {
 }
 
 /**
- * @param {import("../../types").Device[]} devices
- * @returns {import("../../types").Device[]}
+ * @param {Device[]} devices
+ * @returns {Device[]}
  */
 function updateDevicesStore(devices) {
     window.store.obj.update("devices", (storeDevices) => {
-        /** @type {import("../../types").Device} */
+        /** @type {Device} */
         let storeDevice;
 
         for (let sI = 0; sI < storeDevices.length; sI++) {

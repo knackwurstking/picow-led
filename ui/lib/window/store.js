@@ -1,8 +1,6 @@
-/**
- * @returns {import("../../types").Store}
- */
+/** @returns {Store} */
 export function create() {
-    /** @type {import("../../types").UIStore} */
+    /** @type {UIStore} */
     const store = new window.ui.Store("picow-led:");
 
     store.set("devices", [], true);
@@ -36,7 +34,7 @@ export function create() {
 
         /**
          * @param {string} addr
-         * @returns {import("../../types").Device | null}
+         * @returns {Device | null}
          */
         device(addr) {
             for (const d of store.get("devices") || []) {
@@ -50,7 +48,7 @@ export function create() {
 
         /**
          * @param {string} addr
-         * @returns {import("../../types").Color | null}
+         * @returns {Color | null}
          */
         currentDeviceColor(addr) {
             const currentDeviceColors = store.get("currentDeviceColors");

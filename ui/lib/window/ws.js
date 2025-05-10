@@ -1,5 +1,5 @@
 /**
- * @returns {import("../../types").WS}
+ * @returns {WS}
  */
 export function create() {
     /** @type {WebSocket | null} */
@@ -26,7 +26,7 @@ export function create() {
     };
 
     /**
-     * @param {MessageEvent<import("../../types").WSMessage>} ev
+     * @param {MessageEvent<WSMessage>} ev
      * @returns {void}
      */
     const onMessage = (ev) => {
@@ -70,7 +70,7 @@ export function create() {
         }
     }
 
-    /** @type {import("../../types").WS} */
+    /** @type {WS} */
     return {
         isOpen,
         connect,

@@ -2,19 +2,19 @@ export const colorSeparator = ",";
 
 /**
  * @param {string} v
- * @return {import("../../../types").Color}
+ * @return {Color}
  */
 export function splitDataColor(v) {
     return v.split(colorSeparator).map((c) => parseInt(c, 10));
 }
 
 /**
- * TODO: Add on change callback
+ * TODO: Add on change callback, Continue here...
  *
  * @param {number} index
- * @param {import("../../../types").Color} color
- * @param {import("../../../types").Device} [device]
- * @param {(color: import("../../../types").Color) => void|Promise<void>} [onClick]
+ * @param {Color} color
+ * @param {Device} [device]
+ * @param {(color: Color) => void|Promise<void>} [onClick]
  * @returns {HTMLElement}
  */
 export function createColorStorageItem(index, color, device, onClick) {
@@ -38,9 +38,9 @@ export function createColorStorageItem(index, color, device, onClick) {
  *
  * @param {HTMLElement} item
  * @param {number} index
- * @param {import("../../../types").Color} color
- * @param {import("../../../types").Device | null} [device]
- * @param {(color: import("../../../types").Color) => void|Promise<void>} [onClick]
+ * @param {Color} color
+ * @param {Device | null} [device]
+ * @param {(color: Color) => void|Promise<void>} [onClick]
  * @returns {HTMLElement}
  */
 export function updateColorStorageItem(item, index, color, device, onClick) {

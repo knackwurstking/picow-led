@@ -15,14 +15,14 @@
     }
 
     /**
-     * @returns {import("../../../types").Device}
+     * @returns {Device}
      */
     function pageDevice() {
         return window.store.device(pageDeviceAddress());
     }
 
     /**
-     * @returns {import("../../../types").Color}
+     * @returns {Color}
      */
     function pageCurrentColor() {
         return (
@@ -32,7 +32,7 @@
     }
 
     /**
-     * @returns {import("../../../types").Color | null}
+     * @returns {Color | null}
      */
     function pagePickedColor() {
         // Get color from active item
@@ -45,7 +45,7 @@
     }
 
     /**
-     * @returns {import("../../../types").Color}
+     * @returns {Color}
      */
     function pageActiveColor() {
         let color = [];
@@ -101,7 +101,7 @@
         const device = pageDevice();
         (await window.api.colors()).forEach((color, index) => {
             /**
-             * @param {import("../../../types").Color} color
+             * @param {Color} color
              */
             const onClick = async (color) => {
                 const colorString = color.join(colorSeparator);
