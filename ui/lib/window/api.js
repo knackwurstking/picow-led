@@ -2,153 +2,147 @@
  * @returns {import("../../types").Api}
  */
 export function create() {
-    /**
-     * @returns {Promise<import("../../types").Device[]>}
-     */
-    async function devices() {
-        const url = getURL("/api/devices");
-
-        try {
-            const resp = await fetch(url);
+    return {
+        /**
+         * @returns {Promise<import("../../types").Device[]>}
+         */
+        async devices() {
+            const url = getURL("/api/devices");
 
             try {
-                const data = await handleResponse(resp, url);
-                window.store.obj.set("devices", data);
-                return data;
+                const resp = await fetch(url);
+
+                try {
+                    const data = await handleResponse(resp, url);
+                    window.store.obj.set("devices", data);
+                    return data;
+                } catch (err) {
+                    console.error(`Handle fetch response for ${url}:`, err);
+                }
             } catch (err) {
-                console.error(`Handle fetch response for ${url}:`, err);
+                console.error(`fetch ${url}:`, err);
             }
-        } catch (err) {
-            console.error(`fetch ${url}:`, err);
-        }
 
-        return window.store.obj.get("devices");
-    }
+            return window.store.obj.get("devices");
+        },
 
-    /**
-     * @param {import("../../types").Color | undefined | null} color
-     * @param {import("../../types").Device[]} devices
-     * @returns {Promise<import("../../types").Device[]>}
-     */
-    async function setDevicesColor(color, ...devices) {
-        // TODO: Do the same thing like in devices and colors
+        /**
+         * @param {import("../../types").Color | undefined | null} color
+         * @param {import("../../types").Device[]} devices
+         * @returns {Promise<import("../../types").Device[]>}
+         */
+        async setDevicesColor(color, ...devices) {
+            // TODO: Do the same thing like in devices and colors
 
-        if (!color) {
-            color = [255, 255, 255, 255];
-        }
-
-        const url = getURL("/api/devices/color");
-        const data = { devices, color };
-        console.debug(`POST "${url}":`, data);
-
-        const resp = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
-
-        /** @type {import("../../types").Device[]} */
-        devices = await handleResponse(resp, url);
-        return updateStoreDevices(devices);
-    }
-
-    /**
-     * @returns {Promise<import("../../types").Colors>}
-     */
-    async function colors() {
-        const url = getURL("/api/colors");
-
-        try {
-            const resp = await fetch(url);
-
-            try {
-                const data = await handleResponse(resp, url);
-                window.store.obj.set("colors", data);
-                return data;
-            } catch (err) {
-                console.error(`Handle fetch response for ${url}:`, err);
+            if (!color) {
+                color = [255, 255, 255, 255];
             }
-        } catch (err) {
-            console.error(`Fetch ${url}:`, err);
-        }
 
-        return window.store.obj.get("colors");
-    }
+            const url = getURL("/api/devices/color");
+            const data = { devices, color };
+            console.debug(`POST "${url}":`, data);
 
-    /**
-     * @param {number} index
-     * @returns {Promise<import("../../types").Color>}
-     */
-    async function color(index) {
-        const url = getURL(`/api/colors/${index}`);
-
-        try {
-            const resp = await fetch(url);
-
-            try {
-                /** @type {import("../../types").Color} */
-                const color = await handleResponse(resp, url);
-
-                window.store.obj.update("colors", (colors) => {
-                    return colors.map((c, i) => (i === index ? color : c));
-                });
-
-                return color;
-            } catch (err) {
-                console.error(`Handle fetch response for ${url}:`, err);
-            }
-        } catch (err) {
-            console.error(`Fetch ${url}:`, err);
-        }
-
-        const color = window.store.obj.get("colors")[index];
-        if (!color) {
-            return await colors()[index];
-        }
-        return color;
-    }
-
-    /**
-     * @param {number} index
-     * @param {import("../../types").Color} color
-     * @returns {Promise<void>}
-     */
-    async function setColor(index, color) {
-        const url = getURL(`/api/colors/${index}`);
-
-        try {
             const resp = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(color),
+                body: JSON.stringify(data),
             });
 
-            try {
-                const data = await handleResponse(resp, url);
+            /** @type {import("../../types").Device[]} */
+            devices = await handleResponse(resp, url);
+            return updateStoreDevices(devices);
+        },
 
-                window.store.obj.update("colors", (colors) => {
-                    return colors.map((c, i) => (i === index ? color : c));
+        /**
+         * @returns {Promise<import("../../types").Colors>}
+         */
+        async colors() {
+            const url = getURL("/api/colors");
+
+            try {
+                const resp = await fetch(url);
+
+                try {
+                    const data = await handleResponse(resp, url);
+                    window.store.obj.set("colors", data);
+                    return data;
+                } catch (err) {
+                    console.error(`Handle fetch response for ${url}:`, err);
+                }
+            } catch (err) {
+                console.error(`Fetch ${url}:`, err);
+            }
+
+            return window.store.obj.get("colors");
+        },
+
+        /**
+         * @param {number} index
+         * @returns {Promise<import("../../types").Color>}
+         */
+        async color(index) {
+            const url = getURL(`/api/colors/${index}`);
+
+            try {
+                const resp = await fetch(url);
+
+                try {
+                    /** @type {import("../../types").Color} */
+                    const color = await handleResponse(resp, url);
+
+                    window.store.obj.update("colors", (colors) => {
+                        return colors.map((c, i) => (i === index ? color : c));
+                    });
+
+                    return color;
+                } catch (err) {
+                    console.error(`Handle fetch response for ${url}:`, err);
+                }
+            } catch (err) {
+                console.error(`Fetch ${url}:`, err);
+            }
+
+            const color = window.store.obj.get("colors")[index];
+            if (!color) {
+                return await this.colors()[index];
+            }
+            return color;
+        },
+
+        /**
+         * @param {number} index
+         * @param {import("../../types").Color} color
+         * @returns {Promise<void>}
+         */
+        async setColor(index, color) {
+            const url = getURL(`/api/colors/${index}`);
+
+            try {
+                const resp = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(color),
                 });
 
-                return data;
-            } catch (err) {
-                console.error(`Handle fetch response for ${url}:`, err);
-            }
-        } catch (err) {
-            console.error(`Fetch ${url}:`, err);
-        }
-    }
+                try {
+                    const data = await handleResponse(resp, url);
 
-    return {
-        devices,
-        setDevicesColor,
-        colors,
-        color,
-        setColor,
+                    window.store.obj.update("colors", (colors) => {
+                        return colors.map((c, i) => (i === index ? color : c));
+                    });
+
+                    return data;
+                } catch (err) {
+                    console.error(`Handle fetch response for ${url}:`, err);
+                }
+            } catch (err) {
+                console.error(`Fetch ${url}:`, err);
+            }
+        },
     };
 }
 
