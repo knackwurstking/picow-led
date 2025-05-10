@@ -7,13 +7,27 @@ export function create() {
 
     store.set("devices", [], true);
     store.set("colors", [], true);
+
     store.set("currentDeviceColors", {}, true);
+    // Update "currentDeviceColors" after any "devices" change
+    store.listen("devices", (devices) => {
+        devices.forEach((device) => {
+            if (Math.max(...(device.color || [])) > 0) {
+                store.update("currentDeviceColors", (data) => {
+                    data[device.server.addr] = device.color;
+                    return data;
+                });
+            }
+        });
+    });
 
     // @ts-expect-error
     store.delete("color"); // TODO: Just to clean up, can be removed before release
 
     return {
         obj: store,
+
+        // Helper Functions:
 
         /**
          * @param {string} addr

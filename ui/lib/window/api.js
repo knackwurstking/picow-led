@@ -32,8 +32,6 @@ export function create() {
          * @returns {Promise<import("../../types").Device[]>}
          */
         async setDevicesColor(color, ...devices) {
-            // TODO: Do the same thing like in devices and colors
-
             if (!color) {
                 color = [255, 255, 255, 255];
             }
@@ -42,17 +40,26 @@ export function create() {
             const data = { devices, color };
             console.debug(`POST "${url}":`, data);
 
-            const resp = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
+            try {
+                const resp = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
 
-            /** @type {import("../../types").Device[]} */
-            devices = await handleResponse(resp, url);
-            return updateStoreDevices(devices);
+                try {
+                    /** @type {import("../../types").Device[]} */
+                    devices = await handleResponse(resp, url);
+                } catch (err) {
+                    console.error(`Handle fetch response from ${url}:`, err);
+                }
+            } catch (err) {
+                console.error(`Fetch ${url}:`, err);
+            }
+
+            return updateDevicesStore(devices);
         },
 
         /**
@@ -175,7 +182,7 @@ async function handleResponse(resp, url) {
  * @param {import("../../types").Device[]} devices
  * @returns {import("../../types").Device[]}
  */
-function updateStoreDevices(devices) {
+function updateDevicesStore(devices) {
     window.store.obj.update("devices", (storeDevices) => {
         /** @type {import("../../types").Device} */
         let storeDevice;
