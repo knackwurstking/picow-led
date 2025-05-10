@@ -8,8 +8,22 @@ export function create() {
     async function devices() {
         const url = getURL("/api/devices");
 
-        const resp = await fetch(url);
-        return await handleResponse(resp, url);
+        try {
+            const resp = await fetch(url);
+
+            try {
+                const data = await handleResponse(resp, url);
+
+                window.store.obj.set("devices", data);
+                return data;
+            } catch (err) {
+                console.error(err);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+
+        return window.store.obj.get("devices");
     }
 
     /**
