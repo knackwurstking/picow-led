@@ -13,15 +13,13 @@ export declare type UI = typeof import("ui");
 export declare type Store = {
     obj: UIStore;
     device: (addr: string) => Device | null;
-    currentColor: (addr: string) => Color | null;
+    currentDeviceColor: (addr: string) => Color | null;
 };
 
 export declare type UIStore = import("ui").Store<{
     devices: Device[];
-    color: {
-        api: ColorCache; // TODO: Not handled for now (api)
-        current: Record<string, Color>;
-    };
+    colors: Colors;
+    currentDeviceColors: Record<string, Color>;
 }>;
 
 export declare type Api = {
@@ -30,7 +28,7 @@ export declare type Api = {
         color: Color | undefined | null,
         ...devices: Device[]
     ) => Promise<Device[]>;
-    colors: () => Promise<ColorCache>;
+    colors: () => Promise<Colors>;
     color: (index: number) => Promise<Color>;
     setColor: (index: number, color: Color) => Promise<void>;
 };
@@ -64,7 +62,7 @@ export declare type Server = {
 export declare type Color = number[];
 export declare type Pins = number[];
 
-export declare type ColorCache = Color[];
+export declare type Colors = Color[];
 
 export declare type WS = {
     isOpen: () => boolean;
