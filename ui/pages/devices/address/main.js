@@ -100,34 +100,44 @@
         // Create color storage items
         const device = pageDevice();
         (await window.api.colors()).forEach((color, index) => {
-            /**
-             * @param {Color} color
-             */
-            const onClick = async (color) => {
-                const colorString = color.join(colorSeparator);
+            const item = createColorStorageItem(index, color, {
+                device,
 
-                Array.from(colorStorageContainer.children).forEach((child) => {
-                    if (child.getAttribute("data-color") === colorString) {
-                        if (!child.classList.contains("active")) {
-                            child.classList.add("active");
+                onClick(color) {
+                    const colorString = color.join(colorSeparator);
 
-                            const color = splitDataColor(
-                                child.getAttribute("data-color"),
-                            );
+                    Array.from(colorStorageContainer.children).forEach(
+                        (child) => {
+                            if (
+                                child.getAttribute("data-color") === colorString
+                            ) {
+                                if (!child.classList.contains("active")) {
+                                    child.classList.add("active");
 
-                            window.api.setDevicesColor(
-                                [...color, ...pageRangeSliderValues()],
-                                device,
-                            );
-                        }
-                    } else {
-                        child.classList.remove("active");
+                                    const color = splitDataColor(
+                                        child.getAttribute("data-color"),
+                                    );
+
+                                    window.api.setDevicesColor(
+                                        [...color, ...pageRangeSliderValues()],
+                                        device,
+                                    );
+                                }
+                            } else {
+                                child.classList.remove("active");
+                            }
+                        },
+                    );
+                },
+
+                onChange(color) {
+                    if (!item.classList.contains("active")) {
+                        return;
                     }
-                });
-            };
 
-            // TODO: Add on change callback => do a api.setColor(...)
-            const item = createColorStorageItem(index, color, device, onClick);
+                    window.api.setDevicesColor(color, device);
+                },
+            });
 
             if (item.getAttribute("data-color") === currentColorString) {
                 item.classList.add("active");

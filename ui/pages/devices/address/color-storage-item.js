@@ -9,15 +9,15 @@ export function splitDataColor(v) {
 }
 
 /**
- * TODO: Add on change callback, Continue here...
- *
  * @param {number} index
  * @param {Color} color
- * @param {Device} [device]
- * @param {(color: Color) => void|Promise<void>} [onClick]
+ * @param {Object} [options]
+ * @param {Device} [options.device]
+ * @param {(color: Color) => void|Promise<void>} [options.onClick]
+ * @param {(color: Color) => void|Promise<void>} [options.onChange]
  * @returns {HTMLElement}
  */
-export function createColorStorageItem(index, color, device, onClick) {
+export function createColorStorageItem(index, color, options) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="color-storage-item"]`);
     if (!t) {
@@ -30,28 +30,28 @@ export function createColorStorageItem(index, color, device, onClick) {
     // @ts-expect-error
     const item = t.content.cloneNode(true).querySelector(`*`);
 
-    return updateColorStorageItem(item, index, color, device, onClick);
+    return updateColorStorageItem(item, index, color, options);
 }
 
 /**
- * TODO: Add on change callback
- *
  * @param {HTMLElement} item
  * @param {number} index
  * @param {Color} color
- * @param {Device | null} [device]
- * @param {(color: Color) => void|Promise<void>} [onClick]
+ * @param {Object} options
+ * @param {Device | null} [options.device]
+ * @param {(color: Color) => void|Promise<void>} [options.onClick]
+ * @param {(color: Color) => void|Promise<void>} [options.onChange]
  * @returns {HTMLElement}
  */
-export function updateColorStorageItem(item, index, color, device, onClick) {
+export function updateColorStorageItem(item, index, color, options) {
     if (color.length < 3) color = [...color, 0, 0, 0];
     color = color.slice(0, 3);
     item.style.color = `rgb(${color.join(", ")})`;
     item.setAttribute("data-color", `${color.join(colorSeparator)}`);
 
-    if (onClick) {
+    if (options.onClick) {
         item.onclick = () => {
-            onClick(color);
+            options.onClick(color);
         };
     } else item.onclick = null;
 
@@ -65,9 +65,12 @@ export function updateColorStorageItem(item, index, color, device, onClick) {
         }
 
         window.api.setColor(index, color);
-        if (device) window.api.setDevicesColor(color, device);
+        if (options.device) {
+            window.api.setDevicesColor(color, options.device);
+            if (options.onChange) options.onChange(color);
+        }
 
-        updateColorStorageItem(item, index, color, device, onClick);
+        updateColorStorageItem(item, index, color, options);
     };
 
     return item;
