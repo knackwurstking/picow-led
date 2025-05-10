@@ -79,7 +79,7 @@ export function create() {
 
     /**
      * @param {number} index
-     * @returns {Promise<import("../../types").Color | undefined>}
+     * @returns {Promise<import("../../types").Color>}
      */
     async function color(index) {
         const url = getURL(`/api/colors/${index}`);
@@ -103,7 +103,11 @@ export function create() {
             console.error(`Fetch ${url}:`, err);
         }
 
-        return window.store.obj.get("colors")[index]; // Could be undefined
+        const color = window.store.obj.get("colors")[index];
+        if (!color) {
+            return await colors()[index];
+        }
+        return color;
     }
 
     /**
@@ -112,18 +116,31 @@ export function create() {
      * @returns {Promise<void>}
      */
     async function setColor(index, color) {
-        // TODO: Do the same thing like in devices and colors
         const url = getURL(`/api/colors/${index}`);
 
-        const resp = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(color),
-        });
+        try {
+            const resp = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(color),
+            });
 
-        return handleResponse(resp, url);
+            try {
+                const data = await handleResponse(resp, url);
+
+                window.store.obj.update("colors", (colors) => {
+                    return colors.map((c, i) => (i === index ? color : c));
+                });
+
+                return data;
+            } catch (err) {
+                console.error(`Handle fetch response for ${url}:`, err);
+            }
+        } catch (err) {
+            console.error(`Fetch ${url}:`, err);
+        }
     }
 
     return {
