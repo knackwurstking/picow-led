@@ -65,7 +65,7 @@ export declare global {
 
     declare type WS = {
         isOpen: () => boolean;
-        connect: () => void;
+        connect: () => Promise<void>;
         close: () => void;
     };
 
