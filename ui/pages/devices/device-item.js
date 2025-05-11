@@ -54,9 +54,9 @@ export function update(item, device, onClickPowerButton) {
 
     // @ts-expect-error
     powerButton.querySelector(`.background`).style.backgroundColor =
-        `rgb(${[...device.color, 0, 0, 0].slice(0, 3).join(", ")})`;
+        `rgb(${[...(device.color || []), 0, 0, 0].slice(0, 3).join(", ")})`;
 
-    if (Math.max(...device.color, 0, 0, 0)) {
+    if (Math.max(...(device.color || []), 0, 0, 0)) {
         powerButton.setAttribute("data-state", "on");
     } else {
         powerButton.setAttribute("data-state", "off");
