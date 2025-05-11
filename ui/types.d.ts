@@ -49,8 +49,8 @@ export declare global {
         server: Server;
         online: boolean;
         error: string;
-        color: Color;
-        pins: Pins;
+        color: Color | null;
+        pins: Pins | null;
     };
 
     declare type Server = {
