@@ -2,22 +2,24 @@
  * @returns {WS}
  */
 export function create() {
-    /** @type {WebSocket | null} */
-    let socket = null;
     let timeout = null;
     /** @type {number} */
     const timeoutDuration = 1000;
 
-    const onClose = function () {
+    function getURL() {
+        return process.env.SERVER_PATH_PREFIX + `/ws`;
+    }
+
+    const onClose = () => {
         if (timeout !== null) {
             clearTimeout(timeout);
             timeout = null;
         }
 
         // Reconnect here
-        timeout = setTimeout(() => {
+        timeout = setTimeout(async () => {
             console.debug(`Try to reconnect to "${getURL()}"`);
-            connect();
+            await ws.connect();
         }, timeoutDuration);
     };
 
@@ -30,52 +32,47 @@ export function create() {
      * @returns {void}
      */
     const onMessage = (ev) => {
-        // TODO: Continue here
         console.debug(`WebSocket message event:`, ev);
+        // TODO: ...
     };
-
-    function getURL() {
-        return process.env.SERVER_PATH_PREFIX + `/ws`;
-    }
-
-    function isOpen() {
-        if (!socket) return false;
-        return socket.readyState === socket.OPEN;
-    }
-
-    async function connect() {
-        if (socket) close();
-
-        const wsAddr = getURL(); // origin + path
-        console.debug(`Try to connect WebSocket to ${wsAddr}`);
-
-        socket = new WebSocket(wsAddr);
-
-        // Reconnect handler
-        socket.addEventListener("close", onClose);
-        socket.addEventListener("open", onOpen);
-        socket.addEventListener("message", onMessage);
-    }
-
-    function close() {
-        if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-        }
-
-        if (socket) {
-            socket.removeEventListener("close", onClose);
-            if (isOpen()) socket.close();
-            socket = null;
-        }
-    }
-
-    // TODO: Add on open/close/message
 
     /** @type {WS} */
-    return {
-        isOpen,
-        connect,
-        close,
+    const ws = {
+        /** @type {WebSocket | null} */
+        socket: null,
+
+        isOpen() {
+            if (!this.socket) return false;
+            return this.socket.readyState === this.socket.OPEN;
+        },
+
+        async connect() {
+            if (this.socket) this.close();
+
+            const wsAddr = getURL(); // origin + path
+            console.debug(`Try to connect WebSocket to ${wsAddr}`);
+
+            this.socket = new WebSocket(wsAddr);
+
+            // Reconnect handler
+            this.socket.addEventListener("close", onClose);
+            this.socket.addEventListener("open", onOpen);
+            this.socket.addEventListener("message", onMessage);
+        },
+
+        close() {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+
+            if (this.socket) {
+                this.socket.removeEventListener("close", onClose);
+                if (this.isOpen()) this.socket.close();
+                this.socket = null;
+            }
+        },
     };
+
+    return ws;
 }

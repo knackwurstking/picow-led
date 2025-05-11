@@ -64,6 +64,7 @@ export declare global {
     declare type Colors = Color[];
 
     declare type WS = {
+        socket: WebSocket | null;
         isOpen: () => boolean;
         connect: () => Promise<void>;
         close: () => void;
