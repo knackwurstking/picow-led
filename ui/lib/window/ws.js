@@ -35,15 +35,16 @@ export function create() {
      * @returns {Promise<void>}
      */
     const onMessage = async (ev) => {
-        console.debug(
-            `WebSocket message event:`,
-            JSON.parse(await ev.data.text()),
-        );
-        // TODO: ...
+        /** @type {WSMessageData} */
+        const data = JSON.parse(await ev.data.text());
+        console.debug(`WebSocket message event:`, data);
+        ws.events.dispatch(data.type, data.data);
     };
 
     /** @type {WS} */
     const ws = {
+        events: new window.ui.Events(),
+
         /** @type {WebSocket | null} */
         socket: null,
 
