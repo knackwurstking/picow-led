@@ -12,10 +12,7 @@
         );
     }
 
-    /**
-     * @returns {void}
-     */
-    function setupAppBar() {
+    async function setupAppBar() {
         const items = window.utils.setupAppBarItems(
             "online-indicator",
             "title",
@@ -25,9 +22,7 @@
         items["title"].innerText = "Devices";
     }
 
-    window.addEventListener("pageshow", async () => {
-        setupAppBar();
-
+    async function setupDevicesList() {
         const devices = await window.api.devices();
 
         /** @type {HTMLElement} */
@@ -35,26 +30,47 @@
         devicesList.innerHTML = "";
 
         /** @param {Device} device */
-        const createItem = (device) => {
-            const onClick = async () => {
-                /** @type {Color} */
-                let color;
-                if (Math.max(...device.color) > 0) {
-                    color = (device.pins || device.color).map(() => 0);
-                } else {
-                    color = currentColorForDevice(device);
-                }
+        const onClick = async (device) => {
+            /** @type {Color} */
+            let color;
+            if (Math.max(...device.color) > 0) {
+                color = (device.pins || device.color).map(() => 0);
+            } else {
+                color = currentColorForDevice(device);
+            }
 
-                // TODO: The websocket message handler will handle the device item update
-                await window.api.setDevicesColor(color, device);
-                //const devices = await window.api.setDevicesColor(color, device);
-                //devices.forEach(createItem);
-            };
-
-            const item = deviceItem.create(device, onClick);
-            devicesList.appendChild(item);
+            // TODO: The websocket message handler will handle the device item update
+            await window.api.setDevicesColor(color, device);
         };
 
-        devices.forEach(createItem);
+        devices.forEach((device) => {
+            const item = deviceItem.create(device, () => {
+                onClick(device);
+            });
+
+            devicesList.appendChild(item);
+        });
+
+        window.ws.events.addListener("device", (device) => {
+            /** @type {HTMLElement} */
+            let child;
+            for (let x = 0; x < devices.length; x++) {
+                if (devices[x].server.addr !== device.server.addr) {
+                    continue;
+                }
+
+                // @ts-expect-error
+                child = devicesList.children[x];
+
+                deviceItem.update(child, device, () => {
+                    onClick(device);
+                });
+            }
+        });
+    }
+
+    window.addEventListener("pageshow", async () => {
+        setupAppBar();
+        setupDevicesList();
     });
 })();
