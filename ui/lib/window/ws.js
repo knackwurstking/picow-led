@@ -58,6 +58,7 @@ export function create() {
                 }
                 break;
             case "colors":
+                // TODO: Handle colors ws event here
                 console.warn("@todo: Handle colors ws event here", data.data);
                 break;
         }
