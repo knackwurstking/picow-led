@@ -18,8 +18,8 @@ const (
 type BroadcastType string
 
 type BroadcastData struct {
-	Type BroadcastType
-	Data any
+	Type BroadcastType `json:"type"`
+	Data any           `json:"data"`
 }
 
 type WS struct {
