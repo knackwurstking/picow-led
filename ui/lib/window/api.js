@@ -52,8 +52,6 @@ export function create() {
             } catch (err) {
                 console.error(`Fetch ${url}:`, err);
             }
-
-            //return updateDevicesStore(devices);
         },
 
         /**
