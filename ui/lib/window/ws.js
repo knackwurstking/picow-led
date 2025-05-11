@@ -37,7 +37,31 @@ export function create() {
     const onMessage = async (ev) => {
         /** @type {WSMessageData} */
         const data = JSON.parse(await ev.data.text());
-        console.debug(`WebSocket message event:`, data);
+
+        switch (data.type) {
+            case "device":
+                {
+                    window.store.obj.update("devices", (devices) => {
+                        // Update device in store
+                        for (let x = 0; x < devices.length; x++) {
+                            if (
+                                devices[x].server.addr !== data.data.server.addr
+                            ) {
+                                continue;
+                            }
+
+                            devices[x] = data.data;
+                        }
+
+                        return devices;
+                    });
+                }
+                break;
+            case "colors":
+                console.warn("@todo: Handle colors ws event here", data.data);
+                break;
+        }
+
         ws.events.dispatch(data.type, data.data);
     };
 
