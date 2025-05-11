@@ -1,10 +1,6 @@
 const deviceItem = require("./device-item");
 
-/**
- * @param {Device} device
- * @returns {Color}
- */
-function currentColorForDevice(device) {
+function currentColorForDevice(device: Device): Color {
     return (
         window.store.currentDeviceColor(device.server.addr) ||
         (device.pins || []).map(() => 255)
@@ -18,27 +14,27 @@ async function setupAppBar() {
         "settings-button",
     );
 
-    items["title"].innerText = "Devices";
+    items["title"]!.innerText = "Devices";
 }
 
 async function setupDevicesList() {
     const devices = await window.api.devices();
 
-    /** @type {HTMLElement} */
-    const devicesList = document.querySelector("._content.devices > .list");
+    const devicesList = document.querySelector<HTMLElement>(
+        "._content.devices > .list",
+    );
+    if (!devicesList) throw new Error(`devices list container is null`);
+
     devicesList.innerHTML = "";
 
-    /** @param {Device} device */
-    const onClick = async (device) => {
-        /** @type {Color} */
-        let color;
+    const onClick = async (device: Device) => {
+        let color: Color;
         if (Math.max(...device.color) > 0) {
             color = (device.pins || device.color).map(() => 0);
         } else {
             color = currentColorForDevice(device);
         }
 
-        // TODO: The websocket message handler will handle the device item update
         await window.api.setDevicesColor(color, device);
     };
 
@@ -51,15 +47,13 @@ async function setupDevicesList() {
     });
 
     window.ws.events.addListener("device", (device) => {
-        /** @type {HTMLElement} */
-        let child;
+        let child: HTMLElement;
         for (let x = 0; x < devices.length; x++) {
             if (devices[x].server.addr !== device.server.addr) {
                 continue;
             }
 
-            // @ts-expect-error
-            child = devicesList.children[x];
+            child = devicesList.children[x] as HTMLElement;
 
             deviceItem.update(child, device, () => {
                 onClick(device);
