@@ -64,23 +64,23 @@ export declare global {
     declare type Colors = Color[];
 
     declare type WS = {
+        events: import("ui").Events<{
+            device: Device;
+            colors: Colors;
+        }>;
         socket: WebSocket | null;
         isOpen: () => boolean;
         connect: () => Promise<void>;
         close: () => void;
     };
 
-    declare type WSMessage =
-        | {
-              type: "devices";
-              data: Device[];
-          }
+    declare type WSMessageData =
         | {
               type: "device";
               data: Device;
           }
         | {
               type: "colors";
-              data: Color[];
+              data: Colors;
           };
 }
