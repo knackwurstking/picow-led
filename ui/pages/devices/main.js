@@ -40,7 +40,7 @@
                 /** @type {Color} */
                 let color;
                 if (Math.max(...device.color) > 0) {
-                    color = color.map(() => 0);
+                    color = (device.pins || device.color).map(() => 0);
                 } else {
                     color = currentColorForDevice(device);
                 }
