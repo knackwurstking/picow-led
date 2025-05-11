@@ -1,4 +1,4 @@
-const deviceItem = require("./device-item");
+import * as deviceItem from "./device-item";
 
 function currentColorForDevice(device: Device): Color {
     return (
