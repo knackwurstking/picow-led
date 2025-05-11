@@ -1,5 +1,5 @@
-const colorStorageItem = require("./color-storage-item.js");
-const colorRangeSlider = require("./color-range-slider.js");
+import * as colorStorageItem from "./color-storage-item.js";
+import * as colorRangeSlider from "./color-range-slider.js";
 
 function pageDeviceAddress(): string {
     return decodeURIComponent(location.pathname.split("/").reverse()[0]);
@@ -35,7 +35,7 @@ function pageActiveColor(): Color {
     if (activeItem) {
         color.push(
             ...colorStorageItem.splitDataColor(
-                activeItem.getAttribute("data-color"),
+                activeItem.getAttribute("data-color")!,
             ),
         );
     } else {
@@ -89,7 +89,7 @@ async function setupColorStorage(): Promise<void> {
                             child.classList.add("active");
 
                             const color = colorStorageItem.splitDataColor(
-                                child.getAttribute("data-color"),
+                                child.getAttribute("data-color")!,
                             );
 
                             window.api.setDevicesColor(
@@ -128,7 +128,7 @@ async function setupRangeSliders(): Promise<void> {
 
     const device = pageDevice();
 
-    if (device.pins.length > 3) {
+    if ((device.pins || []).length > 3) {
         container.style.display = "block";
     } else {
         container.style.display = "none";
