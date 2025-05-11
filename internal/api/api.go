@@ -126,22 +126,22 @@ func SetColor(o *Config, c MicroColor, devices ...*Device) []*Device {
 	return devices
 }
 
-// SetColorForce will set color just like `SetColor`, but will skip the response
-func SetColorForce(o *Config, c MicroColor, devices ...*Device) {
-	wg := &sync.WaitGroup{}
-	for _, d := range devices {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
-			r := NewMicroRequest(MicroIDNoResponse)
-			r.ID = MicroIDNoResponse
-			if err := r.SetColor(d, c); err != nil {
-				d.Error = err.Error()
-			} else {
-				d.Color = c
-			}
-		}()
-	}
-	wg.Wait()
-}
+//// SetColorForce will set color just like `SetColor`, but will skip the response
+//func SetColorForce(o *Config, c MicroColor, devices ...*Device) {
+//	wg := &sync.WaitGroup{}
+//	for _, d := range devices {
+//		wg.Add(1)
+//		go func() {
+//			defer wg.Done()
+//
+//			r := NewMicroRequest(MicroIDNoResponse)
+//			r.ID = MicroIDNoResponse
+//			if err := r.SetColor(d, c); err != nil {
+//				d.Error = err.Error()
+//			} else {
+//				d.Color = c
+//			}
+//		}()
+//	}
+//	wg.Wait()
+//}

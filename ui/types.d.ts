@@ -26,7 +26,7 @@ export declare global {
         setDevicesColor: (
             color: Color | undefined | null,
             ...devices: Device[]
-        ) => Promise<Device[]>;
+        ) => Promise<void>;
         colors: () => Promise<Colors>;
         color: (index: number) => Promise<Color>;
         setColor: (index: number, color: Color) => Promise<void>;

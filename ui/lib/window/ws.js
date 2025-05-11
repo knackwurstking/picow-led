@@ -16,6 +16,8 @@ export function create() {
             timeout = null;
         }
 
+        window.utils.setOnlineIndicatorState(false);
+
         // Reconnect here
         timeout = setTimeout(async () => {
             console.debug(`Try to reconnect to "${getURL()}"`);
@@ -25,14 +27,18 @@ export function create() {
 
     const onOpen = () => {
         console.debug(`WebSocket connected to "${getURL()}"`);
+        window.utils.setOnlineIndicatorState(true);
     };
 
     /**
-     * @param {MessageEvent<WSMessage>} ev
-     * @returns {void}
+     * @param {MessageEvent<Blob>} ev
+     * @returns {Promise<void>}
      */
-    const onMessage = (ev) => {
-        console.debug(`WebSocket message event:`, ev);
+    const onMessage = async (ev) => {
+        console.debug(
+            `WebSocket message event:`,
+            JSON.parse(await ev.data.text()),
+        );
         // TODO: ...
     };
 

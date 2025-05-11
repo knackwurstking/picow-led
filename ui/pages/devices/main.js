@@ -45,8 +45,10 @@
                     color = currentColorForDevice(device);
                 }
 
-                const devices = await window.api.setDevicesColor(color, device);
-                devices.forEach(createItem);
+                // TODO: The websocket message handler will handle the device item update
+                await window.api.setDevicesColor(color, device);
+                //const devices = await window.api.setDevicesColor(color, device);
+                //devices.forEach(createItem);
             };
 
             const item = deviceItem.create(device, onClick);

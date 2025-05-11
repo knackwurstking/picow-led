@@ -52,10 +52,6 @@ func (c *Cache) SetDevices(devices ...*api.Device) {
 	defer c.mutex.Unlock()
 
 	c.devices = devices
-
-	if c.ws != nil {
-		c.ws.BroadcastDevices(c.devices)
-	}
 }
 
 func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, error) {

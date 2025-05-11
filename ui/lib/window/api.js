@@ -29,37 +29,31 @@ export function create() {
         /**
          * @param {Color | undefined | null} color
          * @param {Device[]} devices
-         * @returns {Promise<Device[]>}
+         * @returns {Promise<void>}
          */
         async setDevicesColor(color, ...devices) {
+            const url = getURL("/api/devices/color?force");
+
             if (!color) {
                 color = [255, 255, 255, 255];
             }
 
-            const url = getURL("/api/devices/color");
             const data = { devices, color };
             console.debug(`POST "${url}":`, data);
 
             try {
-                const resp = await fetch(url, {
+                await fetch(url, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(data),
                 });
-
-                try {
-                    /** @type {Device[]} */
-                    devices = await handleResponse(resp, url);
-                } catch (err) {
-                    console.error(`Handle fetch response from ${url}:`, err);
-                }
             } catch (err) {
                 console.error(`Fetch ${url}:`, err);
             }
 
-            return updateDevicesStore(devices);
+            //return updateDevicesStore(devices);
         },
 
         /**
@@ -178,53 +172,53 @@ async function handleResponse(resp, url) {
     return respData;
 }
 
-/**
- * @param {Device[]} devices
- * @returns {Device[]}
- */
-function updateDevicesStore(devices) {
-    window.store.obj.update("devices", (storeDevices) => {
-        /** @type {Device} */
-        let storeDevice;
-
-        for (let sI = 0; sI < storeDevices.length; sI++) {
-            for (let i = 0; i < devices.length; i++) {
-                storeDevice = storeDevices[sI];
-
-                if (storeDevice.server.addr === devices[i].server.addr) {
-                    storeDevices[sI] = devices[i];
-
-                    // Store current color
-                    if (Math.max(...storeDevice.color) > 0) {
-                        window.store.obj.update(
-                            "currentDeviceColors",
-                            (data) => {
-                                data[storeDevice.server.addr] =
-                                    storeDevice.color;
-
-                                return data;
-                            },
-                        );
-                    }
-
-                    // Log device error
-                    if (storeDevice.error) {
-                        console.error(
-                            `Device ${
-                                storeDevice.server.name ||
-                                storeDevice.server.addr
-                            } is ${
-                                storeDevice.online ? "online" : "offline"
-                            } with error:`,
-                            storeDevice.error,
-                        );
-                    }
-                }
-            }
-        }
-
-        return storeDevices;
-    });
-
-    return devices;
-}
+///**
+// * @param {Device[]} devices
+// * @returns {Device[]}
+// */
+//function updateDevicesStore(devices) {
+//    window.store.obj.update("devices", (storeDevices) => {
+//        /** @type {Device} */
+//        let storeDevice;
+//
+//        for (let sI = 0; sI < storeDevices.length; sI++) {
+//            for (let i = 0; i < devices.length; i++) {
+//                storeDevice = storeDevices[sI];
+//
+//                if (storeDevice.server.addr === devices[i].server.addr) {
+//                    storeDevices[sI] = devices[i];
+//
+//                    // Store current color
+//                    if (Math.max(...storeDevice.color) > 0) {
+//                        window.store.obj.update(
+//                            "currentDeviceColors",
+//                            (data) => {
+//                                data[storeDevice.server.addr] =
+//                                    storeDevice.color;
+//
+//                                return data;
+//                            },
+//                        );
+//                    }
+//
+//                    // Log device error
+//                    if (storeDevice.error) {
+//                        console.error(
+//                            `Device ${
+//                                storeDevice.server.name ||
+//                                storeDevice.server.addr
+//                            } is ${
+//                                storeDevice.online ? "online" : "offline"
+//                            } with error:`,
+//                            storeDevice.error,
+//                        );
+//                    }
+//                }
+//            }
+//        }
+//
+//        return storeDevices;
+//    });
+//
+//    return devices;
+//}

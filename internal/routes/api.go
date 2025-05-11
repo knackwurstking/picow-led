@@ -1,7 +1,7 @@
 // API Routes:
 //   - apiSetupPing: 	GET 	- "/api/ping"
 //   - apiSetupDevices: GET 	- "/api/devices"
-//   - apiSetupDevices: POST 	- "/api/devices/color" <- { devices: Device[]; color: number[] }
+//   - apiSetupDevices: POST 	- "/api/devices/color?force=true" <- { devices: Device[]; color: number[] }
 //   - apiSetupColors: 	GET 	- "/api/colors"
 //   - apiSetupColors: 	GET 	- "/api/colors/:index"
 //   - apiSetupColors 	POST 	- "/api/colors:index" <- `number[]`
@@ -59,25 +59,34 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		reqData.Devices = api.SetColor(o.Config, reqData.Color, reqData.Devices...)
+		handle := func() error {
+			reqData.Devices = api.SetColor(o.Config, reqData.Color, reqData.Devices...)
 
-		for i, d := range reqData.Devices {
-			d, err := cache.UpdateDevice(d.Server.Addr, d)
-			if err != nil {
-				slog.Warn("Update cached device", "error", err, "path", c.Request().URL.Path)
-				return c.String(http.StatusNotFound, err.Error())
+			for i, d := range reqData.Devices {
+				d, err := cache.UpdateDevice(d.Server.Addr, d)
+				if err != nil {
+					slog.Warn("Update cached device", "error", err, "path", c.Request().URL.Path)
+					return c.String(http.StatusNotFound, err.Error())
+				}
+
+				reqData.Devices[i] = d
 			}
 
-			reqData.Devices[i] = d
+			err = c.JSON(http.StatusOK, reqData.Devices)
+			if err != nil {
+				slog.Warn("Parse JSON", "error", err, "path", c.Request().URL.Path)
+				return c.String(http.StatusInternalServerError, err.Error())
+			}
+
+			return nil
 		}
 
-		err = c.JSON(http.StatusOK, reqData.Devices)
-		if err != nil {
-			slog.Warn("Parse JSON", "error", err, "path", c.Request().URL.Path)
-			return c.String(http.StatusInternalServerError, err.Error())
+		if c.QueryParam("force") == "true" {
+			go handle()
+			return nil
 		}
 
-		return nil
+		return handle()
 	})
 }
 
