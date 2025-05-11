@@ -1,6 +1,4 @@
 (() => {
-    // TODO: Starting the WebSocket handler either in "focus event" or in "pageshow"
-
     let timeout = null;
     window.addEventListener("focus", () => {
         if (timeout !== null) {
@@ -12,7 +10,6 @@
         timeout = setTimeout(async () => {
             try {
                 const resp = await fetch(
-                    // @ts-ignore
                     process.env.SERVER_PATH_PREFIX + "/api/ping",
                 );
                 const data = await resp.text();
@@ -31,6 +28,9 @@
     });
 
     window.addEventListener("pageshow", () => {
+        // Starting the WebSocket handler
+        window.ws.connect();
+
         // Trigger the focus event once
         window.dispatchEvent(new Event("focus"));
     });
