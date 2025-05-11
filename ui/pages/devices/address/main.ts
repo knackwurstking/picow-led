@@ -1,34 +1,25 @@
 const colorStorageItem = require("./color-storage-item.js");
 const colorRangeSlider = require("./color-range-slider.js");
 
-/**
- * @returns {string}
- */
-function pageDeviceAddress() {
+function pageDeviceAddress(): string {
     return decodeURIComponent(location.pathname.split("/").reverse()[0]);
 }
 
-/**
- * @returns {Device}
- */
-function pageDevice() {
-    return window.store.device(pageDeviceAddress());
+function pageDevice(): Device {
+    const addr = pageDeviceAddress();
+    const device = window.store.device(addr);
+    if (!device) throw new Error(`device not found for ${addr}`);
+    return device;
 }
 
-/**
- * @returns {Color}
- */
-function pageCurrentColor() {
+function pageCurrentColor(): Color {
     return (
         window.store.currentDeviceColor(pageDeviceAddress()) ||
         (pageDevice().pins || []).map(() => 255)
     );
 }
 
-/**
- * @returns {Color | null}
- */
-function pagePickedColor() {
+function pagePickedColor(): Color | null {
     // Get color from active item
     const color = pageActiveColor().slice(0, 3);
 
@@ -38,10 +29,7 @@ function pagePickedColor() {
     return color;
 }
 
-/**
- * @returns {Color}
- */
-function pageActiveColor() {
+function pageActiveColor(): Color {
     let color = [];
     const activeItem = document.querySelector(`.color-storage-item.active`);
     if (activeItem) {
@@ -56,33 +44,29 @@ function pageActiveColor() {
     return color;
 }
 
-/**
- * @returns {number[]}
- */
-function pageRangeSliderValues() {
+function pageRangeSliderValues(): number[] {
     return Array.from(
-        document.querySelectorAll(
+        document.querySelectorAll<HTMLInputElement>(
             `.range-sliders .color-range-slider input[type="range"]`,
         ),
-    ).map((/**@type {HTMLInputElement}*/ input) => {
+    ).map((input) => {
         return parseInt(input.value || "0", 10);
     });
 }
 
-/**
- * @returns {void}
- */
-function setupAppBar() {
+function setupAppBar(): void {
     const device = pageDevice();
     const items = window.utils.setupAppBarItems("online-indicator", "title");
-    items["title"].innerText = device ? device.server.name : "";
+    items.title!.innerText = device ? device.server.name : "";
 }
 
-async function setupColorStorage() {
-    /** @type {HTMLElement} */
-    const colorStorageContainer = document.querySelector(
+async function setupColorStorage(): Promise<void> {
+    const colorStorageContainer = document.querySelector<HTMLElement>(
         `.color-storage-container`,
     );
+    if (!colorStorageContainer)
+        throw new Error(`color storage container is null`);
+
     colorStorageContainer.innerHTML = "";
 
     const currentColor = pageCurrentColor();
@@ -96,7 +80,7 @@ async function setupColorStorage() {
         const item = colorStorageItem.create(index, color, {
             device,
 
-            onClick(color) {
+            onClick(color): void {
                 const colorString = color.join(colorStorageItem.colorSeparator);
 
                 Array.from(colorStorageContainer.children).forEach((child) => {
@@ -119,7 +103,7 @@ async function setupColorStorage() {
                 });
             },
 
-            onChange(color) {
+            onChange(color): void {
                 if (!item.classList.contains("active")) {
                     return;
                 }
@@ -136,9 +120,10 @@ async function setupColorStorage() {
     });
 }
 
-async function setupRangeSliders() {
-    /** @type {HTMLElement} */
-    const container = document.querySelector(".range-sliders");
+async function setupRangeSliders(): Promise<void> {
+    const container = document.querySelector<HTMLElement>(".range-sliders");
+    if (!container) throw new Error(`range sliders container is null`);
+
     container.innerHTML = "";
 
     const device = pageDevice();
@@ -152,7 +137,7 @@ async function setupRangeSliders() {
 
     if (device.pins) {
         const currentColor = pageCurrentColor();
-        let timeout = null;
+        let timeout: NodeJS.Timeout | null = null;
         device.pins.slice(3).forEach((pin, index) => {
             index += 3;
             const slider = colorRangeSlider.create(

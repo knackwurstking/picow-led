@@ -1,12 +1,6 @@
-/**
- * @returns {Api}
- */
-export function create() {
+export function create(): Api {
     return {
-        /**
-         * @returns {Promise<Device[]>}
-         */
-        async devices() {
+        async devices(): Promise<Device[]> {
             const url = getURL("/api/devices");
 
             try {
@@ -23,15 +17,13 @@ export function create() {
                 console.error(`fetch ${url}:`, err);
             }
 
-            return window.store.obj.get("devices");
+            return window.store.obj.get("devices") || [];
         },
 
-        /**
-         * @param {Color | undefined | null} color
-         * @param {Device[]} devices
-         * @returns {Promise<void>}
-         */
-        async setDevicesColor(color, ...devices) {
+        async setDevicesColor(
+            color?: Color | null,
+            ...devices: Device[]
+        ): Promise<void> {
             const url = getURL("/api/devices/color?force");
 
             if (!color) {
@@ -54,10 +46,7 @@ export function create() {
             }
         },
 
-        /**
-         * @returns {Promise<Colors>}
-         */
-        async colors() {
+        async colors(): Promise<Colors> {
             const url = getURL("/api/colors");
 
             try {
@@ -74,22 +63,17 @@ export function create() {
                 console.error(`Fetch ${url}:`, err);
             }
 
-            return window.store.obj.get("colors");
+            return window.store.obj.get("colors") || [];
         },
 
-        /**
-         * @param {number} index
-         * @returns {Promise<Color>}
-         */
-        async color(index) {
+        async color(index: number): Promise<Color> {
             const url = getURL(`/api/colors/${index}`);
 
             try {
                 const resp = await fetch(url);
 
                 try {
-                    /** @type {Color} */
-                    const color = await handleResponse(resp, url);
+                    const color: Color = await handleResponse(resp, url);
 
                     window.store.obj.update("colors", (colors) => {
                         return colors.map((c, i) => (i === index ? color : c));
@@ -103,19 +87,14 @@ export function create() {
                 console.error(`Fetch ${url}:`, err);
             }
 
-            const color = window.store.obj.get("colors")[index];
+            const color = (window.store.obj.get("colors") || [])[index];
             if (!color) {
-                return await this.colors()[index];
+                return (await this.colors())[index];
             }
             return color;
         },
 
-        /**
-         * @param {number} index
-         * @param {Color} color
-         * @returns {Promise<void>}
-         */
-        async setColor(index, color) {
+        async setColor(index: number, color: Color): Promise<void> {
             const url = getURL(`/api/colors/${index}`);
 
             try {
@@ -145,20 +124,11 @@ export function create() {
     };
 }
 
-/**
- * @param {string} path
- * @returns {string}
- */
-function getURL(path) {
+function getURL(path: string): string {
     return process.env.SERVER_PATH_PREFIX + `${path}`;
 }
 
-/**
- * @param {Response} resp
- * @param {string} url
- * @returns {Promise<any>}
- */
-async function handleResponse(resp, url) {
+async function handleResponse(resp: Response, url: string): Promise<any> {
     const status = resp.status;
 
     if (!resp.ok) {

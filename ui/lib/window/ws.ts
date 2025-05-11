@@ -1,12 +1,8 @@
-/**
- * @returns {WS}
- */
-export function create() {
-    let timeout = null;
-    /** @type {number} */
+export function create(): WS {
+    let timeout: NodeJS.Timeout | null = null;
     const timeoutDuration = 1000;
 
-    function getURL() {
+    function getURL(): string {
         return process.env.SERVER_PATH_PREFIX + `/ws`;
     }
 
@@ -30,13 +26,8 @@ export function create() {
         window.utils.setOnlineIndicatorState(true);
     };
 
-    /**
-     * @param {MessageEvent<Blob>} ev
-     * @returns {Promise<void>}
-     */
-    const onMessage = async (ev) => {
-        /** @type {WSMessageData} */
-        const data = JSON.parse(await ev.data.text());
+    const onMessage = async (ev: MessageEvent<Blob>) => {
+        const data: WSMessageData = JSON.parse(await ev.data.text());
 
         switch (data.type) {
             case "device":
@@ -66,11 +57,8 @@ export function create() {
         ws.events.dispatch(data.type, data.data);
     };
 
-    /** @type {WS} */
-    const ws = {
+    const ws: WS = {
         events: new window.ui.Events(),
-
-        /** @type {WebSocket | null} */
         socket: null,
 
         isOpen() {

@@ -16,7 +16,7 @@
     "noEmit": true,
     "allowJs": true,
     "checkJs": true,
-    "strict": false,
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,

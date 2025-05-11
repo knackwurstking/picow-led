@@ -1,7 +1,5 @@
-/** @returns {Store} */
-export function create() {
-    /** @type {UIStore} */
-    const store = new window.ui.Store("picow-led:");
+export function create(): Store {
+    const store: UIStore = new window.ui.Store("picow-led:");
 
     store.set("devices", [], true);
     store.set("colors", [], true);
@@ -32,11 +30,7 @@ export function create() {
 
         // Helper Functions:
 
-        /**
-         * @param {string} addr
-         * @returns {Device | null}
-         */
-        device(addr) {
+        device(addr: string): Device | null {
             for (const d of store.get("devices") || []) {
                 if (d.server.addr === addr) {
                     return d;
@@ -46,19 +40,8 @@ export function create() {
             return null;
         },
 
-        /**
-         * @param {string} addr
-         * @returns {Color | null}
-         */
-        currentDeviceColor(addr) {
-            const currentDeviceColors = store.get("currentDeviceColors");
-            for (const key in currentDeviceColors) {
-                if (key === addr) {
-                    return currentDeviceColors[key];
-                }
-            }
-
-            return null;
+        currentDeviceColor(addr: string): Color | null {
+            return store.get("currentDeviceColors")?.[addr] || null;
         },
     };
 }

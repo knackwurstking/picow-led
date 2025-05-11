@@ -1,22 +1,14 @@
-/**
- * @returns {Utils}
- */
-export function create() {
-    /**
-     * @param {AppBarItemName[]} itemNames
-     * @returns {AppBarItems}
-     */
-    function setupAppBarItems(...itemNames) {
-        /** @type {AppBarItems} */
-        const enabledItems = {};
+export function create(): Utils {
+    function setupAppBarItems(...itemNames: AppBarItemName[]): AppBarItems {
+        const enabledItems: AppBarItems = {};
 
-        /** @type {NodeListOf<HTMLElement>} */
-        const items = document.querySelectorAll(`.ui-app-bar [data-name]`);
+        const items = document.querySelectorAll<HTMLElement>(
+            `.ui-app-bar [data-name]`,
+        );
         let match = false;
         for (const item of items) {
-            /** @type {AppBarItemName} */
-            // @ts-expect-error
-            const dataName = item.getAttribute("data-name") || "";
+            const dataName = (item.getAttribute("data-name") ||
+                "") as AppBarItemName;
 
             match = false;
             for (const name of itemNames) {
@@ -38,11 +30,7 @@ export function create() {
         return enabledItems;
     }
 
-    /**
-     * @param {boolean} state
-     * @returns {void}
-     */
-    function setOnlineIndicatorState(state) {
+    function setOnlineIndicatorState(state: boolean): void {
         const el = document.querySelector(`.online-indicator`);
         if (!el) return;
 
@@ -53,10 +41,7 @@ export function create() {
         }
     }
 
-    /**
-     * @returns {void}
-     */
-    function registerServiceWorker() {
+    function registerServiceWorker(): void {
         // Check if the browser supports service workers, otherwise abort.
         if (!("serviceWorker" in navigator)) {
             console.warn("Browser doesn't support service workers");
