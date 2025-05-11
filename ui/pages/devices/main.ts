@@ -29,8 +29,8 @@ async function setupDevicesList() {
 
     const onClick = async (device: Device) => {
         let color: Color;
-        if (Math.max(...device.color) > 0) {
-            color = (device.pins || device.color).map(() => 0);
+        if (Math.max(...(device.color || [])) > 0) {
+            color = (device.pins || device.color || []).map(() => 0);
         } else {
             color = currentColorForDevice(device);
         }
