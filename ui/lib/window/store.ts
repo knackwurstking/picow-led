@@ -13,7 +13,8 @@ export function create(): Store {
             devices.forEach((device) => {
                 if (Math.max(...(device.color || [])) > 0) {
                     store.update("currentDeviceColors", (data) => {
-                        data[device.server.addr] = device.color;
+                        data[device.server.addr] =
+                            device.color || (device.pins || []).map(() => 255);
                         return data;
                     });
                 }
