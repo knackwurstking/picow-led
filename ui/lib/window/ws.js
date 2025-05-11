@@ -43,7 +43,7 @@ export function create() {
         return socket.readyState === socket.OPEN;
     }
 
-    function connect() {
+    async function connect() {
         if (socket) close();
 
         const wsAddr = getURL(); // origin + path
@@ -69,6 +69,8 @@ export function create() {
             socket = null;
         }
     }
+
+    // TODO: Add on open/close/message
 
     /** @type {WS} */
     return {
