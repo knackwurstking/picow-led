@@ -3,7 +3,7 @@
  * @param {(item: HTMLElement) => void|Promise<void>} onClickPowerButton
  * @returns {HTMLElement}
  */
-export function createDeviceItem(device, onClickPowerButton) {
+export function create(device, onClickPowerButton) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="device-list-item"]`);
     if (!t) {
@@ -18,7 +18,7 @@ export function createDeviceItem(device, onClickPowerButton) {
         // @ts-expect-error
         .querySelector(".device-list-item");
 
-    return updateDeviceItem(item, device, onClickPowerButton);
+    return update(item, device, onClickPowerButton);
 }
 
 /**
@@ -27,7 +27,7 @@ export function createDeviceItem(device, onClickPowerButton) {
  * @param {(item: HTMLElement) => void|Promise<void>} onClickPowerButton
  * @returns {HTMLElement}
  */
-export function updateDeviceItem(item, device, onClickPowerButton) {
+export function update(item, device, onClickPowerButton) {
     item.setAttribute("data-addr", device.server.addr);
 
     /** @type {HTMLElement} */

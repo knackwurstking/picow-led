@@ -4,7 +4,7 @@
  * @param {(ev: Event & { currentTarget: HTMLInputElement }) => void|Promise<void>} onChange
  * @returns {HTMLElement}
  */
-export function createColorRangeSlider(title, value, onChange) {
+export function create(title, value, onChange) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="color-range-slider"]`);
     if (!t) {
@@ -16,7 +16,7 @@ export function createColorRangeSlider(title, value, onChange) {
     // @ts-expect-error
     const item = t.content.cloneNode(true).querySelector("*");
 
-    return updateColorRangeSlider(item, title, value, onChange);
+    return update(item, title, value, onChange);
 }
 
 /**
@@ -26,7 +26,7 @@ export function createColorRangeSlider(title, value, onChange) {
  * @param {(ev: Event & { currentTarget: HTMLInputElement }) => void|Promise<void>} onChange
  * @returns {HTMLElement}
  */
-export function updateColorRangeSlider(item, title, value, onChange) {
+export function update(item, title, value, onChange) {
     /** @type {HTMLElement} */
     const titleElement = item.querySelector(`.title`);
     titleElement.innerText = title;

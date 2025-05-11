@@ -1,11 +1,6 @@
 (() => {
-    const {
-        colorSeparator,
-        splitDataColor,
-        createColorStorageItem,
-    } = require("./color-storage-item.js");
-
-    const { createColorRangeSlider } = require("./color-range-slider.js");
+    const colorStorageItem = require("./color-storage-item.js");
+    const colorRangeSlider = require("./color-range-slider.js");
 
     /**
      * @returns {string}
@@ -52,7 +47,9 @@
         const activeItem = document.querySelector(`.color-storage-item.active`);
         if (activeItem) {
             color.push(
-                ...splitDataColor(activeItem.getAttribute("data-color")),
+                ...colorStorageItem.splitDataColor(
+                    activeItem.getAttribute("data-color"),
+                ),
             );
         } else {
             color = [255, 255, 255];
@@ -95,16 +92,18 @@
         const currentColor = pageCurrentColor();
         const currentColorString = currentColor
             .slice(0, 3)
-            .join(colorSeparator);
+            .join(colorStorageItem.colorSeparator);
 
         // Create color storage items
         const device = pageDevice();
         (await window.api.colors()).forEach((color, index) => {
-            const item = createColorStorageItem(index, color, {
+            const item = colorStorageItem.create(index, color, {
                 device,
 
                 onClick(color) {
-                    const colorString = color.join(colorSeparator);
+                    const colorString = color.join(
+                        colorStorageItem.colorSeparator,
+                    );
 
                     Array.from(colorStorageContainer.children).forEach(
                         (child) => {
@@ -114,9 +113,10 @@
                                 if (!child.classList.contains("active")) {
                                     child.classList.add("active");
 
-                                    const color = splitDataColor(
-                                        child.getAttribute("data-color"),
-                                    );
+                                    const color =
+                                        colorStorageItem.splitDataColor(
+                                            child.getAttribute("data-color"),
+                                        );
 
                                     window.api.setDevicesColor(
                                         [...color, ...pageRangeSliderValues()],
@@ -166,7 +166,7 @@
             let timeout = null;
             device.pins.slice(3).forEach((pin, index) => {
                 index += 3;
-                const slider = createColorRangeSlider(
+                const slider = colorRangeSlider.create(
                     `Pin: ${pin.toString()}`,
                     currentColor[index] || 0,
                     () => {

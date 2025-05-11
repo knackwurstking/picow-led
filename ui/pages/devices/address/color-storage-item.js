@@ -17,7 +17,7 @@ export function splitDataColor(v) {
  * @param {(color: Color) => void|Promise<void>} [options.onChange]
  * @returns {HTMLElement}
  */
-export function createColorStorageItem(index, color, options) {
+export function create(index, color, options) {
     /** @type {HTMLTemplateElement} */
     const t = document.querySelector(`template[name="color-storage-item"]`);
     if (!t) {
@@ -30,7 +30,7 @@ export function createColorStorageItem(index, color, options) {
     // @ts-expect-error
     const item = t.content.cloneNode(true).querySelector(`*`);
 
-    return updateColorStorageItem(item, index, color, options);
+    return update(item, index, color, options);
 }
 
 /**
@@ -43,7 +43,7 @@ export function createColorStorageItem(index, color, options) {
  * @param {(color: Color) => void|Promise<void>} [options.onChange]
  * @returns {HTMLElement}
  */
-export function updateColorStorageItem(item, index, color, options) {
+export function update(item, index, color, options) {
     if (color.length < 3) color = [...color, 0, 0, 0];
     color = color.slice(0, 3);
     item.style.color = `rgb(${color.join(", ")})`;
@@ -70,7 +70,7 @@ export function updateColorStorageItem(item, index, color, options) {
             if (options.onChange) options.onChange(color);
         }
 
-        updateColorStorageItem(item, index, color, options);
+        update(item, index, color, options);
     };
 
     return item;

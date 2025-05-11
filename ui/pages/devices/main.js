@@ -1,5 +1,5 @@
 (() => {
-    const { createDeviceItem } = require("./device-item");
+    const deviceItem = require("./device-item");
 
     /**
      * @param {Device} device
@@ -49,7 +49,7 @@
                 devices.forEach(createItem);
             };
 
-            const item = createDeviceItem(device, onClick);
+            const item = deviceItem.create(device, onClick);
             devicesList.appendChild(item);
         };
 
