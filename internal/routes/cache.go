@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"picow-led/internal/api"
+	"slices"
 	"sync"
 )
 
@@ -97,6 +98,19 @@ func (c *Cache) UpdateColor(index int, color api.MicroColor) error {
 
 	if c.ws != nil {
 		c.ws.BroadcastColors(c.colors)
+	}
+
+	return nil
+}
+
+func (c *Cache) DeleteColor(index int) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	c.colors = slices.Delete(c.colors, index, index+1)
+
+	if c.ws != nil {
+		go c.ws.BroadcastColors(c.colors)
 	}
 
 	return nil
