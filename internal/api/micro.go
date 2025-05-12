@@ -201,6 +201,30 @@ func (mr *MicroRequest) SetColor(d *Device, c MicroColor) error {
 	return err
 }
 
+func (mr *MicroRequest) SetPins(d *Device, p MicroPins) error {
+	mr.Type = MicroTypeSET
+	mr.Group = MicroGroupConfig
+	mr.Command = "pins"
+	mr.CommandArgs = []string{}
+	for _, n := range p {
+		mr.CommandArgs = append(mr.CommandArgs, strconv.Itoa(int(n)))
+	}
+
+	data, err := mr.Send(d)
+	if err != nil {
+		return err
+	}
+	if d.Error != "" {
+		return errors.New(d.Error)
+	}
+
+	_, err = ParseMicroResponse[any](data)
+	if err != nil {
+		d.Error = err.Error()
+	}
+	return err
+}
+
 type (
 	MicroPins      []uint
 	MicroColor     []uint

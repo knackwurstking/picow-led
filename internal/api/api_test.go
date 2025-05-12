@@ -7,10 +7,8 @@ import (
 func TestMicroRequestError_InvalidCommand(t *testing.T) {
 	apiConfig, _ := GetConfig(".api.yaml")
 	devices := []*Device{}
-	for _, s := range apiConfig.Servers {
-		devices = append(devices, &Device{
-			Server: s,
-		})
+	for _, d := range apiConfig.Devices {
+		devices = append(devices, d)
 	}
 
 	r := &MicroRequest{
@@ -38,10 +36,8 @@ func TestMicroRequestError_InvalidCommand(t *testing.T) {
 func TestMicroRequestError_InvalidGroup(t *testing.T) {
 	apiConfig, _ := GetConfig(".api.yaml")
 	devices := []*Device{}
-	for _, s := range apiConfig.Servers {
-		devices = append(devices, &Device{
-			Server: s,
-		})
+	for _, d := range apiConfig.Devices {
+		devices = append(devices, d)
 	}
 
 	r := &MicroRequest{
@@ -69,10 +65,8 @@ func TestMicroRequestError_InvalidGroup(t *testing.T) {
 func TestMicroRequestError_InvalidType(t *testing.T) {
 	apiConfig, _ := GetConfig(".api.yaml")
 	devices := []*Device{}
-	for _, s := range apiConfig.Servers {
-		devices = append(devices, &Device{
-			Server: s,
-		})
+	for _, d := range apiConfig.Devices {
+		devices = append(devices, d)
 	}
 
 	r := &MicroRequest{

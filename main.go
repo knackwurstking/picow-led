@@ -109,7 +109,8 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			apiConfigPath, apiConfigFallbackPath,
 		)
 		if err != nil {
-			slog.Warn("Read API configuration failed!", "error", err)
+			slog.Warn("Read API configuration failed!")
+			slog.Warn(err.Error())
 		}
 
 		routes.Create(e, routes.Options{

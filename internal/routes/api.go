@@ -37,7 +37,7 @@ func apiSetupPing(e *echo.Echo, o apiOptions) {
 
 func apiSetupDevices(e *echo.Echo, o apiOptions) {
 	e.GET(o.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
-		devices := api.GetDevices(o.Config)
+		devices := api.GetDevices(o.Config.Devices...)
 		err := c.JSON(http.StatusOK, devices)
 		if err != nil {
 			slog.Warn("Parse JSON", "error", err, "path", c.Request().URL.Path)
@@ -60,7 +60,7 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 		}
 
 		handle := func() error {
-			reqData.Devices = api.SetColor(o.Config, reqData.Color, reqData.Devices...)
+			reqData.Devices = api.SetColor(reqData.Color, reqData.Devices...)
 
 			for i, d := range reqData.Devices {
 				d, err := cache.UpdateDevice(d.Server.Addr, d)

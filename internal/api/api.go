@@ -1,29 +1,20 @@
 package api
 
 import (
-	"io"
 	"log/slog"
-	"os"
-	"path/filepath"
 	"sync"
-
-	"gopkg.in/yaml.v3"
 )
 
-type Config struct {
-	Servers []*Server `json:"servers,omitempty" yaml:"servers,omitempty"`
-}
-
 type Device struct {
-	Server *Server `json:"server"`
+	Server *Server `json:"server" yaml:"server"`
 
 	Online bool   `json:"online" yaml:"-"` //  Not used in configurations
 	Error  string `json:"error" yaml:"-"`  //  Not used in configurations
 
 	// Color can be nil
-	Color MicroColor `json:"color"`
+	Color MicroColor `json:"color" yaml:"-"`
 	// Pins can be nil
-	Pins MicroPins `json:"pins"`
+	Pins MicroPins `json:"pins" yaml:"pins"`
 }
 
 // Server contains host and port in use from a Device
@@ -33,42 +24,7 @@ type Server struct {
 	Name string `json:"name" yaml:"name"`
 }
 
-func GetConfig(paths ...string) (*Config, error) {
-	o := &Config{
-		Servers: []*Server{},
-	}
-
-	for _, path := range paths {
-		absPath, err := filepath.Abs(path)
-		if err != nil {
-			absPath = path
-		}
-		f, err := os.Open(absPath)
-		if err != nil {
-			continue
-		}
-		d, err := io.ReadAll(f)
-		if err != nil {
-			return o, err
-		}
-		err = yaml.Unmarshal(d, o)
-		if err != nil {
-			return o, err
-		}
-	}
-
-	return o, nil
-}
-
-func GetDevices(o *Config) []*Device {
-	devices := []*Device{}
-
-	for _, server := range o.Servers {
-		d := &Device{}
-		d.Server = server
-		devices = append(devices, d)
-	}
-
+func GetDevices(devices ...*Device) []*Device {
 	wg := &sync.WaitGroup{}
 	for _, device := range devices {
 		wg.Add(1)
@@ -106,7 +62,7 @@ func GetDevices(o *Config) []*Device {
 	return devices
 }
 
-func SetColor(o *Config, c MicroColor, devices ...*Device) []*Device {
+func SetColor(c MicroColor, devices ...*Device) []*Device {
 	wg := &sync.WaitGroup{}
 	for _, d := range devices {
 		wg.Add(1)
@@ -118,6 +74,26 @@ func SetColor(o *Config, c MicroColor, devices ...*Device) []*Device {
 				d.Error = err.Error()
 			} else {
 				d.Color = c
+			}
+		}()
+	}
+	wg.Wait()
+
+	return devices
+}
+
+func SetPins(p MicroPins, devices ...*Device) []*Device {
+	wg := &sync.WaitGroup{}
+	for _, d := range devices {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			r := NewMicroRequest(MicroIDDefault)
+			if err := r.SetPins(d, p); err != nil {
+				d.Error = err.Error()
+			} else {
+				d.Pins = p
 			}
 		}()
 	}

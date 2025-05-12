@@ -22,7 +22,9 @@ func Create(e *echo.Echo, o Options) {
 	ws := api.NewWS()
 
 	cache = NewCache(ws)
-	cache.SetDevices(api.GetDevices(o.Config)...)
+	cache.SetDevices(
+		api.GetDevices(o.Config.Devices...)...,
+	)
 
 	go ws.Start()
 

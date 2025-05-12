@@ -1,13 +1,54 @@
-servers:
-    - addr: "192.168.178.58:3000"
+devices:
+  - server:
+      addr: "192.168.178.58:3000"
       name: "Kitchen"
-    - addr: "192.168.178.50:3000"
+    pins:
+      - 0
+      - 1
+      - 2
+      - 3
+
+  - server:
+      addr: "192.168.178.50:3000"
       name: "Living Room"
-    - addr: "192.168.178.68:3000"
+    pins:
+      - 0
+      - 1
+      - 2
+      - 3
+
+  - server:
+      addr: "192.168.178.68:3000"
       name: "PC Room"
-    - addr: "192.168.178.62:3000"
+    pins:
+      - 0
+      - 1
+      - 2
+      - 3
+
+  - server:
+      addr: "192.168.178.62:3000"
       name: "Bath Room"
-    - addr: "192.168.178.54:3000"
+    pins:
+      - 0
+      - 1
+      - 2
+      - 3
+
+  - server:
+      addr: "192.168.178.54:3000"
       name: "Work Room"
-    - addr: "192.168.178.67:3000"
+    pins:
+      - 0
+      - 1
+      - 2
+      - 3
+
+  - server:
+      addr: "192.168.178.67:3000"
       name: "Bed Room"
+    pins:
+      - 0
+      - 1
+      - 2
+      - 3
