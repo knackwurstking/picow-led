@@ -28,6 +28,7 @@ export function create(): WS {
 
     const onMessage = async (ev: MessageEvent<Blob>) => {
         const data: WSMessageData = JSON.parse(await ev.data.text());
+        console.debug(`WS: Got a message:`, data);
 
         switch (data.type) {
             case "device":
