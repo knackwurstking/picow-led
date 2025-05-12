@@ -4,7 +4,10 @@ import * as colorRangeSlider from "./color-range-slider.js";
 window.addEventListener("pageshow", async () => {
     setupAppBar();
     setupPower();
+
+    // TODO: store: re-render each time if colors changes "colors"
     setupColorStorage();
+
     setupRangeSliders();
 
     console.debug("device address:", pageDevice());
