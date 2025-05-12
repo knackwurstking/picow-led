@@ -125,8 +125,7 @@ func (mr *MicroRequest) Send(d *Device) ([]byte, error) {
 
 	slog.Debug("Got some data",
 		"device.name", d.Server.Name, "device.address", d.Server.Addr,
-		"command",
-		fmt.Sprintf("%d %s %s %s %+v",
+		"command", fmt.Sprintf("(%d) %s %s %s %+v",
 			mr.ID, mr.Type, mr.Group, mr.Command, mr.CommandArgs,
 		),
 	)
