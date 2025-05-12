@@ -1,10 +1,11 @@
 // API Routes:
 //   - apiSetupPing: 	GET 	- "/api/ping"
-//   - apiSetupDevices: GET 	- "/api/devices"
+//   - apiSetupDevices: GET 	- "/api/devices?cache=true"
 //   - apiSetupDevices: POST 	- "/api/devices/color?force=true" <- { devices: Device[]; color: number[] }
 //   - apiSetupColors: 	GET 	- "/api/colors"
 //   - apiSetupColors: 	GET 	- "/api/colors/:index"
 //   - apiSetupColors 	POST 	- "/api/colors:index" <- `number[]`
+//   - apiSetupColors: 	DELETE 	- "/api/colors/:index"
 package routes
 
 import (
@@ -37,6 +38,10 @@ func apiSetupPing(e *echo.Echo, o apiOptions) {
 
 func apiSetupDevices(e *echo.Echo, o apiOptions) {
 	e.GET(o.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
+		if c.QueryParam("cache") != "true" {
+			return c.JSON(http.StatusOK, cache.Devices())
+		}
+
 		devices := api.GetDevices(o.Config.Devices...)
 		err := c.JSON(http.StatusOK, devices)
 		if err != nil {

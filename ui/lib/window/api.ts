@@ -1,7 +1,7 @@
 export function create(): Api {
     return {
         async devices(): Promise<Device[]> {
-            const url = getURL("/api/devices");
+            const url = getURL("/api/devices?cache=true");
 
             try {
                 const resp = await fetch(url);
