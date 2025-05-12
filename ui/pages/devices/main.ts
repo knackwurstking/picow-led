@@ -46,6 +46,8 @@ async function setupDevicesList() {
         devicesList.appendChild(item);
     });
 
+    // TODO: Handler for (ws) "open" event -> request "devices"
+
     window.ws.events.addListener("device", (device) => {
         let child: HTMLElement;
         for (let x = 0; x < devices.length; x++) {
