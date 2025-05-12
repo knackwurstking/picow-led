@@ -47,9 +47,7 @@ async function setupPower() {
 async function setupColorStorage(): Promise<void> {
     const colorStorageContainer = document.querySelector<HTMLElement>(
         `.color-storage-container`,
-    );
-    if (!colorStorageContainer)
-        throw new Error(`color storage container is null`);
+    )!;
 
     colorStorageContainer.innerHTML = "";
 
@@ -110,9 +108,7 @@ async function setupColorStorage(): Promise<void> {
 }
 
 async function setupRangeSliders(): Promise<void> {
-    const container = document.querySelector<HTMLElement>(".range-sliders");
-    if (!container) throw new Error(`range sliders container is null`);
-
+    const container = document.querySelector<HTMLElement>(".range-sliders")!;
     container.innerHTML = "";
 
     const device = pageDevice();
