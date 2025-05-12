@@ -38,7 +38,7 @@ func apiSetupPing(e *echo.Echo, o apiOptions) {
 
 func apiSetupDevices(e *echo.Echo, o apiOptions) {
 	e.GET(o.ServerPathPrefix+"/api/devices", func(c echo.Context) error {
-		if c.QueryParam("cache") != "true" {
+		if c.QueryParam("cache") == "true" {
 			return c.JSON(http.StatusOK, cache.Devices())
 		}
 
