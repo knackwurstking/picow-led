@@ -121,6 +121,16 @@ export function create(): Api {
                 console.error(`Fetch ${url}:`, err);
             }
         },
+
+        async deleteColor(index: number): Promise<void> {
+            const url = getURL(`/api/colors/${index}`);
+
+            try {
+                await fetch(url, { method: "DELETE" });
+            } catch (err) {
+                console.error(`Fetch ${url}:`, err);
+            }
+        },
     };
 }
 

@@ -30,6 +30,7 @@ export declare global {
         colors: () => Promise<Colors>;
         color: (index: number) => Promise<Color>;
         setColor: (index: number, color: Color) => Promise<void>;
+        deleteColor: (index: number) => Promise<void>;
     };
 
     declare type Utils = {
