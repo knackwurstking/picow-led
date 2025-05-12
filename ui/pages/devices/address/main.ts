@@ -91,6 +91,11 @@ async function setupColorStorage(): Promise<void> {
 
                 window.api.setDevicesColor(color, device);
             },
+
+            enableDelete: true,
+            async onDelete(_color): Promise<void> {
+                await window.api.deleteColor(index);
+            },
         });
 
         if (item.getAttribute("data-color") === currentColorString) {
