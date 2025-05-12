@@ -1,58 +1,20 @@
 import * as colorStorageItem from "./color-storage-item.js";
 import * as colorRangeSlider from "./color-range-slider.js";
 
-function pageDeviceAddress(): string {
-    return decodeURIComponent(location.pathname.split("/").reverse()[0]);
-}
+window.addEventListener("pageshow", async () => {
+    setupAppBar();
+    setupPower();
+    setupColorStorage();
+    setupRangeSliders();
 
-function pageDevice(): Device {
-    const addr = pageDeviceAddress();
-    const device = window.store.device(addr);
-    if (!device) throw new Error(`device not found for ${addr}`);
-    return device;
-}
-
-function pageCurrentColor(): Color {
-    return (
-        window.store.currentDeviceColor(pageDeviceAddress()) ||
-        (pageDevice().pins || []).map(() => 255)
-    );
-}
-
-function pagePickedColor(): Color | null {
-    // Get color from active item
-    const color = pageActiveColor().slice(0, 3);
-
-    // Get range slider values
-    color.push(...pageRangeSliderValues());
-
-    return color;
-}
-
-function pageActiveColor(): Color {
-    let color = [];
-    const activeItem = document.querySelector(`.color-storage-item.active`);
-    if (activeItem) {
-        color.push(
-            ...colorStorageItem.splitDataColor(
-                activeItem.getAttribute("data-color")!,
-            ),
-        );
-    } else {
-        color = [255, 255, 255];
-    }
-    return color;
-}
-
-function pageRangeSliderValues(): number[] {
-    return Array.from(
-        document.querySelectorAll<HTMLInputElement>(
-            `.range-sliders .color-range-slider input[type="range"]`,
-        ),
-    ).map((input) => {
-        return parseInt(input.value || "0", 10);
+    console.debug("device address:", pageDevice());
+    console.table({
+        activeColor: pageActiveColor(),
+        currentColor: pageCurrentColor(),
+        pickedColor: pagePickedColor(),
+        rangeSliderValues: pageRangeSliderValues(),
     });
-}
+});
 
 function setupAppBar(): void {
     const device = pageDevice();
@@ -181,17 +143,55 @@ async function setupRangeSliders(): Promise<void> {
     }
 }
 
-window.addEventListener("pageshow", async () => {
-    setupAppBar();
-    setupPower();
-    setupColorStorage();
-    setupRangeSliders();
+function pageDeviceAddress(): string {
+    return decodeURIComponent(location.pathname.split("/").reverse()[0]);
+}
 
-    console.debug("device address:", pageDevice());
-    console.table({
-        activeColor: pageActiveColor(),
-        currentColor: pageCurrentColor(),
-        pickedColor: pagePickedColor(),
-        rangeSliderValues: pageRangeSliderValues(),
+function pageDevice(): Device {
+    const addr = pageDeviceAddress();
+    const device = window.store.device(addr);
+    if (!device) throw new Error(`device not found for ${addr}`);
+    return device;
+}
+
+function pageCurrentColor(): Color {
+    return (
+        window.store.currentDeviceColor(pageDeviceAddress()) ||
+        (pageDevice().pins || []).map(() => 255)
+    );
+}
+
+function pagePickedColor(): Color | null {
+    // Get color from active item
+    const color = pageActiveColor().slice(0, 3);
+
+    // Get range slider values
+    color.push(...pageRangeSliderValues());
+
+    return color;
+}
+
+function pageActiveColor(): Color {
+    let color = [];
+    const activeItem = document.querySelector(`.color-storage-item.active`);
+    if (activeItem) {
+        color.push(
+            ...colorStorageItem.splitDataColor(
+                activeItem.getAttribute("data-color")!,
+            ),
+        );
+    } else {
+        color = [255, 255, 255];
+    }
+    return color;
+}
+
+function pageRangeSliderValues(): number[] {
+    return Array.from(
+        document.querySelectorAll<HTMLInputElement>(
+            `.range-sliders .color-range-slider input[type="range"]`,
+        ),
+    ).map((input) => {
+        return parseInt(input.value || "0", 10);
     });
-});
+}
