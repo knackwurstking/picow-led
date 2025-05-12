@@ -2,6 +2,8 @@ interface Options {
     device?: Device;
     onClick?: (color: Color) => void | Promise<void>;
     onChange?: (color: Color) => void | Promise<void>;
+    enableDelete?: boolean;
+    onDelete?: (color: Color) => void | Promise<void>;
 }
 
 export const colorSeparator = ",";
@@ -70,6 +72,17 @@ export function update(
 
         update(item, index, color, options);
     };
+
+    const delBtn = item.querySelector<HTMLButtonElement>(`button.delete`)!;
+    if (options?.enableDelete) {
+        delBtn.style.display = "";
+        delBtn.onclick = async (ev) => {
+            ev.stopPropagation();
+            if (options.onDelete) options.onDelete(color);
+        };
+    } else {
+        delBtn.style.display = "none";
+    }
 
     return item;
 }
