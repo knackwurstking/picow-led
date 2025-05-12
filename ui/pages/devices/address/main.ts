@@ -61,20 +61,20 @@ function setupAppBar(): void {
 }
 
 async function setupPower() {
-    const powerOnBtn =
-        document.querySelector<HTMLButtonElement>(`.power button.on`)!;
+    const powerOffBtn =
+        document.querySelector<HTMLButtonElement>(`.power button.off`)!;
 
-    powerOnBtn.onclick = async () => {
+    powerOffBtn.onclick = async () => {
         window.api.setDevicesColor(
             pageCurrentColor().map(() => 0),
             pageDevice(),
         );
     };
 
-    const powerOffBtn =
+    const powerOnBtn =
         document.querySelector<HTMLButtonElement>(`.power button.on`)!;
 
-    powerOffBtn.onclick = async () => {
+    powerOnBtn.onclick = async () => {
         window.api.setDevicesColor(pageCurrentColor(), pageDevice());
     };
 }

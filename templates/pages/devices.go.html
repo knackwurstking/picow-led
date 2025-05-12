@@ -1,7 +1,10 @@
 {{ define "content" }}
 <div
     class="_content devices ui-container ui-auto-scroll ui-hide-scrollbar"
-    style="height: 100%; padding-top: var(--ui-app-bar-height)"
+    style="
+        height: 100%;
+        padding-top: calc(var(--ui-app-bar-height) + var(--ui-spacing));
+    "
 >
     <span class="list ui-flex column gap align-center"></span>
 </div>

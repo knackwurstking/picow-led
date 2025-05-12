@@ -1,14 +1,17 @@
 {{ define "content" }}
 <div
     class="_content devices-addr ui-container ui-auto-scroll ui-hide-scrollbar"
-    style="height: 100%; padding-top: var(--ui-app-bar-height)"
+    style="
+        height: 100%;
+        padding-top: calc(var(--ui-app-bar-height) + var(--ui-spacing));
+    "
 >
     <div class="ui-flex column gap">
-        <label class="power ui-flex gap justify-between">
+        <label class="power ui-flex gap justify-between align-center">
             <span>Power</span>
             <span>
-                <button class="on" data-ui-color="destructive"></button>
-                <button class="off"></button>
+                <button class="off" data-ui-color="destructive">OFF</button>
+                <button class="on">ON</button>
             </span>
         </label>
 
