@@ -10,9 +10,9 @@ clean:
 
 init:
 	npm install
-	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.1.1.css
+	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.1.2.css
 	mkdir -p ./public/js
-	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/js/ui-v4.1.1.min.umd.cjs
+	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/js/ui-v4.1.2.min.umd.cjs
 	go mod tidy -v
 
 generate:
@@ -66,8 +66,8 @@ endif
 
 export SYSTEMD_SERVICE_FILE
 install: check-linux
-	echo "$$SYSTEMD_SERVICE_FILE" > ${HOME}/.config/systemd/user/${SERVER_APP_NAME}.service 
-	systemctl --user daemon-reload 
+	echo "$$SYSTEMD_SERVICE_FILE" > ${HOME}/.config/systemd/user/${SERVER_APP_NAME}.service
+	systemctl --user daemon-reload
 	echo "--> Created a service file @ ${HOME}/.config/systemd/user/${SERVER_APP_NAME}.service"
 	sudo cp ./bin/${SERVER_APP_NAME} /usr/local/bin/
 
