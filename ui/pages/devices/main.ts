@@ -1,11 +1,9 @@
 import * as deviceItem from "./device-item";
 
-function currentColorForDevice(device: Device): Color {
-    return (
-        window.store.currentDeviceColor(device.server.addr) ||
-        (device.pins || []).map(() => 255)
-    );
-}
+window.addEventListener("pageshow", async () => {
+    setupAppBar();
+    setupDevicesList();
+});
 
 async function setupAppBar() {
     const items = window.utils.setupAppBarItems(
@@ -18,16 +16,13 @@ async function setupAppBar() {
 }
 
 async function setupDevicesList() {
-    const devices = await window.api.devices();
+    let devices: Device[] = [];
 
     const devicesList = document.querySelector<HTMLElement>(
         "._content.devices > .list",
-    );
-    if (!devicesList) throw new Error(`devices list container is null`);
+    )!;
 
-    devicesList.innerHTML = "";
-
-    const onClick = async (device: Device) => {
+    const powerButtonToggle = async (device: Device) => {
         let color: Color;
         if (Math.max(...(device.color || [])) > 0) {
             color = (device.pins || device.color || []).map(() => 0);
@@ -38,15 +33,22 @@ async function setupDevicesList() {
         await window.api.setDevicesColor(color, device);
     };
 
-    devices.forEach((device) => {
-        const item = deviceItem.create(device, () => {
-            onClick(device);
-        });
+    window.store.obj.listen("devices", (data) => {
+        devices = data;
+        devicesList.innerHTML = "";
 
-        devicesList.appendChild(item);
+        devices.forEach((device) => {
+            const item = deviceItem.create(device, () => {
+                powerButtonToggle(device);
+            });
+
+            devicesList.appendChild(item);
+        });
     });
 
-    // TODO: Handler for (ws) "open" event -> request "devices"
+    window.ws.events.addListener("open", async () => {
+        await window.api.devices();
+    });
 
     window.ws.events.addListener("device", (device) => {
         let child: HTMLElement;
@@ -58,13 +60,15 @@ async function setupDevicesList() {
             child = devicesList.children[x] as HTMLElement;
 
             deviceItem.update(child, device, () => {
-                onClick(device);
+                powerButtonToggle(device);
             });
         }
     });
 }
 
-window.addEventListener("pageshow", async () => {
-    setupAppBar();
-    setupDevicesList();
-});
+function currentColorForDevice(device: Device): Color {
+    return (
+        window.store.currentDeviceColor(device.server.addr) ||
+        (device.pins || []).map(() => 255)
+    );
+}
