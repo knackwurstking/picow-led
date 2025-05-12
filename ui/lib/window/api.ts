@@ -24,7 +24,7 @@ export function create(): Api {
             color?: Color | null,
             ...devices: Device[]
         ): Promise<void> {
-            const url = getURL("/api/devices/color?force");
+            const url = getURL("/api/devices/color?force=true");
 
             if (!color) {
                 color = [255, 255, 255, 255];
