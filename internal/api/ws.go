@@ -56,7 +56,7 @@ func (ws *WS) UnregisterClient(c *WSClient) {
 
 	for i, client := range ws.Clients {
 		if client == c {
-			ws.Clients = slices.Delete(ws.Clients, i, 0)
+			ws.Clients = slices.Delete(ws.Clients, i, i+1)
 		}
 	}
 }
