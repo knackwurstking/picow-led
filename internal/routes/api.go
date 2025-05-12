@@ -88,6 +88,7 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 
 		return handle()
 	})
+
 }
 
 func apiSetupColor(e *echo.Echo, o apiOptions) {
@@ -135,6 +136,17 @@ func apiSetupColor(e *echo.Echo, o apiOptions) {
 			slog.Warn("Update (cache) color", "index", index, "data", reqData, "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusBadRequest, err.Error())
 		}
+
+		return nil
+	})
+
+	e.DELETE(o.ServerPathPrefix+"/api/colors/:index", func(c echo.Context) error {
+		index, err := strconv.Atoi(c.Param("index"))
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+
+		cache.DeleteColor(index)
 
 		return nil
 	})
