@@ -9,17 +9,11 @@ export function create(
 ): HTMLElement {
     const t = document.querySelector<HTMLTemplateElement>(
         `template[name="color-range-slider"]`,
-    );
-    if (!t) {
-        throw new Error(
-            `Nope, template with name "color-range-slider" is null`,
-        );
-    }
+    )!;
 
     const item = (
         t.content.cloneNode(true) as HTMLElement
-    ).querySelector<HTMLElement>("*");
-    if (!item) throw new Error(`template is empty`);
+    ).querySelector<HTMLElement>("*")!;
 
     return update(item, title, value, onChange);
 }
@@ -30,13 +24,11 @@ export function update(
     value: number,
     onChange: onChange,
 ): HTMLElement {
-    const titleElement = item.querySelector<HTMLElement>(`.title`);
-    if (!titleElement) throw new Error(`title element is null`);
+    const titleElement = item.querySelector<HTMLElement>(`.title`)!;
     titleElement.innerText = title;
 
     const rangeInput =
-        item.querySelector<HTMLInputElement>(`input[type="range"]`);
-    if (!rangeInput) throw new Error(`range input element is null`);
+        item.querySelector<HTMLInputElement>(`input[type="range"]`)!;
 
     rangeInput.value = value.toString();
     rangeInput.oninput = () => {
@@ -49,8 +41,7 @@ export function update(
     };
 
     const numberInput =
-        item.querySelector<HTMLInputElement>(`input[type="number"]`);
-    if (!numberInput) throw new Error(`number input element is null`);
+        item.querySelector<HTMLInputElement>(`input[type="number"]`)!;
 
     numberInput.value = value.toString();
     numberInput.onchange = (ev) => {

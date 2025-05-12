@@ -19,17 +19,11 @@ export function create(
 ): HTMLElement {
     const t = document.querySelector<HTMLTemplateElement>(
         `template[name="color-storage-item"]`,
-    );
-    if (!t) {
-        throw new Error(
-            `Nope, template with name "color-range-slider" is null`,
-        );
-    }
+    )!;
 
     const item = (
         t.content.cloneNode(true) as HTMLElement
-    ).querySelector<HTMLElement>(`*`);
-    if (!item) throw new Error(`template is empty`);
+    ).querySelector<HTMLElement>(`*`)!;
 
     return update(item, index, color, options);
 }
@@ -52,8 +46,7 @@ export function update(
         };
     } else item.onclick = null;
 
-    const input = item.querySelector<HTMLInputElement>(`input`);
-    if (!input) throw new Error(`input element is null`);
+    const input = item.querySelector<HTMLInputElement>(`input`)!;
 
     input.onchange = (ev) => {
         const target = ev.currentTarget as HTMLInputElement;
