@@ -60,6 +60,25 @@ function setupAppBar(): void {
     items.title!.innerText = device ? device.server.name : "";
 }
 
+async function setupPower() {
+    const powerOnBtn =
+        document.querySelector<HTMLButtonElement>(`.power button.on`)!;
+
+    powerOnBtn.onclick = async () => {
+        window.api.setDevicesColor(
+            pageCurrentColor().map(() => 0),
+            pageDevice(),
+        );
+    };
+
+    const powerOffBtn =
+        document.querySelector<HTMLButtonElement>(`.power button.on`)!;
+
+    powerOffBtn.onclick = async () => {
+        window.api.setDevicesColor(pageCurrentColor(), pageDevice());
+    };
+}
+
 async function setupColorStorage(): Promise<void> {
     const colorStorageContainer = document.querySelector<HTMLElement>(
         `.color-storage-container`,
@@ -164,6 +183,7 @@ async function setupRangeSliders(): Promise<void> {
 
 window.addEventListener("pageshow", async () => {
     setupAppBar();
+    setupPower();
     setupColorStorage();
     setupRangeSliders();
 
