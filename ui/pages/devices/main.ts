@@ -46,10 +46,6 @@ async function setupDevicesList() {
         });
     });
 
-    window.ws.events.addListener("open", async () => {
-        await window.api.devices();
-    });
-
     window.ws.events.addListener("device", (device) => {
         let child: HTMLElement;
         for (let x = 0; x < devices.length; x++) {
@@ -63,6 +59,12 @@ async function setupDevicesList() {
                 powerButtonToggle(device);
             });
         }
+    });
+
+    await window.api.devices();
+
+    window.ws.events.addListener("open", async () => {
+        await window.api.devices();
     });
 }
 
