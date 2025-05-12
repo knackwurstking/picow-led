@@ -30,8 +30,8 @@ const cacheFiles = [
 const blackList = [
     "/api/.*",
     "/screenshots/.*",
-    "service-worker.js",
-    "manifest.json",
+    "/service-worker.js",
+    "/manifest.json",
 ];
 
 self.addEventListener("activate", (evt) => {
