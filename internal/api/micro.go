@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net"
 	"strconv"
@@ -122,7 +123,14 @@ func (mr *MicroRequest) Send(d *Device) ([]byte, error) {
 		return nil, err
 	}
 
-	slog.Debug("Got some data", "device", d, "request", mr, "data", string(data))
+	slog.Debug("Got some data",
+		"device.name", d.Server.Name, "device.address", d.Server.Addr,
+		"command",
+		fmt.Sprintf("%d %s %s %s %+v",
+			mr.ID, mr.Type, mr.Group, mr.Command, mr.CommandArgs,
+		),
+	)
+
 	return data, nil
 }
 
