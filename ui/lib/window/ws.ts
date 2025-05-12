@@ -22,8 +22,9 @@ export function create(): WS {
     };
 
     const onOpen = () => {
-        console.debug(`WebSocket connected to "${getURL()}"`);
+        console.debug(`WS: connected to "${getURL()}"`);
         window.utils.setOnlineIndicatorState(true);
+        ws.events.dispatch("open", undefined);
     };
 
     const onMessage = async (ev: MessageEvent<Blob>) => {

@@ -66,6 +66,7 @@ export declare global {
 
     declare type WS = {
         events: import("ui").Events<{
+            open: undefined;
             device: Device;
             colors: Colors;
         }>;
