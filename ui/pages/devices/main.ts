@@ -65,16 +65,6 @@ async function setupDevicesList() {
             });
         }
     });
-
-    let timeout: NodeJS.Timeout | null = null;
-    window.addEventListener("focus", () => {
-        if (timeout === null) {
-            timeout = setTimeout(() => {
-                if (!window.ws.isOpen()) window.ws.connect();
-                timeout = null;
-            });
-        }
-    });
 }
 
 function currentColorForDevice(device: Device): Color {
