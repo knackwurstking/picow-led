@@ -51,12 +51,7 @@ export function update(
     input.onchange = (ev) => {
         const target = ev.currentTarget as HTMLInputElement;
 
-        const value = (target.value || "#FFFFFF").slice(1);
-        const color = [];
-        for (let x = 0; x < value.length; x += 2) {
-            color.push(parseInt(value.slice(x, x + 2), 16));
-        }
-
+        const color = hexToRGB(target.value || "#FFFFFF");
         window.api.setColor(index, color);
         if (options?.device) {
             window.api.setDevicesColor(color, options.device);
@@ -78,4 +73,15 @@ export function update(
     }
 
     return item;
+}
+
+export function hexToRGB(value: string) {
+    value = (value || "#FFFFFF").slice(1);
+    const color = [];
+
+    for (let x = 0; x < value.length; x += 2) {
+        color.push(parseInt(value.slice(x, x + 2), 16));
+    }
+
+    return color;
 }
