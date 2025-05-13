@@ -5,8 +5,10 @@ window.addEventListener("pageshow", async () => {
     setupAppBar();
     setupPower();
 
-    // TODO: store: re-render each time if colors changes "colors"
-    setupColorStorage();
+    // store: re-render each time if colors changes "colors"
+    window.store.obj.listen("colors", () => {
+        setupColorStorage();
+    });
 
     setupRangeSliders();
 
