@@ -17,17 +17,17 @@ window.addEventListener("pageshow", async () => {
 
     setupRangeSliders();
 
-    console.debug("device address:", pageDevice());
+    console.debug("device address:", page.device());
     console.table({
-        activeColor: pageActiveColor(),
-        currentColor: pageCurrentColor(),
-        pickedColor: pagePickedColor(),
-        rangeSliderValues: pageRangeSliderValues(),
+        activeColor: page.rgbActive(),
+        currentColor: page.currentColor(),
+        pickedColor: page.color(),
+        rangeSliderValues: page.rangeSliderValues(),
     });
 });
 
 function setupAppBar(): void {
-    const device = pageDevice();
+    const device = page.device();
     const items = window.utils.setupAppBarItems("online-indicator", "title");
     items.title!.innerText = device ? device.server.name : "";
 }
@@ -38,8 +38,8 @@ async function setupPower() {
 
     powerOffBtn.onclick = async () => {
         window.api.setDevicesColor(
-            pageCurrentColor().map(() => 0),
-            pageDevice(),
+            page.currentColor().map(() => 0),
+            page.device(),
         );
     };
 
@@ -47,7 +47,7 @@ async function setupPower() {
         document.querySelector<HTMLButtonElement>(`.power button.on`)!;
 
     powerOnBtn.onclick = async () => {
-        window.api.setDevicesColor(pageCurrentColor(), pageDevice());
+        window.api.setDevicesColor(page.currentColor(), page.device());
     };
 }
 
@@ -58,13 +58,13 @@ async function setupColorStorage(colors: Colors): Promise<void> {
 
     colorStorageContainer.innerHTML = "";
 
-    const currentColor = pageCurrentColor();
+    const currentColor = page.currentColor();
     const currentColorString = currentColor
         .slice(0, 3)
         .join(colorStorageItem.colorSeparator);
 
     // Create color storage items
-    const device = pageDevice();
+    const device = page.device();
     colors.forEach((color, index) => {
         const item = colorStorageItem.create(index, color, {
             device,
@@ -82,7 +82,7 @@ async function setupColorStorage(colors: Colors): Promise<void> {
                             );
 
                             window.api.setDevicesColor(
-                                [...color, ...pageRangeSliderValues()],
+                                [...color, ...page.rangeSliderValues()],
                                 device,
                             );
                         }
@@ -118,7 +118,7 @@ async function setupRangeSliders(): Promise<void> {
     const container = document.querySelector<HTMLElement>(".range-sliders")!;
     container.innerHTML = "";
 
-    const device = pageDevice();
+    const device = page.device();
 
     if ((device.pins || []).length > 3) {
         container.style.display = "block";
@@ -128,7 +128,7 @@ async function setupRangeSliders(): Promise<void> {
     }
 
     if (device.pins) {
-        const currentColor = pageCurrentColor();
+        const currentColor = page.currentColor();
         let timeout: NodeJS.Timeout | null = null;
         device.pins.slice(3).forEach((pin, index) => {
             index += 3;
@@ -144,7 +144,7 @@ async function setupRangeSliders(): Promise<void> {
                     }
                     timeout = setTimeout(() => {
                         timeout = null;
-                        window.api.setDevicesColor(pagePickedColor(), device);
+                        window.api.setDevicesColor(page.color(), device);
                     }, 250);
                 },
             );
@@ -154,55 +154,57 @@ async function setupRangeSliders(): Promise<void> {
     }
 }
 
-function pageDeviceAddress(): string {
-    return decodeURIComponent(location.pathname.split("/").reverse()[0]);
-}
+const page = {
+    address(): string {
+        return decodeURIComponent(location.pathname.split("/").reverse()[0]);
+    },
 
-function pageDevice(): Device {
-    const addr = pageDeviceAddress();
-    const device = window.store.device(addr);
-    if (!device) throw new Error(`device not found for ${addr}`);
-    return device;
-}
+    device(): Device {
+        const addr = this.address();
+        const device = window.store.device(addr);
+        if (!device) throw new Error(`device not found for ${addr}`);
+        return device;
+    },
 
-function pageCurrentColor(): Color {
-    return (
-        window.store.currentDeviceColor(pageDeviceAddress()) ||
-        (pageDevice().pins || []).map(() => 255)
-    );
-}
-
-function pagePickedColor(): Color | null {
-    // Get color from active item
-    const color = pageActiveColor().slice(0, 3);
-
-    // Get range slider values
-    color.push(...pageRangeSliderValues());
-
-    return color;
-}
-
-function pageActiveColor(): Color {
-    let color = [];
-    const activeItem = document.querySelector(`.color-storage-item.active`);
-    if (activeItem) {
-        color.push(
-            ...colorStorageItem.splitDataColor(
-                activeItem.getAttribute("data-color")!,
-            ),
+    currentColor(): Color {
+        return (
+            window.store.currentDeviceColor(this.address()) ||
+            (this.device().pins || []).map(() => 255)
         );
-    } else {
-        color = [255, 255, 255];
-    }
-    return color;
-}
+    },
 
-function pageRangeSliderValues(): number[] {
-    return Array.from(
-        document.querySelectorAll<HTMLInputElement>(
-            `.range-sliders .color-range-slider input[type="range"]`,
-        ),
-    ).map((input) => {
-        return parseInt(input.value || "0", 10);
-    });
-}
+    color(): Color {
+        // Get color from active item
+        const color = this.rgbActive().slice(0, 3);
+
+        // Get range slider values
+        color.push(...this.rangeSliderValues());
+
+        return color;
+    },
+
+    rgbActive(): number[] {
+        let color = [];
+        const activeItem = document.querySelector(`.color-storage-item.active`);
+        if (activeItem) {
+            color.push(
+                ...colorStorageItem.splitDataColor(
+                    activeItem.getAttribute("data-color")!,
+                ),
+            );
+        } else {
+            color = [255, 255, 255];
+        }
+        return color;
+    },
+
+    rangeSliderValues(): number[] {
+        return Array.from(
+            document.querySelectorAll<HTMLInputElement>(
+                `.range-sliders .color-range-slider input[type="range"]`,
+            ),
+        ).map((input) => {
+            return parseInt(input.value || "0", 10);
+        });
+    },
+};
