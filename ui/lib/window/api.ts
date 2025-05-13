@@ -98,25 +98,13 @@ export function create(): Api {
             const url = getURL(`/api/colors/${index}`);
 
             try {
-                const resp = await fetch(url, {
+                await fetch(url, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(color),
                 });
-
-                try {
-                    const data = await handleResponse(resp, url);
-
-                    window.store.obj.update("colors", (colors) => {
-                        return colors.map((c, i) => (i === index ? color : c));
-                    });
-
-                    return data;
-                } catch (err) {
-                    console.error(`Handle fetch response for ${url}:`, err);
-                }
             } catch (err) {
                 console.error(`Fetch ${url}:`, err);
             }
