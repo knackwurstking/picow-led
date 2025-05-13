@@ -77,6 +77,10 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 				reqData.Devices[i] = d
 			}
 
+			if c.QueryParam("force") == "true" {
+				return nil
+			}
+
 			err = c.JSON(http.StatusOK, reqData.Devices)
 			if err != nil {
 				slog.Warn("Parse JSON", "error", err, "path", c.Request().URL.Path)
