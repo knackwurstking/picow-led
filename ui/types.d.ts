@@ -2,7 +2,7 @@ export declare global {
     interface Window {
         ui: UI;
         store: Store;
-        api: Api;
+        api: import("./lib/api").Api;
         utils: Utils;
         ws: WS;
     }
@@ -20,18 +20,6 @@ export declare global {
         colors: Colors;
         currentDeviceColors: Record<string, Color>;
     }>;
-
-    declare type Api = {
-        devices: () => Promise<Device[]>;
-        setDevicesColor: (
-            color: Color | undefined | null,
-            ...devices: Device[]
-        ) => Promise<void>;
-        colors: () => Promise<Colors>;
-        color: (index: number) => Promise<Color>;
-        setColor: (index: number, color: Color) => Promise<void>;
-        deleteColor: (index: number) => Promise<void>;
-    };
 
     declare type Utils = {
         setupAppBarItems: (...itemNames: AppBarItemName[]) => AppBarItems;
