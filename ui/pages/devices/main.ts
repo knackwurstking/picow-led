@@ -47,7 +47,7 @@ async function setupDevicesList() {
     });
 
     window.ws.events.addListener("open", async () => {
-        console.debug("WS: Request devices from the api");
+        // This will auto update the (ui) store "devices"
         await window.api.devices();
     });
 

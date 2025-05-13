@@ -6,8 +6,13 @@ window.addEventListener("pageshow", async () => {
     setupPower();
 
     // store: re-render each time if colors changes "colors"
-    window.store.obj.listen("colors", () => {
-        setupColorStorage();
+    window.store.obj.listen("colors", async (data) => {
+        await setupColorStorage(data);
+    });
+
+    window.ws.events.addListener("open", async () => {
+        // This will auto update the (ui) store "colors"
+        await window.api.colors();
     });
 
     setupRangeSliders();
@@ -46,7 +51,7 @@ async function setupPower() {
     };
 }
 
-async function setupColorStorage(): Promise<void> {
+async function setupColorStorage(colors: Colors): Promise<void> {
     const colorStorageContainer = document.querySelector<HTMLElement>(
         `.color-storage-container`,
     )!;
@@ -60,7 +65,7 @@ async function setupColorStorage(): Promise<void> {
 
     // Create color storage items
     const device = pageDevice();
-    (await window.api.colors()).forEach((color, index) => {
+    colors.forEach((color, index) => {
         const item = colorStorageItem.create(index, color, {
             device,
 
