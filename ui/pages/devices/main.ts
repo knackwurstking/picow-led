@@ -68,12 +68,9 @@ async function setupDevicesList() {
 
     let timeout: NodeJS.Timeout | null = null;
     window.addEventListener("focus", () => {
-        if (!timeout !== null) {
+        if (timeout === null) {
             timeout = setTimeout(() => {
-                if (!window.ws.isOpen()) {
-                    window.ws.connect();
-                }
-
+                window.ws.connect();
                 timeout = null;
             });
         }
