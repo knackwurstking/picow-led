@@ -51,8 +51,9 @@ export function create(): WS {
                 }
                 break;
             case "colors":
-                // TODO: Handle colors ws event here
-                console.warn("@todo: Handle colors ws event here", data.data);
+                {
+                    window.store.obj.set("colors", data.data);
+                }
                 break;
         }
 
