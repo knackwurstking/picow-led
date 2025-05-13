@@ -1,9 +1,9 @@
 import { UIStore } from "../lib/store";
 import { Api } from "../lib/api";
 import * as utils from "../lib/window/utils";
-import * as ws from "../lib/window/ws";
+import { WS } from "../lib/ws";
 
 window.store = new UIStore();
 window.api = new Api();
 window.utils = utils.create();
-window.ws = ws.create();
+window.ws = new WS();
