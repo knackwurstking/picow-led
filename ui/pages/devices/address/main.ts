@@ -125,14 +125,14 @@ async function setupColorStorage(colors: Colors): Promise<void> {
     });
 
     // New color button
-    const newColorBtn =
-        document.querySelector<HTMLInputElement>(`button.new-color`)!;
+    const newColorBtnInput = document.querySelector<HTMLInputElement>(
+        `button.new-color input`,
+    )!;
 
-    newColorBtn.onclick = () => {
-        // FIXME: This is not working this way
-        const input = document.createElement(`input`);
-        input.type = "color";
-        input.click();
+    newColorBtnInput.onchange = () => {
+        if (!newColorBtnInput.value) return;
+        const color = colorStorageItem.hexToRGB(newColorBtnInput.value);
+        window.api.setColor(-1, [...color, ...page.rangeSliderValues()]);
     };
 }
 
