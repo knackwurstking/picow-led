@@ -1,9 +1,9 @@
 import * as deviceItem from "./device-item";
 
-window.addEventListener("pageshow", async () => {
+window.onpageshow = async () => {
     setupAppBar();
     setupDevicesList();
-});
+};
 
 async function setupAppBar() {
     const items = window.utils.setupAppBarItems(
@@ -46,25 +46,21 @@ async function setupDevicesList() {
         });
     });
 
-    window.ws.events.addListener("open", async () => {
-        // This will auto update the (ui) store "devices"
-        await window.api.devices();
-    });
-
-    window.ws.events.addListener("device", (device) => {
-        let child: HTMLElement;
-        for (let x = 0; x < devices.length; x++) {
-            if (devices[x].server.addr !== device.server.addr) {
-                continue;
-            }
-
-            child = devicesList.children[x] as HTMLElement;
-
-            deviceItem.update(child, device, () => {
-                powerButtonToggle(device);
-            });
+    let timeout: NodeJS.Timeout | null = null;
+    const onFocus = () => {
+        if (timeout !== null) {
+            clearTimeout(timeout);
+            timeout = null;
         }
-    });
+
+        timeout = setTimeout(async () => {
+            await window.api.devices();
+
+            timeout = null;
+        });
+    };
+    window.onfocus = () => onFocus();
+    onFocus();
 }
 
 function currentColorForDevice(device: Device): Color {

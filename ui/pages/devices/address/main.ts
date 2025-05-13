@@ -1,7 +1,7 @@
 import * as colorStorageItem from "./color-storage-item.js";
 import * as colorRangeSlider from "./color-range-slider.js";
 
-window.addEventListener("pageshow", async () => {
+window.onpageshow = async () => {
     setupAppBar();
     setupPower();
 
@@ -10,10 +10,21 @@ window.addEventListener("pageshow", async () => {
         await setupColorStorage(data);
     });
 
-    window.ws.events.addListener("open", async () => {
-        // This will auto update the (ui) store "colors"
-        await window.api.colors();
-    });
+    let timeout: NodeJS.Timeout | null = null;
+    const onFocus = () => {
+        if (timeout !== null) {
+            clearTimeout(timeout);
+            timeout = null;
+        }
+
+        timeout = setTimeout(async () => {
+            await window.api.colors();
+
+            timeout = null;
+        });
+    };
+    window.onfocus = () => onFocus();
+    onFocus();
 
     setupRangeSliders();
 
@@ -24,7 +35,7 @@ window.addEventListener("pageshow", async () => {
         pickedColor: page.color(),
         rangeSliderValues: page.rangeSliderValues(),
     });
-});
+};
 
 function setupAppBar(): void {
     const device = page.device();
