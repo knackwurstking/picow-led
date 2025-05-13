@@ -94,7 +94,11 @@ func (c *Cache) UpdateColor(index int, color api.MicroColor) error {
 		return fmt.Errorf("no such index: %d", index)
 	}
 
-	c.colors[index] = color
+	if index < 0 {
+		c.colors = append(c.colors, color)
+	} else {
+		c.colors[index] = color
+	}
 
 	if c.ws != nil {
 		c.ws.BroadcastColors(c.colors)
