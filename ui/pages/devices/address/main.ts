@@ -123,6 +123,17 @@ async function setupColorStorage(colors: Colors): Promise<void> {
 
         colorStorageContainer.appendChild(item);
     });
+
+    // New color button
+    const newColorBtn =
+        document.querySelector<HTMLInputElement>(`button.new-color`)!;
+
+    newColorBtn.onclick = () => {
+        // FIXME: This is not working this way
+        const input = document.createElement(`input`);
+        input.type = "color";
+        input.click();
+    };
 }
 
 async function setupRangeSliders(): Promise<void> {
