@@ -1,11 +1,13 @@
-type onChange = (
-    ev: Event & { currentTarget: HTMLInputElement },
-) => void | Promise<void>;
+interface Options {
+    onChange?: (
+        ev: Event & { currentTarget: HTMLInputElement },
+    ) => void | Promise<void>;
+}
 
 export function create(
     title: string,
     value: number,
-    onChange: onChange,
+    options: Options,
 ): HTMLElement {
     const t = document.querySelector<HTMLTemplateElement>(
         `template[name="color-range-slider"]`,
@@ -15,14 +17,14 @@ export function create(
         t.content.cloneNode(true) as HTMLElement
     ).querySelector<HTMLElement>("*")!;
 
-    return update(item, title, value, onChange);
+    return update(item, title, value, options);
 }
 
 export function update(
     item: HTMLElement,
     title: string,
     value: number,
-    onChange: onChange,
+    options: Options,
 ): HTMLElement {
     const titleElement = item.querySelector<HTMLElement>(`.title`)!;
     titleElement.innerText = title;
@@ -35,10 +37,9 @@ export function update(
         if (!numberInput) return;
         numberInput.value = rangeInput.value;
     };
-    rangeInput.onchange = (ev) => {
-        // @ts-expect-error
-        onChange(ev);
-    };
+
+    if (options?.onChange)
+        rangeInput.onchange = options.onChange as (ev: Event) => any;
 
     const numberInput =
         item.querySelector<HTMLInputElement>(`input[type="number"]`)!;

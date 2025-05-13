@@ -77,10 +77,6 @@ async function setupColorStorage(colors: Colors): Promise<void> {
                         if (!child.classList.contains("active")) {
                             child.classList.add("active");
 
-                            const color = colorStorageItem.splitDataColor(
-                                child.getAttribute("data-color")!,
-                            );
-
                             window.api.setDevicesColor(
                                 [...color, ...page.rangeSliderValues()],
                                 device,
@@ -97,7 +93,10 @@ async function setupColorStorage(colors: Colors): Promise<void> {
                     return;
                 }
 
-                window.api.setDevicesColor(color, device);
+                window.api.setDevicesColor(
+                    [...color, ...page.rangeSliderValues()],
+                    device,
+                );
             },
 
             enableDelete: true,
@@ -130,22 +129,23 @@ async function setupRangeSliders(): Promise<void> {
     if (device.pins) {
         const currentColor = page.currentColor();
         let timeout: NodeJS.Timeout | null = null;
+
         device.pins.slice(3).forEach((pin, index) => {
             index += 3;
             const slider = colorRangeSlider.create(
                 `Pin: ${pin.toString()}`,
                 currentColor[index] || 0,
-                () => {
-                    // NOTE: Update device color (api) with some timeout
-                    //       (250ms?), i should use websockets for this later
-                    if (timeout !== null) {
-                        clearTimeout(timeout);
-                        timeout = null;
-                    }
-                    timeout = setTimeout(() => {
-                        timeout = null;
-                        window.api.setDevicesColor(page.color(), device);
-                    }, 250);
+                {
+                    async onChange() {
+                        if (timeout !== null) {
+                            clearTimeout(timeout);
+                            timeout = null;
+                        }
+                        timeout = setTimeout(() => {
+                            timeout = null;
+                            window.api.setDevicesColor(page.color(), device);
+                        }, 250);
+                    },
                 },
             );
 
