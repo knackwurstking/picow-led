@@ -33,7 +33,7 @@ async function setupDevicesList() {
         await window.api.setDevicesColor(color, device);
     };
 
-    window.store.obj.listen("devices", (data) => {
+    window.store.listen("devices", (data) => {
         devices = data;
         devicesList.innerHTML = "";
 

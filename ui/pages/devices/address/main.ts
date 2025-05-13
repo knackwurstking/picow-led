@@ -6,7 +6,7 @@ window.onpageshow = async () => {
     setupPower();
 
     // store: re-render each time if colors changes "colors"
-    window.store.obj.listen("colors", async (data) => {
+    window.store.listen("colors", async (data) => {
         await setupColorStorage(data);
     });
 

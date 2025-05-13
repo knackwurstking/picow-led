@@ -1,25 +1,11 @@
 export declare global {
     interface Window {
-        ui: UI;
-        store: Store;
+        ui: typeof import("ui");
+        store: import("./lib/store").UIStore;
         api: import("./lib/api").Api;
         utils: Utils;
-        ws: WS;
+        ws: import("./lib/ws").WS;
     }
-
-    declare type UI = typeof import("ui");
-
-    declare type Store = {
-        obj: UIStore;
-        device: (addr: string) => Device | null;
-        currentDeviceColor: (addr: string) => Color | null;
-    };
-
-    declare type UIStore = import("ui").Store<{
-        devices: Device[];
-        colors: Colors;
-        currentDeviceColors: Record<string, Color>;
-    }>;
 
     declare type Utils = {
         setupAppBarItems: (...itemNames: AppBarItemName[]) => AppBarItems;
@@ -51,26 +37,4 @@ export declare global {
     declare type Pins = number[];
 
     declare type Colors = Color[];
-
-    declare type WS = {
-        events: import("ui").Events<{
-            open: undefined;
-            device: Device;
-            colors: Colors;
-        }>;
-        socket: WebSocket | null;
-        isOpen: () => boolean;
-        connect: () => Promise<void>;
-        close: () => void;
-    };
-
-    declare type WSMessageData =
-        | {
-              type: "device";
-              data: Device;
-          }
-        | {
-              type: "colors";
-              data: Colors;
-          };
 }

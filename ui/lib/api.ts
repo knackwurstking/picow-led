@@ -17,10 +17,10 @@ export class Api {
         }
 
         if (data) {
-            window.store.obj.set("devices", data);
+            window.store.set("devices", data);
         }
 
-        return data || window.store.obj.get("devices") || [];
+        return data || window.store.get("devices") || [];
     }
 
     public async setDevicesColor(
@@ -63,10 +63,10 @@ export class Api {
         }
 
         if (data) {
-            window.store.obj.set("colors", data);
+            window.store.set("colors", data);
         }
 
-        return data || window.store.obj.get("colors") || [];
+        return data || window.store.get("colors") || [];
     }
 
     public async color(index: number): Promise<Color | null> {
@@ -87,12 +87,12 @@ export class Api {
         }
 
         if (data) {
-            window.store.obj.update("colors", (colors) => {
+            window.store.update("colors", (colors) => {
                 return colors.map((c, i) => (i === index ? data : c));
             });
         }
 
-        return data || (window.store.obj.get("colors") || [])[index] || null;
+        return data || (window.store.get("colors") || [])[index] || null;
     }
 
     public async setColor(index: number, color: Color): Promise<void> {
