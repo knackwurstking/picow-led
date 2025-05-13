@@ -33,27 +33,10 @@ export function create(): WS {
 
         switch (data.type) {
             case "device":
-                {
-                    window.store.obj.update("devices", (devices) => {
-                        // Update device in store
-                        for (let x = 0; x < devices.length; x++) {
-                            if (
-                                devices[x].server.addr !== data.data.server.addr
-                            ) {
-                                continue;
-                            }
-
-                            devices[x] = data.data;
-                        }
-
-                        return devices;
-                    });
-                }
+                await wsHandleDevice(data.data);
                 break;
             case "colors":
-                {
-                    window.store.obj.set("colors", data.data);
-                }
+                await wsHandleColors(data.data);
                 break;
         }
 
@@ -98,4 +81,23 @@ export function create(): WS {
     };
 
     return ws;
+}
+
+async function wsHandleDevice(data: Device): Promise<void> {
+    window.store.obj.update("devices", (devices) => {
+        // Update device in store
+        for (let x = 0; x < devices.length; x++) {
+            if (devices[x].server.addr !== data.server.addr) {
+                continue;
+            }
+
+            devices[x] = data;
+        }
+
+        return devices;
+    });
+}
+
+async function wsHandleColors(data: Colors): Promise<void> {
+    window.store.obj.set("colors", data);
 }
