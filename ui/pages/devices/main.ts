@@ -70,7 +70,7 @@ async function setupDevicesList() {
     window.addEventListener("focus", () => {
         if (timeout === null) {
             timeout = setTimeout(() => {
-                window.ws.connect();
+                if (!window.ws.isOpen()) window.ws.connect();
                 timeout = null;
             });
         }
