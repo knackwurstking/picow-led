@@ -76,18 +76,6 @@ async function setupColorStorage(colors: Colors): Promise<void> {
 
     const device = page.device();
 
-    // Append device color if not exists
-    if (Math.max(...(device.color || [])) > 0) {
-        const colorString = device.color!.join(colorStorageItem.colorSeparator);
-        if (
-            !colors.find(
-                (c) => c.join(colorStorageItem.colorSeparator) === colorString,
-            )
-        ) {
-            colors.push(device.color!);
-        }
-    }
-
     // Create color storage items
     colors.forEach((color, index) => {
         const item = colorStorageItem.create(index, color, {
