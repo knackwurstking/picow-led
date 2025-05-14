@@ -7,9 +7,7 @@ window.addEventListener("pageshow", () => {
         if (timeout === null) {
             timeout = setTimeout(async () => {
                 try {
-                    if (!window.ws.isOpen()) {
-                        await window.ws.connect();
-                    }
+                    if (!window.ws.isOpen()) await window.ws.connect();
                 } finally {
                     timeout = null;
                 }
