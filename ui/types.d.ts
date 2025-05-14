@@ -4,7 +4,7 @@ export declare global {
         store: import("./lib/store").UIStore;
         api: import("./lib/api").Api;
         utils: Utils;
-        ws: import("./lib/ws").WS;
+        ws: import("ui").WS<WSMessageData>;
     }
 
     declare type Utils = {
@@ -37,4 +37,14 @@ export declare global {
     declare type Pins = number[];
 
     declare type Colors = Color[];
+
+    declare type WSMessageData =
+        | {
+              type: "device";
+              data: Device;
+          }
+        | {
+              type: "colors";
+              data: Colors;
+          };
 }
