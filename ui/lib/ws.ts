@@ -11,13 +11,13 @@ export declare type WSMessageData =
 export class WS {
     public socket: WebSocket | null = null;
     public events = new window.ui.Events<{
-        open: undefined;
         device: Device;
         colors: Colors;
     }>();
 
     private timeout: NodeJS.Timeout | null = null;
     private timeoutDuration = 1000;
+    private open = false;
 
     private onClose = () => {
         if (this.timeout !== null) {
@@ -26,6 +26,7 @@ export class WS {
         }
 
         window.utils.setOnlineIndicatorState(false);
+        this.open = false;
 
         // Reconnect here
         this.timeout = setTimeout(async () => {
@@ -37,7 +38,7 @@ export class WS {
     private onOpen = () => {
         console.debug(`WS: connected to "${this.getURL()}"`);
         window.utils.setOnlineIndicatorState(true);
-        this.events.dispatch("open", undefined);
+        this.open = true;
     };
 
     private onMessage = async (ev: MessageEvent<Blob>) => {
@@ -61,8 +62,7 @@ export class WS {
     }
 
     public isOpen() {
-        if (!this.socket) return false;
-        return this.socket.readyState === this.socket.OPEN;
+        return this.open;
     }
 
     public async connect() {
