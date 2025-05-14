@@ -11,22 +11,28 @@ export declare type WSMessageData =
 export class WS {
     public socket: WebSocket | null = null;
     public events = new window.ui.Events<{
+        open: undefined;
+        close: undefined;
         device: Device;
         colors: Colors;
     }>();
 
-    private timeout: NodeJS.Timeout | null = null;
-    private timeoutDuration = 1000;
-    private open = false;
+    protected timeout: NodeJS.Timeout | null = null;
+    protected timeoutDuration = 1000;
+    protected open = false;
 
-    private onClose = () => {
+    protected onClose = () => {
         if (this.timeout !== null) {
             clearTimeout(this.timeout);
             this.timeout = null;
         }
 
         window.utils.setOnlineIndicatorState(false);
-        this.open = false;
+
+        if (this.open) {
+            this.open = false;
+            this.events.dispatch("close", undefined);
+        }
 
         // Reconnect here
         this.timeout = setTimeout(async () => {
@@ -35,13 +41,17 @@ export class WS {
         }, this.timeoutDuration);
     };
 
-    private onOpen = () => {
+    protected onOpen = () => {
         console.debug(`WS: connected to "${this.getURL()}"`);
         window.utils.setOnlineIndicatorState(true);
-        this.open = true;
+
+        if (!this.open) {
+            this.open = true;
+            this.events.dispatch("open", undefined);
+        }
     };
 
-    private onMessage = async (ev: MessageEvent<Blob>) => {
+    protected onMessage = async (ev: MessageEvent<Blob>) => {
         const data: WSMessageData = JSON.parse(await ev.data.text());
         console.debug(`WS: Got a message:`, data);
 
@@ -57,7 +67,7 @@ export class WS {
         this.events.dispatch(data.type, data.data);
     };
 
-    private getURL(): string {
+    protected getURL(): string {
         return process.env.SERVER_PATH_PREFIX + `/ws`;
     }
 
@@ -92,7 +102,7 @@ export class WS {
         }
     }
 
-    private async wsHandleDevice(data: Device): Promise<void> {
+    protected async wsHandleDevice(data: Device): Promise<void> {
         window.store.update("devices", (devices) => {
             // Update device in store
             for (let x = 0; x < devices.length; x++) {
@@ -107,7 +117,7 @@ export class WS {
         });
     }
 
-    private async wsHandleColors(data: Colors): Promise<void> {
+    protected async wsHandleColors(data: Colors): Promise<void> {
         window.store.set("colors", data);
     }
 }
