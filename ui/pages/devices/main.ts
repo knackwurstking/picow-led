@@ -16,12 +16,6 @@ async function setupAppBar() {
 }
 
 async function setupDevicesList() {
-    let devices: Device[] = [];
-
-    const devicesList = document.querySelector<HTMLElement>(
-        "._content.devices > .list",
-    )!;
-
     const powerButtonToggle = async (device: Device) => {
         let color: Color;
         if (Math.max(...(device.color || [])) > 0) {
@@ -34,7 +28,10 @@ async function setupDevicesList() {
     };
 
     window.store.listen("devices", (data) => {
-        devices = data;
+        const devices = data;
+        const devicesList = document.querySelector<HTMLElement>(
+            "._content.devices > .list",
+        )!;
         devicesList.innerHTML = "";
 
         devices.forEach((device) => {
@@ -46,21 +43,13 @@ async function setupDevicesList() {
         });
     });
 
-    let timeout: NodeJS.Timeout | null = null;
-    const onFocus = () => {
-        if (timeout !== null) {
-            clearTimeout(timeout);
-            timeout = null;
-        }
+    await window.api.devices();
 
-        timeout = setTimeout(async () => {
+    setTimeout(() => {
+        window.ws.events.addListener("open", async () => {
             await window.api.devices();
-
-            timeout = null;
         });
-    };
-    window.onfocus = () => onFocus();
-    onFocus();
+    });
 }
 
 function currentColorForDevice(device: Device): Color {
