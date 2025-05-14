@@ -27,15 +27,15 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 // Main, window
-                main: "./ui/pages/main.js",
+                main: "./script/pages/main.js",
 
                 // Layouts
-                "layout-base": "./ui/pages/layout-base.js",
+                "layout-base": "./script/pages/layout-base.js",
 
                 // Pages
-                "devices-address": "./ui/pages/devices/address/main.js",
-                devices: "./ui/pages/devices/main.js",
-                settings: "./ui/pages/settings/main.js",
+                "devices-address": "./script/pages/devices/address/main.js",
+                devices: "./script/pages/devices/main.js",
+                settings: "./script/pages/settings/main.js",
             },
             output: {
                 dir: "./public/js/",
