@@ -1,4 +1,10 @@
 window.addEventListener("pageshow", () => {
+    const wsOnClose = () => {
+        window.utils.setOnlineIndicatorState(false);
+    };
+
+    wsOnClose();
+
     // Starting the WebSocket handler
     window.ws.connect();
 
@@ -6,9 +12,7 @@ window.addEventListener("pageshow", () => {
         window.utils.setOnlineIndicatorState(true);
     });
 
-    window.ws.events.addListener("close", () => {
-        window.utils.setOnlineIndicatorState(false);
-    });
+    window.ws.events.addListener("close", wsOnClose);
 
     window.ws.events.addListener("message", async (data) => {
         switch (data.type) {
