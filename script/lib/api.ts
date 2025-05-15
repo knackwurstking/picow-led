@@ -16,11 +16,12 @@ export class Api {
             this.fetchError(url, err);
         }
 
-        if (data) {
-            window.store.set("devices", data);
+        if (!data) {
+            data = window.store.get("devices") || [];
         }
 
-        return data || window.store.get("devices") || [];
+        window.store.set("devices", data);
+        return data;
     }
 
     public async setDevicesColor(
@@ -62,11 +63,12 @@ export class Api {
             this.fetchError(url, err);
         }
 
-        if (data) {
-            window.store.set("colors", data);
+        if (!data) {
+            data = window.store.get("colors") || [];
         }
 
-        return data || window.store.get("colors") || [];
+        window.store.set("colors", data);
+        return data;
     }
 
     public async color(index: number): Promise<Color | null> {
@@ -86,13 +88,17 @@ export class Api {
             this.fetchError(url, err);
         }
 
+        if (!data) {
+            data = (window.store.get("colors") || [])[index] || null;
+        }
+
         if (data) {
             window.store.update("colors", (colors) => {
                 return colors.map((c, i) => (i === index ? data : c));
             });
         }
 
-        return data || (window.store.get("colors") || [])[index] || null;
+        return data;
     }
 
     public async setColor(index: number, color: Color): Promise<void> {
