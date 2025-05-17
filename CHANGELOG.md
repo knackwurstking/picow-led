@@ -1,6 +1,10 @@
 # PicoW LED Server
 
-## v0.11.1 - unreleased
+## v0.11.2 - 2025-09-17
+
+- ui: Add /ws to the service-worker blacklist
+
+## v0.11.1 - 2025-09-15
 
 **Fixed**:
 
