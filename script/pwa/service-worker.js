@@ -28,6 +28,7 @@ const cacheFiles = [
 
 // NOTE: This will be prefixed with ".*" and suffixed with "$"
 const blackList = [
+    "/ws",
     "/api/.*",
     "/screenshots/.*",
     "/service-worker.js",
