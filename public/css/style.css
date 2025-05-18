@@ -6,6 +6,23 @@ main {
     /*overscroll-behavior-y: none !important;*/
 }
 
+#notifications {
+    z-index: 999;
+    position: absolute;
+    bottom: var(--ui-spacing);
+    right: var(--ui-spacing);
+    width: fit-content;
+    max-width: calc(100% - var(--ui-spacing) * 2);
+    height: fit-content;
+    max-height: calc(100% - var(--ui-spacing) * 2);
+}
+
+#notifications > * {
+    width: fit-content;
+    height: fit-content;
+    padding: var(--ui-spacing);
+}
+
 .color-storage-item {
     outline: var(--ui-border-width) solid transparent;
     outline-offset: var(--ui-border-width);

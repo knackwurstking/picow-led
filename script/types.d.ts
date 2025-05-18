@@ -11,6 +11,7 @@ export declare global {
         setupAppBarItems: (...itemNames: AppBarItemName[]) => AppBarItems;
         setOnlineIndicatorState: (state: boolean) => void;
         registerServiceWorker: () => void;
+        notification: (msg: string, ...classNames: string[]) => Promise<void>;
     };
 
     declare type AppBarItemName =

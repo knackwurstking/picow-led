@@ -129,10 +129,15 @@ export class Api {
 
     private fetchError(url: string, err: any) {
         console.error(`fetch ${url}:`, err);
+        window.utils.notification(`fetch ${url}: ${err}`, "ui-destructive");
     }
 
     private fetchResponseError(url: string, err: any) {
         console.error(`Handle fetch response for ${url}:`, err);
+        window.utils.notification(
+            `Handle fetch response for ${url}: ${err}`,
+            "ui-destructive",
+        );
     }
 
     private getURL(path: string): string {

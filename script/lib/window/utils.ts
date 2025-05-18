@@ -3,6 +3,7 @@ export function create(): Utils {
         setupAppBarItems,
         setOnlineIndicatorState,
         registerServiceWorker,
+        notification,
     };
 }
 
@@ -63,6 +64,27 @@ function registerServiceWorker(): void {
             })
             .catch(function (err) {
                 console.error("Service worker registration failed:", err);
+                window.utils.notification(
+                    `Service worker registration failed: ${err}`,
+                    "ui-destructive",
+                );
             });
     });
+}
+
+async function notification(msg: string, ...classNames: string[]) {
+    const e = (
+        document
+            .querySelector<HTMLTemplateElement>(
+                `template[name="notification"]`,
+            )!
+            .content.cloneNode(true) as HTMLElement
+    ).querySelector("*")!;
+
+    if (classNames.length > 0) {
+        e.className += " " + classNames.join(" ");
+    }
+    e.innerHTML = msg;
+
+    document.querySelector(`#notifications`)!.appendChild(e);
 }

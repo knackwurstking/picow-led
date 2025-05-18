@@ -38,5 +38,19 @@
 
     <body data-ui-theme="dark">
         {{ block "layout" . }} {{ end }}
+
+        <div
+            id="notifications"
+            class="ui-flex column gap justify-end align-end ui-auto-scroll ui-hide-scrollbar"
+        >
+            <template name="notification">
+                <div
+                    class="notification ui-backdrop ui-border"
+                    onclick="this.parentElement.removeChild(this)"
+                >
+                    Info
+                </div>
+            </template>
+        </div>
     </body>
 </html>
