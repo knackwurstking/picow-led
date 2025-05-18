@@ -1,9 +1,7 @@
 import * as deviceItem from "./device-item";
 
-window.onpageshow = async () => {
-    setupAppBar();
-    setupDevicesList();
-};
+setupAppBar();
+setupDevicesList();
 
 async function setupAppBar() {
     const items = window.utils.setupAppBarItems(

@@ -1,41 +1,75 @@
 import * as colorStorageItem from "./color-storage-item.js";
 import * as colorRangeSlider from "./color-range-slider.js";
 
-window.onpageshow = async () => {
-    setupAppBar();
-    setupPower();
+const page = {
+    address(): string {
+        return decodeURIComponent(location.pathname.split("/").reverse()[0]);
+    },
 
-    // store: re-render each time if colors changes "colors"
-    window.store.listen("colors", async (data) => {
-        await setupColorStorage(data);
-    });
+    device(): Device {
+        const addr = this.address();
+        const device = window.store.device(addr);
+        if (!device) throw new Error(`device not found for ${addr}`);
+        return device;
+    },
 
-    let timeout: NodeJS.Timeout | null = null;
-    const onFocus = () => {
-        if (timeout !== null) {
-            clearTimeout(timeout);
-            timeout = null;
+    currentColor(): Color {
+        return (
+            window.store.currentDeviceColor(this.address()) ||
+            (this.device().pins || []).map(() => 255)
+        );
+    },
+
+    color(): Color {
+        // Get color from active item
+        const color = this.rgbActive().slice(0, 3);
+
+        // Get range slider values
+        color.push(...this.rangeSliderValues());
+
+        return color;
+    },
+
+    rgbActive(): number[] {
+        let color = [];
+        const activeItem = document.querySelector(`.color-storage-item.active`);
+        if (activeItem) {
+            color.push(
+                ...colorStorageItem.splitDataColor(
+                    activeItem.getAttribute("data-color")!,
+                ),
+            );
+        } else {
+            color = [255, 255, 255];
         }
+        return color;
+    },
 
-        timeout = setTimeout(async () => {
-            await window.api.colors();
-
-            timeout = null;
+    rangeSliderValues(): number[] {
+        return Array.from(
+            document.querySelectorAll<HTMLInputElement>(
+                `.range-sliders .color-range-slider input[type="range"]`,
+            ),
+        ).map((input) => {
+            return parseInt(input.value || "0", 10);
         });
-    };
-    window.onfocus = () => onFocus();
-    onFocus();
-
-    setupRangeSliders();
-
-    console.debug("device address:", page.device());
-    console.table({
-        activeColor: page.rgbActive(),
-        currentColor: page.currentColor(),
-        pickedColor: page.color(),
-        rangeSliderValues: page.rangeSliderValues(),
-    });
+    },
 };
+
+setupAppBar();
+setupPower();
+setupRangeSliders();
+
+// store: re-render each time if colors changes "colors"
+window.store.listen("colors", async (data) => {
+    await setupColorStorage(data);
+});
+
+setTimeout(() => {
+    window.ws.events.addListener("open", async () => {
+        await window.api.colors();
+    });
+});
 
 function setupAppBar(): void {
     const device = page.device();
@@ -176,58 +210,3 @@ async function setupRangeSliders(): Promise<void> {
         });
     }
 }
-
-const page = {
-    address(): string {
-        return decodeURIComponent(location.pathname.split("/").reverse()[0]);
-    },
-
-    device(): Device {
-        const addr = this.address();
-        const device = window.store.device(addr);
-        if (!device) throw new Error(`device not found for ${addr}`);
-        return device;
-    },
-
-    currentColor(): Color {
-        return (
-            window.store.currentDeviceColor(this.address()) ||
-            (this.device().pins || []).map(() => 255)
-        );
-    },
-
-    color(): Color {
-        // Get color from active item
-        const color = this.rgbActive().slice(0, 3);
-
-        // Get range slider values
-        color.push(...this.rangeSliderValues());
-
-        return color;
-    },
-
-    rgbActive(): number[] {
-        let color = [];
-        const activeItem = document.querySelector(`.color-storage-item.active`);
-        if (activeItem) {
-            color.push(
-                ...colorStorageItem.splitDataColor(
-                    activeItem.getAttribute("data-color")!,
-                ),
-            );
-        } else {
-            color = [255, 255, 255];
-        }
-        return color;
-    },
-
-    rangeSliderValues(): number[] {
-        return Array.from(
-            document.querySelectorAll<HTMLInputElement>(
-                `.range-sliders .color-range-slider input[type="range"]`,
-            ),
-        ).map((input) => {
-            return parseInt(input.value || "0", 10);
-        });
-    },
-};

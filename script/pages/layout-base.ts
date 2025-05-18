@@ -1,42 +1,34 @@
+let cleanup: import("ui").CleanUpFunction[] = [];
+
 window.addEventListener("pageshow", () => {
-    const wsOnClose = () => {
-        window.utils.setOnlineIndicatorState(false);
-    };
-
-    if (!window.ws.socket) wsOnClose();
-
     // Starting the WebSocket handler
     window.ws.connect();
 
-    window.ws.events.addListener("open", () => {
-        window.utils.setOnlineIndicatorState(true);
-    });
+    cleanup.push(
+        window.ws.events.addListener("open", () => {
+            window.utils.setOnlineIndicatorState(true);
+        }),
 
-    window.ws.events.addListener("close", wsOnClose);
+        window.ws.events.addListener("close", () => {
+            window.utils.setOnlineIndicatorState(false);
+        }),
 
-    window.ws.events.addListener("message", async (data) => {
-        switch (data.type) {
-            case "device":
-                await wsHandleDevice(data.data);
-                break;
-            case "colors":
-                await wsHandleColors(data.data);
-                break;
-        }
-    });
+        window.ws.events.addListener("message", async (data) => {
+            switch (data.type) {
+                case "device":
+                    await wsHandleDevice(data.data);
+                    break;
+                case "colors":
+                    await wsHandleColors(data.data);
+                    break;
+            }
+        }),
+    );
+});
 
-    let timeout: NodeJS.Timeout | null = null;
-    window.addEventListener("focus", () => {
-        if (timeout === null) {
-            timeout = setTimeout(async () => {
-                try {
-                    if (!window.ws.isOpen()) await window.ws.connect();
-                } finally {
-                    timeout = null;
-                }
-            });
-        }
-    });
+window.addEventListener("pagehide", () => {
+    cleanup.forEach((fn) => fn());
+    cleanup = [];
 });
 
 async function wsHandleDevice(data: Device): Promise<void> {
