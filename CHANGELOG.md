@@ -1,5 +1,9 @@
 # PicoW LED Server
 
+## v0.11.4 - 2025-09-19
+
+- ui: Fix online indicator state
+
 ## v0.11.3 - 2025-09-18
 
 - ui: Add notifications for error messages
