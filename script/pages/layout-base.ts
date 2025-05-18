@@ -3,7 +3,7 @@ window.addEventListener("pageshow", () => {
         window.utils.setOnlineIndicatorState(false);
     };
 
-    wsOnClose();
+    if (!window.ws.socket) wsOnClose();
 
     // Starting the WebSocket handler
     window.ws.connect();
