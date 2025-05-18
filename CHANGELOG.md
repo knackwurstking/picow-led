@@ -1,5 +1,9 @@
 # PicoW LED Server
 
+## v0.11.3 - 2025-09-18
+
+- ui: Add notifications for error messages
+
 ## v0.11.2 - 2025-09-17
 
 - ui: Add /ws to the service-worker blacklist
