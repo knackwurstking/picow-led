@@ -2,7 +2,7 @@
 
 ## v0.11.4 - 2025-09-19
 
-- ui: Fix online indicator state
+- ui: Use page show/hide events for scripts
 
 ## v0.11.3 - 2025-09-18
 
