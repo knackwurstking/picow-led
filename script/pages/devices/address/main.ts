@@ -1,6 +1,23 @@
 import * as colorStorageItem from "./color-storage-item.js";
 import * as colorRangeSlider from "./color-range-slider.js";
 
+window.addEventListener("load", () => {
+    setupAppBar();
+    setupPower();
+    setupRangeSliders();
+
+    // store: re-render each time if colors changes "colors"
+    window.store.listen("colors", async (data) => {
+        await setupColorStorage(data);
+    });
+
+    setTimeout(() => {
+        window.ws.events.addListener("open", async () => {
+            await window.api.colors();
+        });
+    });
+});
+
 const page = {
     address(): string {
         return decodeURIComponent(location.pathname.split("/").reverse()[0]);
@@ -55,21 +72,6 @@ const page = {
         });
     },
 };
-
-setupAppBar();
-setupPower();
-setupRangeSliders();
-
-// store: re-render each time if colors changes "colors"
-window.store.listen("colors", async (data) => {
-    await setupColorStorage(data);
-});
-
-setTimeout(() => {
-    window.ws.events.addListener("open", async () => {
-        await window.api.colors();
-    });
-});
 
 function setupAppBar(): void {
     const device = page.device();

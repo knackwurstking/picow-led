@@ -1,7 +1,9 @@
 import * as deviceItem from "./device-item";
 
-setupAppBar();
-setupDevicesList();
+window.addEventListener("load", () => {
+    setupAppBar();
+    setupDevicesList();
+});
 
 async function setupAppBar() {
     const items = window.utils.setupAppBarItems(
