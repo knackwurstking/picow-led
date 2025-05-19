@@ -1,6 +1,6 @@
-import { UIStore } from "../lib/store";
-import { Api } from "../lib/api";
-import * as utils from "../lib/window/utils";
+import { UIStore } from "./lib/store";
+import { Api } from "./lib/api";
+import * as utils from "./lib/window/utils";
 
 window.store = new UIStore();
 window.api = new Api();
