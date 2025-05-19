@@ -8,11 +8,11 @@ const cacheFiles = [
     process.env.SERVER_PATH_PREFIX + "/css/style.css",
     process.env.SERVER_PATH_PREFIX + "/css/ui-v4.2.0.css",
 
-    process.env.SERVER_PATH_PREFIX + "/js/devices.js",
-    process.env.SERVER_PATH_PREFIX + "/js/devices-address.js",
-    process.env.SERVER_PATH_PREFIX + "/js/layout-base.js",
+    process.env.SERVER_PATH_PREFIX + "/js/content/devices-address.js",
+    process.env.SERVER_PATH_PREFIX + "/js/content/devices.js",
+    process.env.SERVER_PATH_PREFIX + "/js/content/settings.js",
+    process.env.SERVER_PATH_PREFIX + "/js/layouts/base.js",
     process.env.SERVER_PATH_PREFIX + "/js/main.js",
-    process.env.SERVER_PATH_PREFIX + "/js/settings.js",
     process.env.SERVER_PATH_PREFIX + "/js/ui-v4.2.0.min.umd.cjs",
 
     process.env.SERVER_PATH_PREFIX + "/icons/apple-touch-icon-180x180.png",

@@ -2,6 +2,7 @@
 
 ## v0.11.4 - 2025-09-19
 
+- ui: restructor scripts and public/js
 - ui: Use page show/hide events for scripts
 
 ## v0.11.3 - 2025-09-18
