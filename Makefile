@@ -10,11 +10,9 @@ clean:
 
 init:
 	npm install
-	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.2.0.css
-	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.2.1-dev.css
+	cp ./node_modules/ui/dist/ui.css ./public/css/ui-v4.2.1.css
 	mkdir -p ./public/js
-	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/js/ui-v4.2.0.min.umd.cjs
-	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/js/ui-v4.2.1-dev.min.umd.cjs
+	cp ./node_modules/ui/dist/ui.min.umd.cjs ./public/js/ui-v4.2.1.min.umd.cjs
 	go mod tidy -v
 
 generate:
