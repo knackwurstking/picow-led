@@ -1,5 +1,9 @@
 # PicoW LED Server
 
+## v0.11.5 - 2025-09-20
+
+- upgrade ui to v4.2.1, ws fix
+
 ## v0.11.4 - 2025-09-19
 
 - ui: restructor scripts and public/js
