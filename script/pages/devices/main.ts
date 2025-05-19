@@ -1,8 +1,43 @@
 import * as deviceItem from "./device-item";
 
 window.addEventListener("load", () => {
-    setupAppBar();
-    setupDevicesList();
+    let cleanup: import("ui").CleanUpFunction[] = [];
+
+    window.addEventListener("pageshow", async () => {
+        setupAppBar();
+
+        cleanup.push(
+            window.store.listen("devices", (data) => {
+                const devices = data;
+                const devicesList = document.querySelector<HTMLElement>(
+                    "._content.devices > .list",
+                )!;
+                devicesList.innerHTML = "";
+
+                devices.forEach((device) => {
+                    const item = deviceItem.create(device, () => {
+                        powerButtonToggle(device);
+                    });
+
+                    devicesList.appendChild(item);
+                });
+            }),
+        );
+
+        await window.api.devices();
+        setTimeout(() => {
+            cleanup.push(
+                window.ws.events.addListener("open", async () => {
+                    await window.api.devices();
+                }),
+            );
+        });
+    });
+
+    window.addEventListener("pagehide", () => {
+        cleanup.forEach((fn) => fn());
+        cleanup = [];
+    });
 });
 
 async function setupAppBar() {
@@ -15,41 +50,15 @@ async function setupAppBar() {
     items["title"]!.innerText = "Devices";
 }
 
-async function setupDevicesList() {
-    const powerButtonToggle = async (device: Device) => {
-        let color: Color;
-        if (Math.max(...(device.color || [])) > 0) {
-            color = (device.pins || device.color || []).map(() => 0);
-        } else {
-            color = currentColorForDevice(device);
-        }
+async function powerButtonToggle(device: Device) {
+    let color: Color;
+    if (Math.max(...(device.color || [])) > 0) {
+        color = (device.pins || device.color || []).map(() => 0);
+    } else {
+        color = currentColorForDevice(device);
+    }
 
-        await window.api.setDevicesColor(color, device);
-    };
-
-    window.store.listen("devices", (data) => {
-        const devices = data;
-        const devicesList = document.querySelector<HTMLElement>(
-            "._content.devices > .list",
-        )!;
-        devicesList.innerHTML = "";
-
-        devices.forEach((device) => {
-            const item = deviceItem.create(device, () => {
-                powerButtonToggle(device);
-            });
-
-            devicesList.appendChild(item);
-        });
-    });
-
-    await window.api.devices();
-
-    setTimeout(() => {
-        window.ws.events.addListener("open", async () => {
-            await window.api.devices();
-        });
-    });
+    await window.api.setDevicesColor(color, device);
 }
 
 function currentColorForDevice(device: Device): Color {
