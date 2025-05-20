@@ -1,6 +1,6 @@
 import * as deviceItem from "./device-item";
 
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
     let cleanup: import("ui").CleanUpFunction[] = [];
 
     window.addEventListener("pageshow", async () => {

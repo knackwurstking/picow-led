@@ -1,7 +1,7 @@
 import * as colorStorageItem from "./color-storage-item.js";
 import * as colorRangeSlider from "./color-range-slider.js";
 
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
     let cleanup: import("ui").CleanUpFunction[] = [];
 
     window.addEventListener("pageshow", () => {
