@@ -8,7 +8,13 @@
     style="width: 100%"
     data-addr
 >
-    <h3 class="title ui-padding">{{ $device.Server.Addr }}</h3>
+    <h3 class="title ui-padding">
+        {{ if ne $device.Server.Name "" }}
+            {{ $device.Server.Name }}
+        {{ else }}
+            {{ $device.Server.Addr }}
+        {{ end }}
+    </h3>
 
     <span class="ui-flex-item ui-flex row gap" style="flex: 0">
         <span class="ui-flex-item" style="flex: 0">
@@ -33,7 +39,8 @@
                 style="width: 3rem; height: 3rem; overflow: visible"
                 data-ui-variant="ghost"
                 data-ui-icon
-                data-state
+                data-state="off"
+                data-addr="{{ $device.Server.Addr }}"
             >
                 <div
                     class="background"
