@@ -21,3 +21,16 @@ func (o *Options) Devices() Devices {
 		Global: g,
 	}
 }
+
+func (o *Options) PageControl(addr string) PageControl {
+	// TODO: Get device for this address
+	device :=
+
+	g := o.Global
+	g.SubTitle = addr // TODO: Set name if available
+
+	return PageControl{
+		Global: g,
+		Device: device,
+	}
+}

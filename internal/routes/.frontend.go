@@ -97,7 +97,6 @@ func (f *frontendTemplateData) Devices() []*api.Device {
 }
 
 func frontendRoutes(e *echo.Echo, o frontendOptions) {
-
 	e.GET(o.ServerPathPrefix+"/control", func(c echo.Context) error {
 		addr, err := url.QueryUnescape(c.QueryParam("addr"))
 		if err != nil {
