@@ -17,32 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     window.ws.events.addListener("message", async (data) => {
+        console.debug("ws: message...", data);
+
         switch (data.type) {
-            case "device":
-                await wsHandleDevice(data.data);
-                break;
             case "colors":
-                await wsHandleColors(data.data);
+                window.store.set("colors", data.data);
                 break;
         }
     });
 });
-
-async function wsHandleDevice(data: Device): Promise<void> {
-    window.store.update("devices", (devices) => {
-        // Update device in store
-        for (let x = 0; x < devices.length; x++) {
-            if (devices[x].server.addr !== data.server.addr) {
-                continue;
-            }
-
-            devices[x] = data;
-        }
-
-        return devices;
-    });
-}
-
-async function wsHandleColors(data: Colors): Promise<void> {
-    window.store.set("colors", data);
-}

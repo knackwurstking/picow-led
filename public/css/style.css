@@ -100,19 +100,19 @@ main {
     color: red;
 }
 
-.power-button {
+button.power {
     color: rgb(0, 0, 0) !important;
 }
 
-.power-button[data-state="on"] {
+button.power[data-state="on"] {
     color: rgb(0, 225, 0) !important;
 }
 
-.power-button[data-state="processing"] {
+button.power[data-state="processing"] {
     color: yellow !important;
 }
 
-.power-button[data-state="off"] {
+button.power[data-state="off"] {
     color: rgb(0, 0, 0) !important;
 }
 
