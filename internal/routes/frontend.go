@@ -33,6 +33,7 @@ type frontendOptions struct {
 
 func (f *frontendOptions) BasicPatterns() []string {
 	return []string{
+		"components/device-list-item.go.html",
 		"components/online-indicator.go.html",
 		"components/svg-power.go.html",
 	}
