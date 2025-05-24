@@ -1,4 +1,7 @@
 // API Routes:
+//
+// TODO: Remove route: "/api/ping"
+//
 //   - apiSetupPing: 	GET 	- "/api/ping"
 //   - apiSetupDevices: GET 	- "/api/devices?cache=true"
 //   - apiSetupDevices: POST 	- "/api/devices/color?force=true" <- { devices: Device[]; color: number[] }
@@ -97,7 +100,6 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 
 		return handle()
 	})
-
 }
 
 func apiSetupColor(e *echo.Echo, o apiOptions) {
