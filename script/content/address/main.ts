@@ -2,31 +2,18 @@ import * as colorStorageItem from "./color-storage-item.js";
 import * as colorRangeSlider from "./color-range-slider.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    let cleanup: import("ui").CleanUpFunction[] = [];
+    setupAppBar();
+    setupPower();
+    setupRangeSliders();
 
-    window.addEventListener("pageshow", () => {
-        setupAppBar();
-        setupPower();
-        setupRangeSliders();
-
-        cleanup.push(
-            window.store.listen("colors", async (data) => {
-                await setupColorStorage(data);
-            }),
-        );
-
-        setTimeout(() => {
-            cleanup.push(
-                window.ws.events.addListener("open", async () => {
-                    await window.api.colors();
-                }),
-            );
-        });
+    window.store.listen("colors", async (data) => {
+        await setupColorStorage(data);
     });
 
-    window.addEventListener("pagehide", () => {
-        cleanup.forEach((fn) => fn());
-        cleanup = [];
+    setTimeout(() => {
+        window.ws.events.addListener("open", async () => {
+            await window.api.colors();
+        });
     });
 });
 

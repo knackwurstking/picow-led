@@ -1,35 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
-    let cleanup: import("ui").CleanUpFunction[] = [];
+    // Starting the WebSocket handler
+    window.ws.connect();
 
-    window.addEventListener("pageshow", () => {
-        // Starting the WebSocket handler
-        window.ws.connect();
-
-        cleanup.push(
-            window.ws.events.addListener("open", () => {
-                window.utils.setOnlineIndicatorState(true);
-            }),
-
-            window.ws.events.addListener("close", () => {
-                window.utils.setOnlineIndicatorState(false);
-            }),
-
-            window.ws.events.addListener("message", async (data) => {
-                switch (data.type) {
-                    case "device":
-                        await wsHandleDevice(data.data);
-                        break;
-                    case "colors":
-                        await wsHandleColors(data.data);
-                        break;
-                }
-            }),
-        );
+    window.ws.events.addListener("open", () => {
+        console.debug("ws: open...");
+        window.utils.setOnlineIndicatorState(true);
     });
 
-    window.addEventListener("pagehide", () => {
-        cleanup.forEach((fn) => fn());
-        cleanup = [];
+    window.ws.events.addListener("close", () => {
+        console.debug("ws: close...");
+        window.utils.setOnlineIndicatorState(false);
+    });
+
+    window.ws.events.addListener("error", () => {
+        console.debug("ws: error...");
+    });
+
+    window.ws.events.addListener("message", async (data) => {
+        switch (data.type) {
+            case "device":
+                await wsHandleDevice(data.data);
+                break;
+            case "colors":
+                await wsHandleColors(data.data);
+                break;
+        }
     });
 });
 

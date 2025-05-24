@@ -1,42 +1,29 @@
 import * as deviceItem from "./device-item";
 
-document.addEventListener("DOMContentLoaded", () => {
-    let cleanup: import("ui").CleanUpFunction[] = [];
+document.addEventListener("DOMContentLoaded", async () => {
+    setupAppBar();
 
-    window.addEventListener("pageshow", async () => {
-        setupAppBar();
+    window.store.listen("devices", (data) => {
+        const devices = data;
+        const devicesList = document.querySelector<HTMLElement>(
+            "._content.devices > .list",
+        )!;
+        devicesList.innerHTML = "";
 
-        cleanup.push(
-            window.store.listen("devices", (data) => {
-                const devices = data;
-                const devicesList = document.querySelector<HTMLElement>(
-                    "._content.devices > .list",
-                )!;
-                devicesList.innerHTML = "";
+        devices.forEach((device) => {
+            const item = deviceItem.create(device, () => {
+                powerButtonToggle(device);
+            });
 
-                devices.forEach((device) => {
-                    const item = deviceItem.create(device, () => {
-                        powerButtonToggle(device);
-                    });
-
-                    devicesList.appendChild(item);
-                });
-            }),
-        );
-
-        await window.api.devices();
-        setTimeout(() => {
-            cleanup.push(
-                window.ws.events.addListener("open", async () => {
-                    await window.api.devices();
-                }),
-            );
+            devicesList.appendChild(item);
         });
     });
 
-    window.addEventListener("pagehide", () => {
-        cleanup.forEach((fn) => fn());
-        cleanup = [];
+    await window.api.devices();
+    setTimeout(() => {
+        window.ws.events.addListener("open", async () => {
+            await window.api.devices();
+        });
     });
 });
 
