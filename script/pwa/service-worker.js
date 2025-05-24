@@ -27,13 +27,7 @@ const cacheFiles = [
 ];
 
 // NOTE: This will be prefixed with ".*" and suffixed with "$"
-const blackList = [
-    "/ws",
-    "/api/.*",
-    "/screenshots/.*",
-    "/service-worker.js",
-    "/manifest.json",
-];
+const blackList = ["/screenshots/.*", "/service-worker.js", "/manifest.json"];
 
 self.addEventListener("activate", (evt) => {
     // @ts-expect-error
