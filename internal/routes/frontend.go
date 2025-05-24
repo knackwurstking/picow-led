@@ -40,7 +40,7 @@ func (f *frontendOptions) BasicPatterns() []string {
 }
 
 // serve template data
-func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string, data frontendTemplateData) error {
+func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string, data *frontendTemplateData) error {
 	t, err := template.ParseFS(f.Templates, pattern)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
@@ -58,7 +58,7 @@ func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string,
 }
 
 // servePage template data
-func (f *frontendOptions) servePage(c echo.Context, content content, data frontendTemplateData) error {
+func (f *frontendOptions) servePage(c echo.Context, content content, data *frontendTemplateData) error {
 	patterns := []string{
 		"main.go.html",         // There is only one page for now
 		"layouts/base.go.html", // There is also only on layout for now
@@ -88,13 +88,17 @@ type frontendTemplateData struct {
 	Title            string
 }
 
-func (ftd *frontendTemplateData) Devices() []*api.Device {
+func (f *frontendTemplateData) Array(v ...any) []any {
+	return v
+}
+
+func (f *frontendTemplateData) Devices() []*api.Device {
 	return cache.Devices()
 }
 
 func frontendRoutes(e *echo.Echo, o frontendOptions) {
 	e.GET(o.ServerPathPrefix+"/", func(c echo.Context) error {
-		err := o.servePage(c, contentDevices, frontendTemplateData{
+		err := o.servePage(c, contentDevices, &frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
 			Version:          o.Version,
 			Title:            "PicoW LED | Devices",
@@ -126,7 +130,7 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 			return c.String(http.StatusNotFound, msg)
 		}
 
-		return o.servePage(c, contentDevicesAddr, frontendTemplateData{
+		return o.servePage(c, contentDevicesAddr, &frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
 			Version:          o.Version,
 			Title:            fmt.Sprintf("PicoW LED | %s", addr),
@@ -134,7 +138,7 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 	})
 
 	e.GET(o.ServerPathPrefix+"/settings", func(c echo.Context) error {
-		return o.servePage(c, contentSettings, frontendTemplateData{
+		return o.servePage(c, contentSettings, &frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
 			Version:          o.Version,
 			Title:            "PicoW LED | Settings",
@@ -143,7 +147,7 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 
 	// PWA Stuff here
 	e.GET(o.ServerPathPrefix+"/manifest.json", func(c echo.Context) error {
-		return o.serve(c, "pwa/manifest.json", "application/json", frontendTemplateData{
+		return o.serve(c, "pwa/manifest.json", "application/json", &frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
 			Version:          o.Version,
 			Title:            "PicoW LED | Settings",
