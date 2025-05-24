@@ -1,6 +1,6 @@
 // Frontend Routes:
 //   - GET - "/"
-//   - GET - "/devices/:addr"
+//   - GET - "/control?addr=<string>"
 //   - GET - "/settings"
 //   - GET - "/manifest.json"
 package routes
@@ -97,20 +97,9 @@ func (f *frontendTemplateData) Devices() []*api.Device {
 }
 
 func frontendRoutes(e *echo.Echo, o frontendOptions) {
-	e.GET(o.ServerPathPrefix+"/", func(c echo.Context) error {
-		err := o.servePage(c, contentDevices, &frontendTemplateData{
-			ServerPathPrefix: o.ServerPathPrefix,
-			Version:          o.Version,
-			Title:            "PicoW LED | Devices",
-		})
-		if err != nil {
-			slog.Error(err.Error(), "path", c.Request().URL.Path)
-		}
-		return err
-	})
 
-	e.GET(o.ServerPathPrefix+"/devices/:addr", func(c echo.Context) error {
-		addr, err := url.QueryUnescape(c.Param("addr"))
+	e.GET(o.ServerPathPrefix+"/control", func(c echo.Context) error {
+		addr, err := url.QueryUnescape(c.QueryParam("addr"))
 		if err != nil {
 			slog.Warn("Query unescape", "error", err, "path", c.Request().URL.Path)
 			return c.String(http.StatusBadRequest, err.Error())
@@ -139,15 +128,6 @@ func frontendRoutes(e *echo.Echo, o frontendOptions) {
 
 	e.GET(o.ServerPathPrefix+"/settings", func(c echo.Context) error {
 		return o.servePage(c, contentSettings, &frontendTemplateData{
-			ServerPathPrefix: o.ServerPathPrefix,
-			Version:          o.Version,
-			Title:            "PicoW LED | Settings",
-		})
-	})
-
-	// PWA Stuff here
-	e.GET(o.ServerPathPrefix+"/manifest.json", func(c echo.Context) error {
-		return o.serve(c, "pwa/manifest.json", "application/json", &frontendTemplateData{
 			ServerPathPrefix: o.ServerPathPrefix,
 			Version:          o.Version,
 			Title:            "PicoW LED | Settings",

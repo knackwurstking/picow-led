@@ -30,7 +30,7 @@ async function setupPower() {
     powerOffBtn.onclick = async () => {
         window.api.setDevicesColor(
             page.currentColor().map(() => 0),
-            page.device(),
+            page.address(),
         );
     };
 
@@ -38,7 +38,7 @@ async function setupPower() {
         document.querySelector<HTMLButtonElement>(`.power button.on`)!;
 
     powerOnBtn.onclick = async () => {
-        window.api.setDevicesColor(page.currentColor(), page.device());
+        window.api.setDevicesColor(page.currentColor(), page.address());
     };
 }
 
@@ -162,18 +162,8 @@ const page = {
         return decodeURIComponent(location.pathname.split("/").reverse()[0]);
     },
 
-    device(): Device {
-        const addr = this.address();
-        const device = window.store.device(addr);
-        if (!device) throw new Error(`device not found for ${addr}`);
-        return device;
-    },
-
-    currentColor(): Color {
-        return (
-            window.store.currentDeviceColor(this.address()) ||
-            (this.device().pins || []).map(() => 255)
-        );
+    currentColor(): Color | null {
+        return window.store.currentDeviceColor(this.address());
     },
 
     color(): Color {

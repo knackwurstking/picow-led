@@ -103,8 +103,11 @@ func cliServerAction(addr *string) cli.ActionRunner {
 		// Echo: Static File Server
 		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(publicFS(), false))
 
-		// Api Configuration
-		slog.Info("Load API configuration", "path", apiConfigPath, "fallbackPath", apiConfigFallbackPath)
+		// Loat API Configuration
+		slog.Info("Load API configuration",
+			"path", apiConfigPath,
+			"fallbackPath", apiConfigFallbackPath)
+
 		apiConfig, err := api.GetConfig(
 			apiConfigPath, apiConfigFallbackPath,
 		)
@@ -113,12 +116,18 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			slog.Warn(err.Error())
 		}
 
-		routes.Create(e, routes.Options{
-			ServerPathPrefix: serverPathPrefix,
-			Version:          version,
-			Templates:        templatesFS(),
-			Config:           apiConfig,
-		})
+		// Register Routes
+		routesOptions := &routes.Options{
+			Global: routes.Global{
+				ServerPathPrefix: serverPathPrefix,
+				Version:          version,
+			},
+			Templates: templatesFS(),
+			Config:    apiConfig,
+		}
+
+		routes.RegisterPWA(e, routesOptions)
+		routes.RegisterFrontend(e, routesOptions)
 
 		return e.Start(*addr)
 	}
