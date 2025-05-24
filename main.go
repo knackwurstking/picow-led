@@ -125,10 +125,13 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			},
 			Templates: templatesFS(),
 			Config:    apiConfig,
+			WS:        api.NewWS(),
 		}
 
 		routes.RegisterPWA(e, routesOptions)
 		routes.RegisterFrontend(e, routesOptions)
+		routes.RegisterWS(e, routesOptions)
+		routes.RegisterAPI(e, routesOptions)
 
 		return e.Start(*addr)
 	}
