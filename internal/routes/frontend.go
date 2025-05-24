@@ -45,12 +45,7 @@ func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string,
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
-
-	t = t.Funcs(template.FuncMap{
-		"arr": func(els ...any) []any {
-			return els
-		},
-	})
+	t = f.createFuncMap(t)
 
 	c.Response().Header().Add("Content-Type", mimeType)
 	err = t.Execute(c.Response().Writer, data)
@@ -77,12 +72,7 @@ func (f *frontendOptions) servePage(c echo.Context, content content, data fronte
 		slog.Error("ParseFS (template) patterns", "error", err, "path", c.Request().URL.Path)
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
-
-	t = t.Funcs(template.FuncMap{
-		"arr": func(els ...any) []any {
-			return els
-		},
-	})
+	t = f.createFuncMap(t)
 
 	c.Response().Header().Add("Content-Type", "text/html; charset=utf-8")
 	err = t.Execute(c.Response().Writer, data)
@@ -92,6 +82,14 @@ func (f *frontendOptions) servePage(c echo.Context, content content, data fronte
 	}
 
 	return nil
+}
+
+func (f *frontendOptions) createFuncMap(t *template.Template) *template.Template {
+	return t.Funcs(template.FuncMap{
+		"arr": func(els ...any) []any {
+			return els
+		},
+	})
 }
 
 type frontendTemplateData struct {
