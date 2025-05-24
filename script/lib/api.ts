@@ -1,29 +1,4 @@
 export class Api {
-    public async devices(): Promise<Device[]> {
-        const url = this.getURL("/api/devices?cache=true");
-
-        let data: any;
-
-        try {
-            const resp = await fetch(url);
-
-            try {
-                data = await this.handleResponse(resp, url);
-            } catch (err) {
-                this.fetchResponseError(url, err);
-            }
-        } catch (err) {
-            this.fetchError(url, err);
-        }
-
-        if (!data) {
-            data = window.store.get("devices") || [];
-        }
-
-        window.store.set("devices", data);
-        return data;
-    }
-
     public async setDevicesColor(
         color?: Color | null,
         ...addr: string[]

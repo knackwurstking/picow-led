@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const color = JSON.parse(button.getAttribute("data-color")!);
             setPowerButtonState(button, color);
             setPowerButtonBackground(button, color);
+
+            storeCurrentDeviceColor(button.getAttribute("data-addr")!, color);
         }
 
         button.onclick = async () => {
@@ -60,6 +62,7 @@ function updatePowerButton(device: Device) {
 
     powerButtons.forEach((button) => {
         if (button.getAttribute("data-addr") !== device.server.addr) return;
+        storeCurrentDeviceColor(device.server.addr, device.color);
 
         button.setAttribute(`data-color`, JSON.stringify(device.color));
 
@@ -86,4 +89,14 @@ function setPowerButtonBackground(
 ) {
     button.querySelector<HTMLElement>(`.background`)!.style.backgroundColor =
         `rgb(${(color || [0, 0, 0]).slice(0, 3).join(", ")})`;
+}
+
+function storeCurrentDeviceColor(addr: string, color: number[] | null) {
+    if (!color || !(Math.max(...color) > 0)) return;
+
+    window.store.update("currentDeviceColors", (data) => {
+        data[addr] = color;
+
+        return data;
+    });
 }
