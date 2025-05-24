@@ -1,4 +1,7 @@
 {{ define "content" }}
+
+{{ $data := . }}
+
 <div
     class="_content devices ui-container ui-auto-scroll ui-hide-scrollbar"
     style="
@@ -7,8 +10,8 @@
     "
 >
     <span class="list ui-flex column gap align-center">
-        {{ range $device := .Devices }}
-            {{ template "device-list-item" (arr .ServerPathPrefix $device) }}
+        {{ range $device := $data.Devices }}
+            {{ template "device-list-item" ($data.Array $data.ServerPathPrefix $device) }}
         {{ end }}
     </span>
 </div>
