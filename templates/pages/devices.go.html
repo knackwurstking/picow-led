@@ -7,7 +7,7 @@
     "
 >
     <span class="list ui-flex column gap align-center">
-        {{ range $device := .Devices() }}
+        {{ range $device := .Devices }}
             {{ template "device-list-item" (arr .ServerPathPrefix $device) }}
         {{ end }}
     </span>
