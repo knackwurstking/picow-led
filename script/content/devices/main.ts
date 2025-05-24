@@ -1,10 +1,23 @@
 document.addEventListener("DOMContentLoaded", async () => {
     setupAppBar();
 
-    // TODO: Power Button:
-    //  - query all device list item power buttons,
-    //  - handle data-state
-    //  - power button onclick event
+    const deviceListItems = document.querySelectorAll<HTMLButtonElement>(
+        `.device-list-item button.power`,
+    );
+
+    deviceListItems.forEach(async (button) => {
+        const addr = button.getAttribute(`data-addr`)!;
+        const pins = JSON.parse(button.getAttribute(`data-pins`)!);
+        let color = JSON.parse(button.getAttribute("data-color")!);
+
+        if (color && Math.max(...color) > 0) {
+            color = (pins || []).map(() => 0);
+        } else {
+            color = currentColor(addr, pins || []);
+        }
+
+        await window.api.setDevicesColor(color, addr);
+    });
 });
 
 async function setupAppBar() {
@@ -17,20 +30,6 @@ async function setupAppBar() {
     items["title"]!.innerText = "Devices";
 }
 
-//async function powerButtonToggle(device: Device) {
-//    let color: Color;
-//    if (Math.max(...(device.color || [])) > 0) {
-//        color = (device.pins || device.color || []).map(() => 0);
-//    } else {
-//        color = currentColorForDevice(device);
-//    }
-//
-//    await window.api.setDevicesColor(color, device);
-//}
-
-//function currentColorForDevice(device: Device): Color {
-//    return (
-//        window.store.currentDeviceColor(device.server.addr) ||
-//        (device.pins || []).map(() => 255)
-//    );
-//}
+function currentColor(addr: string, pins: number[]): Color {
+    return window.store.currentDeviceColor(addr) || pins.map(() => 255);
+}

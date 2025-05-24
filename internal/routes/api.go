@@ -1,7 +1,7 @@
 // API Routes:
 //
 //   - apiSetupDevices: GET 	- "/api/devices?cache=true"
-//   - apiSetupDevices: POST 	- "/api/devices/color?force=true" <- { devices: Device[]; color: number[] }
+//   - apiSetupDevices: POST 	- "/api/devices/color" <- { addr: string[]; color: number[] }
 //   - apiSetupColors: 	GET 	- "/api/colors"
 //   - apiSetupColors: 	GET 	- "/api/colors/:index"
 //   - apiSetupColors 	POST 	- "/api/colors:index" <- `number[]`
@@ -48,8 +48,8 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 
 	e.POST(o.ServerPathPrefix+"/api/devices/color", func(c echo.Context) error {
 		var reqData struct {
-			Devices []*api.Device  `json:"devices"`
-			Color   api.MicroColor `json:"color"`
+			Addr  []string       `json:"addr"`
+			Color api.MicroColor `json:"color"`
 		}
 		err := json.NewDecoder(c.Request().Body).Decode(&reqData)
 		if err != nil {
@@ -57,38 +57,21 @@ func apiSetupDevices(e *echo.Echo, o apiOptions) {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		handle := func() error {
-			reqData.Devices = api.SetColor(reqData.Color, reqData.Devices...)
+		devices := []*api.Device{}
 
-			for i, d := range reqData.Devices {
-				d, err := cache.UpdateDevice(d.Server.Addr, d)
-				if err != nil {
-					slog.Warn("Update cached device", "error", err, "path", c.Request().URL.Path)
-					return c.String(http.StatusNotFound, err.Error())
-				}
+		for _, a := range reqData.Addr {
+			devices = append(devices, cache.Device(a))
+		}
 
-				reqData.Devices[i] = d
-			}
-
-			if c.QueryParam("force") == "true" {
-				return nil
-			}
-
-			err = c.JSON(http.StatusOK, reqData.Devices)
+		for _, d := range api.SetColor(reqData.Color, devices...) {
+			_, err := cache.UpdateDevice(d.Server.Addr, d)
 			if err != nil {
-				slog.Warn("Parse JSON", "error", err, "path", c.Request().URL.Path)
-				return c.String(http.StatusInternalServerError, err.Error())
+				slog.Warn("Update cached device", "error", err, "path", c.Request().URL.Path)
+				return c.String(http.StatusNotFound, err.Error())
 			}
-
-			return nil
 		}
 
-		if c.QueryParam("force") == "true" {
-			go handle()
-			return nil
-		}
-
-		return handle()
+		return nil
 	})
 }
 

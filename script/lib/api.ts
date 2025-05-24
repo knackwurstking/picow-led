@@ -26,9 +26,9 @@ export class Api {
 
     public async setDevicesColor(
         color?: Color | null,
-        ...devices: Device[]
+        ...addr: string[]
     ): Promise<void> {
-        const url = this.getURL("/api/devices/color?force=true");
+        const url = this.getURL("/api/devices/color");
 
         try {
             await fetch(url, {
@@ -37,7 +37,7 @@ export class Api {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    devices,
+                    addr,
                     color: color || [255, 255, 255, 255],
                 }),
             });

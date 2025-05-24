@@ -48,6 +48,19 @@ func (c *Cache) Devices() []*api.Device {
 	return c.devices
 }
 
+func (c *Cache) Device(addr string) *api.Device {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	for _, d := range c.devices {
+		if d.Server.Addr == addr {
+			return d
+		}
+	}
+
+	return nil
+}
+
 func (c *Cache) SetDevices(devices ...*api.Device) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
