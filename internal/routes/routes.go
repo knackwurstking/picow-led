@@ -1,3 +1,4 @@
+// TODO: Clean up this mess, see pg-vis (branch: dev/server) project
 package routes
 
 import (
