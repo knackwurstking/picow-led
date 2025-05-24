@@ -13,6 +13,7 @@ type Options struct {
 
 func (o *Options) Devices() Devices {
 	g := o.Global
+	g.SubTitle = "Devices"
 
 	return Devices{
 		Global: g,

@@ -121,6 +121,7 @@ func cliServerAction(addr *string) cli.ActionRunner {
 			Global: routes.Global{
 				ServerPathPrefix: serverPathPrefix,
 				Version:          version,
+				Title:            "PicoW LED",
 			},
 			Templates: templatesFS(),
 			Config:    apiConfig,
