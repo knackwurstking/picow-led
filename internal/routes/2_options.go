@@ -2,13 +2,13 @@ package routes
 
 import (
 	"io/fs"
-	"picow-led/internal/api"
+	"picow-led/internal/types"
 )
 
 type Options struct {
 	Global
 	Templates fs.FS
-	Config    *api.Config
+	Config    *types.APIConfig
 }
 
 func (o *Options) Devices() Devices {

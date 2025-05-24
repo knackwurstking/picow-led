@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"picow-led/internal/api"
+	"picow-led/internal/types"
 	"slices"
 	"sync"
 )
@@ -10,8 +11,8 @@ import (
 var cache *Cache
 
 type Cache struct {
-	devices []*api.Device
-	colors  []api.MicroColor
+	devices []*types.Device
+	colors  []types.MicroColor
 
 	mutex *sync.Mutex
 	ws    *api.WS
@@ -19,8 +20,8 @@ type Cache struct {
 
 func NewCache(ws *api.WS) *Cache {
 	return &Cache{
-		devices: make([]*api.Device, 0),
-		colors: []api.MicroColor{
+		devices: make([]*types.Device, 0),
+		colors: []types.MicroColor{
 			{255, 255, 255, 255},
 			{255, 0, 0, 0},
 			{0, 255, 0, 0},
@@ -41,14 +42,14 @@ func (c *Cache) Close() {
 	}
 }
 
-func (c *Cache) Devices() []*api.Device {
+func (c *Cache) Devices() []*types.Device {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	return c.devices
 }
 
-func (c *Cache) Device(addr string) *api.Device {
+func (c *Cache) Device(addr string) *types.Device {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -61,14 +62,14 @@ func (c *Cache) Device(addr string) *api.Device {
 	return nil
 }
 
-func (c *Cache) SetDevices(devices ...*api.Device) {
+func (c *Cache) SetDevices(devices ...*types.Device) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	c.devices = devices
 }
 
-func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, error) {
+func (c *Cache) UpdateDevice(addr string, device *types.Device) (*types.Device, error) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -92,14 +93,14 @@ func (c *Cache) UpdateDevice(addr string, device *api.Device) (*api.Device, erro
 	return nil, fmt.Errorf("device \"%s\" not found", addr)
 }
 
-func (c *Cache) Colors() []api.MicroColor {
+func (c *Cache) Colors() []types.MicroColor {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	return c.colors
 }
 
-func (c *Cache) UpdateColor(index int, color api.MicroColor) error {
+func (c *Cache) UpdateColor(index int, color types.MicroColor) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
