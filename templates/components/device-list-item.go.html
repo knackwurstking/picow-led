@@ -42,6 +42,8 @@
                 data-ui-icon
                 data-state="off"
                 data-addr="{{ $device.Server.Addr }}"
+                data-pins="{{ $device.Pins.ToJSON }}"
+                data-color="{{ $device.Color.ToJSON }}"
             >
                 <div
                     class="background"

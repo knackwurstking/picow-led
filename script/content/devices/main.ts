@@ -5,18 +5,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         `.device-list-item button.power`,
     );
 
-    deviceListItems.forEach(async (button) => {
-        const addr = button.getAttribute(`data-addr`)!;
-        const pins = JSON.parse(button.getAttribute(`data-pins`)!);
-        let color = JSON.parse(button.getAttribute("data-color")!);
+    deviceListItems.forEach((button) => {
+        button.onclick = async () => {
+            const addr = button.getAttribute(`data-addr`)!;
+            const pins = JSON.parse(button.getAttribute(`data-pins`)!);
+            let color = JSON.parse(button.getAttribute("data-color")!);
 
-        if (color && Math.max(...color) > 0) {
-            color = (pins || []).map(() => 0);
-        } else {
-            color = currentColor(addr, pins || []);
-        }
+            if (color && Math.max(...color) > 0) {
+                color = (pins || []).map(() => 0);
+            } else {
+                color = currentColor(addr, pins || []);
+            }
 
-        await window.api.setDevicesColor(color, addr);
+            await window.api.setDevicesColor(color, addr);
+        };
     });
 });
 

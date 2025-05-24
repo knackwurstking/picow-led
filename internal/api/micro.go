@@ -226,8 +226,6 @@ func (mr *MicroRequest) SetPins(d *Device, p MicroPins) error {
 }
 
 type (
-	MicroPins      []uint
-	MicroColor     []uint
 	MicroTemp      int
 	MicroDiskUsage struct {
 		Used int `json:"used"`
@@ -235,6 +233,20 @@ type (
 	}
 	MicroVersion string
 )
+
+type MicroColor []uint
+
+func (mc MicroColor) ToJSON() string {
+	d, _ := json.Marshal(mc)
+	return string(d)
+}
+
+type MicroPins []uint
+
+func (mp MicroPins) ToJSON() string {
+	d, _ := json.Marshal(mp)
+	return string(d)
+}
 
 type MicroSocket struct {
 	socket net.Conn
