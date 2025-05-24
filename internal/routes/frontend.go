@@ -45,6 +45,12 @@ func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string,
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
+	t.Funcs(template.FuncMap{
+		"arr": func(els ...any) []any {
+			return els
+		},
+	})
+
 	c.Response().Header().Add("Content-Type", mimeType)
 	err = t.Execute(c.Response().Writer, data)
 	if err != nil {
@@ -71,6 +77,12 @@ func (f *frontendOptions) servePage(c echo.Context, content content, data fronte
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
+	t.Funcs(template.FuncMap{
+		"arr": func(els ...any) []any {
+			return els
+		},
+	})
+
 	c.Response().Header().Add("Content-Type", "text/html; charset=utf-8")
 	err = t.Execute(c.Response().Writer, data)
 	if err != nil {
@@ -85,6 +97,10 @@ type frontendTemplateData struct {
 	ServerPathPrefix string
 	Version          string
 	Title            string
+}
+
+func (ftd *frontendTemplateData) Devices() []*api.Device {
+	return cache.Devices()
 }
 
 func frontendRoutes(e *echo.Echo, o frontendOptions) {
