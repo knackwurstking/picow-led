@@ -4,18 +4,15 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"picow-led/internal/types"
 	"sync"
 
 	"gopkg.in/yaml.v3"
 )
 
-type Config struct {
-	Devices []*Device `json:"devices,omitempty" yaml:"devices,omitempty"`
-}
-
-func GetConfig(paths ...string) (*Config, error) {
-	o := &Config{
-		Devices: []*Device{},
+func GetConfig(paths ...string) (*types.APIConfig, error) {
+	o := &types.APIConfig{
+		Devices: []*types.Device{},
 	}
 
 	defer func() {

@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"log/slog"
+	"picow-led/internal/types"
 	"slices"
 	"sync"
 
@@ -134,7 +135,7 @@ func (ws *WS) Broadcast(t BroadcastType, v any) {
 //	}
 //}
 
-func (ws *WS) BroadcastDevice(d *Device) {
+func (ws *WS) BroadcastDevice(d *types.Device) {
 	if !ws.running {
 		return
 	}
@@ -145,7 +146,7 @@ func (ws *WS) BroadcastDevice(d *Device) {
 	}
 }
 
-func (ws *WS) BroadcastColors(c []MicroColor) {
+func (ws *WS) BroadcastColors(c []types.MicroColor) {
 	if !ws.running {
 		return
 	}

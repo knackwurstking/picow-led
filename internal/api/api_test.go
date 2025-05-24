@@ -1,20 +1,21 @@
 package api
 
 import (
+	"picow-led/internal/types"
 	"testing"
 )
 
 func TestMicroRequestError_InvalidCommand(t *testing.T) {
 	apiConfig, _ := GetConfig(".api.yaml")
-	devices := []*Device{}
+	devices := []*types.Device{}
 	for _, d := range apiConfig.Devices {
 		devices = append(devices, d)
 	}
 
-	r := &MicroRequest{
-		ID:      MicroIDDefault,
-		Type:    MicroTypeGET,
-		Group:   MicroGroupConfig,
+	r := &types.MicroRequest{
+		ID:      types.MicroIDDefault,
+		Type:    types.MicroTypeGET,
+		Group:   types.MicroGroupConfig,
 		Command: "not-existing-command",
 	}
 
@@ -24,7 +25,7 @@ func TestMicroRequestError_InvalidCommand(t *testing.T) {
 			continue
 		}
 
-		_, err = ParseMicroResponse[any](respData)
+		_, err = types.ParseMicroResponse[any](respData)
 		if err == nil {
 			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", d)
 		} else {
@@ -35,14 +36,14 @@ func TestMicroRequestError_InvalidCommand(t *testing.T) {
 
 func TestMicroRequestError_InvalidGroup(t *testing.T) {
 	apiConfig, _ := GetConfig(".api.yaml")
-	devices := []*Device{}
+	devices := []*types.Device{}
 	for _, d := range apiConfig.Devices {
 		devices = append(devices, d)
 	}
 
-	r := &MicroRequest{
-		ID:      MicroIDDefault,
-		Type:    MicroTypeGET,
+	r := &types.MicroRequest{
+		ID:      types.MicroIDDefault,
+		Type:    types.MicroTypeGET,
 		Group:   "wrong-group",
 		Command: "not-existing-command",
 	}
@@ -53,7 +54,7 @@ func TestMicroRequestError_InvalidGroup(t *testing.T) {
 			continue
 		}
 
-		_, err = ParseMicroResponse[any](respData)
+		_, err = types.ParseMicroResponse[any](respData)
 		if err == nil {
 			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", d)
 		} else {
@@ -64,13 +65,13 @@ func TestMicroRequestError_InvalidGroup(t *testing.T) {
 
 func TestMicroRequestError_InvalidType(t *testing.T) {
 	apiConfig, _ := GetConfig(".api.yaml")
-	devices := []*Device{}
+	devices := []*types.Device{}
 	for _, d := range apiConfig.Devices {
 		devices = append(devices, d)
 	}
 
-	r := &MicroRequest{
-		ID:      MicroIDDefault,
+	r := &types.MicroRequest{
+		ID:      types.MicroIDDefault,
 		Type:    "wrong-type",
 		Group:   "wrong-group",
 		Command: "not-existing-command",
@@ -82,7 +83,7 @@ func TestMicroRequestError_InvalidType(t *testing.T) {
 			continue
 		}
 
-		_, err = ParseMicroResponse[any](respData)
+		_, err = types.ParseMicroResponse[any](respData)
 		if err == nil {
 			t.Errorf("Error expected, because the command does not exists, but go nothing. server=%+v", d)
 		} else {
