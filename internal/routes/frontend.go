@@ -46,7 +46,7 @@ func (f *frontendOptions) serve(c echo.Context, pattern string, mimeType string,
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	t.Funcs(template.FuncMap{
+	t = t.Funcs(template.FuncMap{
 		"arr": func(els ...any) []any {
 			return els
 		},
@@ -78,7 +78,7 @@ func (f *frontendOptions) servePage(c echo.Context, content content, data fronte
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	t.Funcs(template.FuncMap{
+	t = t.Funcs(template.FuncMap{
 		"arr": func(els ...any) []any {
 			return els
 		},
