@@ -18,7 +18,7 @@ import (
 
 var (
 	serverPathPrefix      = os.Getenv("SERVER_PATH_PREFIX")
-	version               = "v0.11.5"
+	version               = "v0.11.6"
 	apiConfigPath         = "api.yaml"
 	apiConfigFallbackPath = ""
 )

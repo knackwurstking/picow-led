@@ -1,5 +1,11 @@
 # PicoW LED Server
 
+## v0.11.6 - unreleased
+
+- removed pageshow and pagehide event handlers
+- removed /ws and /api from the service worker blacklist
+- removed route /api/ping
+
 ## v0.11.5 - 2025-09-20
 
 - upgrade ui to v4.2.1, ws fix
