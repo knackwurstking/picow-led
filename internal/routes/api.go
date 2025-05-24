@@ -1,8 +1,5 @@
 // API Routes:
 //
-// TODO: Remove route: "/api/ping"
-//
-//   - apiSetupPing: 	GET 	- "/api/ping"
 //   - apiSetupDevices: GET 	- "/api/devices?cache=true"
 //   - apiSetupDevices: POST 	- "/api/devices/color?force=true" <- { devices: Device[]; color: number[] }
 //   - apiSetupColors: 	GET 	- "/api/colors"
@@ -28,15 +25,8 @@ type apiOptions struct {
 }
 
 func apiRoutes(e *echo.Echo, o apiOptions) {
-	apiSetupPing(e, o)
 	apiSetupDevices(e, o)
 	apiSetupColor(e, o)
-}
-
-func apiSetupPing(e *echo.Echo, o apiOptions) {
-	e.GET(o.ServerPathPrefix+"/api/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
 }
 
 func apiSetupDevices(e *echo.Echo, o apiOptions) {
