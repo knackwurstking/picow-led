@@ -83,20 +83,20 @@ func (h *APIHandler) GetColors(c echo.Context) error {
 	return c.JSON(http.StatusOK, colors)
 }
 
-func (h *APIHandler) PutColors(c echo.Context) error {
-	// TODO: ...
-
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
-}
-
 func (h *APIHandler) PostColors(c echo.Context) error {
 	// TODO: Read body data, and add all colors to the database
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) GetColorsIndex(c echo.Context) error {
+func (h *APIHandler) PutColors(c echo.Context) error {
 	// TODO: Read body data, and replace all colors inside the database
+
+	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+}
+
+func (h *APIHandler) GetColorsIndex(c echo.Context) error {
+	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
