@@ -16,36 +16,22 @@ func Register(e *echo.Echo, o *Options) {
 
 	apiGroup := e.Group(o.ServerPathPrefix + "/api")
 
-	apiGroup.GET(o.ServerPathPrefix+"/api/devices", apiHandler.GetDevices)
+	apiGroup.GET("/devices", apiHandler.GetDevices)
 
-	apiGroup.GET(o.ServerPathPrefix+"/api/devices/:addr",
-		apiHandler.GetDevicesAddr)
+	apiGroup.GET("/devices/:addr", apiHandler.GetDevicesAddr)
+	apiGroup.GET("/devices/:addr/name", apiHandler.GetDevicesAddrName)
+	apiGroup.GET("/devices/:addr/active_color", apiHandler.GetDevicesAddrColor)
+	apiGroup.GET("/devices/:addr/color", apiHandler.GetDevicesAddrColor)
+	apiGroup.GET("/devices/:addr/pins", apiHandler.GetDevicesAddrPins)
 
-	apiGroup.GET(o.ServerPathPrefix+"/api/devices/:addr/name",
-		apiHandler.GetDevicesAddrName)
+	apiGroup.GET("/devices/:addr/power", apiHandler.GetDevicesAddrPower)
+	apiGroup.POST("/devices/:addr/power", apiHandler.PostDevicesAddrPower)
 
-	apiGroup.GET(o.ServerPathPrefix+"/api/devices/:addr/active_color",
-		apiHandler.GetDevicesAddrColor)
+	apiGroup.GET("/colors", apiHandler.GetColors)
+	apiGroup.POST("/colors", apiHandler.PostColors)
+	apiGroup.PUT("/colors", apiHandler.PutColors)
 
-	apiGroup.GET(o.ServerPathPrefix+"/api/devices/:addr/color",
-		apiHandler.GetDevicesAddrColor)
-
-	apiGroup.GET(o.ServerPathPrefix+"/api/devices/:addr/pins",
-		apiHandler.GetDevicesAddrPins)
-
-	apiGroup.GET(o.ServerPathPrefix+"/api/devices/:addr/power",
-		apiHandler.GetDevicesAddrPower)
-	apiGroup.POST(o.ServerPathPrefix+"/api/devices/:addr/power",
-		apiHandler.PostDevicesAddrPower)
-
-	apiGroup.GET(o.ServerPathPrefix+"/api/colors", apiHandler.GetColors)
-	apiGroup.POST(o.ServerPathPrefix+"/api/colors", apiHandler.PostColors)
-	apiGroup.PUT(o.ServerPathPrefix+"/api/colors", apiHandler.PutColors)
-
-	apiGroup.GET(o.ServerPathPrefix+"/api/colors/:index",
-		apiHandler.GetColorsIndex)
-	apiGroup.PUT(o.ServerPathPrefix+"/api/colors/:index",
-		apiHandler.PutColorsIndex)
-	apiGroup.DELETE(o.ServerPathPrefix+"/api/colors/:index",
-		apiHandler.DeleteColorsIndex)
+	apiGroup.GET("/colors/:index", apiHandler.GetColorsIndex)
+	apiGroup.PUT("/colors/:index", apiHandler.PutColorsIndex)
+	apiGroup.DELETE("/colors/:index", apiHandler.DeleteColorsIndex)
 }
