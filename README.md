@@ -19,6 +19,14 @@
     - [_/api/colors/:index_ **DELETE**](#apicolorsindex-delete)
 <!--toc:end-->
 
+## Error Response
+
+```json
+{
+    "message": "error message"
+}
+```
+
 ## Routes
 
 ### _/api/devices_ **GET**
@@ -40,7 +48,7 @@ Response:
         "pins": [0, 1, 2, 3],
         "active_color": [255, 255, 255, 255],
         "power": 0,
-        
+
     }
 ]
 ```
