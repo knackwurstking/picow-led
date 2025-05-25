@@ -1,7 +1,9 @@
 package routes
 
 import (
+	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 	"picow-led/internal/database"
 
@@ -79,20 +81,45 @@ func (h *APIHandler) PostDevicesAddrPower(c echo.Context) error {
 }
 
 func (h *APIHandler) GetColors(c echo.Context) error {
-	colors := h.db.Colors.List()
+	colors, err := h.db.Colors.List()
+	if err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
 	return c.JSON(http.StatusOK, colors)
 }
 
 func (h *APIHandler) PostColors(c echo.Context) error {
-	// TODO: Read body data, and add all colors to the database
+	colors := []database.Color{}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	var data []database.Color
+	err := json.NewDecoder(c.Request().Body).Decode(&data)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	err = h.db.Colors.Add(colors...)
+	if err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
+
+	return nil
 }
 
 func (h *APIHandler) PutColors(c echo.Context) error {
-	// TODO: Read body data, and replace all colors inside the database
+	colors := []database.Color{}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	var data []database.Color
+	err := json.NewDecoder(c.Request().Body).Decode(&data)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	err = h.db.Colors.Set(colors...)
+	if err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
+
+	return nil
 }
 
 func (h *APIHandler) GetColorsIndex(c echo.Context) error {
@@ -114,5 +141,6 @@ func (h *APIHandler) DeleteColorsIndex(c echo.Context) error {
 }
 
 func (h *APIHandler) error(c echo.Context, code int, err error) error {
+	slog.Error(err.Error())
 	return c.JSON(code, NewErrorResponse(err))
 }
