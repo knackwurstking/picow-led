@@ -7,6 +7,7 @@ type Colors struct {
 }
 
 func NewColors(db *sql.DB) (*Colors, error) {
+	// TODO: Insert default (colors) data (only if not exists)
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS colors (
 		);
