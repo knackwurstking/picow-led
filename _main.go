@@ -1,9 +1,12 @@
 package main
 
 import (
+	"embed"
+	"io/fs"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"picow-led/internal/api"
 	"picow-led/internal/routes"
 	"time"
 
@@ -15,8 +18,7 @@ import (
 
 var (
 	serverPathPrefix      = os.Getenv("SERVER_PATH_PREFIX")
-	serverAddress         = os.Getenv("SERVER_ADDR")
-	version               = "v0.1.0"
+	version               = "v0.11.6"
 	apiConfigPath         = "api.yaml"
 	apiConfigFallbackPath = ""
 )
@@ -25,6 +27,30 @@ func init() {
 	if d, err := os.UserConfigDir(); err == nil {
 		apiConfigFallbackPath = filepath.Join(d, "picow-led", "api.yaml")
 	}
+}
+
+//go:embed templates
+var templates embed.FS
+
+//go:embed public
+var public embed.FS
+
+func templatesFS() fs.FS {
+	fs, err := fs.Sub(templates, "templates")
+	if err != nil {
+		panic(err)
+	}
+
+	return fs
+}
+
+func publicFS() fs.FS {
+	fs, err := fs.Sub(public, "public")
+	if err != nil {
+		panic(err)
+	}
+
+	return fs
 }
 
 func main() {
@@ -42,9 +68,9 @@ func main() {
 						cli.Usage("Set server address (<host>:<port>)"),
 					)
 
-					*addr = serverAddress
+					*addr = os.Getenv("SERVER_ADDR")
 
-					return cliAction_Server(addr)
+					return cliServerAction(addr)
 				}),
 			},
 		},
@@ -57,11 +83,10 @@ func main() {
 	app.HandleError(app.Run())
 }
 
-func cliAction_Server(addr *string) cli.ActionRunner {
+func cliServerAction(addr *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		e := echo.New()
 
-		// Logger setup
 		logger := slog.New(tint.NewHandler(os.Stderr, &tint.Options{
 			Level:      slog.LevelDebug,
 			TimeFormat: time.DateTime,
@@ -69,27 +94,44 @@ func cliAction_Server(addr *string) cli.ActionRunner {
 		}))
 		slog.SetDefault(logger)
 
-		// Middleware
+		// Echo: Middleware
 		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 			Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
 			Output: os.Stderr,
 		}))
 
-		// Load API Configuration
-		//slog.Info("Load API configuration",
-		//	"path", apiConfigPath,
-		//	"fallbackPath", apiConfigFallbackPath)
+		// Echo: Static File Server
+		e.GET(serverPathPrefix+"/*", echo.StaticDirectoryHandler(publicFS(), false))
 
-		//apiConfig, err := api.GetConfig(
-		//	apiConfigPath, apiConfigFallbackPath,
-		//)
-		//if err != nil {
-		//	slog.Warn("Read API configuration failed!")
-		//	slog.Warn(err.Error())
-		//}
+		// Loat API Configuration
+		slog.Info("Load API configuration",
+			"path", apiConfigPath,
+			"fallbackPath", apiConfigFallbackPath)
 
-		// Register routes
-		routes.Register(e)
+		apiConfig, err := api.GetConfig(
+			apiConfigPath, apiConfigFallbackPath,
+		)
+		if err != nil {
+			slog.Warn("Read API configuration failed!")
+			slog.Warn(err.Error())
+		}
+
+		// Register Routes
+		routesOptions := &routes.Options{
+			Global: routes.Global{
+				ServerPathPrefix: serverPathPrefix,
+				Version:          version,
+				Title:            "PicoW LED",
+			},
+			Templates: templatesFS(),
+			Config:    apiConfig,
+			WS:        api.NewWS(),
+		}
+
+		routes.RegisterPWA(e, routesOptions)
+		routes.RegisterFrontend(e, routesOptions)
+		routes.RegisterWS(e, routesOptions)
+		routes.RegisterAPI(e, routesOptions)
 
 		return e.Start(*addr)
 	}
