@@ -75,6 +75,14 @@ func (c *Colors) List() []Color {
 	return colors
 }
 
+func (c *Colors) Set(colors ...Color) {
+	// TODO: ...
+}
+
+func (c *Colors) Add(colors ...Color) {
+	// TODO: ...
+}
+
 func (c *Colors) Close() {
 	c.db.Close()
 }
