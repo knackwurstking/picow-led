@@ -7,7 +7,7 @@ import (
 )
 
 type Color struct {
-	ID int   `json:"id"`
+	ID int   `json:"id,omitempty"`
 	R  uint8 `json:"r"`
 	G  uint8 `json:"g"`
 	B  uint8 `json:"b"`
@@ -55,32 +55,36 @@ func NewColors(db *sql.DB) (*Colors, error) {
 	}, nil
 }
 
-func (c *Colors) List() []Color {
+func (c *Colors) List() ([]Color, error) {
 	colors := []Color{}
 
 	r, err := c.db.Query(`SELECT id, r, g, b FROM colors`)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	var color Color
 	for r.Next() {
 		err = r.Scan(&color.ID, &color.R, &color.G, &color.B)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		colors = append(colors, color)
 	}
 
-	return colors
+	return colors, nil
 }
 
-func (c *Colors) Set(colors ...Color) {
+func (c *Colors) Set(colors ...Color) error {
 	// TODO: ...
+
+	return nil
 }
 
-func (c *Colors) Add(colors ...Color) {
+func (c *Colors) Add(colors ...Color) error {
 	// TODO: ...
+
+	return nil
 }
 
 func (c *Colors) Close() {
