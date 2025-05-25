@@ -183,6 +183,8 @@ Response:
 
 ### **PUT** _/api/colors_
 
+This will replace all data
+
 Request:
 
 ```bash
@@ -192,6 +194,8 @@ curl -X PUT http://localhost:50835/api/colors \
 ```
 
 ### **POST** _/api/colors_
+
+This will append all data
 
 Request:
 
