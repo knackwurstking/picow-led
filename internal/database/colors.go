@@ -76,13 +76,13 @@ func (c *Colors) List() ([]Color, error) {
 }
 
 func (c *Colors) Set(colors ...Color) error {
-	// TODO: ...
+	// TODO: Reqlace all data
 
 	return nil
 }
 
 func (c *Colors) Add(colors ...Color) error {
-	// TODO: ...
+	// TODO: Add data
 
 	return nil
 }
