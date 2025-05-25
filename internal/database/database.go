@@ -7,6 +7,8 @@ import (
 )
 
 type DB struct {
+	Colors *Colors
+
 	Path string
 }
 
@@ -16,7 +18,12 @@ func (db *DB) NewColors() (*Colors, error) {
 		return nil, err
 	}
 
-	return NewColors(dataBase)
+	if db.Colors != nil {
+		db.Colors.Close()
+	}
+
+	db.Colors, err = NewColors(dataBase)
+	return db.Colors, err
 }
 
 func NewDB(path string) *DB {
