@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"picow-led/internal/database"
@@ -9,9 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var (
-	ErrorUnderConstruction = errors.New("under construction")
-)
+var ErrorUnderConstruction = errors.New("under construction")
 
 type ErrorResponse struct {
 	Message error `json:"message"`
@@ -83,12 +80,7 @@ func (h *APIHandler) PostDevicesAddrPower(c echo.Context) error {
 
 func (h *APIHandler) GetColors(c echo.Context) error {
 	colors := h.db.Colors.List()
-	data, err := json.Marshal(colors)
-	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
-	}
-
-	return c.JSON(http.StatusOK, data)
+	return c.JSON(http.StatusOK, colors)
 }
 
 func (h *APIHandler) PostColors(c echo.Context) error {
