@@ -8,10 +8,10 @@ import (
 
 type Options struct {
 	ServerPathPrefix string
+	DB               *database.DB
 }
 
 func Register(e *echo.Echo, o *Options) {
-	db := database.NewDB()
 	apiHandler := NewAPIHandler()
 
 	apiGroup := e.Group(o.ServerPathPrefix + "/api")
