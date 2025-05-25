@@ -1,12 +1,17 @@
 package routes
 
-import "github.com/labstack/echo/v4"
+import (
+	"picow-led/internal/database"
+
+	"github.com/labstack/echo/v4"
+)
 
 type Options struct {
 	ServerPathPrefix string
 }
 
 func Register(e *echo.Echo, o *Options) {
+	db := database.NewDB()
 	apiHandler := NewAPIHandler()
 
 	apiGroup := e.Group(o.ServerPathPrefix + "/api")

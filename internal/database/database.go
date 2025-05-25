@@ -1,4 +1,8 @@
 package database
 
 // TODO: Using sqlite3? (store: colors)
-type DataBase struct{}
+type DB struct{}
+
+func NewDB() *DB {
+	return &DB{}
+}
