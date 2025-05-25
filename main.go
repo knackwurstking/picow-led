@@ -101,6 +101,7 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 
 		// TODO: Create and init the database
 		db := database.NewDB(*dbPath)
+		defer db.Close()
 
 		// Register routes
 		routesOptions := &routes.Options{
