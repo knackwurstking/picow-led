@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"picow-led/internal/database"
 	"picow-led/internal/routes"
 	"time"
 
@@ -14,17 +15,20 @@ import (
 )
 
 var (
-	serverPathPrefix      = os.Getenv("SERVER_PATH_PREFIX")
-	serverAddress         = os.Getenv("SERVER_ADDR")
-	version               = "v0.1.0"
-	apiConfigPath         = "api.yaml"
-	apiConfigFallbackPath = ""
+	ServerPathPrefix      = os.Getenv("SERVER_PATH_PREFIX")
+	ServerAddress         = os.Getenv("SERVER_ADDR")
+	Version               = "v0.1.0"
+	ApiConfigPath         = "api.yaml"
+	ApiConfigFallbackPath = ""
+	DBPath                = "./database.db" // TODO: Use a default system path for this (not the config directory)
 )
 
 func init() {
 	if d, err := os.UserConfigDir(); err == nil {
-		apiConfigFallbackPath = filepath.Join(d, "picow-led", "api.yaml")
+		ApiConfigFallbackPath = filepath.Join(d, "picow-led", "api.yaml")
 	}
+
+	// TODO: Get dir to data storage (used for the database)
 }
 
 func main() {
@@ -42,22 +46,29 @@ func main() {
 						cli.Usage("Set server address (<host>:<port>)"),
 					)
 
-					*addr = serverAddress
+					dbPath := cli.String(
+						cmd, "db",
+						cli.WithShort("d"),
+						cli.Usage("Change database"),
+					)
 
-					return cliAction_Server(addr)
+					*addr = ServerAddress
+					*dbPath = DBPath
+
+					return cliAction_Server(addr, dbPath)
 				}),
 			},
 		},
 		CommandFlags: []cli.CommandFlag{
 			cli.HelpCommandFlag(),
-			cli.VersionCommandFlag(version),
+			cli.VersionCommandFlag(Version),
 		},
 	}
 
 	app.HandleError(app.Run())
 }
 
-func cliAction_Server(addr *string) cli.ActionRunner {
+func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		e := echo.New()
 
@@ -90,7 +101,8 @@ func cliAction_Server(addr *string) cli.ActionRunner {
 
 		// Register routes
 		routesOptions := &routes.Options{
-			ServerPathPrefix: serverPathPrefix,
+			ServerPathPrefix: ServerPathPrefix,
+			DB:               database.NewDB(*dbPath),
 		}
 
 		routes.Register(e, routesOptions)
