@@ -6,6 +6,13 @@ import (
 	"slices"
 )
 
+type Color struct {
+	ID int   `json:"id"`
+	R  uint8 `json:"r"`
+	G  uint8 `json:"g"`
+	B  uint8 `json:"b"`
+}
+
 type Colors struct {
 	db *sql.DB
 }
@@ -17,9 +24,9 @@ func NewColors(db *sql.DB) (*Colors, error) {
 	}
 
 	tables := []string{}
+	var name string
 	for r.Next() {
-		var name string
-		err := r.Scan(&name)
+		err = r.Scan(&name)
 		if err != nil {
 			return nil, err
 		}
@@ -46,6 +53,22 @@ func NewColors(db *sql.DB) (*Colors, error) {
 	return &Colors{
 		db: db,
 	}, nil
+}
+
+func (c *Colors) List() []Color {
+	colors := []Color{}
+
+	r, err := c.db.Query(`SELECT (id, r, g, b) FROM colors`)
+	var color Color
+	for r.Next() {
+		err = r.Scan(&color.ID, &color.R, &color.G, &color.B)
+		if err != nil {
+			panic(err)
+		}
+		colors = append(colors, color)
+	}
+
+	return colors
 }
 
 func (c *Colors) Close() {
