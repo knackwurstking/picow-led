@@ -99,7 +99,7 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 		//	slog.Warn(err.Error())
 		//}
 
-		// TODO: Create and init the database
+		// Create and init the database
 		db := database.NewDB(*dbPath)
 		defer db.Close()
 
