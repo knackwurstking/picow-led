@@ -99,10 +99,13 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 		//	slog.Warn(err.Error())
 		//}
 
+		// TODO: Create and init the database
+		db := database.NewDB(*dbPath)
+
 		// Register routes
 		routesOptions := &routes.Options{
 			ServerPathPrefix: ServerPathPrefix,
-			DB:               database.NewDB(*dbPath),
+			DB:               db,
 		}
 
 		routes.Register(e, routesOptions)
