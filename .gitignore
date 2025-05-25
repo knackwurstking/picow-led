@@ -8,3 +8,4 @@ dist
 public/css/ui*.css
 public/js
 public/service-worker.js
+*.db
