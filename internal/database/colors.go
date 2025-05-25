@@ -1,28 +1,46 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"log/slog"
+	"slices"
+)
 
 type Colors struct {
 	db *sql.DB
 }
 
 func NewColors(db *sql.DB) (*Colors, error) {
-	// Insert default (colors) data (only if not exists)
-	_, err := db.Exec(`
-		CREATE TABLE IF NOT EXISTS colors (
-            "id" INTEGER NOT NULL,
-		    "r"  INTEGER NOT NULL,
-		    "g"  INTEGER NOT NULL,
-		    "b"  INTEGER NOT NULL,
-		    PRIMARY KEY("id" AUTOINCREMENT)
-		);
-		AS SELECT 255 AS r, 255 AS g, 255 AS b
-		AS SELECT 255 AS r, 0 AS g, 0 AS b
-		AS SELECT 0 AS r, 255 AS g, 0 AS b
-		AS SELECT 0 AS r, 0 AS g, 255 AS b
-	`)
+	r, err := db.Query(`SELECT name FROM sqlite_master WHERE type = "table" AND name NOT LIKE 'sqlite_%'`)
 	if err != nil {
 		return nil, err
+	}
+
+	tables := []string{}
+	for r.Next() {
+		var name string
+		err := r.Scan(&name)
+		if err != nil {
+			return nil, err
+		}
+		tables = append(tables, name)
+	}
+
+	if !slices.Contains(tables, "colors") {
+		slog.Debug("Create (sqlite) database table", "name", "colors")
+		_, err = db.Exec(`
+      		CREATE TABLE colors (
+                "id" INTEGER NOT NULL,
+      		    "r"  INTEGER NOT NULL,
+      		    "g"  INTEGER NOT NULL,
+      		    "b"  INTEGER NOT NULL,
+      		    PRIMARY KEY("id" AUTOINCREMENT)
+      		);
+            INSERT INTO colors (r, g, b) VALUES (255, 255, 255), (255, 0, 0), (0, 255, 0), (0, 0, 255);
+    	`)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &Colors{
