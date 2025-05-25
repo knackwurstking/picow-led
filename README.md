@@ -13,8 +13,8 @@
     - [**GET** _/api/devices/:addr/power_](#get-apidevicesaddrpower)
     - [**POST** _/api/devices/:addr/power_](#post-apidevicesaddrpower)
     - [**GET** _/api/colors_](#get-apicolors)
-    - [**POST** _/api/colors_ **POST**](#post-apicolors-post)
     - [**PUT** _/api/colors_](#put-apicolors)
+    - [**POST** _/api/colors_](#post-apicolors)
     - [**GET** _/api/colors/:index_](#get-apicolorsindex)
     - [**PUT** _/api/colors/:index_](#put-apicolorsindex)
     - [**DELETE** _/api/colors/:index_](#delete-apicolorsindex)
@@ -181,22 +181,22 @@ Response:
 ]
 ```
 
-### **POST** _/api/colors_ **POST**
-
-Request:
-
-```bash
-curl -X POST http://localhost:50835/api/colors \
-    -H "Content-Type: application/json" \
-    -d '[{ "r": 255,"g": 255,"b": 255 }]'
-```
-
 ### **PUT** _/api/colors_
 
 Request:
 
 ```bash
 curl -X PUT http://localhost:50835/api/colors \
+    -H "Content-Type: application/json" \
+    -d '[{ "r": 255,"g": 255,"b": 255 }]'
+```
+
+### **POST** _/api/colors_
+
+Request:
+
+```bash
+curl -X POST http://localhost:50835/api/colors \
     -H "Content-Type: application/json" \
     -d '[{ "r": 255,"g": 0,"b": 0 }, { "r": 0,"g": 255,"b": 0 }, { "r": 0,"g": 0,"b": 255 }]'
 ```
