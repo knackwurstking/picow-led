@@ -2,21 +2,22 @@
 
 <!--toc:start-->
 - [PicoW LED](#picow-led)
+  - [Error Response](#error-response)
   - [Routes](#routes)
-    - [_/api/devices_ **GET**](#apidevices-get)
-    - [_/api/devices/:addr_ **GET**](#apidevicesaddr-get)
-    - [_/api/devices/:addr/name_ **GET**](#apidevicesaddrname-get)
-    - [_/api/devices/:addr/color_ **GET**](#apidevicesaddrcolor-get)
-    - [_/api/devices/:addr/pins_ **GET**](#apidevicesaddrpins-get)
-    - [_/api/devices/:addr/active_color_ **GET**](#apidevicesaddractivecolor-get)
-    - [_/api/devices/:addr/power_ **GET**](#apidevicesaddrpower-get)
-    - [_/api/devices/:addr/power_ **POST**](#apidevicesaddrpower-post)
-    - [_/api/colors_ **GET**](#apicolors-get)
-    - [_/api/colors_ **POST**](#apicolors-post)
-    - [_/api/colors_ **PUT**](#apicolors-put)
-    - [_/api/colors/:index_ **GET**](#apicolorsindex-get)
-    - [_/api/colors/:index_ **PUT**](#apicolorsindex-put)
-    - [_/api/colors/:index_ **DELETE**](#apicolorsindex-delete)
+    - [**GET** _/api/devices_](#get-apidevices)
+    - [**GET** _/api/devices/:addr_](#get-apidevicesaddr)
+    - [**GET** _/api/devices/:addr/name_](#get-apidevicesaddrname)
+    - [**GET** _/api/devices/:addr/color_](#get-apidevicesaddrcolor)
+    - [**GET** _/api/devices/:addr/pins_](#get-apidevicesaddrpins)
+    - [**GET** _/api/devices/:addr/active_color_](#get-apidevicesaddractivecolor)
+    - [**GET** _/api/devices/:addr/power_](#get-apidevicesaddrpower)
+    - [**POST** _/api/devices/:addr/power_](#post-apidevicesaddrpower)
+    - [**GET** _/api/colors_](#get-apicolors)
+    - [**POST** _/api/colors_ **POST**](#post-apicolors-post)
+    - [**PUT** _/api/colors_](#put-apicolors)
+    - [**GET** _/api/colors/:index_](#get-apicolorsindex)
+    - [**PUT** _/api/colors/:index_](#put-apicolorsindex)
+    - [**DELETE** _/api/colors/:index_](#delete-apicolorsindex)
 <!--toc:end-->
 
 ## Error Response
@@ -29,7 +30,7 @@
 
 ## Routes
 
-### _/api/devices_ **GET**
+### **GET** _/api/devices_
 
 Request:
 
@@ -53,7 +54,7 @@ Response:
 ]
 ```
 
-### _/api/devices/:addr_ **GET**
+### **GET** _/api/devices/:addr_
 
 Request:
 
@@ -76,7 +77,7 @@ Response:
 }
 ```
 
-### _/api/devices/:addr/name_ **GET**
+### **GET** _/api/devices/:addr/name_
 
 Request:
 
@@ -91,7 +92,7 @@ Response:
 ```
 
 
-### _/api/devices/:addr/color_ **GET**
+### **GET** _/api/devices/:addr/color_
 
 Request:
 
@@ -105,7 +106,7 @@ Response:
 [0, 0, 0, 0]
 ```
 
-### _/api/devices/:addr/pins_ **GET**
+### **GET** _/api/devices/:addr/pins_
 
 Request:
 
@@ -121,7 +122,7 @@ Response:
 
 
 
-### _/api/devices/:addr/active_color_ **GET**
+### **GET** _/api/devices/:addr/active_color_
 
 Request:
 
@@ -135,7 +136,7 @@ Response:
 [255, 255, 255, 255]
 ```
 
-### _/api/devices/:addr/power_ **GET**
+### **GET** _/api/devices/:addr/power_
 
 PowerStates: 0 | 1
 
@@ -151,7 +152,7 @@ Response:
 1
 ```
 
-### _/api/devices/:addr/power_ **POST**
+### **POST** _/api/devices/:addr/power_
 
 PowerStates: 0 | 1
 
@@ -161,7 +162,7 @@ Request:
 curl -X POST http://localhost:50835/api/devices/192.168.178.58:3000/power?state=0
 ```
 
-### _/api/colors_ **GET**
+### **GET** _/api/colors_
 
 Request:
 
@@ -180,7 +181,7 @@ Response:
 ]
 ```
 
-### _/api/colors_ **POST**
+### **POST** _/api/colors_ **POST**
 
 Request:
 
@@ -190,7 +191,7 @@ curl -X POST http://localhost:50835/api/colors \
     -d '[{ "r": 255,"g": 255,"b": 255 }]'
 ```
 
-### _/api/colors_ **PUT**
+### **PUT** _/api/colors_
 
 Request:
 
@@ -200,7 +201,7 @@ curl -X PUT http://localhost:50835/api/colors \
     -d '[{ "r": 255,"g": 0,"b": 0 }, { "r": 0,"g": 255,"b": 0 }, { "r": 0,"g": 0,"b": 255 }]'
 ```
 
-### _/api/colors/:index_ **GET**
+### **GET** _/api/colors/:index_
 
 Request:
 
@@ -214,7 +215,7 @@ Response:
 { "r": 255 "g": 255 "b": 255 }
 ```
 
-### _/api/colors/:index_ **PUT**
+### **PUT** _/api/colors/:index_
 
 Request:
 
@@ -224,7 +225,7 @@ curl -X PUT http://localhost:50835/api/colors/0 \
     -d '{ "r": 150, "g": 150, "b": 150 }'
 ```
 
-### _/api/colors/:index_ **DELETE**
+### **DELETE** _/api/colors/:index_
 
 Request:
 
