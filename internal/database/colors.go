@@ -58,7 +58,11 @@ func NewColors(db *sql.DB) (*Colors, error) {
 func (c *Colors) List() []Color {
 	colors := []Color{}
 
-	r, err := c.db.Query(`SELECT (id, r, g, b) FROM colors`)
+	r, err := c.db.Query(`SELECT id, r, g, b FROM colors`)
+	if err != nil {
+		panic(err)
+	}
+
 	var color Color
 	for r.Next() {
 		err = r.Scan(&color.ID, &color.R, &color.G, &color.B)
