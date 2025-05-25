@@ -122,19 +122,19 @@ func (h *APIHandler) PutColors(c echo.Context) error {
 	return nil
 }
 
-func (h *APIHandler) GetColorsIndex(c echo.Context) error {
+func (h *APIHandler) GetColorsID(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) PutColorsIndex(c echo.Context) error {
+func (h *APIHandler) PutColorsID(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) DeleteColorsIndex(c echo.Context) error {
+func (h *APIHandler) DeleteColorsID(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)

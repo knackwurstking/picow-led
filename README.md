@@ -15,9 +15,9 @@
     - [**GET** _/api/colors_](#get-apicolors)
     - [**PUT** _/api/colors_](#put-apicolors)
     - [**POST** _/api/colors_](#post-apicolors)
-    - [**GET** _/api/colors/:index_](#get-apicolorsindex)
-    - [**PUT** _/api/colors/:index_](#put-apicolorsindex)
-    - [**DELETE** _/api/colors/:index_](#delete-apicolorsindex)
+    - [**GET** _/api/colors/:id_](#get-apicolorsid)
+    - [**PUT** _/api/colors/:id_](#put-apicolorsid)
+    - [**DELETE** _/api/colors/:id_](#delete-apicolorsid)
 <!--toc:end-->
 
 ## Error Response
@@ -205,7 +205,7 @@ curl -X POST http://localhost:50835/api/colors \
     -d '[{ "r": 255,"g": 0,"b": 0 }, { "r": 0,"g": 255,"b": 0 }, { "r": 0,"g": 0,"b": 255 }]'
 ```
 
-### **GET** _/api/colors/:index_
+### **GET** _/api/colors/:id_
 
 Request:
 
@@ -219,7 +219,7 @@ Response:
 { "r": 255 "g": 255 "b": 255 }
 ```
 
-### **PUT** _/api/colors/:index_
+### **PUT** _/api/colors/:id_
 
 Request:
 
@@ -229,7 +229,7 @@ curl -X PUT http://localhost:50835/api/colors/0 \
     -d '{ "r": 150, "g": 150, "b": 150 }'
 ```
 
-### **DELETE** _/api/colors/:index_
+### **DELETE** _/api/colors/:id_
 
 Request:
 
