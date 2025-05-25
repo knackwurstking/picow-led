@@ -26,6 +26,19 @@ func (db *DB) NewColors() (*Colors, error) {
 	return db.Colors, err
 }
 
+func (db *DB) Close() {
+	if db.Colors != nil {
+		db.Colors.Close()
+	}
+}
+
 func NewDB(path string) *DB {
-	return &DB{Path: path}
+	db := &DB{Path: path}
+
+	_, err := db.NewColors()
+	if err != nil {
+		panic(err)
+	}
+
+	return db
 }
