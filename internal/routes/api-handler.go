@@ -26,6 +26,18 @@ func (h *APIHandler) GetDevicesAddr(c echo.Context) error {
 	return ErrorUnderConstruction
 }
 
+func (h *APIHandler) GetDevicesAddrName(c echo.Context) error {
+	// TODO: ...
+
+	return ErrorUnderConstruction
+}
+
+func (h *APIHandler) GetDevicesAddrActiveColor(c echo.Context) error {
+	// TODO: ...
+
+	return ErrorUnderConstruction
+}
+
 func (h *APIHandler) GetDevicesAddrColor(c echo.Context) error {
 	// TODO: ...
 
@@ -33,12 +45,6 @@ func (h *APIHandler) GetDevicesAddrColor(c echo.Context) error {
 }
 
 func (h *APIHandler) GetDevicesAddrPins(c echo.Context) error {
-	// TODO: ...
-
-	return ErrorUnderConstruction
-}
-
-func (h *APIHandler) GetDevicesAddrName(c echo.Context) error {
 	// TODO: ...
 
 	return ErrorUnderConstruction

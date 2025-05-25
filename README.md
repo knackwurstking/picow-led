@@ -3,24 +3,25 @@
 <!--toc:start-->
 - [PicoW LED](#picow-led)
   - [Routes](#routes)
-    - [/api/devices [GET]](#apidevices-get)
-    - [/api/devices/:addr [GET]](#apidevicesaddr-get)
-    - [/api/devices/:addr/color [GET]](#apidevicesaddrcolor-get)
-    - [/api/devices/:addr/pins [GET]](#apidevicesaddrpins-get)
-    - [/api/devices/:addr/name [GET]](#apidevicesaddrname-get)
-    - [/api/devices/:addr/power [GET]](#apidevicesaddrpower-get)
-    - [/api/devices/:addr/power [POST]](#apidevicesaddrpower-post)
-    - [/api/colors [GET]](#apicolors-get)
-    - [/api/colors [POST]](#apicolors-post)
-    - [/api/colors [PUT]](#apicolors-put)
-    - [/api/colors/:index [GET]](#apicolorsindex-get)
-    - [/api/colors/:index [PUT]](#apicolorsindex-put)
-    - [/api/colors/:index [DELETE]](#apicolorsindex-delete)
+    - [_/api/devices_ **GET**](#apidevices-get)
+    - [_/api/devices/:addr_ **GET**](#apidevicesaddr-get)
+    - [_/api/devices/:addr/name_ **GET**](#apidevicesaddrname-get)
+    - [_/api/devices/:addr/color_ **GET**](#apidevicesaddrcolor-get)
+    - [_/api/devices/:addr/pins_ **GET**](#apidevicesaddrpins-get)
+    - [_/api/devices/:addr/active_color_ **GET**](#apidevicesaddractivecolor-get)
+    - [_/api/devices/:addr/power_ **GET**](#apidevicesaddrpower-get)
+    - [_/api/devices/:addr/power_ **POST**](#apidevicesaddrpower-post)
+    - [_/api/colors_ **GET**](#apicolors-get)
+    - [_/api/colors_ **POST**](#apicolors-post)
+    - [_/api/colors_ **PUT**](#apicolors-put)
+    - [_/api/colors/:index_ **GET**](#apicolorsindex-get)
+    - [_/api/colors/:index_ **PUT**](#apicolorsindex-put)
+    - [_/api/colors/:index_ **DELETE**](#apicolorsindex-delete)
 <!--toc:end-->
 
 ## Routes
 
-### /api/devices [GET]
+### _/api/devices_ **GET**
 
 Request:
 
@@ -37,12 +38,14 @@ Response:
         "name": "Kitchen",
         "color": [0, 0, 0, 0],
         "pins": [0, 1, 2, 3],
+        "active_color": [255, 255, 255, 255],
         "power": 0,
+        
     }
 ]
 ```
 
-### /api/devices/:addr [GET]
+### _/api/devices/:addr_ **GET**
 
 Request:
 
@@ -60,39 +63,12 @@ Response:
     "name": "Kitchen",
     "color": [0, 0, 0, 0],
     "pins": [0, 1, 2, 3],
+    "active_color": [255, 255, 255, 255],
     "power": 0,
 }
 ```
 
-### /api/devices/:addr/color [GET]
-
-Request:
-
-```bash
-curl http://localhost:50835/api/devices/192.168.178.58:3000/color
-```
-
-Response:
-
-```json
-[0, 0, 0, 0]
-```
-
-### /api/devices/:addr/pins [GET]
-
-Request:
-
-```bash
-curl http://localhost:50835/api/devices/192.168.178.58:3000/pins
-```
-
-Response:
-
-```json
-[0, 1, 2, 3]
-```
-
-### /api/devices/:addr/name [GET]
+### _/api/devices/:addr/name_ **GET**
 
 Request:
 
@@ -106,7 +82,52 @@ Response:
 "Kitchen"
 ```
 
-### /api/devices/:addr/power [GET]
+
+### _/api/devices/:addr/color_ **GET**
+
+Request:
+
+```bash
+curl http://localhost:50835/api/devices/192.168.178.58:3000/color
+```
+
+Response:
+
+```json
+[0, 0, 0, 0]
+```
+
+### _/api/devices/:addr/pins_ **GET**
+
+Request:
+
+```bash
+curl http://localhost:50835/api/devices/192.168.178.58:3000/pins
+```
+
+Response:
+
+```json
+[0, 1, 2, 3]
+```
+
+
+
+### _/api/devices/:addr/active_color_ **GET**
+
+Request:
+
+```bash
+curl http://localhost:50835/api/devices/192.168.178.58:3000/active_color
+```
+
+Response:
+
+```json
+[255, 255, 255, 255]
+```
+
+### _/api/devices/:addr/power_ **GET**
 
 PowerStates: 0 | 1
 
@@ -122,7 +143,7 @@ Response:
 1
 ```
 
-### /api/devices/:addr/power [POST]
+### _/api/devices/:addr/power_ **POST**
 
 PowerStates: 0 | 1
 
@@ -132,7 +153,7 @@ Request:
 curl -X POST http://localhost:50835/api/devices/192.168.178.58:3000/power?state=0
 ```
 
-### /api/colors [GET]
+### _/api/colors_ **GET**
 
 Request:
 
@@ -151,7 +172,7 @@ Response:
 ]
 ```
 
-### /api/colors [POST]
+### _/api/colors_ **POST**
 
 Request:
 
@@ -161,7 +182,7 @@ curl -X POST http://localhost:50835/api/colors \
     -d '[{ "r": 255,"g": 255,"b": 255 }]'
 ```
 
-### /api/colors [PUT]
+### _/api/colors_ **PUT**
 
 Request:
 
@@ -171,7 +192,7 @@ curl -X PUT http://localhost:50835/api/colors \
     -d '[{ "r": 255,"g": 0,"b": 0 }, { "r": 0,"g": 255,"b": 0 }, { "r": 0,"g": 0,"b": 255 }]'
 ```
 
-### /api/colors/:index [GET]
+### _/api/colors/:index_ **GET**
 
 Request:
 
@@ -185,7 +206,7 @@ Response:
 { "r": 255 "g": 255 "b": 255 }
 ```
 
-### /api/colors/:index [PUT]
+### _/api/colors/:index_ **PUT**
 
 Request:
 
@@ -195,7 +216,7 @@ curl -X PUT http://localhost:50835/api/colors/0 \
     -d '{ "r": 150, "g": 150, "b": 150 }'
 ```
 
-### /api/colors/:index [DELETE]
+### _/api/colors/:index_ **DELETE**
 
 Request:
 
