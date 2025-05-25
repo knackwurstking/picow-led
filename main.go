@@ -76,7 +76,7 @@ func cliAction_Server(addr *string) cli.ActionRunner {
 		}))
 
 		// Load API Configuration
-		//slog.Info("Load API configuration",
+		// slog.Info("Load API configuration",
 		//	"path", apiConfigPath,
 		//	"fallbackPath", apiConfigFallbackPath)
 
@@ -89,7 +89,11 @@ func cliAction_Server(addr *string) cli.ActionRunner {
 		//}
 
 		// Register routes
-		routes.Register(e)
+		routesOptions := &routes.Options{
+			ServerPathPrefix: serverPathPrefix,
+		}
+
+		routes.Register(e, routesOptions)
 
 		return e.Start(*addr)
 	}
