@@ -20,3 +20,7 @@ func NewColors(db *sql.DB) (*Colors, error) {
 		db: db,
 	}, nil
 }
+
+func (c *Colors) Close() {
+	c.db.Close()
+}
