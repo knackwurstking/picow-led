@@ -12,7 +12,7 @@ type Options struct {
 }
 
 func Register(e *echo.Echo, o *Options) {
-	apiHandler := NewAPIHandler()
+	apiHandler := NewAPIHandler(o.DB)
 
 	apiGroup := e.Group(o.ServerPathPrefix + "/api")
 

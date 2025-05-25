@@ -2,16 +2,21 @@ package routes
 
 import (
 	"errors"
+	"picow-led/internal/database"
 
 	"github.com/labstack/echo/v4"
 )
 
 var ErrorUnderConstruction = errors.New("under construction")
 
-type APIHandler struct{}
+type APIHandler struct {
+	db *database.DB
+}
 
-func NewAPIHandler() *APIHandler {
-	return &APIHandler{}
+func NewAPIHandler(db *database.DB) *APIHandler {
+	return &APIHandler{
+		db: db,
+	}
 }
 
 func (h *APIHandler) GetDevices(c echo.Context) error {
