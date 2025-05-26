@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"slices"
 )
@@ -76,15 +77,34 @@ func (c *Colors) List() ([]Color, error) {
 }
 
 func (c *Colors) Set(colors ...Color) error {
-	// TODO: Reqlace all data
+	_, err := c.db.Exec(`DELETE FROM colors`)
+	if err != nil {
+		return err
+	}
 
-	return nil
+	query := ""
+	for _, color := range colors {
+		query += fmt.Sprintf(
+			"INSERT INTO colors (r, g, b) VALUES (%d, %d, %d);\n",
+			color.R, color.G, color.B,
+		)
+	}
+
+	_, err = c.db.Exec(query)
+	return err
 }
 
 func (c *Colors) Add(colors ...Color) error {
-	// TODO: Add data
+	query := ""
+	for _, color := range colors {
+		query += fmt.Sprintf(
+			"INSERT INTO colors (r, g, b) VALUES (%d, %d, %d);\n",
+			color.R, color.G, color.B,
+		)
+	}
 
-	return nil
+	_, err := c.db.Exec(query)
+	return err
 }
 
 func (c *Colors) Close() {

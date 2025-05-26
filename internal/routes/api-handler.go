@@ -13,12 +13,12 @@ import (
 var ErrorUnderConstruction = errors.New("under construction")
 
 type ErrorResponse struct {
-	Message error `json:"message"`
+	Message string `json:"message"`
 }
 
-func NewErrorResponse(err error) ErrorResponse {
+func NewErrorResponse(msg string) ErrorResponse {
 	return ErrorResponse{
-		Message: err,
+		Message: msg,
 	}
 }
 
@@ -90,9 +90,7 @@ func (h *APIHandler) GetColors(c echo.Context) error {
 
 func (h *APIHandler) PostColors(c echo.Context) error {
 	colors := []database.Color{}
-
-	var data []database.Color
-	err := json.NewDecoder(c.Request().Body).Decode(&data)
+	err := json.NewDecoder(c.Request().Body).Decode(&colors)
 	if err != nil {
 		return h.error(c, http.StatusBadRequest, err)
 	}
@@ -107,9 +105,7 @@ func (h *APIHandler) PostColors(c echo.Context) error {
 
 func (h *APIHandler) PutColors(c echo.Context) error {
 	colors := []database.Color{}
-
-	var data []database.Color
-	err := json.NewDecoder(c.Request().Body).Decode(&data)
+	err := json.NewDecoder(c.Request().Body).Decode(&colors)
 	if err != nil {
 		return h.error(c, http.StatusBadRequest, err)
 	}
@@ -142,5 +138,5 @@ func (h *APIHandler) DeleteColorsID(c echo.Context) error {
 
 func (h *APIHandler) error(c echo.Context, code int, err error) error {
 	slog.Error(err.Error())
-	return c.JSON(code, NewErrorResponse(err))
+	return c.JSON(code, NewErrorResponse(err.Error()))
 }
