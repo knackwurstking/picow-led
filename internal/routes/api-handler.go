@@ -39,43 +39,43 @@ func (h *APIHandler) GetDevices(c echo.Context) error {
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) GetDevicesAddr(c echo.Context) error {
+func (h *APIHandler) GetDevice(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) GetDevicesAddrName(c echo.Context) error {
+func (h *APIHandler) GetDeviceName(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) GetDevicesAddrActiveColor(c echo.Context) error {
+func (h *APIHandler) GetDeviceActiveColor(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) GetDevicesAddrColor(c echo.Context) error {
+func (h *APIHandler) GetDeviceColor(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) GetDevicesAddrPins(c echo.Context) error {
+func (h *APIHandler) GetDevicePins(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) GetDevicesAddrPower(c echo.Context) error {
+func (h *APIHandler) GetDevicePower(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
 
-func (h *APIHandler) PostDevicesAddrPower(c echo.Context) error {
+func (h *APIHandler) PostDevicePower(c echo.Context) error {
 	// TODO: ...
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
