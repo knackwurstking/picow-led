@@ -11,6 +11,8 @@ import (
 const (
 	PowerStateOFF = 0
 	PowerStateON  = 1
+
+	deviceQueryKeys = "addr, name, color, pins, active_color, power"
 )
 
 type PowerState uint8
@@ -70,15 +72,16 @@ func NewDevices(db *sql.DB) (*Devices, error) {
 }
 
 func (d *Devices) List() ([]*Device, error) {
-	devices := []*Device{}
-
-	query := fmt.Sprintf(`SELECT %s FROM devices`, d.deviceQueryKeys())
+	query := fmt.Sprintf(`SELECT %s FROM devices`, deviceQueryKeys)
 	r, err := d.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 
-	var device *Device
+	var (
+		devices = []*Device{}
+		device  *Device
+	)
 	for r.Next() {
 		device, err = d.scan(r)
 		if err != nil {
@@ -93,7 +96,8 @@ func (d *Devices) List() ([]*Device, error) {
 func (d *Devices) Get(addr string) (*Device, error) {
 	query := fmt.Sprintf(
 		"SELECT %s FROM devices WHERE addr=%s",
-		d.deviceQueryKeys(), addr,
+		"addr, name, color, pins, active_color, power",
+		addr,
 	)
 	r, err := d.db.Query(query)
 	if err != nil {
@@ -104,50 +108,65 @@ func (d *Devices) Get(addr string) (*Device, error) {
 	return d.scan(r)
 }
 
-func (d *Devices) Set(devices ...Device) error {
+func (d *Devices) Set(devices ...*Device) error {
 	err := d.DeleteAll()
 	if err != nil {
 		return err
 	}
 
-	var (
-		query           string
-		colorJSON       []byte
-		pinsJSON        []byte
-		activeColorJSON []byte
-	)
+	var query string
 	for _, device := range devices {
-		colorJSON, _ = json.Marshal(device.Color)
-		pinsJSON, _ = json.Marshal(device.Color)
-		activeColorJSON, _ = json.Marshal(device.Color)
-
 		query += fmt.Sprintf(
 			"INSERT INTO devices (%s) VALUES (%s, %s, ?, ?, ?, %d);\n",
-			d.deviceQueryKeys(),
-			device.Addr, device.Name, device.Power,
+			deviceQueryKeys, device.Addr, device.Name, device.Power,
 		)
 
-		_, err = d.db.Exec(query, colorJSON, pinsJSON, activeColorJSON)
+		err = d.execDevice(query, device)
+		if err != nil {
+			return err
+		}
 	}
 
-	_, err = d.db.Exec(query)
-	return err
+	return nil
 }
 
-func (d *Devices) Add() error {
-	// TODO: ...
+func (d *Devices) Add(devices ...*Device) error {
+	var (
+		query string
+		err   error
+	)
+	for _, device := range devices {
+		query += fmt.Sprintf(
+			"INSERT INTO devices (%s) VALUES (%s, %s, ?, ?, ?, %d);\n",
+			deviceQueryKeys, device.Addr, device.Name, device.Power,
+		)
+
+		err = d.execDevice(query, device)
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
 
-func (d *Devices) Update() error {
-	// TODO: ...
+func (d *Devices) Update(addr string, device *Device) error {
+	query := fmt.Sprintf(
+		"INSERT OR REPLACE INTO devices (%s) VALUES (%s %s, ?, ?, ?, %d);\n",
+		deviceQueryKeys, device.Addr, device.Name, device.Power,
+	)
 
-	return nil
+	return d.execDevice(query, device)
 }
 
 func (c *Devices) DeleteAll() error {
 	_, err := c.db.Exec(`DELETE FROM devices`)
+	return err
+}
+
+func (c *Devices) Delete(addr string) error {
+	query := fmt.Sprintf("DELETE FROM devices WHERE addr=%s;", addr)
+	_, err := c.db.Exec(query)
 	return err
 }
 
@@ -178,6 +197,17 @@ func (d *Devices) scan(r *sql.Rows) (*Device, error) {
 	return device, err
 }
 
-func (d *Devices) deviceQueryKeys() string {
-	return "addr, name, color, pins, active_color, power"
+func (d *Devices) execDevice(query string, device *Device) error {
+	var (
+		colorJSON       []byte
+		pinsJSON        []byte
+		activeColorJSON []byte
+	)
+
+	colorJSON, _ = json.Marshal(device.Color)
+	pinsJSON, _ = json.Marshal(device.Color)
+	activeColorJSON, _ = json.Marshal(device.Color)
+
+	_, err := d.db.Exec(query, colorJSON, pinsJSON, activeColorJSON)
+	return err
 }
