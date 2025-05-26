@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"picow-led/internal/database"
 	"strconv"
 
@@ -43,13 +44,21 @@ func (h *APIHandler) GetDevices(c echo.Context) error {
 }
 
 func (h *APIHandler) GetDevice(c echo.Context) error {
-	// TODO: ...
+	addr, err := url.QueryUnescape(c.Param("addr"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	device, err := h.db.Devices.Get(addr)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, device)
 }
 
 func (h *APIHandler) GetDeviceName(c echo.Context) error {
-	// TODO: ...
+	// TODO: Continue here
 
 	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
 }
