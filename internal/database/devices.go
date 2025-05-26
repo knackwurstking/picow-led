@@ -70,14 +70,17 @@ func NewDevices(db *sql.DB) (*Devices, error) {
 func (d *Devices) List() ([]*Device, error) {
 	devices := []*Device{}
 
-	r, err := d.db.Query(`SELECT ... FROM devices`) // TODO: Continue here
+	query := `SELECT addr, name, color, pins, active_color, power FROM devices`
+	r, err := d.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 
 	var device Device
 	for r.Next() {
-		err = r.Scan() // TODO: ...
+		err = r.Scan(&device.Addr, &device.Name,
+			&device.Color, &device.Pins, &device.ActiveColor,
+			&device.Power)
 		if err != nil {
 			return nil, err
 		}
@@ -85,6 +88,10 @@ func (d *Devices) List() ([]*Device, error) {
 	}
 
 	return devices, nil
+}
+
+func (d *Devices) Get(addr string) (*Device, error) {
+	// TODO: ...
 }
 
 func (d *Devices) Close() {
