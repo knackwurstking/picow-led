@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"slices"
 )
@@ -70,30 +71,53 @@ func NewDevices(db *sql.DB) (*Devices, error) {
 func (d *Devices) List() ([]*Device, error) {
 	devices := []*Device{}
 
-	query := `SELECT addr, name, color, pins, active_color, power FROM devices`
+	query := fmt.Sprintf(`SELECT %s FROM devices`, d.deviceQueryKeys())
 	r, err := d.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 
-	var device Device
+	var device *Device
 	for r.Next() {
-		err = r.Scan(&device.Addr, &device.Name,
-			&device.Color, &device.Pins, &device.ActiveColor,
-			&device.Power)
+		device, err = d.scan(r)
 		if err != nil {
 			return nil, err
 		}
-		devices = append(devices, &device)
+		devices = append(devices, device)
 	}
 
 	return devices, nil
 }
 
 func (d *Devices) Get(addr string) (*Device, error) {
-	// TODO: ...
+	query := fmt.Sprintf(
+		"SELECT %s FROM devices WHERE addr=%s",
+		d.deviceQueryKeys(), addr,
+	)
+	r, err := d.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	r.Next()
+	return d.scan(r)
 }
 
 func (d *Devices) Close() {
 	d.db.Close()
+}
+
+func (d *Devices) scan(r *sql.Rows) (*Device, error) {
+	device := &Device{}
+	err := r.Scan(&device.Addr, &device.Name,
+		&device.Color, &device.Pins, &device.ActiveColor,
+		&device.Power)
+	if err != nil {
+		return nil, err
+	}
+	return device, err
+}
+
+func (d *Devices) deviceQueryKeys() string {
+	return "addr, name, color, pins, active_color, power"
 }
