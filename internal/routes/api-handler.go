@@ -145,7 +145,7 @@ func (h *APIHandler) PostColorsID(c echo.Context) error {
 		return h.error(c, http.StatusBadRequest, err)
 	}
 
-	err = h.db.Colors.Replace(id, color)
+	err = h.db.Colors.Update(id, color)
 	if err != nil {
 		return h.error(c, http.StatusInternalServerError, err)
 	}

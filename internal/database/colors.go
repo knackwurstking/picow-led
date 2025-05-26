@@ -120,7 +120,7 @@ func (c *Colors) Add(colors ...Color) error {
 	return err
 }
 
-func (c *Colors) Replace(id int, color Color) error {
+func (c *Colors) Update(id int, color Color) error {
 	query := fmt.Sprintf(
 		"insert or replace into colors (id, r, g, b) values (%d, %d, %d, %d);\n",
 		id, color.R, color.G, color.B,
