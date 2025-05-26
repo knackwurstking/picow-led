@@ -6,8 +6,20 @@ import (
 	"slices"
 )
 
+const (
+	PowerStateOFF = 0
+	PowerStateON  = 1
+)
+
+type PowerState uint8
+
 type Device struct {
-	// TODO: Continue here
+	Addr        string     `json:"addr"`
+	Name        string     `json:"name"`
+	Color       []uint8    `json:"color"`
+	Pins        []uint8    `json:"pins"`
+	ActiveColor []uint8    `json:"active_color"`
+	Power       PowerState `json:"power"`
 }
 
 type Devices struct {
