@@ -107,6 +107,12 @@ func (c *Colors) Add(colors ...Color) error {
 	return err
 }
 
+func (c *Colors) Delete(id int) error {
+	query := fmt.Sprintf("DELETE FROM colors WHERE id=%d;", id)
+	_, err := c.db.Exec(query)
+	return err
+}
+
 func (c *Colors) Close() {
 	c.db.Close()
 }

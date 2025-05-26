@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"picow-led/internal/database"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -131,9 +132,17 @@ func (h *APIHandler) PutColorsID(c echo.Context) error {
 }
 
 func (h *APIHandler) DeleteColorsID(c echo.Context) error {
-	// TODO: ...
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	err = h.db.Colors.Delete(id)
+	if err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
+
+	return nil
 }
 
 func (h *APIHandler) error(c echo.Context, code int, err error) error {
