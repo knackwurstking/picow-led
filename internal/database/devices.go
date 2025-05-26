@@ -83,7 +83,7 @@ func (d *Devices) List() ([]*Device, error) {
 		device  *Device
 	)
 	for r.Next() {
-		device, err = d.scan(r)
+		device, err = d.scanDevice(r)
 		if err != nil {
 			return nil, err
 		}
@@ -105,7 +105,7 @@ func (d *Devices) Get(addr string) (*Device, error) {
 	}
 
 	r.Next()
-	return d.scan(r)
+	return d.scanDevice(r)
 }
 
 func (d *Devices) Set(devices ...*Device) error {
@@ -174,7 +174,7 @@ func (d *Devices) Close() {
 	d.db.Close()
 }
 
-func (d *Devices) scan(r *sql.Rows) (*Device, error) {
+func (d *Devices) scanDevice(r *sql.Rows) (*Device, error) {
 	device := &Device{}
 
 	var (
