@@ -7,9 +7,24 @@ import (
 )
 
 type DB struct {
-	Colors *Colors
+	Devices *Devices
+	Colors  *Colors
 
 	Path string
+}
+
+func (db *DB) NewDevices() (*Devices, error) {
+	dataBase, err := sql.Open("sqlite3", db.Path)
+	if err != nil {
+		return nil, err
+	}
+
+	if db.Devices != nil {
+		db.Devices.Close()
+	}
+
+	db.Devices, err = NewDevices(dataBase)
+	return db.Devices, err
 }
 
 func (db *DB) NewColors() (*Colors, error) {
@@ -35,7 +50,12 @@ func (db *DB) Close() {
 func NewDB(path string) *DB {
 	db := &DB{Path: path}
 
-	_, err := db.NewColors()
+	_, err := db.NewDevices()
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = db.NewColors()
 	if err != nil {
 		panic(err)
 	}
