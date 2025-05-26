@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"slices"
@@ -103,22 +104,51 @@ func (d *Devices) Get(addr string) (*Device, error) {
 	return d.scan(r)
 }
 
-func (d *Device) Set() error {
+func (d *Devices) Set(devices ...Device) error {
+	err := d.DeleteAll()
+	if err != nil {
+		return err
+	}
+
+	var (
+		query           string
+		colorJSON       []byte
+		pinsJSON        []byte
+		activeColorJSON []byte
+	)
+	for _, device := range devices {
+		colorJSON, _ = json.Marshal(device.Color)
+		pinsJSON, _ = json.Marshal(device.Color)
+		activeColorJSON, _ = json.Marshal(device.Color)
+
+		query += fmt.Sprintf(
+			"INSERT INTO devices (%s) VALUES (%s, %s, ?, ?, ?, %d);\n",
+			d.deviceQueryKeys(),
+			device.Addr, device.Name, device.Power,
+		)
+
+		_, err = d.db.Exec(query, colorJSON, pinsJSON, activeColorJSON)
+	}
+
+	_, err = d.db.Exec(query)
+	return err
+}
+
+func (d *Devices) Add() error {
 	// TODO: ...
 
 	return nil
 }
 
-func (d *Device) Add() error {
+func (d *Devices) Update() error {
 	// TODO: ...
 
 	return nil
 }
 
-func (d *Device) Update() error {
-	// TODO: ...
-
-	return nil
+func (c *Devices) DeleteAll() error {
+	_, err := c.db.Exec(`DELETE FROM devices`)
+	return err
 }
 
 func (d *Devices) Close() {
@@ -127,12 +157,24 @@ func (d *Devices) Close() {
 
 func (d *Devices) scan(r *sql.Rows) (*Device, error) {
 	device := &Device{}
+
+	var (
+		colorJSON       []byte
+		pinsJSON        []byte
+		activeColorJSON []byte
+	)
+
 	err := r.Scan(&device.Addr, &device.Name,
-		&device.Color, &device.Pins, &device.ActiveColor,
+		colorJSON, pinsJSON, activeColorJSON,
 		&device.Power)
 	if err != nil {
 		return nil, err
 	}
+
+	device.Color = colorJSON
+	device.Pins = pinsJSON
+	device.ActiveColor = activeColorJSON
+
 	return device, err
 }
 
