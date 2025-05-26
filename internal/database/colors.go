@@ -122,7 +122,7 @@ func (c *Colors) Add(colors ...Color) error {
 
 func (c *Colors) Update(id int, color Color) error {
 	query := fmt.Sprintf(
-		"insert or replace into colors (id, r, g, b) values (%d, %d, %d, %d);\n",
+		"INSERT OR REPLACE INTO colors (id, r, g, b) VALUES (%d, %d, %d, %d);\n",
 		id, color.R, color.G, color.B,
 	)
 	_, err := c.db.Exec(query)
