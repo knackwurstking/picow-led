@@ -76,8 +76,21 @@ func (c *Colors) List() ([]Color, error) {
 	return colors, nil
 }
 
+func (c *Colors) Get(id int) (Color, error) {
+	query := fmt.Sprintf("SELECT r, g, b FROM colors WHERE id=%d", id)
+	r, err := c.db.Query(query)
+	if err != nil {
+		return Color{}, err
+	}
+
+	r.Next()
+	color := Color{}
+	err = r.Scan(&color.R, &color.G, &color.B)
+	return color, err
+}
+
 func (c *Colors) Set(colors ...Color) error {
-	_, err := c.db.Exec(`DELETE FROM colors`)
+	err := c.DeleteAll()
 	if err != nil {
 		return err
 	}
@@ -107,9 +120,23 @@ func (c *Colors) Add(colors ...Color) error {
 	return err
 }
 
+func (c *Colors) Replace(id int, color Color) error {
+	query := fmt.Sprintf(
+		"insert or replace into colors (id, r, g, b) values (%d, %d, %d, %d);\n",
+		id, color.R, color.G, color.B,
+	)
+	_, err := c.db.Exec(query)
+	return err
+}
+
 func (c *Colors) Delete(id int) error {
 	query := fmt.Sprintf("DELETE FROM colors WHERE id=%d;", id)
 	_, err := c.db.Exec(query)
+	return err
+}
+
+func (c *Colors) DeleteAll() error {
+	_, err := c.db.Exec(`DELETE FROM colors`)
 	return err
 }
 

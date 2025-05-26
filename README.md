@@ -16,7 +16,7 @@
     - [**PUT** _/api/colors_](#put-apicolors)
     - [**POST** _/api/colors_](#post-apicolors)
     - [**GET** _/api/colors/:id_](#get-apicolorsid)
-    - [**PUT** _/api/colors/:id_](#put-apicolorsid)
+    - [**POST** _/api/colors/:id_](#post-apicolorsid)
     - [**DELETE** _/api/colors/:id_](#delete-apicolorsid)
 <!--toc:end-->
 
@@ -219,12 +219,12 @@ Response:
 { "r": 255 "g": 255 "b": 255 }
 ```
 
-### **PUT** _/api/colors/:id_
+### **POST** _/api/colors/:id_
 
 Request:
 
 ```bash
-curl -X PUT http://localhost:50835/api/colors/0 \
+curl -X POST http://localhost:50835/api/colors/0 \
     -H "Content-Type: application/json" \
     -d '{ "r": 150, "g": 150, "b": 150 }'
 ```

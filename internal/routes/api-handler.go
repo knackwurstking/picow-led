@@ -120,15 +120,37 @@ func (h *APIHandler) PutColors(c echo.Context) error {
 }
 
 func (h *APIHandler) GetColorsID(c echo.Context) error {
-	// TODO: ...
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	color, err := h.db.Colors.Get(id)
+	if err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, color)
 }
 
-func (h *APIHandler) PutColorsID(c echo.Context) error {
-	// TODO: ...
+func (h *APIHandler) PostColorsID(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	color := database.Color{}
+	err = json.NewDecoder(c.Request().Body).Decode(&color)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	err = h.db.Colors.Replace(id, color)
+	if err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
+
+	return err
 }
 
 func (h *APIHandler) DeleteColorsID(c echo.Context) error {

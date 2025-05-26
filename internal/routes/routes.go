@@ -32,6 +32,6 @@ func Register(e *echo.Echo, o *Options) {
 	apiGroup.PUT("/colors", apiHandler.PutColors)
 
 	apiGroup.GET("/colors/:id", apiHandler.GetColorsID)
-	apiGroup.PUT("/colors/:id", apiHandler.PutColorsID)
+	apiGroup.POST("/colors/:id", apiHandler.PostColorsID)
 	apiGroup.DELETE("/colors/:id", apiHandler.DeleteColorsID)
 }
