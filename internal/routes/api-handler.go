@@ -127,7 +127,7 @@ func (h *APIHandler) GetColorsID(c echo.Context) error {
 
 	color, err := h.db.Colors.Get(id)
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusOK, color)
