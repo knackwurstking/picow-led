@@ -103,6 +103,24 @@ func (d *Devices) Get(addr string) (*Device, error) {
 	return d.scan(r)
 }
 
+func (d *Device) Set() error {
+	// TODO: ...
+
+	return nil
+}
+
+func (d *Device) Add() error {
+	// TODO: ...
+
+	return nil
+}
+
+func (d *Device) Update() error {
+	// TODO: ...
+
+	return nil
+}
+
 func (d *Devices) Close() {
 	d.db.Close()
 }
