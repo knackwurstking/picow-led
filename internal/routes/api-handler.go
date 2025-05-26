@@ -34,9 +34,12 @@ func NewAPIHandler(db *database.DB) *APIHandler {
 }
 
 func (h *APIHandler) GetDevices(c echo.Context) error {
-	// TODO: ...
+	devices, err := h.db.Devices.List()
+	if err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	return c.JSON(http.StatusOK, devices)
 }
 
 func (h *APIHandler) GetDevice(c echo.Context) error {
