@@ -2,17 +2,16 @@ package routes
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
 	"picow-led/internal/database"
+	"picow-led/internal/micro"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
-
-var ErrorUnderConstruction = errors.New("under construction")
 
 type ErrorResponse struct {
 	Message string `json:"message"`
@@ -58,39 +57,110 @@ func (h *APIHandler) GetDevice(c echo.Context) error {
 }
 
 func (h *APIHandler) GetDeviceName(c echo.Context) error {
-	// TODO: Continue here
+	addr, err := url.QueryUnescape(c.Param("addr"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	device, err := h.db.Devices.Get(addr)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, device.Name)
 }
 
 func (h *APIHandler) GetDeviceActiveColor(c echo.Context) error {
-	// TODO: ...
+	addr, err := url.QueryUnescape(c.Param("addr"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	device, err := h.db.Devices.Get(addr)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, device.ActiveColor)
 }
 
 func (h *APIHandler) GetDeviceColor(c echo.Context) error {
-	// TODO: ...
+	addr, err := url.QueryUnescape(c.Param("addr"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	device, err := h.db.Devices.Get(addr)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, device.Color)
 }
 
 func (h *APIHandler) GetDevicePins(c echo.Context) error {
-	// TODO: ...
+	addr, err := url.QueryUnescape(c.Param("addr"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	device, err := h.db.Devices.Get(addr)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, device.Pins)
 }
 
 func (h *APIHandler) GetDevicePower(c echo.Context) error {
-	// TODO: ...
+	addr, err := url.QueryUnescape(c.Param("addr"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	device, err := h.db.Devices.Get(addr)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, device.Power)
 }
 
 func (h *APIHandler) PostDevicePower(c echo.Context) error {
-	// TODO: ...
+	addr, err := url.QueryUnescape(c.Param("addr"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return h.error(c, http.StatusInternalServerError, ErrorUnderConstruction)
+	state, err := strconv.Atoi(c.QueryParam("state"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	device, err := h.db.Devices.Get(addr)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	switch database.PowerState(state) {
+	case database.PowerStateOFF:
+		if err := micro.SetColor(); err != nil {
+			return h.error(c, http.StatusInternalServerError, err)
+		}
+	case database.PowerStateON:
+		if err := micro.SetColor(); err != nil {
+			return h.error(c, http.StatusInternalServerError, err)
+		}
+	default:
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf(
+				"unknown power state %d, expect 1 (ON) or 0 (OFF)", state,
+			),
+		)
+	}
+
+	device.Power = database.PowerState(state)
+	return nil
 }
 
 func (h *APIHandler) GetColors(c echo.Context) error {
