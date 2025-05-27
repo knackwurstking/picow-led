@@ -71,6 +71,23 @@ func ParseResponse[T any](data []byte) (T, error) {
 	return resp.Data, nil
 }
 
+func GetPins(addr string) ([]uint8, error) {
+	pkg := NewCommand(IDDefault, TypeGet, "config", "pins")
+	handler := NewHandler(addr)
+
+	data, err := Send(handler, pkg)
+	if err != nil {
+		return nil, err
+	}
+
+	pins, err := ParseResponse[[]uint8](data)
+	if err != nil {
+		return nil, err
+	}
+
+	return pins, nil
+}
+
 func GetColor(addr string) ([]uint8, error) {
 	pkg := NewCommand(IDDefault, TypeGet, "led", "color")
 	handler := NewHandler(addr)
