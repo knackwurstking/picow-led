@@ -12,7 +12,7 @@ const (
 	PowerStateOFF = 0
 	PowerStateON  = 1
 
-	deviceQueryKeys = "addr, name, color, pins, active_color, power"
+	deviceQueryKeys = "addr, name, active_color, color, pins, power"
 )
 
 type PowerState uint8
@@ -20,10 +20,23 @@ type PowerState uint8
 type Device struct {
 	Addr        string     `json:"addr"`
 	Name        string     `json:"name"`
+	ActiveColor []uint8    `json:"active_color"`
 	Color       []uint8    `json:"color"`
 	Pins        []uint8    `json:"pins"`
-	ActiveColor []uint8    `json:"active_color"`
 	Power       PowerState `json:"power"`
+
+	// Not stored inside the database
+
+	Online bool   `json:"online"`
+	Error  string `json:"error"`
+}
+
+func NewDevice() *Device {
+	return &Device{
+		ActiveColor: make([]uint8, 0),
+		Color:       make([]uint8, 0),
+		Pins:        make([]uint8, 0),
+	}
 }
 
 type Devices struct {
@@ -54,9 +67,9 @@ func NewDevices(db *sql.DB) (*Devices, error) {
       		CREATE TABLE devices (
 				addr TEXT NOT NULL,
 				name TEXT NOT NULL,
+				active_color BLOB NOT NULL,
 				color BLOB NOT NULL,
 				pins BLOB NOT NULL,
-				active_color BLOB NOT NULL,
 				power INTEGER NOT NULL,
 				PRIMARY KEY("addr")
       		);
@@ -96,8 +109,7 @@ func (d *Devices) List() ([]*Device, error) {
 func (d *Devices) Get(addr string) (*Device, error) {
 	query := fmt.Sprintf(
 		"SELECT %s FROM devices WHERE addr=%s",
-		"addr, name, color, pins, active_color, power",
-		addr,
+		deviceQueryKeys, addr,
 	)
 	r, err := d.db.Query(query)
 	if err != nil {
@@ -178,36 +190,36 @@ func (d *Devices) scanDevice(r *sql.Rows) (*Device, error) {
 	device := &Device{}
 
 	var (
+		activeColorJSON []byte
 		colorJSON       []byte
 		pinsJSON        []byte
-		activeColorJSON []byte
 	)
 
 	err := r.Scan(&device.Addr, &device.Name,
-		colorJSON, pinsJSON, activeColorJSON,
+		activeColorJSON, colorJSON, pinsJSON,
 		&device.Power)
 	if err != nil {
 		return nil, err
 	}
 
+	device.ActiveColor = activeColorJSON
 	device.Color = colorJSON
 	device.Pins = pinsJSON
-	device.ActiveColor = activeColorJSON
 
 	return device, err
 }
 
 func (d *Devices) execDevice(query string, device *Device) error {
 	var (
+		activeColorJSON []byte
 		colorJSON       []byte
 		pinsJSON        []byte
-		activeColorJSON []byte
 	)
 
+	activeColorJSON, _ = json.Marshal(device.Color)
 	colorJSON, _ = json.Marshal(device.Color)
 	pinsJSON, _ = json.Marshal(device.Color)
-	activeColorJSON, _ = json.Marshal(device.Color)
 
-	_, err := d.db.Exec(query, colorJSON, pinsJSON, activeColorJSON)
+	_, err := d.db.Exec(query, activeColorJSON, colorJSON, pinsJSON)
 	return err
 }
