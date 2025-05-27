@@ -7,6 +7,7 @@ require (
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/lmittmann/tint v1.0.7
 	github.com/mattn/go-sqlite3 v1.14.28
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
