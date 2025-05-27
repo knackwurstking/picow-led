@@ -35,7 +35,7 @@ func (h *Handler) Connect() error {
 		Timeout: time.Duration(time.Second * 5),
 	}
 
-	conn, err := dialer.Dial("tcp", addr)
+	conn, err := dialer.Dial("tcp", h.Addr())
 	if err != nil {
 		h.socket = nil
 	} else {
