@@ -52,9 +52,17 @@ func (c *Config) GetDataBaseDevices() []*database.Device {
 
 			if d.Pins != nil {
 				if len(d.Pins) > 0 {
-					micro.SetPins(d.Addr, d.Pins)
+					if err := micro.SetPins(d.Addr, d.Pins); err != nil {
+						// TODO: ...
+					} else {
+						// TODO: ...
+					}
+				}
 
-					// TODO: Get color and create device and append to devices
+				if color, err := micro.GetColor(d.Addr); err != nil {
+					// TODO: ...
+				} else {
+					// TODO: ...
 				}
 			}
 		}()
