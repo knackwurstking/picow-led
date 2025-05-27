@@ -106,6 +106,16 @@ Response:
 [0, 0, 0, 0]
 ```
 
+### **POST** _/api/devices/:addr/color_
+
+Request:
+
+```bash
+curl http://localhost:50835/api/devices/192.168.178.58:3000/color \
+    -H "Content-Type: application/json" \
+    -d '[255, 255, 255, 255]'
+```
+
 ### **GET** _/api/devices/:addr/pins_
 
 Request:

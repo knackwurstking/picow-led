@@ -98,6 +98,22 @@ func (h *APIHandler) GetDeviceColor(c echo.Context) error {
 	return c.JSON(http.StatusOK, device.Color)
 }
 
+func (h *APIHandler) PostDeviceColor(c echo.Context) error {
+	addr, err := url.QueryUnescape(c.Param("addr"))
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	device, err := h.db.Devices.Get(addr)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
+
+	// TODO: Read body (JSON) data and get the device color to set
+
+	return c.JSON(http.StatusOK, device.Color)
+}
+
 func (h *APIHandler) GetDevicePins(c echo.Context) error {
 	addr, err := url.QueryUnescape(c.Param("addr"))
 	if err != nil {
