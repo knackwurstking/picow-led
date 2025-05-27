@@ -19,7 +19,7 @@ var (
 	ServerAddress         = os.Getenv("SERVER_ADDR")
 	Version               = "v0.1.0"
 	ApiConfigPath         = "api.yaml"
-	ApiConfigFallbackPath = ""
+	ApiConfigFallbackPath = ""              // See init()
 	DBPath                = "./database.db" // TODO: Use a default system path for this (not the config directory)
 )
 
@@ -92,19 +92,6 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 
 		// TODO: Load configuration and set devices to the database
 		loadConfig()
-
-		// Load API Configuration
-		// slog.Info("Load API configuration",
-		//	"path", apiConfigPath,
-		//	"fallbackPath", apiConfigFallbackPath)
-
-		//apiConfig, err := api.GetConfig(
-		//	apiConfigPath, apiConfigFallbackPath,
-		//)
-		//if err != nil {
-		//	slog.Warn("Read API configuration failed!")
-		//	slog.Warn(err.Error())
-		//}
 
 		// Create and init the database
 		db := database.NewDB(*dbPath)
