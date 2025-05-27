@@ -3,13 +3,17 @@ package micro
 import "errors"
 
 func GetColor() error {
-	// TODO: ...
+	pkg := NewCommand(IDDefault, TypeGet, "led", "color")
+
+	// TODO: Send request and wait for response
 
 	return errors.New("under construction")
 }
 
 func SetColor() error {
-	// TODO: ...
+	pkg := NewCommand(IDDefault, TypeSet, "led", "color")
+
+	// TODO: Send request and wait for response
 
 	return errors.New("under construction")
 }
