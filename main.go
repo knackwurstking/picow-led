@@ -23,6 +23,10 @@ var (
 	DBPath                = "./database.db" // TODO: Use a default system path for this (not the config directory)
 )
 
+type Config struct {
+	// TODO: Yaml configuration struct
+}
+
 func init() {
 	if d, err := os.UserConfigDir(); err == nil {
 		ApiConfigFallbackPath = filepath.Join(d, "picow-led", "api.yaml")
@@ -86,6 +90,9 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 			Output: os.Stderr,
 		}))
 
+		// TODO: Load configuration and set devices to the database
+		loadConfig()
+
 		// Load API Configuration
 		// slog.Info("Load API configuration",
 		//	"path", apiConfigPath,
@@ -113,4 +120,8 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 
 		return e.Start(*addr)
 	}
+}
+
+func loadConfig() *Config {
+	// TODO: Continue here...
 }
