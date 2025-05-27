@@ -1,17 +1,21 @@
 package main
 
 import (
+	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"picow-led/internal/database"
+	"picow-led/internal/micro"
 	"picow-led/internal/routes"
+	"sync"
 	"time"
 
 	"github.com/SuperPaintman/nice/cli"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/lmittmann/tint"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -23,8 +27,41 @@ var (
 	DBPath                = "./database.db" // TODO: Use a default system path for this (not the config directory)
 )
 
+type ConfigDevice struct {
+	Addr string  `yaml:"addr"`
+	Name string  `yaml:"name"`
+	Pins []uint8 `yaml:"pins"`
+}
+
 type Config struct {
-	// TODO: Yaml configuration struct
+	Devices []ConfigDevice `yaml:"devices"`
+}
+
+func (c *Config) GetDataBaseDevices() []*database.Device {
+	devices := []*database.Device{}
+
+	if c.Devices == nil {
+		return devices
+	}
+
+	wg := &sync.WaitGroup{}
+	for _, d := range c.Devices {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			if d.Pins != nil {
+				if len(d.Pins) > 0 {
+					micro.SetPins(d.Addr, d.Pins)
+
+					// TODO: Get color and create device and append to devices
+				}
+			}
+		}()
+	}
+	wg.Wait()
+
+	return devices
 }
 
 func init() {
@@ -90,12 +127,19 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 			Output: os.Stderr,
 		}))
 
-		// TODO: Load configuration and set devices to the database
-		loadConfig()
-
 		// Create and init the database
 		db := database.NewDB(*dbPath)
 		defer db.Close()
+
+		// Load configuration and pass data to the database
+		if config, err := loadConfig(ApiConfigPath, ApiConfigFallbackPath); err != nil {
+			slog.Warn("Configuration", "error", err)
+		} else {
+			devices := config.GetDataBaseDevices()
+			if err = db.Devices.Set(devices...); err != nil {
+				slog.Error("Set devices to database", "error", err)
+			}
+		}
 
 		// Register routes
 		routesOptions := &routes.Options{
@@ -109,6 +153,27 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 	}
 }
 
-func loadConfig() *Config {
-	// TODO: Continue here...
+func loadConfig(paths ...string) (*Config, error) {
+	config := &Config{}
+
+	for _, path := range paths {
+		absPath, err := filepath.Abs(path)
+		if err != nil {
+			absPath = path
+		}
+		f, err := os.Open(absPath)
+		if err != nil {
+			continue
+		}
+		d, err := io.ReadAll(f)
+		if err != nil {
+			return nil, err
+		}
+		err = yaml.Unmarshal(d, config)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return config, nil
 }
