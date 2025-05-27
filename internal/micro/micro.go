@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strconv"
 )
 
 type Response[T any] struct {
@@ -88,9 +89,23 @@ func GetColor(addr string) ([]uint8, error) {
 }
 
 func SetColor(addr string, color []uint8) error {
-	pkg := NewCommand(IDDefault, TypeSet, "led", "color")
+	args := []string{}
+	for _, n := range color {
+		args = append(args, strconv.Itoa(int(n)))
+	}
 
-	// TODO: Send request and wait for response
+	pkg := NewCommand(IDDefault, TypeSet, "led", "color", args...)
+	handler := NewHandler(addr)
 
-	return errors.New("under construction")
+	data, err := Send(handler, pkg)
+	if err != nil {
+		return err
+	}
+
+	_, err = ParseResponse[any](data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
