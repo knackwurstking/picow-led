@@ -105,6 +105,28 @@ func GetColor(addr string) ([]uint8, error) {
 	return color, nil
 }
 
+func SetPins(addr string, pins []uint8) error {
+	args := []string{}
+	for _, n := range pins {
+		args = append(args, strconv.Itoa(int(n)))
+	}
+
+	pkg := NewCommand(IDDefault, TypeSet, "config", "pins", args...)
+	handler := NewHandler(addr)
+
+	data, err := Send(handler, pkg)
+	if err != nil {
+		return err
+	}
+
+	_, err = ParseResponse[any](data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func SetColor(addr string, color []uint8) error {
 	args := []string{}
 	for _, n := range color {
