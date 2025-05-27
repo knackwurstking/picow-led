@@ -9,17 +9,24 @@ import (
 
 type Handler struct {
 	socket net.Conn
+	addr   string
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(addr string) *Handler {
+	return &Handler{
+		addr: addr,
+	}
+}
+
+func (h *Handler) Addr() string {
+	return h.addr
 }
 
 func (h *Handler) IsConnected() bool {
 	return h.socket != nil
 }
 
-func (h *Handler) Connect(addr string) error {
+func (h *Handler) Connect() error {
 	if h.socket != nil {
 		h.Close()
 	}
