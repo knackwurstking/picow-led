@@ -149,7 +149,7 @@ curl http://localhost:50835/api/devices/192.168.178.58:3000/power
 Response:
 
 ```json
-1
+"1"
 ```
 
 ### **POST** _/api/devices/:addr/power_
