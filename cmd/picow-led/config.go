@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"picow-led/internal/database"
 	"picow-led/internal/micro"
-	"slices"
 	"sync"
 
 	"gopkg.in/yaml.v3"
@@ -65,12 +64,7 @@ func (c *Config) GetDataBaseDevices() []*database.Device {
 					"device.address", d.Addr, "device.name", d.Name)
 				device.Error = append(device.Error, err.Error())
 			} else {
-				if color != nil {
-					device.Color = color
-					if slices.Max(device.Color) > 0 {
-						device.ActiveColor = device.Color
-					}
-				}
+				device.SetColor(color)
 			}
 		}()
 	}
