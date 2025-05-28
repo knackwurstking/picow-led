@@ -69,7 +69,18 @@ func (d *Device) SetColor(color []uint8) {
 
 	// Handle active color
 	if slices.Max(d.Color) > 0 {
+		slog.Debug("Set active color",
+			"color", d.Color,
+			"device.address", d.Addr,
+			"device.name", d.Name,
+		)
+
 		d.ActiveColor = color
+	} else if len(d.ActiveColor) == 0 {
+		d.ActiveColor = []uint8{}
+		for range d.Pins {
+			d.ActiveColor = append(d.ActiveColor, 255)
+		}
 	}
 }
 
@@ -119,7 +130,7 @@ func NewDevices(db *sql.DB) (*Devices, error) {
 }
 
 func (d *Devices) List() ([]*Device, error) {
-	query := fmt.Sprintf(`SELECT %s FROM devices`, deviceQueryKeys)
+	query := fmt.Sprintf(`SELECT %s FROM devices;`, deviceQueryKeys)
 	r, err := d.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -142,7 +153,7 @@ func (d *Devices) List() ([]*Device, error) {
 
 func (d *Devices) Get(addr string) (*Device, error) {
 	query := fmt.Sprintf(
-		"SELECT %s FROM devices WHERE addr=%s",
+		"SELECT %s FROM devices WHERE addr=\"%s\";",
 		deviceQueryKeys, addr,
 	)
 	r, err := d.db.Query(query)
@@ -211,7 +222,7 @@ func (c *Devices) DeleteAll() error {
 }
 
 func (c *Devices) Delete(addr string) error {
-	query := fmt.Sprintf("DELETE FROM devices WHERE addr=%s;", addr)
+	query := fmt.Sprintf("DELETE FROM devices WHERE addr=\"%s\";", addr)
 	_, err := c.db.Exec(query)
 	return err
 }
@@ -230,30 +241,29 @@ func (d *Devices) scanDevice(r *sql.Rows) (*Device, error) {
 	)
 
 	err := r.Scan(&device.Addr, &device.Name,
-		activeColorJSON, colorJSON, pinsJSON,
+		&activeColorJSON, &colorJSON, &pinsJSON,
 		&device.Power)
 	if err != nil {
 		return nil, err
 	}
 
-	device.ActiveColor = activeColorJSON
-	device.Color = colorJSON
-	device.Pins = pinsJSON
+	_ = json.Unmarshal(activeColorJSON, &device.ActiveColor)
+	_ = json.Unmarshal(colorJSON, &device.Color)
+	_ = json.Unmarshal(pinsJSON, &device.Pins)
 
 	return device, err
 }
 
 func (d *Devices) execDevice(query string, device *Device) error {
-	// FIXME: This is looking odd, "AAAAAA=="
 	var (
 		activeColorJSON []byte
 		colorJSON       []byte
 		pinsJSON        []byte
 	)
 
-	activeColorJSON, _ = json.Marshal(device.Color)
+	activeColorJSON, _ = json.Marshal(device.ActiveColor)
 	colorJSON, _ = json.Marshal(device.Color)
-	pinsJSON, _ = json.Marshal(device.Color)
+	pinsJSON, _ = json.Marshal(device.Pins)
 
 	slog.Debug("Exec Query", "query", query)
 	_, err := d.db.Exec(query,
