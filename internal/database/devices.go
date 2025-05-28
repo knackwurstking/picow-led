@@ -27,8 +27,7 @@ type Device struct {
 
 	// Not stored inside the database
 
-	Online bool   `json:"online"`
-	Error  string `json:"error"`
+	Error []string `json:"error"`
 }
 
 func NewDevice() *Device {
@@ -36,6 +35,7 @@ func NewDevice() *Device {
 		ActiveColor: make([]uint8, 0),
 		Color:       make([]uint8, 0),
 		Pins:        make([]uint8, 0),
+		Error:       make([]string, 0),
 	}
 }
 
