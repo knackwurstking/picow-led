@@ -116,7 +116,13 @@ func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 	}
 
 	device.SetColor(color)
-	if err := micro.SetColor(device.Addr, device.Color); err != nil {
+	err = micro.SetColor(device.Addr, device.Color)
+	if err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
+
+	err = h.db.Devices.Update(device.Addr, device)
+	if err != nil {
 		return h.error(c, http.StatusInternalServerError, err)
 	}
 
