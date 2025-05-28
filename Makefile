@@ -13,17 +13,17 @@ init:
 
 dev:
 	which gow || (echo 'gow is not installed, install with: `go install github.com/mitranim/gow@latest`' && exit 1)
-	gow -e=go,json -v -r run . server -a ${SERVER_ADDR}
+	gow -e=go,json -v -r run ./cmd/${BINARY_NAME} server -a ${SERVER_ADDR}
 
 run:
-	go run . server -a ${SERVER_ADDR}
+	go run ./cmd/${BINARY_NAME} server -a ${SERVER_ADDR}
 
 test:
 	go test -v ./...
 
 build:
 	make test
-	go build -v -ldflags="-w -s" -o bin/${BINARY_NAME}
+	go build -v -o bin/${BINARY_NAME} ./cmd/${BINARY_NAME}
 
 # NOTE: Standard systemd stuff
 
@@ -33,7 +33,7 @@ Description=API for controlling my picow devices
 After=network.target
 
 [Service]
-EnvironmentFile=%h/.config/picow-led/.env
+EnvironmentFile=%h/.config/${BINARY_NAME}/.env
 ExecStart=${SERVER_APP_NAME} server
 
 [Install]
