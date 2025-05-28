@@ -19,11 +19,11 @@ type PowerState uint8
 
 type Device struct {
 	Addr        string     `json:"addr"`
-	Name        string     `json:"name"`
-	ActiveColor []uint8    `json:"active_color"`
-	Color       []uint8    `json:"color"`
-	Pins        []uint8    `json:"pins"`
-	Power       PowerState `json:"power"`
+	Name        string     `json:"name,omitempty"`
+	ActiveColor []uint8    `json:"active_color,omitempty"`
+	Color       []uint8    `json:"color,omitempty"`
+	Pins        []uint8    `json:"pins,omitempty"`
+	Power       PowerState `json:"power,omitempty"`
 
 	// Not stored inside the database
 
@@ -37,6 +37,27 @@ func NewDevice() *Device {
 		Pins:        make([]uint8, 0),
 		Error:       make([]string, 0),
 	}
+}
+
+func (d *Device) PowerStateColor(state PowerState) []uint8 {
+	color := []uint8{}
+
+	switch state {
+	case PowerStateOFF:
+		for range d.Pins {
+			color = append(color, 0)
+		}
+	case PowerStateON:
+		if len(d.ActiveColor) > 0 {
+			color = d.ActiveColor
+		} else {
+			for range d.Pins {
+				color = append(color, 255)
+			}
+		}
+	}
+
+	return color
 }
 
 type Devices struct {
