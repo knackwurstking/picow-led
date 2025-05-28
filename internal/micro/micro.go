@@ -47,7 +47,7 @@ func Send(h *Handler, c *Command) ([]byte, error) {
 		return nil, err
 	}
 
-	slog.Debug("Got some data", "addr", h.Addr,
+	slog.Debug("Got some data", "addr", h.Addr(),
 		"command", fmt.Sprintf("(%d) %s %s %s %#v",
 			c.ID, c.Type, c.Group, c.Command, c.CommandArgs,
 		),

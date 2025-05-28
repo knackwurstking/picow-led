@@ -162,8 +162,8 @@ func (d *Devices) Set(devices ...*Device) error {
 
 	var query string
 	for _, device := range devices {
-		query += fmt.Sprintf(
-			"INSERT INTO devices (%s) VALUES (%s, %s, ?, ?, ?, %d);\n",
+		query = fmt.Sprintf(
+			"INSERT INTO devices (%s) VALUES (\"%s\", \"%s\", :active_color, :color, :pins, %d);\n",
 			deviceQueryKeys, device.Addr, device.Name, device.Power,
 		)
 
@@ -182,8 +182,8 @@ func (d *Devices) Add(devices ...*Device) error {
 		err   error
 	)
 	for _, device := range devices {
-		query += fmt.Sprintf(
-			"INSERT INTO devices (%s) VALUES (%s, %s, ?, ?, ?, %d);\n",
+		query = fmt.Sprintf(
+			"INSERT INTO devices (%s) VALUES (\"%s\", \"%s\", :active_color, :color, :pins, %d);\n",
 			deviceQueryKeys, device.Addr, device.Name, device.Power,
 		)
 
@@ -198,7 +198,7 @@ func (d *Devices) Add(devices ...*Device) error {
 
 func (d *Devices) Update(addr string, device *Device) error {
 	query := fmt.Sprintf(
-		"INSERT OR REPLACE INTO devices (%s) VALUES (%s %s, ?, ?, ?, %d);\n",
+		"INSERT OR REPLACE INTO devices (%s) VALUES (\"%s\", \"%s\", :active_color, :color, :pins, %d);\n",
 		deviceQueryKeys, device.Addr, device.Name, device.Power,
 	)
 
@@ -254,6 +254,10 @@ func (d *Devices) execDevice(query string, device *Device) error {
 	colorJSON, _ = json.Marshal(device.Color)
 	pinsJSON, _ = json.Marshal(device.Color)
 
-	_, err := d.db.Exec(query, activeColorJSON, colorJSON, pinsJSON)
+	slog.Debug("Exec Query", "query", query)
+	_, err := d.db.Exec(query,
+		sql.Named("active_color", activeColorJSON),
+		sql.Named("color", colorJSON),
+		sql.Named("pins", pinsJSON))
 	return err
 }

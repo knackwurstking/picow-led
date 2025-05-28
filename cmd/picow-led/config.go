@@ -57,6 +57,9 @@ func (c *Config) GetDataBaseDevices() []*database.Device {
 			device := database.NewDevice()
 			devices = append(devices, device)
 
+			device.Addr = d.Addr
+			device.Name = d.Name
+
 			pins, err := micro.GetPins(d.Addr)
 			if err != nil {
 				slog.Warn("Get Pins failed", "error", err,
