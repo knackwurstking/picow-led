@@ -60,6 +60,19 @@ func (d *Device) PowerStateColor(state PowerState) []uint8 {
 	return color
 }
 
+func (d *Device) SetColor(color []uint8) {
+	if color == nil {
+		return
+	}
+
+	d.Color = color
+
+	// Handle active color
+	if slices.Max(d.Color) > 0 {
+		d.ActiveColor = color
+	}
+}
+
 type Devices struct {
 	db *sql.DB
 }
