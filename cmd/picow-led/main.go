@@ -99,6 +99,15 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 			if err = db.Devices.Set(devices...); err != nil {
 				slog.Error("Set devices to database", "error", err)
 			}
+
+			devices, err = db.Devices.List()
+			if err != nil {
+				slog.Error("Get device from database failed", "error", err)
+			} else {
+				for _, d := range devices {
+					slog.Debug("Database devices", "device", d)
+				}
+			}
 		}
 
 		// Register routes
