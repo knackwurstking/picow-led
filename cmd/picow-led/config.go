@@ -14,8 +14,8 @@ import (
 
 type ConfigDevice struct {
 	Addr string  `yaml:"addr"`
-	Name string  `yaml:"name"`
-	Pins []uint8 `yaml:"pins"`
+	Name string  `yaml:"name,omitempty"`
+	Pins []uint8 `yaml:"pins,omitempty"`
 }
 
 type Config struct {
@@ -31,6 +31,16 @@ func (c *Config) GetDataBaseDevices() []*database.Device {
 
 	wg := &sync.WaitGroup{}
 	for _, d := range c.Devices {
+		if d.Addr == "" {
+			continue
+		}
+
+		slog.Debug("Update device",
+			"device.address", d.Addr,
+			"device.name", d.Name,
+			"device.pins", d.Pins,
+		)
+
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
