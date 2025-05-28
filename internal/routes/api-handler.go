@@ -109,9 +109,18 @@ func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 		return h.error(c, http.StatusBadRequest, err)
 	}
 
-	// TODO: Read body (JSON) data and get the device color to set
+	color := []uint8{}
+	err = json.NewDecoder(c.Request().Body).Decode(&color)
+	if err != nil {
+		return h.error(c, http.StatusBadRequest, err)
+	}
 
-	return c.JSON(http.StatusOK, device.Color)
+	device.SetColor(color)
+	if err := micro.SetColor(device.Addr, device.Color); err != nil {
+		return h.error(c, http.StatusInternalServerError, err)
+	}
+
+	return nil
 }
 
 func (h *APIHandler) GetDevicePins(c echo.Context) error {
@@ -168,6 +177,8 @@ func (h *APIHandler) PostDevicePower(c echo.Context) error {
 		color := device.PowerStateColor(database.PowerStateON)
 		if err := micro.SetColor(device.Addr, color); err != nil {
 			return h.error(c, http.StatusInternalServerError, err)
+		} else {
+			device.SetColor(color)
 		}
 	default:
 		return h.error(c, http.StatusBadRequest,
