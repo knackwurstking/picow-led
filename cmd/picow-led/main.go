@@ -94,6 +94,7 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 		if config, err := loadConfig(ApiConfigPath, ApiConfigFallbackPath); err != nil {
 			slog.Warn("Configuration", "error", err)
 		} else {
+			slog.Debug("Loaded configuration, Try update database...")
 			devices := config.GetDataBaseDevices()
 			if err = db.Devices.Set(devices...); err != nil {
 				slog.Error("Set devices to database", "error", err)
