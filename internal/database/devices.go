@@ -244,6 +244,7 @@ func (d *Devices) scanDevice(r *sql.Rows) (*Device, error) {
 }
 
 func (d *Devices) execDevice(query string, device *Device) error {
+	// FIXME: This is looking odd, "AAAAAA=="
 	var (
 		activeColorJSON []byte
 		colorJSON       []byte
