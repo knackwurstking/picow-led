@@ -22,7 +22,7 @@ func Register(e *echo.Echo, o *Options) {
 
 	apiGroup.GET("/devices/:addr/name", apiHandler.GetDeviceName)
 
-	apiGroup.GET("/devices/:addr/active_color", apiHandler.GetDeviceColor)
+	apiGroup.GET("/devices/:addr/active_color", apiHandler.GetDeviceActiveColor)
 
 	apiGroup.GET("/devices/:addr/color", apiHandler.GetDeviceColor)
 	apiGroup.POST("/devices/:addr/color", apiHandler.PostDeviceColor)
