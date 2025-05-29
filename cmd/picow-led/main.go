@@ -16,26 +16,26 @@ import (
 )
 
 const (
-	ErrorCache = 2
+	exitCodeCache = 2
 )
 
 var (
-	ServerPathPrefix = os.Getenv("SERVER_PATH_PREFIX")
-	ServerAddress    = os.Getenv("SERVER_ADDR")
-	Version          = "v0.1.0"
-	ConfigDir        string
-	CacheDir         string
-	ApiConfigPath    = "api.yaml"
-	DBPath           = "database.db"
+	serverPathPrefix = os.Getenv("SERVER_PATH_PREFIX")
+	serverAddress    = os.Getenv("SERVER_ADDR")
+	version          = "v0.1.0"
+	configDir        string
+	cacheDir         string
+	apiConfigPath    = "api.yaml"
+	dbPath           = "database.db"
 )
 
 func init() {
 	if d, err := os.UserConfigDir(); err == nil {
-		ConfigDir = filepath.Join(d, "picow-led")
+		configDir = filepath.Join(d, "picow-led")
 	}
 
 	if d, err := os.UserCacheDir(); err != nil {
-		CacheDir = filepath.Join(d, "picow-led")
+		cacheDir = filepath.Join(d, "picow-led")
 	}
 }
 
@@ -60,8 +60,8 @@ func main() {
 						cli.Usage("Cache location, where the database will land"),
 					)
 
-					*addr = ServerAddress
-					*dbPath = filepath.Join(CacheDir)
+					*addr = serverAddress
+					*dbPath = filepath.Join(cacheDir)
 
 					return cliAction_Server(addr, dbPath)
 				}),
@@ -69,7 +69,7 @@ func main() {
 		},
 		CommandFlags: []cli.CommandFlag{
 			cli.HelpCommandFlag(),
-			cli.VersionCommandFlag(Version),
+			cli.VersionCommandFlag(version),
 		},
 	}
 
@@ -91,11 +91,12 @@ func cliAction_Server(addr *string, cache *string) cli.ActionRunner {
 		middlewareHandlers(e)
 
 		// Handle database path
-		dbPath := getDataBasePath(*cache)
+		databasePath := getDatabasePath(*cache)
 
 		// Create database
-		slog.Info(fmt.Sprintf("Database location: %s", dbPath), "CacheDir", CacheDir)
-		db := database.NewDB(dbPath)
+		slog.Info(fmt.Sprintf("Database location: %s", databasePath),
+			"cacheDir", cacheDir)
+		db := database.NewDB(databasePath)
 		defer db.Close()
 
 		loadApiConfig(db)
@@ -105,26 +106,26 @@ func cliAction_Server(addr *string, cache *string) cli.ActionRunner {
 	}
 }
 
-func getDataBasePath(cache string) string {
+func getDatabasePath(cache string) string {
 	var err error
 
 	if cache, err = filepath.Abs(cache); err != nil {
 		slog.Error("Get the absolute database path failed", "error", err)
-		os.Exit(ErrorCache)
+		os.Exit(exitCodeCache)
 	}
 
-	dbPath := filepath.Join(cache, DBPath)
+	path := filepath.Join(cache, dbPath)
 
-	if err = os.MkdirAll(filepath.Dir(dbPath), 0700); err != nil {
+	if err = os.MkdirAll(filepath.Dir(path), 0700); err != nil {
 		slog.Error("Database creation failed", "error", err)
-		os.Exit(ErrorCache)
+		os.Exit(exitCodeCache)
 	}
 
-	return dbPath
+	return path
 }
 
 func loadApiConfig(db *database.DB) {
-	if config, err := loadConfig(ApiConfigPath, filepath.Join(ConfigDir, ApiConfigPath)); err != nil {
+	if config, err := loadConfig(apiConfigPath, filepath.Join(configDir, apiConfigPath)); err != nil {
 		slog.Warn("Configuration", "error", err)
 	} else {
 		// Parse config and update database
@@ -155,7 +156,7 @@ func middlewareHandlers(e *echo.Echo) {
 
 func registerRoutes(e *echo.Echo, db *database.DB) {
 	routesOptions := &routes.Options{
-		ServerPathPrefix: ServerPathPrefix,
+		ServerPathPrefix: serverPathPrefix,
 		DB:               db,
 	}
 
