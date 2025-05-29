@@ -30,7 +30,7 @@ func Register(e *echo.Echo, o *Options) {
 	apiGroup.GET("/devices/:addr/pins", apiHandler.GetDevicePins)
 
 	apiGroup.GET("/devices/:addr/power", apiHandler.GetDevicePower)
-	apiGroup.POST("/devices/:addr/power", apiHandler.PostDevicePower) // FIXME: Does not store state to database
+	apiGroup.POST("/devices/:addr/power", apiHandler.PostDevicePower)
 
 	apiGroup.GET("/colors", apiHandler.GetColors)
 	apiGroup.POST("/colors", apiHandler.PostColors)
