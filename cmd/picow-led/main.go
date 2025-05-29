@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -111,6 +112,7 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 		}
 
 		// Create database
+		slog.Debug(fmt.Sprintf("Database location: %s", *dbPath))
 		db := database.NewDB(*dbPath)
 		defer db.Close()
 
