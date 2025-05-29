@@ -109,7 +109,7 @@ func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 		return h.error(c, http.StatusBadRequest, err)
 	}
 
-	color := []uint8{}
+	color := []int{}
 	err = json.NewDecoder(c.Request().Body).Decode(&color)
 	if err != nil {
 		return h.error(c, http.StatusBadRequest, err)

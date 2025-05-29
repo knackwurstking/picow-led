@@ -71,7 +71,7 @@ func ParseResponse[T any](data []byte) (T, error) {
 	return resp.Data, nil
 }
 
-func GetPins(addr string) ([]uint8, error) {
+func GetPins(addr string) ([]int, error) {
 	pkg := NewCommand(IDDefault, TypeGet, "config", "pins")
 	handler := NewHandler(addr)
 
@@ -80,7 +80,7 @@ func GetPins(addr string) ([]uint8, error) {
 		return nil, err
 	}
 
-	pins, err := ParseResponse[[]uint8](data)
+	pins, err := ParseResponse[[]int](data)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func GetPins(addr string) ([]uint8, error) {
 	return pins, nil
 }
 
-func GetColor(addr string) ([]uint8, error) {
+func GetColor(addr string) ([]int, error) {
 	pkg := NewCommand(IDDefault, TypeGet, "led", "color")
 	handler := NewHandler(addr)
 
@@ -97,7 +97,7 @@ func GetColor(addr string) ([]uint8, error) {
 		return nil, err
 	}
 
-	color, err := ParseResponse[[]uint8](data)
+	color, err := ParseResponse[[]int](data)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func GetColor(addr string) ([]uint8, error) {
 	return color, nil
 }
 
-func SetPins(addr string, pins []uint8) error {
+func SetPins(addr string, pins []int) error {
 	args := []string{}
 	for _, n := range pins {
 		args = append(args, strconv.Itoa(int(n)))
@@ -127,7 +127,7 @@ func SetPins(addr string, pins []uint8) error {
 	return nil
 }
 
-func SetColor(addr string, color []uint8) error {
+func SetColor(addr string, color []int) error {
 	args := []string{}
 	for _, n := range color {
 		args = append(args, strconv.Itoa(int(n)))

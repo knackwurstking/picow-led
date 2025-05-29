@@ -19,11 +19,11 @@ type PowerState uint8
 
 type Device struct {
 	Addr        string     `json:"addr"`
-	Name        string     `json:"name,omitempty"`
-	ActiveColor []uint8    `json:"active_color,omitempty"`
-	Color       []uint8    `json:"color,omitempty"`
-	Pins        []uint8    `json:"pins,omitempty"`
-	Power       PowerState `json:"power,omitempty"`
+	Name        string     `json:"name"`
+	ActiveColor []int      `json:"active_color"`
+	Color       []int      `json:"color"`
+	Pins        []int      `json:"pins"`
+	Power       PowerState `json:"power"`
 
 	// Not stored inside the database
 
@@ -32,15 +32,15 @@ type Device struct {
 
 func NewDevice() *Device {
 	return &Device{
-		ActiveColor: make([]uint8, 0),
-		Color:       make([]uint8, 0),
-		Pins:        make([]uint8, 0),
+		ActiveColor: make([]int, 0),
+		Color:       make([]int, 0),
+		Pins:        make([]int, 0),
 		Error:       make([]string, 0),
 	}
 }
 
-func (d *Device) PowerStateColor(state PowerState) []uint8 {
-	color := []uint8{}
+func (d *Device) PowerStateColor(state PowerState) []int {
+	color := []int{}
 
 	switch state {
 	case PowerStateOFF:
@@ -60,7 +60,7 @@ func (d *Device) PowerStateColor(state PowerState) []uint8 {
 	return color
 }
 
-func (d *Device) SetColor(color []uint8) {
+func (d *Device) SetColor(color []int) {
 	if color == nil {
 		return
 	}
@@ -77,7 +77,7 @@ func (d *Device) SetColor(color []uint8) {
 
 		d.ActiveColor = color
 	} else if len(d.ActiveColor) == 0 {
-		d.ActiveColor = []uint8{}
+		d.ActiveColor = []int{}
 		for range d.Pins {
 			d.ActiveColor = append(d.ActiveColor, 255)
 		}

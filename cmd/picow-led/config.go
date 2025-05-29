@@ -13,9 +13,9 @@ import (
 )
 
 type ConfigDevice struct {
-	Addr string  `yaml:"addr"`
-	Name string  `yaml:"name,omitempty"`
-	Pins []uint8 `yaml:"pins,omitempty"`
+	Addr string `yaml:"addr"`
+	Name string `yaml:"name,omitempty"`
+	Pins []int  `yaml:"pins,omitempty"`
 }
 
 type Config struct {
