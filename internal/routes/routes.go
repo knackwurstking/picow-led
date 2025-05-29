@@ -25,12 +25,12 @@ func Register(e *echo.Echo, o *Options) {
 	apiGroup.GET("/devices/:addr/active_color", apiHandler.GetDeviceActiveColor)
 
 	apiGroup.GET("/devices/:addr/color", apiHandler.GetDeviceColor)
-	apiGroup.POST("/devices/:addr/color", apiHandler.PostDeviceColor)
+	apiGroup.POST("/devices/:addr/color", apiHandler.PostDeviceColor) // FIXME: "database is locked" error
 
 	apiGroup.GET("/devices/:addr/pins", apiHandler.GetDevicePins)
 
 	apiGroup.GET("/devices/:addr/power", apiHandler.GetDevicePower)
-	apiGroup.POST("/devices/:addr/power", apiHandler.PostDevicePower)
+	apiGroup.POST("/devices/:addr/power", apiHandler.PostDevicePower) // FIXME: Does not store state to database
 
 	apiGroup.GET("/colors", apiHandler.GetColors)
 	apiGroup.POST("/colors", apiHandler.PostColors)
