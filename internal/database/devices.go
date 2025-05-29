@@ -232,7 +232,7 @@ func (d *Devices) Close() {
 }
 
 func (d *Devices) scanDevice(r *sql.Rows) (*Device, error) {
-	device := &Device{}
+	device := NewDevice()
 
 	var (
 		activeColorJSON []byte
