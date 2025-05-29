@@ -61,7 +61,6 @@ func main() {
 					)
 
 					*addr = ServerAddress
-					*dbPath = DBPath
 
 					return cliAction_Server(addr, dbPath)
 				}),
@@ -112,7 +111,7 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 		}
 
 		// Create database
-		slog.Debug(fmt.Sprintf("Database location: %s", *dbPath))
+		slog.Info(fmt.Sprintf("Database location: %s", *dbPath), "CacheDir", CacheDir)
 		db := database.NewDB(*dbPath)
 		defer db.Close()
 
