@@ -106,24 +106,27 @@ func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest, fmt.Errorf("database: get device: %s", err))
 	}
 
 	color := []int{}
 	err = json.NewDecoder(c.Request().Body).Decode(&color)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("decode body data: %s", err))
 	}
 
 	device.SetColor(color)
 	err = micro.SetColor(device.Addr, device.Color)
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("micro: set color for device: %s", err))
 	}
 
 	err = h.db.Devices.Update(device.Addr, device)
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("database: update device: %s", err))
 	}
 
 	return nil

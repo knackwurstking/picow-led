@@ -23,6 +23,7 @@ func NewColors(db *sql.DB) (*Colors, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer r.Close()
 
 	tables := []string{}
 	var name string
@@ -63,6 +64,7 @@ func (c *Colors) List() ([]Color, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer r.Close()
 
 	var color Color
 	for r.Next() {
@@ -82,6 +84,7 @@ func (c *Colors) Get(id int) (Color, error) {
 	if err != nil {
 		return Color{}, err
 	}
+	defer r.Close()
 
 	r.Next()
 	color := Color{}

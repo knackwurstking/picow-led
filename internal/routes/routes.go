@@ -25,7 +25,7 @@ func Register(e *echo.Echo, o *Options) {
 	apiGroup.GET("/devices/:addr/active_color", apiHandler.GetDeviceActiveColor)
 
 	apiGroup.GET("/devices/:addr/color", apiHandler.GetDeviceColor)
-	apiGroup.POST("/devices/:addr/color", apiHandler.PostDeviceColor) // FIXME: "database is locked" error
+	apiGroup.POST("/devices/:addr/color", apiHandler.PostDeviceColor)
 
 	apiGroup.GET("/devices/:addr/pins", apiHandler.GetDevicePins)
 

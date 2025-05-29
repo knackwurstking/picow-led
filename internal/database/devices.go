@@ -89,21 +89,30 @@ type Devices struct {
 }
 
 func NewDevices(db *sql.DB) (*Devices, error) {
-	// Query table names
-	r, err := db.Query(`SELECT name FROM sqlite_master WHERE type = "table" AND name NOT LIKE 'sqlite_%'`)
+	tables := []string{}
+
+	err := func() error {
+		// Query table names
+		r, err := db.Query(`SELECT name FROM sqlite_master WHERE type = "table" AND name NOT LIKE 'sqlite_%'`)
+		if err != nil {
+			return err
+		}
+		defer r.Close()
+
+		// Scan table names
+		var name string
+		for r.Next() {
+			err = r.Scan(&name)
+			if err != nil {
+				return err
+			}
+			tables = append(tables, name)
+		}
+
+		return nil
+	}()
 	if err != nil {
 		return nil, err
-	}
-
-	// Scan table names
-	tables := []string{}
-	var name string
-	for r.Next() {
-		err = r.Scan(&name)
-		if err != nil {
-			return nil, err
-		}
-		tables = append(tables, name)
 	}
 
 	if !slices.Contains(tables, "devices") {
@@ -135,6 +144,7 @@ func (d *Devices) List() ([]*Device, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer r.Close()
 
 	var (
 		devices = []*Device{}
@@ -160,6 +170,7 @@ func (d *Devices) Get(addr string) (*Device, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer r.Close()
 
 	r.Next()
 	return d.scanDevice(r)
