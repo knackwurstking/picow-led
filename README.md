@@ -8,6 +8,7 @@
     - [**GET** _/api/devices/:addr_](#get-apidevicesaddr)
     - [**GET** _/api/devices/:addr/name_](#get-apidevicesaddrname)
     - [**GET** _/api/devices/:addr/color_](#get-apidevicesaddrcolor)
+    - [**POST** _/api/devices/:addr/color_](#post-apidevicesaddrcolor)
     - [**GET** _/api/devices/:addr/pins_](#get-apidevicesaddrpins)
     - [**GET** _/api/devices/:addr/active_color_](#get-apidevicesaddractivecolor)
     - [**GET** _/api/devices/:addr/power_](#get-apidevicesaddrpower)
