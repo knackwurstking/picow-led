@@ -19,11 +19,16 @@ func Register(e *echo.Echo, o *Options) {
 	apiGroup.GET("/devices", apiHandler.GetDevices)
 
 	apiGroup.GET("/devices/:addr", apiHandler.GetDevice)
+
 	apiGroup.GET("/devices/:addr/name", apiHandler.GetDeviceName)
+
 	apiGroup.GET("/devices/:addr/active_color", apiHandler.GetDeviceColor)
+
 	apiGroup.GET("/devices/:addr/color", apiHandler.GetDeviceColor)
 	apiGroup.POST("/devices/:addr/color", apiHandler.PostDeviceColor)
+
 	apiGroup.GET("/devices/:addr/pins", apiHandler.GetDevicePins)
+
 	apiGroup.GET("/devices/:addr/power", apiHandler.GetDevicePower)
 	apiGroup.POST("/devices/:addr/power", apiHandler.PostDevicePower)
 
