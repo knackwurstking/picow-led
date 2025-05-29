@@ -13,10 +13,10 @@ init:
 
 dev:
 	which gow || (echo 'gow is not installed, install with: `go install github.com/mitranim/gow@latest`' && exit 1)
-	gow -e=go,json -v -r run ./cmd/${BINARY_NAME} server -a ${SERVER_ADDR}
+	gow -e=go,json -v -r run ./cmd/${BINARY_NAME} server --addr ${SERVER_ADDR} --cache .
 
 run:
-	go run ./cmd/${BINARY_NAME} server -a ${SERVER_ADDR}
+	go run ./cmd/${BINARY_NAME} server -a ${SERVER_ADDR} --cache .
 
 test:
 	go test -v ./...
