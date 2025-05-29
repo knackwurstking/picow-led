@@ -14,21 +14,28 @@ import (
 	"github.com/lmittmann/tint"
 )
 
+const (
+	ErrorCache = 2
+)
+
 var (
-	ServerPathPrefix      = os.Getenv("SERVER_PATH_PREFIX")
-	ServerAddress         = os.Getenv("SERVER_ADDR")
-	Version               = "v0.1.0"
-	ApiConfigPath         = "api.yaml"
-	ApiConfigFallbackPath = ""              // See init()
-	DBPath                = "./database.db" // TODO: Use a default system path for this (not the config directory)
+	ServerPathPrefix = os.Getenv("SERVER_PATH_PREFIX")
+	ServerAddress    = os.Getenv("SERVER_ADDR")
+	Version          = "v0.1.0"
+	ConfigDir        string
+	CacheDir         string
+	ApiConfig        = "api.yaml"
+	DBPath           = "database.db"
 )
 
 func init() {
 	if d, err := os.UserConfigDir(); err == nil {
-		ApiConfigFallbackPath = filepath.Join(d, "picow-led", "api.yaml")
+		ConfigDir = filepath.Join(d, "picow-led")
 	}
 
-	// TODO: Get dir to data storage (used for the database)
+	if d, err := os.UserCacheDir(); err != nil {
+		CacheDir = filepath.Join(d, "picow-led")
+	}
 }
 
 func main() {
@@ -86,20 +93,39 @@ func cliAction_Server(addr *string, dbPath *string) cli.ActionRunner {
 			Output: os.Stderr,
 		}))
 
-		// Create and init the database
+		// Handle database path
+		if *dbPath == "" {
+			*dbPath = filepath.Join(CacheDir, DBPath)
+			err := os.MkdirAll(filepath.Dir(*dbPath), 0700)
+			if err != nil {
+				slog.Error("Database creation failed", "error", err)
+				os.Exit(ErrorCache)
+			}
+		} else {
+			var err error
+			*dbPath, err = filepath.Abs(*dbPath)
+			if err != nil {
+				slog.Error("Get the absolute database path failed", "error", err)
+				os.Exit(ErrorCache)
+			}
+		}
+
+		// Create database
 		db := database.NewDB(*dbPath)
 		defer db.Close()
 
-		// Load configuration and pass data to the database
-		if config, err := loadConfig(ApiConfigPath, ApiConfigFallbackPath); err != nil {
+		// Load api configuration
+		if config, err := loadConfig(ApiConfig, filepath.Join(ConfigDir, ApiConfig)); err != nil {
 			slog.Warn("Configuration", "error", err)
 		} else {
+			// Parse config and update database
 			slog.Debug("Loaded configuration, Try update database...")
 			devices := config.GetDataBaseDevices()
 			if err = db.Devices.Set(devices...); err != nil {
 				slog.Error("Set devices to database", "error", err)
 			}
 
+			// Log
 			devices, err = db.Devices.List()
 			if err != nil {
 				slog.Error("Get device from database failed", "error", err)
