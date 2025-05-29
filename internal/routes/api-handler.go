@@ -36,7 +36,8 @@ func NewAPIHandler(db *database.DB) *APIHandler {
 func (h *APIHandler) GetDevices(c echo.Context) error {
 	devices, err := h.db.Devices.List()
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("database: list devices: %s", err))
 	}
 
 	return c.JSON(http.StatusOK, devices)
@@ -50,7 +51,8 @@ func (h *APIHandler) GetDevice(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get device: %s", err))
 	}
 
 	return c.JSON(http.StatusOK, device)
@@ -64,7 +66,8 @@ func (h *APIHandler) GetDeviceName(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get device: %s", err))
 	}
 
 	return c.JSON(http.StatusOK, device.Name)
@@ -78,7 +81,8 @@ func (h *APIHandler) GetDeviceActiveColor(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get device: %s", err))
 	}
 
 	return c.JSON(http.StatusOK, device.ActiveColor)
@@ -92,7 +96,8 @@ func (h *APIHandler) GetDeviceColor(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get device: %s", err))
 	}
 
 	return c.JSON(http.StatusOK, device.Color)
@@ -106,21 +111,21 @@ func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, fmt.Errorf("database: get device: %s", err))
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get device: %s", err))
 	}
 
 	color := []int{}
 	err = json.NewDecoder(c.Request().Body).Decode(&color)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest,
-			fmt.Errorf("decode body data: %s", err))
+		return h.error(c, http.StatusBadRequest, err)
 	}
 
 	device.SetColor(color)
 	err = micro.SetColor(device.Addr, device.Color)
 	if err != nil {
 		return h.error(c, http.StatusInternalServerError,
-			fmt.Errorf("micro: set color for device: %s", err))
+			fmt.Errorf("micro: set device color: %s", err))
 	}
 
 	err = h.db.Devices.Update(device.Addr, device)
@@ -140,7 +145,8 @@ func (h *APIHandler) GetDevicePins(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get device: %s", err))
 	}
 
 	return c.JSON(http.StatusOK, device.Pins)
@@ -154,7 +160,8 @@ func (h *APIHandler) GetDevicePower(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get device: %s", err))
 	}
 
 	return c.JSON(http.StatusOK, device.Power)
@@ -173,19 +180,22 @@ func (h *APIHandler) PostDevicePower(c echo.Context) error {
 
 	device, err := h.db.Devices.Get(addr)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get device: %s", err))
 	}
 
 	switch database.PowerState(state) {
 	case database.PowerStateOFF:
 		color := device.PowerStateColor(database.PowerStateOFF)
 		if err := micro.SetColor(device.Addr, color); err != nil {
-			return h.error(c, http.StatusInternalServerError, err)
+			return h.error(c, http.StatusInternalServerError,
+				fmt.Errorf("micro: set color: %s", err))
 		}
 	case database.PowerStateON:
 		color := device.PowerStateColor(database.PowerStateON)
 		if err := micro.SetColor(device.Addr, color); err != nil {
-			return h.error(c, http.StatusInternalServerError, err)
+			return h.error(c, http.StatusInternalServerError,
+				fmt.Errorf("micro: set color: %s", err))
 		} else {
 			device.SetColor(color)
 		}
@@ -198,13 +208,20 @@ func (h *APIHandler) PostDevicePower(c echo.Context) error {
 	}
 
 	device.Power = database.PowerState(state)
+
+	if err = h.db.Devices.Update(device.Addr, device); err != nil {
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("database: update device: %s", err))
+	}
+
 	return nil
 }
 
 func (h *APIHandler) GetColors(c echo.Context) error {
 	colors, err := h.db.Colors.List()
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("database: get colors: %s", err))
 	}
 	return c.JSON(http.StatusOK, colors)
 }
@@ -218,7 +235,8 @@ func (h *APIHandler) PostColors(c echo.Context) error {
 
 	err = h.db.Colors.Add(colors...)
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("database: add colors: %s", err))
 	}
 
 	return nil
@@ -233,7 +251,8 @@ func (h *APIHandler) PutColors(c echo.Context) error {
 
 	err = h.db.Colors.Set(colors...)
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("database: set colors: %s", err))
 	}
 
 	return nil
@@ -247,7 +266,8 @@ func (h *APIHandler) GetColorsID(c echo.Context) error {
 
 	color, err := h.db.Colors.Get(id)
 	if err != nil {
-		return h.error(c, http.StatusBadRequest, err)
+		return h.error(c, http.StatusBadRequest,
+			fmt.Errorf("database: get color: %s", err))
 	}
 
 	return c.JSON(http.StatusOK, color)
@@ -267,7 +287,8 @@ func (h *APIHandler) PostColorsID(c echo.Context) error {
 
 	err = h.db.Colors.Update(id, color)
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("database: update color: %s", err))
 	}
 
 	return err
@@ -281,7 +302,8 @@ func (h *APIHandler) DeleteColorsID(c echo.Context) error {
 
 	err = h.db.Colors.Delete(id)
 	if err != nil {
-		return h.error(c, http.StatusInternalServerError, err)
+		return h.error(c, http.StatusInternalServerError,
+			fmt.Errorf("database: delete color: %s", err))
 	}
 
 	return nil
