@@ -141,7 +141,7 @@ func loadApiConfig(db *database.DB) {
 			slog.Error("Get device from database failed", "error", err)
 		} else {
 			for _, d := range devices {
-				slog.Debug("Database devices", "device", d)
+				slog.Debug("Database device", "device", d)
 			}
 		}
 	}
