@@ -19,6 +19,8 @@
     - [**GET** _/api/colors/:id_](#get-apicolorsid)
     - [**POST** _/api/colors/:id_](#post-apicolorsid)
     - [**DELETE** _/api/colors/:id_](#delete-apicolorsid)
+  - [WebSocket](#websocket)
+    - [GET /ws](#get-ws)
 <!--toc:end-->
 
 ## Error Response
@@ -247,3 +249,11 @@ Request:
 ```bash
 curl -X DELETE http://localhost:50835/api/colors/0
 ```
+
+## WebSocket
+
+### GET /ws
+
+> This endpoint is readonly
+
+TODO: List broadcasted data types here
