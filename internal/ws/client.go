@@ -11,3 +11,7 @@ func NewClient(conn *websocket.Conn) *Client {
 		Conn: conn,
 	}
 }
+
+func (c *Client) Send(data []byte) error {
+	return websocket.Message.Send(c.Conn, data)
+}

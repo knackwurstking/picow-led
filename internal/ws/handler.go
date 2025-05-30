@@ -6,8 +6,6 @@ import (
 	"picow-led/internal/database"
 	"slices"
 	"sync"
-
-	"golang.org/x/net/websocket"
 )
 
 const (
@@ -93,19 +91,20 @@ func (h *Handler) Unregister(client *Client) {
 }
 
 func (h *Handler) handleBroadcast(v BroadcastData) {
+	data, err := json.Marshal(v)
+	if err != nil {
+		slog.Error("(WS) Broadcast: Marshal JSON", "error", err, "v", v)
+	}
+
 	wg := &sync.WaitGroup{}
-	for _, c := range h.clients {
+	for _, client := range h.clients {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 
-			d, err := json.Marshal(v)
-			if err != nil {
-				slog.Error("(WS) Broadcast: Marshal JSON", "error", err, "client", c)
-			}
-
-			if err = websocket.Message.Send(c.Conn, d); err != nil {
-				slog.Warn("(WS) Broadcast: Send message", "error", err, "client", c)
+			if err = client.Send(data); err != nil {
+				slog.Warn("(WS) Broadcast: Send message",
+					"error", err, "client", client)
 			}
 		}()
 	}
