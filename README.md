@@ -187,10 +187,10 @@ Response:
 
 ```json
 [
-    { "r": 255 "g": 255 "b": 255 },
-    { "r": 255 "g": 0   "b": 0   },
-    { "r": 0   "g": 255 "b": 0   },
-    { "r": 0   "g": 0   "b": 255 },
+    { "id": 1, "r": 255 "g": 255 "b": 255 },
+    { "id": 2, "r": 255 "g": 0   "b": 0   },
+    { "id": 3, "r": 0   "g": 255 "b": 0   },
+    { "id": 4, "r": 0   "g": 0   "b": 255 },
 ]
 ```
 
@@ -229,7 +229,7 @@ curl http://localhost:50835/api/colors/0
 Response:
 
 ```json
-{ "r": 255 "g": 255 "b": 255 }
+{ "id": 1, "r": 255 "g": 255 "b": 255 }
 ```
 
 ### **POST** _/api/colors/:id_
@@ -256,4 +256,52 @@ curl -X DELETE http://localhost:50835/api/colors/0
 
 > This endpoint is readonly
 
-TODO: List broadcasted data types here
+#### Type: "devices"
+
+```json
+{
+    "type": "devices",
+    "data": [
+        {
+            "addr": "192.168.178.58:3000",
+            "name": "Kitchen",
+            "color": [0, 0, 0, 0],
+            "pins": [0, 1, 2, 3],
+            "active_color": [255, 255, 255, 255],
+            "power": 0,
+
+        }
+    ]
+}
+```
+
+#### Type: "device"
+
+```json
+{
+    "type": "device",
+    "data": {
+        "addr": "192.168.178.58:3000",
+        "name": "Kitchen",
+        "color": [0, 0, 0, 0],
+        "pins": [0, 1, 2, 3],
+        "active_color": [255, 255, 255, 255],
+        "power": 0,
+
+    }
+}
+```
+
+#### Type: "colors"
+
+```json
+{
+    "type": "colors",
+    "data": [
+        { "id": 1, "r": 255 "g": 255 "b": 255 },
+        { "id": 2, "r": 255 "g": 0   "b": 0   },
+        { "id": 3, "r": 0   "g": 255 "b": 0   },
+        { "id": 4, "r": 0   "g": 0   "b": 255 },
+    ]
+}
+```
