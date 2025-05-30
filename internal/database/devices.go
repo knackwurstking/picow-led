@@ -172,7 +172,10 @@ func (d *Devices) Get(addr string) (*Device, error) {
 	}
 	defer r.Close()
 
-	r.Next()
+	if !r.Next() {
+		return nil, fmt.Errorf("not found")
+	}
+
 	return d.scanDevice(r)
 }
 

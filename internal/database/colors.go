@@ -86,7 +86,10 @@ func (c *Colors) Get(id int) (Color, error) {
 	}
 	defer r.Close()
 
-	r.Next()
+	if !r.Next() {
+		return Color{}, fmt.Errorf("not found")
+	}
+
 	color := Color{}
 	err = r.Scan(&color.R, &color.G, &color.B)
 	return color, err
