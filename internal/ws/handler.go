@@ -1,9 +1,27 @@
 package ws
 
 import (
+	"encoding/json"
+	"log/slog"
+	"picow-led/internal/database"
 	"slices"
 	"sync"
+
+	"golang.org/x/net/websocket"
 )
+
+const (
+	BroadcastTypeDevices BroadcastType = "devices"
+	BroadcastTypeDevice  BroadcastType = "device"
+	BroadcastTypeColors  BroadcastType = "colors"
+)
+
+type BroadcastType string
+
+type BroadcastData struct {
+	Type BroadcastType `json:"type"`
+	Data any           `json:"data"`
+}
 
 type Handler struct {
 	clients []*Client
@@ -11,7 +29,8 @@ type Handler struct {
 
 	started bool
 
-	chDone chan any
+	chBroadcast chan BroadcastData
+	chDone      chan any
 }
 
 func NewHandler() *Handler {
@@ -27,14 +46,16 @@ func (h *Handler) Start() {
 		h.started = false
 	}()
 
+	h.chBroadcast = make(chan BroadcastData)
 	h.chDone = make(chan any)
 	defer func() {
 		close(h.chDone)
 	}()
 
-	// TODO: Broadcast handler (chan)
 	for {
 		select {
+		case v := <-h.chBroadcast:
+			h.handleBroadcast(v)
 		case <-h.chDone:
 			break
 		}
@@ -68,5 +89,69 @@ func (h *Handler) Unregister(client *Client) {
 		if c == client {
 			h.clients = slices.Delete(h.clients, i, i+1)
 		}
+	}
+}
+
+func (h *Handler) handleBroadcast(v BroadcastData) {
+	wg := &sync.WaitGroup{}
+	for _, c := range h.clients {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			d, err := json.Marshal(v)
+			if err != nil {
+				slog.Error("(WS) Broadcast: Marshal JSON", "error", err, "client", c)
+			}
+
+			if err = websocket.Message.Send(c.Conn, d); err != nil {
+				slog.Warn("(WS) Broadcast: Send message", "error", err, "client", c)
+			}
+		}()
+	}
+	wg.Wait()
+}
+
+func (h *Handler) Broadcast(t BroadcastType, v any) {
+	if !h.started {
+		return
+	}
+
+	h.chBroadcast <- BroadcastData{
+		Type: t,
+		Data: v,
+	}
+}
+
+func (h *Handler) BroadcastDevices(v []*database.Device) {
+	if !h.started {
+		return
+	}
+
+	h.chBroadcast <- BroadcastData{
+		Type: BroadcastTypeDevices,
+		Data: v,
+	}
+}
+
+func (h *Handler) BroadcastDevice(v *database.Device) {
+	if !h.started {
+		return
+	}
+
+	h.chBroadcast <- BroadcastData{
+		Type: BroadcastTypeDevice,
+		Data: v,
+	}
+}
+
+func (h *Handler) BroadcastColors(v []database.Color) {
+	if !h.started {
+		return
+	}
+
+	h.chBroadcast <- BroadcastData{
+		Type: BroadcastTypeColors,
+		Data: v,
 	}
 }
