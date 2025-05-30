@@ -21,6 +21,9 @@
     - [**DELETE** _/api/colors/:id_](#delete-apicolorsid)
   - [WebSocket](#websocket)
     - [GET /ws](#get-ws)
+      - [Type: "devices"](#type-devices)
+      - [Type: "device"](#type-device)
+      - [Type: "colors"](#type-colors)
 <!--toc:end-->
 
 ## Error Response
