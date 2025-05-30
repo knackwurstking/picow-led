@@ -13,30 +13,33 @@ type Options struct {
 
 func Register(e *echo.Echo, o *Options) {
 	apiHandler := NewAPIHandler(o.DB)
+	registerGroup(e.Group(o.ServerPathPrefix+"/api"), apiHandler)
 
-	apiGroup := e.Group(o.ServerPathPrefix + "/api")
+	// TODO: Register /ws routes
+}
 
-	apiGroup.GET("/devices", apiHandler.GetDevices)
+func registerGroup(g *echo.Group, apiHandler *APIHandler) {
+	g.GET("/devices", apiHandler.GetDevices)
 
-	apiGroup.GET("/devices/:addr", apiHandler.GetDevice)
+	g.GET("/devices/:addr", apiHandler.GetDevice)
 
-	apiGroup.GET("/devices/:addr/name", apiHandler.GetDeviceName)
+	g.GET("/devices/:addr/name", apiHandler.GetDeviceName)
 
-	apiGroup.GET("/devices/:addr/active_color", apiHandler.GetDeviceActiveColor)
+	g.GET("/devices/:addr/active_color", apiHandler.GetDeviceActiveColor)
 
-	apiGroup.GET("/devices/:addr/color", apiHandler.GetDeviceColor)
-	apiGroup.POST("/devices/:addr/color", apiHandler.PostDeviceColor)
+	g.GET("/devices/:addr/color", apiHandler.GetDeviceColor)
+	g.POST("/devices/:addr/color", apiHandler.PostDeviceColor)
 
-	apiGroup.GET("/devices/:addr/pins", apiHandler.GetDevicePins)
+	g.GET("/devices/:addr/pins", apiHandler.GetDevicePins)
 
-	apiGroup.GET("/devices/:addr/power", apiHandler.GetDevicePower)
-	apiGroup.POST("/devices/:addr/power", apiHandler.PostDevicePower)
+	g.GET("/devices/:addr/power", apiHandler.GetDevicePower)
+	g.POST("/devices/:addr/power", apiHandler.PostDevicePower)
 
-	apiGroup.GET("/colors", apiHandler.GetColors)
-	apiGroup.POST("/colors", apiHandler.PostColors)
-	apiGroup.PUT("/colors", apiHandler.PutColors)
+	g.GET("/colors", apiHandler.GetColors)
+	g.POST("/colors", apiHandler.PostColors)
+	g.PUT("/colors", apiHandler.PutColors)
 
-	apiGroup.GET("/colors/:id", apiHandler.GetColorsID)
-	apiGroup.POST("/colors/:id", apiHandler.PostColorsID)
-	apiGroup.DELETE("/colors/:id", apiHandler.DeleteColorsID)
+	g.GET("/colors/:id", apiHandler.GetColorsID)
+	g.POST("/colors/:id", apiHandler.PostColorsID)
+	g.DELETE("/colors/:id", apiHandler.DeleteColorsID)
 }
