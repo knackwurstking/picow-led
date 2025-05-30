@@ -8,12 +8,45 @@ import (
 type Handler struct {
 	clients []*Client
 	mutex   *sync.Mutex
+
+	started bool
+
+	chDone chan any
 }
 
 func NewHandler() *Handler {
 	return &Handler{
-		mutex: &sync.Mutex{},
+		clients: make([]*Client, 0),
+		mutex:   &sync.Mutex{},
 	}
+}
+
+func (h *Handler) Start() {
+	h.started = true
+	defer func() {
+		h.started = false
+	}()
+
+	h.chDone = make(chan any)
+	defer func() {
+		close(h.chDone)
+	}()
+
+	// TODO: Broadcast handler (chan)
+	for {
+		select {
+		case <-h.chDone:
+			break
+		}
+	}
+}
+
+func (h *Handler) Stop() {
+	if !h.started {
+		return
+	}
+
+	h.chDone <- nil
 }
 
 func (h *Handler) Register(client *Client) {
