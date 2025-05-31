@@ -106,7 +106,6 @@ func (h *APIHandler) GetDeviceColor(c echo.Context) error {
 	return c.JSON(http.StatusOK, device.Color)
 }
 
-// TODO: Handle ws event "device"
 func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 	addr, err := url.QueryUnescape(c.Param("addr"))
 	if err != nil {
@@ -125,12 +124,14 @@ func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 		return h.error(c, http.StatusBadRequest, err)
 	}
 
-	device.SetColor(color)
-	err = micro.SetColor(device.Addr, device.Color)
+	err = micro.SetColor(device.Addr, color)
 	if err != nil {
 		return h.error(c, http.StatusInternalServerError,
 			fmt.Errorf("micro: set device color: %s", err))
 	}
+
+	device.SetColor(color)
+	go h.wsHandler.BroadcastDevice(device)
 
 	err = h.db.Devices.Update(device.Addr, device)
 	if err != nil {
