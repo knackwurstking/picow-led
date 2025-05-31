@@ -184,15 +184,16 @@ func (h *APIHandler) PostDevicePower(c echo.Context) error {
 			fmt.Errorf("database: get device: %s", err))
 	}
 
+	color := []int{}
 	switch database.PowerState(state) {
 	case database.PowerStateOFF:
-		color := device.GetColorForPowerState(database.PowerStateOFF)
+		color = device.GetColorForPowerState(database.PowerStateOFF)
 		if err := micro.SetColor(device.Addr, color); err != nil {
 			return h.error(c, http.StatusInternalServerError,
 				fmt.Errorf("micro: set color: %s", err))
 		}
 	case database.PowerStateON:
-		color := device.GetColorForPowerState(database.PowerStateON)
+		color = device.GetColorForPowerState(database.PowerStateON)
 		if err := micro.SetColor(device.Addr, color); err != nil {
 			return h.error(c, http.StatusInternalServerError,
 				fmt.Errorf("micro: set color: %s", err))
@@ -207,8 +208,7 @@ func (h *APIHandler) PostDevicePower(c echo.Context) error {
 		)
 	}
 
-	device.Power = database.PowerState(state)
-
+	device.SetColor(color)
 	if err = h.db.Devices.Update(device.Addr, device); err != nil {
 		return h.error(c, http.StatusInternalServerError,
 			fmt.Errorf("database: update device: %s", err))

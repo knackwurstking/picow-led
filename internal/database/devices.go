@@ -67,23 +67,19 @@ func (d *Device) SetColor(color []int) {
 	}
 
 	d.Color = color
+	if slices.Max(d.Color) > 0 {
+		d.Power = 1
+		d.ActiveColor = color
+	} else {
+		d.Power = 0
+	}
 
 	// Handle active color
-	if slices.Max(d.Color) > 0 {
-		slog.Debug("Set active color",
-			"color", d.Color,
-			"device.address", d.Addr,
-			"device.name", d.Name,
-		)
-
-		d.ActiveColor = color
-		d.Power = PowerStateON
-	} else if len(d.ActiveColor) == 0 {
+	if len(d.ActiveColor) == 0 {
 		d.ActiveColor = []int{}
 		for range d.Pins {
 			d.ActiveColor = append(d.ActiveColor, 255)
 		}
-		d.Power = PowerStateOFF
 	}
 }
 
@@ -142,7 +138,7 @@ func NewDevices(db *sql.DB) (*Devices, error) {
 }
 
 func (d *Devices) List() ([]*Device, error) {
-	query := fmt.Sprintf(`SELECT %s FROM devices;`, deviceQueryKeys)
+	query := fmt.Sprintf(`SELECT %s FROM devices ORDER BY name;`, deviceQueryKeys)
 	r, err := d.db.Query(query)
 	if err != nil {
 		return nil, err
