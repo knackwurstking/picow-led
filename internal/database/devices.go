@@ -39,7 +39,7 @@ func NewDevice() *Device {
 	}
 }
 
-func (d *Device) PowerStateColor(state PowerState) []int {
+func (d *Device) GetColorForPowerState(state PowerState) []int {
 	color := []int{}
 
 	switch state {
@@ -47,6 +47,7 @@ func (d *Device) PowerStateColor(state PowerState) []int {
 		for range d.Pins {
 			color = append(color, 0)
 		}
+
 	case PowerStateON:
 		if len(d.ActiveColor) > 0 {
 			color = d.ActiveColor
@@ -76,11 +77,13 @@ func (d *Device) SetColor(color []int) {
 		)
 
 		d.ActiveColor = color
+		d.Power = PowerStateON
 	} else if len(d.ActiveColor) == 0 {
 		d.ActiveColor = []int{}
 		for range d.Pins {
 			d.ActiveColor = append(d.ActiveColor, 255)
 		}
+		d.Power = PowerStateOFF
 	}
 }
 
