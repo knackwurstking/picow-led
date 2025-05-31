@@ -106,6 +106,7 @@ func (h *APIHandler) GetDeviceColor(c echo.Context) error {
 	return c.JSON(http.StatusOK, device.Color)
 }
 
+// TODO: Handle ws event "device"
 func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 	addr, err := url.QueryUnescape(c.Param("addr"))
 	if err != nil {
@@ -170,6 +171,7 @@ func (h *APIHandler) GetDevicePower(c echo.Context) error {
 	return c.JSON(http.StatusOK, device.Power)
 }
 
+// TODO: Handle ws event "device"
 func (h *APIHandler) PostDevicePower(c echo.Context) error {
 	addr, err := url.QueryUnescape(c.Param("addr"))
 	if err != nil {
@@ -229,6 +231,7 @@ func (h *APIHandler) GetColors(c echo.Context) error {
 	return c.JSON(http.StatusOK, colors)
 }
 
+// TODO: Handle ws event "colors"
 func (h *APIHandler) PostColors(c echo.Context) error {
 	colors := []database.Color{}
 	err := json.NewDecoder(c.Request().Body).Decode(&colors)
@@ -245,6 +248,7 @@ func (h *APIHandler) PostColors(c echo.Context) error {
 	return nil
 }
 
+// TODO: Handle ws event "colors"
 func (h *APIHandler) PutColors(c echo.Context) error {
 	colors := []database.Color{}
 	err := json.NewDecoder(c.Request().Body).Decode(&colors)
@@ -276,6 +280,7 @@ func (h *APIHandler) GetColorsID(c echo.Context) error {
 	return c.JSON(http.StatusOK, color)
 }
 
+// TODO: Handle ws event "color"
 func (h *APIHandler) PostColorsID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -297,6 +302,7 @@ func (h *APIHandler) PostColorsID(c echo.Context) error {
 	return err
 }
 
+// TODO: Handle ws event "color"
 func (h *APIHandler) DeleteColorsID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
