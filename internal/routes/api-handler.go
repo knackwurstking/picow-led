@@ -186,13 +186,13 @@ func (h *APIHandler) PostDevicePower(c echo.Context) error {
 
 	switch database.PowerState(state) {
 	case database.PowerStateOFF:
-		color := device.PowerStateColor(database.PowerStateOFF)
+		color := device.GetColorForPowerState(database.PowerStateOFF)
 		if err := micro.SetColor(device.Addr, color); err != nil {
 			return h.error(c, http.StatusInternalServerError,
 				fmt.Errorf("micro: set color: %s", err))
 		}
 	case database.PowerStateON:
-		color := device.PowerStateColor(database.PowerStateON)
+		color := device.GetColorForPowerState(database.PowerStateON)
 		if err := micro.SetColor(device.Addr, color); err != nil {
 			return h.error(c, http.StatusInternalServerError,
 				fmt.Errorf("micro: set color: %s", err))
