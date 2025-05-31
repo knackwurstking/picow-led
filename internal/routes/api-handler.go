@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"picow-led/internal/database"
 	"picow-led/internal/micro"
+	"picow-led/internal/ws"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -24,12 +25,14 @@ func NewErrorResponse(msg string) ErrorResponse {
 }
 
 type APIHandler struct {
-	db *database.DB
+	db        *database.DB
+	wsHandler *ws.Handler
 }
 
-func NewAPIHandler(db *database.DB) *APIHandler {
+func NewAPIHandler(db *database.DB, wsHandler *ws.Handler) *APIHandler {
 	return &APIHandler{
-		db: db,
+		db:        db,
+		wsHandler: wsHandler,
 	}
 }
 

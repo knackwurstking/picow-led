@@ -15,12 +15,13 @@ type Options struct {
 }
 
 func Register(e *echo.Echo, o *Options) {
-	apiHandler := NewAPIHandler(o.DB)
-	registerGroup(e.Group(o.ServerPathPrefix+"/api"), apiHandler)
-	registerWebSocket(e)
+	wsHandler := ws.NewHandler()
+	apiHandler := NewAPIHandler(o.DB, wsHandler)
+	registerAPI(e.Group(o.ServerPathPrefix+"/api"), apiHandler)
+	registerWebSocket(e, wsHandler)
 }
 
-func registerGroup(g *echo.Group, apiHandler *APIHandler) {
+func registerAPI(g *echo.Group, apiHandler *APIHandler) {
 	g.GET("/devices", apiHandler.GetDevices)
 
 	g.GET("/devices/:addr", apiHandler.GetDevice)
@@ -46,9 +47,7 @@ func registerGroup(g *echo.Group, apiHandler *APIHandler) {
 	g.DELETE("/colors/:id", apiHandler.DeleteColorsID)
 }
 
-func registerWebSocket(e *echo.Echo) {
-	wsHandler := ws.NewHandler()
-
+func registerWebSocket(e *echo.Echo, wsHandler *ws.Handler) {
 	e.GET("/ws", func(c echo.Context) error {
 		websocket.Handler(func(conn *websocket.Conn) {
 			defer conn.Close()
