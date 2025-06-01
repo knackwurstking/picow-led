@@ -9,9 +9,10 @@ clean:
 	git clean -xfd
 
 init:
+	go mod tidy -v
 	git submodule init
 	git submodule update --recursive
-	go mod tidy -v
+	cd frontend && npm install
 
 dev:
 	which gow || (echo 'gow is not installed, install with: `go install github.com/mitranim/gow@latest`' && exit 1)
@@ -25,6 +26,7 @@ test:
 
 build:
 	make test
+	cd frontend && npm run build && cp -r build ../cmd/picow-led/frontend-build
 	go build -v -o bin/${BINARY_NAME} ./cmd/${BINARY_NAME}
 
 # NOTE: Standard systemd stuff
