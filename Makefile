@@ -8,8 +8,9 @@ SERVER_APP_NAME := ${BINARY_NAME}
 clean:
 	git clean -xfd
 
-# TODO: Update submodule "picow-led-frontend" (dev branch)
 init:
+	git submodule init
+	git submodule update --recursive
 	go mod tidy -v
 
 dev:
