@@ -131,13 +131,13 @@ func (h *APIHandler) PostDeviceColor(c echo.Context) error {
 	}
 
 	device.SetColor(color)
-	go h.wsHandler.BroadcastDevice(device)
-
 	err = h.db.Devices.Update(device.Addr, device)
 	if err != nil {
 		return h.error(c, http.StatusInternalServerError,
 			fmt.Errorf("database: update device: %s", err))
 	}
+
+	go h.wsHandler.BroadcastDevice(device)
 
 	return nil
 }
@@ -172,7 +172,6 @@ func (h *APIHandler) GetDevicePower(c echo.Context) error {
 	return c.JSON(http.StatusOK, device.Power)
 }
 
-// TODO: Handle ws event "device"
 func (h *APIHandler) PostDevicePower(c echo.Context) error {
 	addr, err := url.QueryUnescape(c.Param("addr"))
 	if err != nil {
@@ -220,6 +219,8 @@ func (h *APIHandler) PostDevicePower(c echo.Context) error {
 			fmt.Errorf("database: update device: %s", err))
 	}
 
+	go h.wsHandler.BroadcastDevice(device)
+
 	return nil
 }
 
@@ -232,7 +233,6 @@ func (h *APIHandler) GetColors(c echo.Context) error {
 	return c.JSON(http.StatusOK, colors)
 }
 
-// TODO: Handle ws event "colors"
 func (h *APIHandler) PostColors(c echo.Context) error {
 	colors := []database.Color{}
 	err := json.NewDecoder(c.Request().Body).Decode(&colors)
@@ -246,10 +246,17 @@ func (h *APIHandler) PostColors(c echo.Context) error {
 			fmt.Errorf("database: add colors: %s", err))
 	}
 
+	go func() {
+		if colors, err = h.db.Colors.List(); err != nil {
+			slog.Error("Handle broadcast colors", "error", err)
+		} else {
+			h.wsHandler.BroadcastColors(colors)
+		}
+	}()
+
 	return nil
 }
 
-// TODO: Handle ws event "colors"
 func (h *APIHandler) PutColors(c echo.Context) error {
 	colors := []database.Color{}
 	err := json.NewDecoder(c.Request().Body).Decode(&colors)
@@ -262,6 +269,8 @@ func (h *APIHandler) PutColors(c echo.Context) error {
 		return h.error(c, http.StatusInternalServerError,
 			fmt.Errorf("database: set colors: %s", err))
 	}
+
+	go h.wsHandler.BroadcastColors(colors)
 
 	return nil
 }
@@ -281,7 +290,6 @@ func (h *APIHandler) GetColorsID(c echo.Context) error {
 	return c.JSON(http.StatusOK, color)
 }
 
-// TODO: Handle ws event "color"
 func (h *APIHandler) PostColorsID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -300,10 +308,17 @@ func (h *APIHandler) PostColorsID(c echo.Context) error {
 			fmt.Errorf("database: update color: %s", err))
 	}
 
+	go func() {
+		if colors, err := h.db.Colors.List(); err != nil {
+			slog.Error("broadcast colors", "error", err)
+		} else {
+			h.wsHandler.BroadcastColors(colors)
+		}
+	}()
+
 	return err
 }
 
-// TODO: Handle ws event "color"
 func (h *APIHandler) DeleteColorsID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -315,6 +330,14 @@ func (h *APIHandler) DeleteColorsID(c echo.Context) error {
 		return h.error(c, http.StatusInternalServerError,
 			fmt.Errorf("database: delete color: %s", err))
 	}
+
+	go func() {
+		if colors, err := h.db.Colors.List(); err != nil {
+			slog.Error("broadcast colors", "error", err)
+		} else {
+			h.wsHandler.BroadcastColors(colors)
+		}
+	}()
 
 	return nil
 }
