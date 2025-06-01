@@ -3,8 +3,6 @@ package micro
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"log/slog"
 	"strconv"
 )
 
@@ -46,12 +44,6 @@ func Send(h *Handler, c *Command) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	slog.Debug("Got some data", "addr", h.Addr(),
-		"command", fmt.Sprintf("(%d) %s %s %s %#v",
-			c.ID, c.Type, c.Group, c.Command, c.CommandArgs,
-		),
-	)
 
 	return data, nil
 }

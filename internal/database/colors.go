@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"log/slog"
 	"slices"
 )
 
@@ -36,7 +35,6 @@ func NewColors(db *sql.DB) (*Colors, error) {
 	}
 
 	if !slices.Contains(tables, "colors") {
-		slog.Debug("Create (sqlite) database table", "name", "colors")
 		_, err = db.Exec(`
       		CREATE TABLE colors (
                 "id" INTEGER NOT NULL,
@@ -60,7 +58,7 @@ func NewColors(db *sql.DB) (*Colors, error) {
 func (c *Colors) List() ([]Color, error) {
 	colors := []Color{}
 
-	r, err := c.db.Query(`SELECT id, r, g, b FROM colors`)
+	r, err := c.db.Query(`SELECT id, r, g, b FROM colors ORDER BY id`)
 	if err != nil {
 		return nil, err
 	}

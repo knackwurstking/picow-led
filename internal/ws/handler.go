@@ -39,6 +39,8 @@ func NewHandler() *Handler {
 }
 
 func (h *Handler) Start() {
+	slog.Debug("Start WebSocket handler")
+
 	h.started = true
 	defer func() {
 		h.started = false
@@ -61,6 +63,8 @@ func (h *Handler) Start() {
 }
 
 func (h *Handler) Stop() {
+	slog.Debug("Stop WebSocket handler")
+
 	if !h.started {
 		return
 	}

@@ -189,8 +189,6 @@ func (h *APIHandler) PostDevicePower(c echo.Context) error {
 		color = device.GetColorForPowerState(database.PowerStateON)
 		if err := micro.SetColor(device.Addr, color); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
-		} else {
-			device.SetColor(color)
 		}
 	default:
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf(

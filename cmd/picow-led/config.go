@@ -35,12 +35,6 @@ func (c *Config) GetDataBaseDevices() []*database.Device {
 			continue
 		}
 
-		slog.Debug("Update device",
-			"device.address", d.Addr,
-			"device.name", d.Name,
-			"device.pins", d.Pins,
-		)
-
 		wg.Add(1)
 		go func() {
 			defer wg.Done()

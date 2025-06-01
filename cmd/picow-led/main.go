@@ -102,6 +102,7 @@ func cliAction_Server(addr *string, cache *string) cli.ActionRunner {
 		loadApiConfig(db)
 		registerRoutes(e, db)
 
+		slog.Info("Server running", "addr", *addr)
 		return e.Start(*addr)
 	}
 }

@@ -48,6 +48,8 @@ func registerAPI(g *echo.Group, apiHandler *APIHandler) {
 }
 
 func registerWebSocket(e *echo.Echo, wsHandler *ws.Handler) {
+	go wsHandler.Start()
+
 	e.GET("/ws", func(c echo.Context) error {
 		websocket.Handler(func(conn *websocket.Conn) {
 			defer conn.Close()

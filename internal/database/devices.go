@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 	"slices"
 )
 
@@ -115,7 +114,6 @@ func NewDevices(db *sql.DB) (*Devices, error) {
 	}
 
 	if !slices.Contains(tables, "devices") {
-		slog.Debug("Create (sqlite) database table", "name", "devices")
 		_, err = db.Exec(`
       		CREATE TABLE devices (
 				addr TEXT NOT NULL,
@@ -278,7 +276,6 @@ func (d *Devices) execDevice(query string, device *Device) error {
 	colorJSON, _ = json.Marshal(device.Color)
 	pinsJSON, _ = json.Marshal(device.Pins)
 
-	slog.Debug("Exec Query", "query", query)
 	_, err := d.db.Exec(query,
 		sql.Named("active_color", activeColorJSON),
 		sql.Named("color", colorJSON),
