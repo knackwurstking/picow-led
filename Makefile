@@ -27,7 +27,7 @@ test:
 build:
 	make test
 	cd frontend && npm run build && cp -r build ../cmd/picow-led/frontend-build
-	go build -v -o bin/${BINARY_NAME} ./cmd/${BINARY_NAME}
+	go build -v --tags=frontend -o bin/${BINARY_NAME} ./cmd/${BINARY_NAME}
 
 # NOTE: Standard systemd stuff
 
