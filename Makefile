@@ -2,7 +2,7 @@ all: init build
 
 include .env
 
-BINARY_NAME := "picow-led"
+BINARY_NAME := picow-led
 SERVER_APP_NAME := ${BINARY_NAME}
 
 clean:
