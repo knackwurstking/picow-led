@@ -3,10 +3,7 @@
 
 package main
 
-import (
-	"embed"
-)
+import "github.com/labstack/echo/v4"
 
-func frontend() (f embed.FS, ok bool) {
-	return embed.FS{}, false
+func StaticFS(e *echo.Echo) {
 }

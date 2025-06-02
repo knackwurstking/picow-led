@@ -5,17 +5,13 @@ package main
 
 import (
 	"embed"
-	"io/fs"
+
+	"github.com/labstack/echo/v4"
 )
 
 //go:embed frontend-build
 var frontendBuild embed.FS
 
-func frontend() (f fs.FS, ok bool) {
-	f, err := fs.Sub(frontendBuild, "frontend-build")
-	if err != nil {
-		panic(err)
-	}
-
-	return f, true
+func StaticFS(e *echo.Echo) {
+	e.StaticFS(serverPathPrefix+"/", echo.MustSubFS(frontendBuild, "frontend-build"))
 }

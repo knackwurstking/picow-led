@@ -99,7 +99,7 @@ func cliAction_Server(addr *string, cache *string) cli.ActionRunner {
 		db := database.NewDB(databasePath)
 		defer db.Close()
 
-		staticFileServer(e)
+		StaticFS(e)
 
 		loadApiConfig(db)
 		registerRoutes(e, db)
@@ -165,13 +165,4 @@ func registerRoutes(e *echo.Echo, db *database.DB) {
 	}
 
 	routes.Register(e, routesOptions)
-}
-
-func staticFileServer(e *echo.Echo) {
-	f, ok := frontend()
-	if !ok {
-		return
-	}
-
-	e.StaticFS(serverPathPrefix+"/", f)
 }
