@@ -1,9 +1,7 @@
 package main
 
 import (
-	"embed"
 	"fmt"
-	"io/fs"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -29,9 +27,6 @@ var (
 	cacheDir         string
 	apiConfigPath    = "api.yaml"
 	dbPath           = "database.db"
-
-	//go:embed frontend-build
-	frontendBuild embed.FS
 )
 
 func init() {
@@ -172,9 +167,8 @@ func registerRoutes(e *echo.Echo, db *database.DB) {
 }
 
 func staticFileServer(e *echo.Echo) {
-	f, err := fs.Sub(frontendBuild, "frontend-build")
-	if err != nil {
-		slog.Warn("Parsing \"frontend-build\" failed, skip...", "error", err)
+	f, ok := frontend()
+	if !ok {
 		return
 	}
 
