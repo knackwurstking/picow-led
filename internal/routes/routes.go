@@ -18,7 +18,7 @@ func Register(e *echo.Echo, o *Options) {
 	wsHandler := ws.NewHandler()
 	apiHandler := NewAPIHandler(o.DB, wsHandler)
 	registerAPI(e.Group(o.ServerPathPrefix+"/api"), apiHandler)
-	registerWebSocket(e, wsHandler)
+	registerWebSocket(e, o.ServerPathPrefix, wsHandler)
 }
 
 func registerAPI(g *echo.Group, apiHandler *APIHandler) {
@@ -47,10 +47,10 @@ func registerAPI(g *echo.Group, apiHandler *APIHandler) {
 	g.DELETE("/colors/:id", apiHandler.DeleteColorsID)
 }
 
-func registerWebSocket(e *echo.Echo, wsHandler *ws.Handler) {
+func registerWebSocket(e *echo.Echo, serverPathPrefix string, wsHandler *ws.Handler) {
 	go wsHandler.Start()
 
-	e.GET("/ws", func(c echo.Context) error {
+	e.GET(serverPathPrefix+"/ws", func(c echo.Context) error {
 		websocket.Handler(func(conn *websocket.Conn) {
 			defer conn.Close()
 
