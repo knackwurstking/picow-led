@@ -173,5 +173,5 @@ func staticFileServer(e *echo.Echo) {
 		return
 	}
 
-	e.GET("/*", echo.StaticDirectoryHandler(f, false))
+	e.StaticFS(serverPathPrefix+"/", f)
 }
