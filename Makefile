@@ -26,9 +26,11 @@ test:
 	cd frontend && npm run check
 
 build:
-	rm -rf ./cmd/picow-led/frontend-build && \
-		cd frontend && npx vite build --base=${SERVER_PATH_PREFIX} && \
-		cp -r build ../cmd/picow-led/frontend-build
+	cd frontend && npx vite build --base=${SERVER_PATH_PREFIX}
+	rm -rf ./cmd/picow-led/frontend-build
+	mkdir  ./cmd/picow-led/frontend-build
+	cp -r ./frontend/.svelte-kit/output/prerendered/pages/* ./cmd/picow-led/frontend-build/
+	cp -r ./frontend/.svelte-kit/output/client/* ./cmd/picow-led/frontend-build/
 	go build -v --tags=frontend -o bin/${BINARY_NAME} ./cmd/${BINARY_NAME}
 
 # NOTE: Standard systemd stuff
