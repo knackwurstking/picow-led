@@ -26,7 +26,10 @@ test:
 
 build:
 	make test
-	rm -rf ./cmd/picow-led/frontend-build && cd frontend && npm run build && cp -r build ../cmd/picow-led/frontend-build
+	cd frontend && npm run check
+	rm -rf ./cmd/picow-led/frontend-build && \
+		cd frontend && npx vite build --base=${SERVER_PATH_PREFIX} && \
+		cp -r build ../cmd/picow-led/frontend-build
 	go build -v --tags=frontend -o bin/${BINARY_NAME} ./cmd/${BINARY_NAME}
 
 # NOTE: Standard systemd stuff
