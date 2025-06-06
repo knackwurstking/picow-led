@@ -26,7 +26,7 @@ test:
 	cd frontend && npm run check
 
 build:
-	cd frontend && npx vite build --base=${SERVER_PATH_PREFIX}
+	cd frontend && npm run build
 	rm -rf ./cmd/picow-led/frontend-build
 	mkdir  ./cmd/picow-led/frontend-build
 	cp -r ./frontend/.svelte-kit/output/prerendered/pages/* ./cmd/picow-led/frontend-build/
