@@ -1,5 +1,9 @@
 # PicoW LED Server
 
+## v0.12.0 - 2025-06-08
+
+- A complete rewrite with a separate frontend using sveltekit [picow-led-frontend](https://github.com/knackwurstking/picow-led-frontend/tree/v0.1.0)
+
 ## v0.11.6 - unreleased
 
 - removed pageshow and pagehide event handlers
