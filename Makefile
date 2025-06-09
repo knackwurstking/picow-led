@@ -21,6 +21,7 @@ endef
 
 clean:
 	git clean -xfd
+	cd ./frontend && git clean -xfd
 
 init:
 	go mod tidy -v
