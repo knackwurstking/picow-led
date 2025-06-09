@@ -1,5 +1,12 @@
 # PicoW LED Server
 
+## v0.12.1 - 2025-06-09
+
+**Frontend**: [picow-led-frontend v0.1.1](https://github.com/knackwurstking/picow-led-frontend/tree/v0.1.1)
+
+- Changed the app manifests (PWA) "short_name" to "PicoW LED"
+- Fixed missing onclick handler for `Toast` messages, dismiss message if clicked
+
 ## v0.12.0 - 2025-06-08
 
 - A complete rewrite with a separate frontend using sveltekit [picow-led-frontend v0.1.0](https://github.com/knackwurstking/picow-led-frontend/tree/v0.1.0)
