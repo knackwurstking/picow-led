@@ -12,7 +12,7 @@ init:
 	go mod tidy -v
 	git submodule init
 	git submodule update --recursive
-	cd frontend && npm install
+	cd frontend && npm ci 
 
 dev:
 	which gow || (echo 'gow is not installed, install with: `go install github.com/mitranim/gow@latest`' && exit 1)
