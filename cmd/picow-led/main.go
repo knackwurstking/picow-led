@@ -22,7 +22,7 @@ const (
 var (
 	serverPathPrefix = os.Getenv("SERVER_PATH_PREFIX")
 	serverAddress    = os.Getenv("SERVER_ADDR")
-	version          = "v0.13.0"
+	version          = "v0.13.1"
 	configDir        string
 	apiConfigPath    = "api.yaml"
 	dbPath           = "database.db"

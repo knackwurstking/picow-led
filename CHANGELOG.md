@@ -1,5 +1,11 @@
 # PicoW LED Server
 
+## v0.13.1 [2025-06-16]
+
+**Changed**:
+
+- Frontend: A new service worker
+
 ## v0.13.0 [2025-06-16]
 
 **Changed**:
