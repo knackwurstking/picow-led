@@ -1,10 +1,10 @@
 # PicoW LED Server
 
-## v0.12.2 [unreleased]
+## v0.13.0 [2025-06-16]
 
-**Fixed**:
+**Changed**:
 
-- User cache dir
+- Move database file to the user configs location
 
 ## v0.12.1 - 2025-06-09
 
