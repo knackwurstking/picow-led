@@ -24,7 +24,6 @@ var (
 	serverAddress    = os.Getenv("SERVER_ADDR")
 	version          = "v0.12.2"
 	configDir        string
-	cacheDir         string
 	apiConfigPath    = "api.yaml"
 	dbPath           = "database.db"
 )
@@ -32,10 +31,6 @@ var (
 func init() {
 	if d, err := os.UserConfigDir(); err == nil {
 		configDir = filepath.Join(d, "picow-led")
-	}
-
-	if d, err := os.UserCacheDir(); err == nil {
-		cacheDir = filepath.Join(d, "picow-led")
 	}
 }
 
@@ -54,16 +49,9 @@ func main() {
 						cli.Usage("Set server address (<host>:<port>)"),
 					)
 
-					dbPath := cli.String(
-						cmd, "cache",
-						cli.WithShort("c"),
-						cli.Usage("Cache location, where the database will land"),
-					)
-
 					*addr = serverAddress
-					*dbPath = filepath.Join(cacheDir)
 
-					return cliAction_Server(addr, dbPath)
+					return cliAction_Server(addr)
 				}),
 			},
 		},
@@ -76,7 +64,7 @@ func main() {
 	app.HandleError(app.Run())
 }
 
-func cliAction_Server(addr *string, cache *string) cli.ActionRunner {
+func cliAction_Server(addr *string) cli.ActionRunner {
 	return func(cmd *cli.Command) error {
 		e := echo.New()
 
@@ -91,11 +79,10 @@ func cliAction_Server(addr *string, cache *string) cli.ActionRunner {
 		middlewareHandlers(e)
 
 		// Handle database path
-		databasePath := getDatabasePath(*cache)
+		databasePath := filepath.Join(configDir, dbPath)
+		createDatabasePath(databasePath)
 
 		// Create database
-		slog.Info(fmt.Sprintf("Database location: %s", databasePath),
-			"cacheDir", cacheDir)
 		db := database.NewDB(databasePath)
 		defer db.Close()
 
@@ -110,22 +97,14 @@ func cliAction_Server(addr *string, cache *string) cli.ActionRunner {
 	}
 }
 
-func getDatabasePath(cache string) string {
+func createDatabasePath(path string) {
+	slog.Info(fmt.Sprintf("Database location: %s", path))
+
 	var err error
-
-	if cache, err = filepath.Abs(cache); err != nil {
-		slog.Error("Get the absolute database path failed", "error", err)
-		os.Exit(exitCodeCache)
-	}
-
-	path := filepath.Join(cache, dbPath)
-
 	if err = os.MkdirAll(filepath.Dir(path), 0700); err != nil {
 		slog.Error("Database creation failed", "error", err)
 		os.Exit(exitCodeCache)
 	}
-
-	return path
 }
 
 func loadApiConfig(db *database.DB) {
