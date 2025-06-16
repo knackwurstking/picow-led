@@ -34,7 +34,7 @@ func init() {
 		configDir = filepath.Join(d, "picow-led")
 	}
 
-	if d, err := os.UserCacheDir(); err != nil {
+	if d, err := os.UserCacheDir(); err == nil {
 		cacheDir = filepath.Join(d, "picow-led")
 	}
 }
