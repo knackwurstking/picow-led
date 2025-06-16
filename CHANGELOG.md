@@ -1,5 +1,11 @@
 # PicoW LED Server
 
+## v0.12.2 [unreleased]
+
+**Fixed**:
+
+- User cache dir
+
 ## v0.12.1 - 2025-06-09
 
 **Frontend**: [picow-led-frontend v0.1.1](https://github.com/knackwurstking/picow-led-frontend/tree/v0.1.1)
