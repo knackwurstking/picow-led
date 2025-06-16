@@ -32,11 +32,11 @@ init:
 dev:
 	which gow || (echo 'gow is not installed, install with: `go install github.com/mitranim/gow@latest`' && exit 1)
 	SERVER_PATH_PREFIX=${SERVER_PATH_PREFIX} \
-		gow -e=go,json -v -r run ./cmd/${BINARY_NAME} server --addr ${SERVER_ADDR} --cache .
+		gow -e=go,json -v -r run ./cmd/${BINARY_NAME} server --addr ${SERVER_ADDR}
 
 run:
 	SERVER_PATH_PREFIX=${SERVER_PATH_PREFIX} \
-		go run ./cmd/${BINARY_NAME} server -a ${SERVER_ADDR} --cache .
+		go run ./cmd/${BINARY_NAME} server -a ${SERVER_ADDR}
 
 test:
 	go test -v ./...
