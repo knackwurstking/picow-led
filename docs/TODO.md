@@ -2,7 +2,7 @@
 
 - [ ] SQLite Database [WIP]
   - [x] Open the database, take path from flags
-  - [ ] Create tables [WIP]
+  - [ ] Create tables and models [WIP]
     - [ ] Create a table for devices
     - [ ] create a table for colors
     - [ ] create a table for groups
