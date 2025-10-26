@@ -2,14 +2,16 @@ module github.com/knackwurstking/picow-led
 
 go 1.25.0
 
-require github.com/labstack/echo/v4 v4.13.4
+require (
+	github.com/labstack/echo/v4 v4.13.4
+	github.com/mattn/go-sqlite3 v1.14.32
+)
 
 require (
-	github.com/a-h/templ v0.3.960 // indirect
-	github.com/knackwurstking/pg-press v0.0.0-20251026175046-1b8c5c2d2b58 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/crypto v0.43.0 // indirect

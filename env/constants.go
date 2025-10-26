@@ -6,8 +6,11 @@ const (
 )
 
 const (
-	ExitCodeServerStart      = 2
-	ExitCodeInvalidLogFormat = 3
+	ExitCodeServerStart         = 2
+	ExitCodeInvalidLogFormat    = 3
+	ExitCodeDatabaseConnection  = 4
+	ExitCodeDatabasePing        = 5
+	ExitCodeInvalidDatabasePath = 6
 )
 
 var (
@@ -26,6 +29,7 @@ type ArgsData struct {
 	ServerPathPrefix string
 	Debug            bool
 	LogFormat        LogFormat
+	DatabasePath     string
 }
 
 func init() {

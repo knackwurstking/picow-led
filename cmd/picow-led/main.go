@@ -1,18 +1,25 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
+	"fmt"
 	"log/slog"
 	"os"
 
 	"github.com/knackwurstking/picow-led/env"
 	"github.com/labstack/echo/v4"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 	parseFlags()
+
 	initializeLogging()
-	startServer()
+	db := initializeDatabase()
+
+	startServer(db)
 }
 
 func parseFlags() {
@@ -30,8 +37,12 @@ func parseFlags() {
 	// Log Format: "text", "json"
 	flag.StringVar(&logFormat, "log-format", logFormat, "Log format: text, json")
 
+	// Get the required database path
+	flag.StringVar(&env.Args.DatabasePath, "database-path", env.Args.DatabasePath, "Database path")
+
 	// Custom Usage Message
 	flag.Usage = func() {
+		// TODO: List all exit codes and their meanings
 		flag.PrintDefaults()
 	}
 
@@ -45,6 +56,16 @@ func parseFlags() {
 	default:
 		slog.Error("Invalid log format", "format", logFormat)
 		os.Exit(env.ExitCodeInvalidLogFormat)
+	}
+
+	verifyDatabasePath()
+}
+
+func verifyDatabasePath() {
+	// Verify the database path
+	if env.Args.DatabasePath == "" {
+		slog.Error("Database path is required")
+		os.Exit(env.ExitCodeInvalidDatabasePath)
 	}
 }
 
@@ -70,11 +91,36 @@ func initializeLogging() {
 	slog.SetDefault(slog.New(handler))
 }
 
-func startServer() {
+func initializeDatabase() *sql.DB {
+	slog.Debug("Initializing database", "database-path", env.Args.DatabasePath)
+
+	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
+	db, err := sql.Open("sqlite3", sqlPath)
+	if err != nil {
+		slog.Error("Failed to open database connection", "error", err)
+		os.Exit(env.ExitCodeDatabaseConnection)
+	}
+
+	// Configure connection pool to prevent resource exhaustion
+	db.SetMaxOpenConns(1)    // SQLite works best with single writer
+	db.SetMaxIdleConns(1)    // Keep one connection alive
+	db.SetConnMaxLifetime(0) // No maximum lifetime
+
+	// Ping the database to verify the connection
+	err = db.Ping()
+	if err != nil {
+		slog.Error("Failed to ping database", "error", err)
+		os.Exit(env.ExitCodeDatabasePing)
+	}
+
+	return db
+}
+
+func startServer(db *sql.DB) {
 	e := echo.New()
 
 	// Initialize routes
-	router(e)
+	router(e, db)
 
 	slog.Debug("Server started", "addr", env.Args.Addr, "server-path-prefix", env.Args.ServerPathPrefix)
 	if err := e.Start(env.Args.Addr); err != nil {
