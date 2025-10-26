@@ -1,9 +1,9 @@
-package service
+package services
 
 import (
 	"log/slog"
 
-	"github.com/knackwurstking/picow-led/model"
+	"github.com/knackwurstking/picow-led/models"
 )
 
 type Devices struct {
@@ -27,7 +27,7 @@ func (d *Devices) CreateTable() error {
 	return err
 }
 
-func (d *Devices) Get(id model.DeviceID) (*model.Device, error) {
+func (d *Devices) Get(id models.DeviceID) (*models.Device, error) {
 	slog.Debug("Get device from database", "table", "devices", "id", id)
 
 	query := `SELECT * FROM devices WHERE addr = ?`
@@ -40,19 +40,19 @@ func (d *Devices) Get(id model.DeviceID) (*model.Device, error) {
 }
 
 // TODO: ...
-//func (d *Devices) List() ([]*model.Device, error)
+//func (d *Devices) List() ([]*models.Device, error)
 
 // TODO: ...
-//func (d *Devices) Add(device *model.Device) (model.DeviceID, error)
+//func (d *Devices) Add(device *models.Device) (models.DeviceID, error)
 
 // TODO: ...
-//func (d *Devices) Update(device *model.Device) error
+//func (d *Devices) Update(device *models.Device) error
 
 // TODO: ...
-//func (d *Devices) Delete(id model.DeviceID) error
+//func (d *Devices) Delete(id models.DeviceID) error
 
-func ScanDevice(r Scannable) (*model.Device, error) {
-	var device model.Device
+func ScanDevice(r Scannable) (*models.Device, error) {
+	var device models.Device
 	err := r.Scan(&device.Addr, &device.Name, &device.CreatedAt)
 	if err != nil {
 		return nil, err

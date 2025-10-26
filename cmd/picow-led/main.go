@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/knackwurstking/picow-led/env"
-	"github.com/knackwurstking/picow-led/service"
+	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 	"github.com/lmittmann/tint"
 
@@ -122,7 +122,7 @@ func initializeLogging() {
 	slog.SetDefault(slog.New(handler))
 }
 
-func initializeDatabase() *service.Registry {
+func initializeDatabase() *services.Registry {
 	slog.Debug("Initializing database", "database-path", env.Args.DatabasePath)
 
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
@@ -144,10 +144,10 @@ func initializeDatabase() *service.Registry {
 		os.Exit(env.ExitCodeDatabasePing)
 	}
 
-	return service.NewRegistry(db)
+	return services.NewRegistry(db)
 }
 
-func startServer(r *service.Registry) {
+func startServer(r *services.Registry) {
 	e := echo.New()
 
 	// Initialize routes

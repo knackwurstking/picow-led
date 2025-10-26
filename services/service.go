@@ -1,4 +1,4 @@
-package service
+package services
 
 type Scannable interface {
 	Scan(dest ...any) error
