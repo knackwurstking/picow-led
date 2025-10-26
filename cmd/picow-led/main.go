@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/knackwurstking/picow-led/env"
-	"github.com/knackwurstking/picow-led/services"
+	"github.com/knackwurstking/picow-led/service"
 	"github.com/labstack/echo/v4"
+	"github.com/lmittmann/tint"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -17,49 +19,72 @@ import (
 func main() {
 	parseFlags()
 
-	initializeLogging()
-	r := initializeDatabase()
+	switch env.Args.Command {
+	case env.CommandServer:
+		initializeLogging()
+		r := initializeDatabase()
 
-	startServer(r)
+		startServer(r)
+	}
 }
 
 func parseFlags() {
 	var logFormat string = string(env.Args.LogFormat)
 
+	subCmd := flag.NewFlagSet("server", flag.ExitOnError)
+
 	// Server Address
-	flag.StringVar(&env.Args.Addr, "addr", env.Args.Addr, "Server address")
+	subCmd.StringVar(&env.Args.Addr, "addr", env.Args.Addr, "Server address")
 
 	// Server Path Prefix
-	flag.StringVar(&env.Args.ServerPathPrefix, "path-prefix", env.Args.ServerPathPrefix, "Server path prefix")
+	subCmd.StringVar(&env.Args.ServerPathPrefix, "path-prefix", env.Args.ServerPathPrefix, "Server path prefix")
 
 	// Debug Flag
-	flag.BoolVar(&env.Args.Debug, "debug", env.Args.Debug, "Enable debug mode")
+	subCmd.BoolVar(&env.Args.Debug, "debug", env.Args.Debug, "Enable debug mode")
 
 	// Log Format: "text", "json"
-	flag.StringVar(&logFormat, "log-format", logFormat, "Log format: text, json")
+	subCmd.StringVar(&logFormat, "log-format", logFormat, "Log format: text, json")
 
 	// Get the required database path
-	flag.StringVar(&env.Args.DatabasePath, "database-path", env.Args.DatabasePath, "Database path")
+	subCmd.StringVar(&env.Args.DatabasePath, "database-path", env.Args.DatabasePath, "Database path")
 
-	// Custom Usage Message
+	// Custom Usage Message for subcommand
 	flag.Usage = func() {
-		// TODO: List all exit codes and their meanings
-		flag.PrintDefaults()
+		fmt.Println("Usage: <program> [flags]")
+		fmt.Println("Commands:")
+		fmt.Println("\tserver\t\tStart the server")
+	}
+
+	// Custom Usage Message for server subcommand
+	subCmd.Usage = func() {
+		fmt.Println("Usage: <program> server [server-flags]")
+		fmt.Println("Server Flags:")
+		subCmd.PrintDefaults()
 	}
 
 	flag.Parse()
 
-	switch logFormat {
-	case "text":
-		env.Args.LogFormat = env.LogFormatText
-	case "json":
-		env.Args.LogFormat = env.LogFormatJSON
-	default:
-		slog.Error("Invalid log format", "format", logFormat)
-		os.Exit(env.ExitCodeInvalidLogFormat)
-	}
+	if len(os.Args) > 1 && os.Args[1] == "server" {
+		err := subCmd.Parse(os.Args[2:])
+		if err != nil {
+			slog.Error("Failed to parse flags", "error", err)
+			os.Exit(env.ExitCodeInvalidFlags)
+		}
 
-	verifyDatabasePath()
+		switch logFormat {
+		case "text":
+			env.Args.LogFormat = env.LogFormatText
+		case "json":
+			env.Args.LogFormat = env.LogFormatJSON
+		default:
+			slog.Error("Invalid log format", "format", logFormat)
+			os.Exit(env.ExitCodeInvalidLogFormat)
+		}
+
+		verifyDatabasePath()
+
+		env.Args.Command = env.CommandServer
+	}
 }
 
 func verifyDatabasePath() {
@@ -80,19 +105,24 @@ func initializeLogging() {
 
 	var handler slog.Handler
 	if env.Args.LogFormat == "text" {
-		handler = slog.NewTextHandler(
-			os.Stderr, &slog.HandlerOptions{Level: level},
-		)
+		handler = tint.NewHandler(os.Stderr, &tint.Options{
+			AddSource:  true,
+			Level:      level,
+			TimeFormat: time.DateTime,
+		})
 	} else {
 		handler = slog.NewJSONHandler(
-			os.Stderr, &slog.HandlerOptions{Level: level},
+			os.Stderr, &slog.HandlerOptions{
+				AddSource: true,
+				Level:     level,
+			},
 		)
 	}
 
 	slog.SetDefault(slog.New(handler))
 }
 
-func initializeDatabase() *services.Registry {
+func initializeDatabase() *service.Registry {
 	slog.Debug("Initializing database", "database-path", env.Args.DatabasePath)
 
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
@@ -114,10 +144,10 @@ func initializeDatabase() *services.Registry {
 		os.Exit(env.ExitCodeDatabasePing)
 	}
 
-	return services.NewRegistry(db)
+	return service.NewRegistry(db)
 }
 
-func startServer(r *services.Registry) {
+func startServer(r *service.Registry) {
 	e := echo.New()
 
 	// Initialize routes

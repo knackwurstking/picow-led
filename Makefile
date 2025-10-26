@@ -17,7 +17,7 @@ build:
 # Run the application
 dev-run:
 	@echo "Running server without building..."
-	go run $(BINARY_NAME) -debug -log-format=text -database-path=$(DATABASE_PATH)
+	go run $(BINARY_NAME) server -debug -log-format=text -database-path=$(DATABASE_PATH)
 
 # Clean up build files
 clean:
