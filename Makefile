@@ -1,6 +1,7 @@
 # Makefile for picow-led project
 
 BINARY_NAME = ./cmd/picow-led
+DATABASE_PATH = ./picow-led.db
 
 all: init build
 
@@ -14,9 +15,9 @@ build:
 	go build -o ./bin/picow-led $(BINARY_NAME)
 
 # Run the application
-run:
+dev-run:
 	@echo "Running server without building..."
-	go run $(BINARY_NAME) -debug -log-format=text
+	go run $(BINARY_NAME) -debug -log-format=text -database-path=$(DATABASE_PATH)
 
 # Clean up build files
 clean:
