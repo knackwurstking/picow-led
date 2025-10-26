@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -17,9 +18,9 @@ func main() {
 	parseFlags()
 
 	initializeLogging()
-	db := initializeDatabase()
+	r := initializeDatabase()
 
-	startServer(db)
+	startServer(r)
 }
 
 func parseFlags() {
@@ -91,7 +92,7 @@ func initializeLogging() {
 	slog.SetDefault(slog.New(handler))
 }
 
-func initializeDatabase() *sql.DB {
+func initializeDatabase() *services.Registry {
 	slog.Debug("Initializing database", "database-path", env.Args.DatabasePath)
 
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
@@ -113,14 +114,14 @@ func initializeDatabase() *sql.DB {
 		os.Exit(env.ExitCodeDatabasePing)
 	}
 
-	return db
+	return services.NewRegistry(db)
 }
 
-func startServer(db *sql.DB) {
+func startServer(r *services.Registry) {
 	e := echo.New()
 
 	// Initialize routes
-	router(e, db)
+	router(e, r)
 
 	slog.Debug("Server started", "addr", env.Args.Addr, "server-path-prefix", env.Args.ServerPathPrefix)
 	if err := e.Start(env.Args.Addr); err != nil {
