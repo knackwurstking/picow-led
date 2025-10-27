@@ -5,7 +5,7 @@
   - [ ] Create tables and models [WIP]
     - [x] Create a table for devices
     - [x] Create a table for device_setups
-    - [ ] Create a table for duty (id, name, duty, created_at)
+    - [ ] Create a table for colors [WIP]
       - Duty contains the an rgb like values (0-255)
     - [ ] Create a table for groups (id, name, setup, created_at)
       - Setup contains a list of device_id and duty data

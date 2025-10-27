@@ -9,6 +9,7 @@ type Registry struct {
 
 	Devices      *Devices
 	DeviceSetups *DeviceSetups
+	Colors       *Colors
 }
 
 // NewRegistry creates a new registry instance and will call the `CreateTables` method.
@@ -17,6 +18,7 @@ func NewRegistry(db *sql.DB) *Registry {
 
 	r.Devices = NewDevices(r)
 	r.DeviceSetups = NewDeviceSetups(r)
+	r.Colors = NewColors(r)
 
 	if err := r.CreateTables(); err != nil {
 		panic("failed to create tables: " + err.Error())
@@ -33,6 +35,10 @@ func (r *Registry) CreateTables() error {
 	}
 
 	if err = r.DeviceSetups.CreateTable(); err != nil {
+		return err
+	}
+
+	if err = r.Colors.CreateTable(); err != nil {
 		return err
 	}
 
