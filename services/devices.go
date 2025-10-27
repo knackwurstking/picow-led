@@ -21,8 +21,8 @@ func (d *Devices) CreateTable() error {
 		id INTEGER PRIMARY KEY NOT NULL,
 		addr TEXT UNIQUE NOT NULL,
 		name TEXT NOT NULL,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-		FOREIGN KEY (id) REFERENCES pins(device_id) ON DELETE CASCADE,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (id) REFERENCES pins(device_id) ON DELETE CASCADE
 	);`
 
 	_, err := d.registry.db.Exec(query)
