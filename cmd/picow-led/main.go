@@ -144,7 +144,13 @@ func initializeDatabase() *services.Registry {
 		os.Exit(env.ExitCodeDatabasePing)
 	}
 
-	return services.NewRegistry(db)
+	r := services.NewRegistry(db)
+	if err := r.CreateTables(); err != nil {
+		slog.Error("Failed to create tables", "error", err)
+		os.Exit(env.ExitCodeDatabaseTables)
+	}
+
+	return r
 }
 
 func startServer(r *services.Registry) {

@@ -12,6 +12,7 @@ const (
 	ExitCodeDatabasePing        = 5
 	ExitCodeInvalidDatabasePath = 6
 	ExitCodeInvalidFlags        = 8
+	ExitCodeDatabaseTables      = 9
 )
 
 const (
