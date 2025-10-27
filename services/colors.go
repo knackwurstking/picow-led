@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"log/slog"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -65,8 +66,13 @@ func (c *Colors) List() ([]*models.Color, error) {
 func (c *Colors) Add(color *models.Color) (models.ColorID, error) {
 	slog.Debug("Add color to database", "table", "colors", "id", color.ID)
 
+	duty, err := json.Marshal(color.Duty)
+	if err != nil {
+		return 0, err
+	}
+
 	query := `INSERT INTO colors (id, name, duty) VALUES (?, ?, ?)`
-	result, err := c.registry.db.Exec(query, color.ID, color.Name, color.Duty)
+	result, err := c.registry.db.Exec(query, color.ID, color.Name, duty)
 	if err != nil {
 		return 0, err
 	}
@@ -82,8 +88,13 @@ func (c *Colors) Add(color *models.Color) (models.ColorID, error) {
 func (c *Colors) Update(color *models.Color) error {
 	slog.Debug("Update color in database", "table", "colors", "id", color.ID)
 
+	duty, err := json.Marshal(color.Duty)
+	if err != nil {
+		return err
+	}
+
 	query := `UPDATE colors SET name = ?, duty = ? WHERE id = ?`
-	_, err := c.registry.db.Exec(query, color.Name, color.Duty, color.ID)
+	_, err = c.registry.db.Exec(query, color.Name, duty, color.ID)
 	return err
 }
 
@@ -96,7 +107,18 @@ func (c *Colors) Delete(id models.ColorID) error {
 }
 
 func ScanColor(scannable Scannable) (*models.Color, error) {
+	var duty string
+
 	color := &models.Color{}
-	err := scannable.Scan(&color.ID, &color.Name, &color.Duty, &color.CreatedAt)
-	return color, err
+	err := scannable.Scan(&color.ID, &color.Name, &duty, &color.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal([]byte(duty), &color.Duty)
+	if err != nil {
+		return nil, err
+	}
+
+	return color, nil
 }
