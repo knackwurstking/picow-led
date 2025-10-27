@@ -21,8 +21,7 @@ func (d *Devices) CreateTable() error {
 		id INTEGER PRIMARY KEY NOT NULL,
 		addr TEXT UNIQUE NOT NULL,
 		name TEXT NOT NULL,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		FOREIGN KEY (id) REFERENCES pins(device_id) ON DELETE CASCADE
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
 
 	_, err := d.registry.db.Exec(query)
@@ -98,9 +97,15 @@ func (d *Devices) Update(device *models.Device) error {
 }
 
 func (d *Devices) Delete(id models.DeviceID) error {
-	query := `DELETE FROM devices WHERE id = ?`
-	_, err := d.registry.db.Exec(query, id)
-	if err != nil {
+	var err error
+
+	query := `DELETE FROM pins WHERE device_id = ?`
+	if err = d.registry.DeviceSetups.Delete(id); err != nil {
+		return err
+	}
+
+	query = `DELETE FROM devices WHERE id = ?`
+	if _, err = d.registry.db.Exec(query, id); err != nil {
 		return err
 	}
 

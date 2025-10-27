@@ -7,15 +7,15 @@ import (
 type Registry struct {
 	db *sql.DB
 
-	Devices *Devices
-	Pins    *Pins
+	Devices      *Devices
+	DeviceSetups *DeviceSetups
 }
 
 func NewRegistry(db *sql.DB) *Registry {
 	r := &Registry{db: db}
 
 	r.Devices = NewDevices(r)
-	r.Pins = NewPins(r)
+	r.DeviceSetups = NewDeviceSetups(r)
 
 	return r
 }
@@ -27,7 +27,7 @@ func (r *Registry) CreateTables() error {
 		return err
 	}
 
-	if err = r.Pins.CreateTable(); err != nil {
+	if err = r.DeviceSetups.CreateTable(); err != nil {
 		return err
 	}
 
