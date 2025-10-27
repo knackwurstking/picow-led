@@ -18,7 +18,7 @@ func NewDevices(r *Registry) *Devices {
 
 func (d *Devices) CreateTable() error {
 	query := `CREATE TABLE IF NOT EXISTS devices (
-		ID INTEGER PRIMARY KEY NOT NULL,
+		id INTEGER PRIMARY KEY NOT NULL,
 		addr TEXT UNIQUE NOT NULL,
 		name TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
