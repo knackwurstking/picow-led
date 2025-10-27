@@ -22,7 +22,9 @@ func (d *Devices) CreateTable() error {
 		addr TEXT UNIQUE NOT NULL,
 		name TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		FOREIGN KEY (id) REFERENCES pins(device_id) ON DELETE CASCADE,
 	);`
+
 	_, err := d.registry.db.Exec(query)
 	return err
 }
@@ -106,11 +108,11 @@ func (d *Devices) Delete(id models.DeviceID) error {
 }
 
 func ScanDevice(r Scannable) (*models.Device, error) {
-	var device models.Device
-	err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.CreatedAt)
-	if err != nil {
+	device := &models.Device{}
+
+	if err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.CreatedAt); err != nil {
 		return nil, err
 	}
 
-	return &device, nil
+	return device, nil
 }
