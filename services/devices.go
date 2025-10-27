@@ -30,7 +30,7 @@ func (d *Devices) CreateTable() error {
 func (d *Devices) Get(id models.DeviceID) (*models.Device, error) {
 	slog.Debug("Get device from database", "table", "devices", "id", id)
 
-	query := `SELECT * FROM devices WHERE addr = ?`
+	query := `SELECT * FROM devices WHERE id = ?`
 	device, err := ScanDevice(d.registry.db.QueryRow(query, id))
 	if err != nil {
 		return nil, err
@@ -39,21 +39,75 @@ func (d *Devices) Get(id models.DeviceID) (*models.Device, error) {
 	return device, nil
 }
 
-// TODO: ...
-//func (d *Devices) List() ([]*models.Device, error)
+func (d *Devices) GetByAddr(addr models.Addr) (*models.Device, error) {
+	slog.Debug("Get device from database", "table", "devices", "addr", addr)
 
-// TODO: ...
-//func (d *Devices) Add(device *models.Device) (models.DeviceID, error)
+	query := `SELECT * FROM devices WHERE addr = ?`
+	device, err := ScanDevice(d.registry.db.QueryRow(query, addr))
+	if err != nil {
+		return nil, err
+	}
 
-// TODO: ...
-//func (d *Devices) Update(device *models.Device) error
+	return device, nil
+}
 
-// TODO: ...
-//func (d *Devices) Delete(id models.DeviceID) error
+func (d *Devices) List() ([]*models.Device, error) {
+	rows, err := d.registry.db.Query(`SELECT * FROM devices`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var devices []*models.Device
+	for rows.Next() {
+		device, err := ScanDevice(rows)
+		if err != nil {
+			return nil, err
+		}
+		devices = append(devices, device)
+	}
+
+	return devices, nil
+}
+
+func (d *Devices) Add(device *models.Device) (models.DeviceID, error) {
+	query := `INSERT INTO devices (addr, name) VALUES (?, ?)`
+	result, err := d.registry.db.Exec(query, device.Addr, device.Name)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return models.DeviceID(id), nil
+}
+
+func (d *Devices) Update(device *models.Device) error {
+	query := `UPDATE devices SET addr = ?, name = ? WHERE id = ?`
+	_, err := d.registry.db.Exec(query, device.Addr, device.Name, device.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Devices) Delete(id models.DeviceID) error {
+	query := `DELETE FROM devices WHERE id = ?`
+	_, err := d.registry.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func ScanDevice(r Scannable) (*models.Device, error) {
 	var device models.Device
-	err := r.Scan(&device.Addr, &device.Name, &device.CreatedAt)
+	err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
