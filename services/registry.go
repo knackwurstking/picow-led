@@ -21,8 +21,13 @@ func NewRegistry(db *sql.DB) *Registry {
 }
 
 func (r *Registry) CreateTables() error {
-	err := r.Devices.CreateTable()
-	if err != nil {
+	var err error
+
+	if err = r.Devices.CreateTable(); err != nil {
+		return err
+	}
+
+	if err = r.Pins.CreateTable(); err != nil {
 		return err
 	}
 
