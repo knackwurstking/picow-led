@@ -3,7 +3,6 @@ package models
 import "time"
 
 type Pins struct {
-	ID        PinsID    `json:"id"`
 	DeviceID  DeviceID  `json:"device_id"`
 	Name      string    `json:"name"`
 	Pins      []uint8   `json:"pins"`
