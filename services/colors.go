@@ -71,8 +71,8 @@ func (c *Colors) Add(color *models.Color) (models.ColorID, error) {
 		return 0, err
 	}
 
-	query := `INSERT INTO colors (id, name, duty) VALUES (?, ?, ?)`
-	result, err := c.registry.db.Exec(query, color.ID, color.Name, duty)
+	query := `INSERT INTO colors (name, duty) VALUES (?, ?)`
+	result, err := c.registry.db.Exec(query, color.Name, duty)
 	if err != nil {
 		return 0, err
 	}

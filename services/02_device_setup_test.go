@@ -10,11 +10,11 @@ import (
 )
 
 func TestAddDevice(t *testing.T) {
-	db := openDB(t, false)
-	defer db.Close()
+	r := openDB(t, true)
+	defer r.Close()
 
 	// First device
-	id, err := registry.Devices.Add(models.NewDevice("192.168.178.10", "Test Device 1"))
+	id, err := r.Devices.Add(models.NewDevice("192.168.178.10", "Test Device 1"))
 	if err != nil {
 		t.Fatalf("Failed to add device: %v", err)
 	}
@@ -22,7 +22,7 @@ func TestAddDevice(t *testing.T) {
 		t.Errorf("Expected ID 1, got %d", id)
 	}
 
-	device, err := registry.Devices.Get(id)
+	device, err := r.Devices.Get(id)
 	if err != nil {
 		t.Fatalf("Failed to get device: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestAddDevice(t *testing.T) {
 	}
 
 	// Second device
-	id, err = registry.Devices.Add(models.NewDevice("192.168.178.20", "Test Device 2"))
+	id, err = r.Devices.Add(models.NewDevice("192.168.178.20", "Test Device 2"))
 	if err != nil {
 		t.Fatalf("Failed to add device: %v", err)
 	}
@@ -47,11 +47,11 @@ func TestAddDevice(t *testing.T) {
 }
 
 func TestAddDeviceSetup(t *testing.T) {
-	db := openDB(t, false)
-	defer db.Close()
+	r := openDB(t, false)
+	defer r.Close()
 
 	// Setup for the first device
-	id, err := registry.DeviceSetups.Add(models.NewDeviceSetup(1, []uint8{0, 1, 2, 3}))
+	id, err := r.DeviceSetups.Add(models.NewDeviceSetup(1, []uint8{0, 1, 2, 3}))
 	if err != nil {
 		t.Fatalf("Failed to add pin: %v", err)
 	}
@@ -59,7 +59,7 @@ func TestAddDeviceSetup(t *testing.T) {
 		t.Errorf("Expected ID 1, got %d", id)
 	}
 
-	pins, err := registry.DeviceSetups.Get(id)
+	pins, err := r.DeviceSetups.Get(id)
 	if err != nil {
 		t.Fatalf("Failed to get pin: %v", err)
 	}
@@ -72,42 +72,42 @@ func TestAddDeviceSetup(t *testing.T) {
 
 	// Second setup for the first device
 	// This should be not possible, adding 2 setups for one device
-	_, err = registry.DeviceSetups.Add(models.NewDeviceSetup(1, []uint8{4, 5, 6, 7}))
+	_, err = r.DeviceSetups.Add(models.NewDeviceSetup(1, []uint8{4, 5, 6, 7}))
 	if err == nil {
 		t.Fatal("Expected an error while trying to add a second setup for device 1, got nil")
 	}
 
 	// Setup for the second device
-	_, err = registry.DeviceSetups.Add(models.NewDeviceSetup(2, []uint8{0, 1, 2, 3}))
+	_, err = r.DeviceSetups.Add(models.NewDeviceSetup(2, []uint8{0, 1, 2, 3}))
 	if err != nil {
 		t.Fatalf("Failed to add device 2 setup: %v", err)
 	}
 }
 
 func TestRemoveDevice(t *testing.T) {
-	db := openDB(t, false)
-	defer db.Close()
+	r := openDB(t, false)
+	defer r.Close()
 
 	// Remove device 1 for checking if the setup got removed too
-	if err := registry.Devices.Delete(1); err != nil {
+	if err := r.Devices.Delete(1); err != nil {
 		t.Fatalf("Failed to remove device: %v", err)
 	}
 
-	if _, err := registry.DeviceSetups.Get(1); err == nil {
+	if _, err := r.DeviceSetups.Get(1); err == nil {
 		t.Errorf("Expected error, got nil, the pins with device_id 1 got not removed")
 	}
 }
 
 func TestDeviceSetupDelete(t *testing.T) {
-	db := openDB(t, false)
-	defer db.Close()
+	r := openDB(t, false)
+	defer r.Close()
 
 	// Remove the setup for the second device
-	if err := registry.DeviceSetups.Delete(2); err != nil {
+	if err := r.DeviceSetups.Delete(2); err != nil {
 		t.Fatalf("Failed to remove device setup: %v", err)
 	}
 
-	if _, err := registry.DeviceSetups.Get(2); err == nil {
+	if _, err := r.DeviceSetups.Get(2); err == nil {
 		t.Error("Expected error, got nil, the pins with device_id 2 got not removed")
 	}
 }

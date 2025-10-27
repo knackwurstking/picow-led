@@ -44,3 +44,7 @@ func (r *Registry) CreateTables() error {
 
 	return nil
 }
+
+func (r *Registry) Close() error {
+	return r.db.Close()
+}

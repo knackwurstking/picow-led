@@ -3,17 +3,17 @@ package services
 import (
 	"database/sql"
 	"os"
+	"strings"
 	"testing"
 )
 
 const TestDatabaseName = "picow-led.test.db"
 
-var registry *Registry
-
-func openDB(t *testing.T, clean bool) *sql.DB {
+func openDB(t *testing.T, clean bool) *Registry {
 	if clean {
-		if err := os.Remove(TestDatabaseName); err != nil {
-			t.Fatalf("Failed to remove database file: %v", err)
+		err := os.Remove(TestDatabaseName)
+		if err != nil && !strings.Contains(err.Error(), "no such file or directory") {
+			t.Fatalf("Failed to remove database file: %[1]s (%#[1]v)", err)
 		}
 	}
 
@@ -22,10 +22,10 @@ func openDB(t *testing.T, clean bool) *sql.DB {
 		t.Fatalf("Failed to open database: %v", err)
 	}
 
-	registry = NewRegistry(db)
+	registry := NewRegistry(db)
 	if err := registry.CreateTables(); err != nil {
 		panic(err)
 	}
 
-	return db
+	return registry
 }
