@@ -4,6 +4,7 @@ import "net"
 
 type DeviceID int64
 type ColorID int64
+type GroupID int64
 
 // Addr contains an IP address and port number separated by a colon.
 type Addr string

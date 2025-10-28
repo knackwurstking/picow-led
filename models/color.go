@@ -16,3 +16,7 @@ func NewColor(name string, duty Duty) *Color {
 		Duty: duty,
 	}
 }
+
+func (c *Color) Validate() bool {
+	return c.Name != "" && len(c.Duty) > 0
+}

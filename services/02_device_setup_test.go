@@ -2,6 +2,7 @@
 package services
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -51,7 +52,9 @@ func TestAddDeviceSetup(t *testing.T) {
 	defer r.Close()
 
 	// Setup for the first device
-	id, err := r.DeviceSetups.Add(models.NewDeviceSetup(1, []uint8{0, 1, 2, 3}))
+	deviceSetup := models.NewDeviceSetup(1, []uint8{0, 1, 2, 3})
+
+	id, err := r.DeviceSetups.Add(deviceSetup)
 	if err != nil {
 		t.Fatalf("Failed to add pin: %v", err)
 	}
@@ -66,13 +69,14 @@ func TestAddDeviceSetup(t *testing.T) {
 	if pins.DeviceID != 1 {
 		t.Errorf("Expected device ID 1, got %d", pins.DeviceID)
 	}
-	if len(pins.Pins) != 4 {
-		t.Errorf("Expected 4 pins, got %d", len(pins.Pins))
+	if !reflect.DeepEqual(pins.Pins, deviceSetup.Pins) {
+		t.Errorf("Expected pins %v, got %v", deviceSetup.Pins, pins.Pins)
 	}
 
 	// Second setup for the first device
 	// This should be not possible, adding 2 setups for one device
-	_, err = r.DeviceSetups.Add(models.NewDeviceSetup(1, []uint8{4, 5, 6, 7}))
+	deviceSetup = models.NewDeviceSetup(1, []uint8{4, 5, 6, 7})
+	_, err = r.DeviceSetups.Add(deviceSetup)
 	if err == nil {
 		t.Fatal("Expected an error while trying to add a second setup for device 1, got nil")
 	}

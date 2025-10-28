@@ -63,6 +63,10 @@ func (p *DeviceSetups) List() ([]*models.DeviceSetup, error) {
 func (p *DeviceSetups) Add(deviceSetup *models.DeviceSetup) (models.DeviceID, error) {
 	slog.Debug("Add device setup to database", "table", "device_setups", "device_id", deviceSetup.DeviceID)
 
+	if !deviceSetup.Validate() {
+		return 0, ErrInvalidDeviceSetup
+	}
+
 	query := `INSERT INTO device_setups (device_id, pins) VALUES (?, ?)`
 	result, err := p.registry.db.Exec(query, deviceSetup.DeviceID, deviceSetup.Pins)
 	if err != nil {
@@ -79,6 +83,10 @@ func (p *DeviceSetups) Add(deviceSetup *models.DeviceSetup) (models.DeviceID, er
 
 func (p *DeviceSetups) Update(deviceSetup *models.DeviceSetup) error {
 	slog.Debug("Update device setup in database", "table", "device_setups", "device_id", deviceSetup.DeviceID)
+
+	if !deviceSetup.Validate() {
+		return ErrInvalidDeviceSetup
+	}
 
 	query := `UPDATE device_setups SET pins = ? WHERE device_id = ?`
 	_, err := p.registry.db.Exec(query, deviceSetup.Pins, deviceSetup.DeviceID)
