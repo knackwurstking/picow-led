@@ -22,7 +22,6 @@ templ Layout(options LayoutOptions) {
 			}
 		</head>
 		<body hx-ext="ws">
-			@appBar(options.AppBarTitle, options.NavContent)
 			{ children... }
 		</body>
 	</html>
@@ -55,17 +54,4 @@ templ scripts() {
 	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/htmx-v2.0.7.min.js") }></script>
 	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/htmx-ext-ws-v2.0.3.min.js") }></script>
 	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/main-layout.js") }></script>
-}
-
-templ appBar(title string, navContent templ.Component) {
-	<header class="app-bar top fixed shadow-sm">
-		<div class="app-bar-left">
-			<h5 id="app-bar-title">{ title }</h5>
-		</div>
-		<div class="app-bar-right">
-			if navContent != nil {
-				@navContent
-			}
-		</div>
-	</header>
 }
