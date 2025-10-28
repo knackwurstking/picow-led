@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/env"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
@@ -21,7 +22,10 @@ func (p Pages) Register(e *echo.Echo) {
 }
 
 func (p *Pages) Home(c echo.Context) error {
-	// TODO: ...
+	err := components.PageHome().Render(c.Request().Context(), c.Response())
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
