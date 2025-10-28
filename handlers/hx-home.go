@@ -37,10 +37,7 @@ func (h HXHome) SectionDevices(c echo.Context) error {
 	}
 
 	return components.PageHome_SectionDevices(
-		components.HXProps{
-			Get:    components.HXHomeSectionDevices(),
-			Target: "#" + string(components.IDSectionDevices),
-		},
+		false,
 		resolvedDevices...,
 	).Render(c.Request().Context(), c.Response())
 }
@@ -59,10 +56,7 @@ func (h HXHome) SectionGroups(c echo.Context) error {
 	}
 
 	return components.PageHome_SectionGroups(
-		components.HXProps{
-			Get:    components.HXHomeSectionGroups(),
-			Target: "#" + string(components.IDSectionGroups),
-		},
+		false,
 		resolvedGroups...,
 	).Render(c.Request().Context(), c.Response())
 }

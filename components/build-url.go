@@ -16,3 +16,11 @@ func HXHomeSectionDevices() templ.SafeURL {
 func HXHomeSectionGroups() templ.SafeURL {
 	return templ.SafeURL(buildURL("/htmx/home/section/groups"))
 }
+
+func HXEditDeviceDialog() templ.SafeURL {
+	return templ.SafeURL(buildURL("/htmx/dialog/edit-device"))
+}
+
+func HXEditGroupDialog() templ.SafeURL {
+	return templ.SafeURL(buildURL("/htmx/dialog/edit-group"))
+}

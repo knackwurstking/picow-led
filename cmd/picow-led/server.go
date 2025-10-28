@@ -11,6 +11,7 @@ import (
 func router(e *echo.Echo, r *services.Registry) {
 	e.StaticFS(env.Args.ServerPathPrefix+"/", picowled.GetAssets())
 
-	handlers.NewPages(r).Register(e)
-	handlers.NewHXHome(r).Register(e)
+	for _, handler := range handlers.GetAll(r) {
+		handler.Register(e)
+	}
 }
