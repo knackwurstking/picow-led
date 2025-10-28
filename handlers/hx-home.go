@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"github.com/knackwurstking/picow-led/env"
+	"net/http"
+
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 )
@@ -17,8 +18,8 @@ func NewHXHome(r *services.Registry) *HXHome {
 }
 
 func (h HXHome) Register(e *echo.Echo) {
-	e.GET(env.Args.ServerPathPrefix+"/htmx/home/section/devices", h.SectionDevices)
-	e.GET(env.Args.ServerPathPrefix+"/htmx/home/section/groups", h.SectionGroups)
+	Register(e, http.MethodGet, "/htmx/home/section/devices", h.SectionDevices)
+	Register(e, http.MethodGet, "/htmx/home/section/groups", h.SectionGroups)
 }
 
 func (h HXHome) SectionDevices(c echo.Context) error {

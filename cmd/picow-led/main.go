@@ -11,6 +11,7 @@ import (
 	"github.com/knackwurstking/picow-led/env"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/lmittmann/tint"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -155,6 +156,13 @@ func initializeDatabase() *services.Registry {
 
 func startServer(r *services.Registry) {
 	e := echo.New()
+
+	// Middleware
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Output:           os.Stderr,
+		Format:           "${time_custom} ${method} ${status} ${uri} ${latency_human} ${remote_ip} ${query} ${form} ${error}\n",
+		CustomTimeFormat: "2006-01-02 15:04:05",
+	}))
 
 	// Initialize routes
 	router(e, r)
