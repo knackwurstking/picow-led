@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	const debouncedReload = debounce(function () {
 		if (document.visibilityState === "visible") {
 			console.log("Page became visible - reloading HTMX sections");
-			document.body.dispatchEvent(new CustomEvent("pageLoaded"));
+			document.body.dispatchEvent(new CustomEvent("reload"));
 		}
 	}, 500);
 
@@ -49,6 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Add manual refresh functionality
 	window.refreshPressSections = function () {
 		console.log("Manual refresh triggered");
-		document.body.dispatchEvent(new CustomEvent("pageLoaded"));
+		document.body.dispatchEvent(new CustomEvent("reload"));
 	};
 });

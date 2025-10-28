@@ -10,6 +10,12 @@ type Pages struct {
 	registry *services.Registry
 }
 
+func NewPages(r *services.Registry) *Pages {
+	return &Pages{
+		registry: r,
+	}
+}
+
 func (p Pages) Register(e *echo.Echo) {
 	e.GET(env.Args.ServerPathPrefix+"/", p.Home)
 }

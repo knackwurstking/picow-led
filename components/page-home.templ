@@ -7,9 +7,57 @@ templ PageHome() {
 			AdditionalHead: PageHome_AdditionalHead(),
 		},
 	) {
-		// TODO: Detail tags: "Devices", "Groups"
+		{{ id := "section-devices" }}
+		@PageHome_Section(id) {
+			@PageHome_SectionDevices(HXProps{
+				Get:    HXHomeSectionDevices(),
+				Target: "#" + id,
+			}, nil)
+		}
+		{{ id = "section-groups" }}
+		@PageHome_Section(id) {
+			@PageHome_SectionGroups(HXProps{
+				Get:    HXHomeSectionGroups(),
+				Target: "#" + id,
+			}, nil)
+		}
 	}
 }
 
 templ PageHome_AdditionalHead() {
+}
+
+templ PageHome_Section(id string) {
+	<details id={ id }>
+		{ children... }
+	</details>
+}
+
+type PageHome_SectionDevicesData struct {
+}
+
+templ PageHome_SectionDevices(props HXProps, data *PageHome_SectionDevicesData) {
+	<span
+		hx-get={ props.Get }
+		hx-trigger="load, reload from:body"
+		hx-target={ props.Target }
+	></span>
+	<summary>Devices</summary>
+	if data != nil {
+		// TODO: ...
+	}
+}
+
+type PageHome_SectionGroupsData struct {
+}
+
+templ PageHome_SectionGroups(props HXProps, data *PageHome_SectionGroupsData) {
+	<span
+		hx-get={ props.Get }
+		hx-trigger="load, reload from:body"
+		hx-target={ props.Target }
+	></span>
+	<summary>Groups</summary>
+	if data != nil {
+	}
 }
