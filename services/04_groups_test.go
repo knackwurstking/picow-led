@@ -27,10 +27,7 @@ func TestAddGroup(t *testing.T) {
 	}
 
 	// Create a new group - test failure, invalid devices
-	group := &models.Group{
-		Name:    "Test Group",
-		Devices: []models.DeviceID{1, 2, 3, 4},
-	}
+	group := models.NewGroup("Test Group", []models.DeviceID{1, 2, 3, 4})
 
 	// Add the group to the database
 	id, err := r.Groups.Add(group)
@@ -39,10 +36,7 @@ func TestAddGroup(t *testing.T) {
 	}
 
 	// Create a new group
-	group = &models.Group{
-		Name:    "Test Group",
-		Devices: []models.DeviceID{1, 2, 3},
-	}
+	group = models.NewGroup("Test Group", []models.DeviceID{1, 2, 3})
 
 	// Add the group to the database
 	id, err = r.Groups.Add(group)
@@ -70,11 +64,8 @@ func TestUpdateGroup(t *testing.T) {
 	defer r.Close()
 
 	// Update the group in the database - check fail
-	group := &models.Group{
-		ID:      1,
-		Name:    "Updated Group",
-		Devices: []models.DeviceID{1, 2, 3, 4},
-	}
+	group := models.NewGroup("Updated Group", []models.DeviceID{1, 2, 3, 4})
+	group.ID = 1
 
 	err := r.Groups.Update(group)
 	if err != ErrInvalidDeviceID {
@@ -82,11 +73,8 @@ func TestUpdateGroup(t *testing.T) {
 	}
 
 	// Update the group in the database
-	group = &models.Group{
-		ID:      1,
-		Name:    "Updated Group",
-		Devices: []models.DeviceID{1, 2},
-	}
+	group = models.NewGroup("Updated Group", []models.DeviceID{1, 2})
+	group.ID = 1
 
 	err = r.Groups.Update(group)
 	if err != nil {

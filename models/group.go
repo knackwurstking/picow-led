@@ -14,6 +14,13 @@ type Group struct {
 	CreatedAt string     `json:"created_at"`
 }
 
+func NewGroup(name string, devices []DeviceID) *Group {
+	return &Group{
+		Name:    name,
+		Devices: devices,
+	}
+}
+
 func (g *Group) Validate() bool {
 	return g.Name != ""
 }
