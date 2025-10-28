@@ -5,6 +5,7 @@ type InputProps struct {
 	Type        string
 	Label       string
 	Description string
+	Value       string
 }
 
 templ Input(props InputProps) {
@@ -14,5 +15,6 @@ templ Input(props InputProps) {
 		id={ props.ID }
 		name={ props.ID }
 		placeholder={ props.Description }
+		value={ props.Value }
 	/>
 }

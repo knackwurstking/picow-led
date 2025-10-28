@@ -1,26 +1,41 @@
 package components
 
 import (
+	"fmt"
+
 	"github.com/a-h/templ"
 	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/picow-led/models"
 )
 
-func BuildURL(path string) string {
+func BuildUrl(path string) string {
 	return env.Args.ServerPathPrefix + path
 }
 
-func HXHomeSectionDevices() templ.SafeURL {
-	return templ.SafeURL(BuildURL("/htmx/home/section/devices"))
+func HxUrlHomeSectionDevices() templ.SafeURL {
+	return templ.SafeURL(BuildUrl("/htmx/home/section/devices"))
 }
 
-func HXHomeSectionGroups() templ.SafeURL {
-	return templ.SafeURL(BuildURL("/htmx/home/section/groups"))
+func HxUrlHomeSectionGroups() templ.SafeURL {
+	return templ.SafeURL(BuildUrl("/htmx/home/section/groups"))
 }
 
-func HXEditDeviceDialog() templ.SafeURL {
-	return templ.SafeURL(BuildURL("/htmx/dialog/edit-device"))
+func HxUrlEditDeviceDialog(deviceID *models.DeviceID) templ.SafeURL {
+	if deviceID == nil {
+		return templ.SafeURL(BuildUrl("/htmx/dialog/edit-device"))
+	}
+
+	return templ.SafeURL(BuildUrl(
+		fmt.Sprintf("/htmx/dialog/edit-device?id=%d", *deviceID),
+	))
 }
 
-func HXEditGroupDialog() templ.SafeURL {
-	return templ.SafeURL(BuildURL("/htmx/dialog/edit-group"))
+func HxUrlEditGroupDialog(groupID *models.GroupID) templ.SafeURL {
+	if groupID == nil {
+		return templ.SafeURL(BuildUrl("/htmx/dialog/edit-group"))
+	}
+
+	return templ.SafeURL(BuildUrl(
+		fmt.Sprintf("/htmx/dialog/edit-group?id=%d", *groupID),
+	))
 }

@@ -159,7 +159,7 @@ func PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolved
 		ctx = templ.ClearChildren(ctx)
 
 		props := &HXProps{
-			Get:               HXHomeSectionDevices(),
+			Get:               HxUrlHomeSectionDevices(),
 			Target:            "#" + string(IDSectionDevices),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
@@ -198,7 +198,7 @@ func PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolved
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = AddIconButton(HXEditDeviceDialog()).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = AddIconButton(HxUrlEditDeviceDialog(nil)).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -247,7 +247,7 @@ func PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGr
 		ctx = templ.ClearChildren(ctx)
 
 		props := &HXProps{
-			Get:               HXHomeSectionGroups(),
+			Get:               HxUrlHomeSectionGroups(),
 			Target:            "#" + string(IDSectionGroups),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
@@ -286,7 +286,7 @@ func PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGr
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = AddIconButton(HXEditGroupDialog()).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = AddIconButton(HxUrlEditGroupDialog(nil)).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -1,6 +1,10 @@
 package components
 
-import "net/http"
+import (
+	"github.com/knackwurstking/picow-led/models"
+	"net/http"
+	"strconv"
+)
 
 const (
 	IDDialogNewDevice  = "new-device-dialog"
@@ -11,37 +15,47 @@ templ DialogNewDevice() {
 	@Dialog(DialogProps{
 		ID:               IDDialogNewDevice,
 		Method:           http.MethodPost,
-		Href:             HXEditDeviceDialog(),
+		Href:             HxUrlEditDeviceDialog(nil),
 		SubmitButtonText: "Create",
 	}) {
-		@Input(InputProps{
-			ID:          "address",
-			Type:        "text",
-			Label:       "Address",
-			Description: "Enter the IP address or hostname of the device.",
-		})
-		@Input(InputProps{
-			ID:          "port",
-			Type:        "number",
-			Label:       "Port",
-			Description: "Enter the port number for the device.",
-		})
-		@Input(InputProps{
-			ID:          "name",
-			Type:        "text",
-			Label:       "Name",
-			Description: "Enter a name for the device.",
-		})
+		@dialogEditDeviceContent("", "", "")
 	}
 }
 
-templ DialogEditDevice(create bool) {
+templ DialogEditDevice(device *models.Device) {
 	@Dialog(DialogProps{
 		ID:               IDDialogEditDevice,
 		Method:           http.MethodPut,
-		Href:             HXEditGroupDialog(),
+		Href:             HxUrlEditDeviceDialog(&device.ID),
 		SubmitButtonText: "Edit",
 	}) {
-		// TODO: Content here...
+		{{
+			address, port := device.GetAddrSplit()
+		}}
+		@dialogEditDeviceContent(address, strconv.Itoa(port), device.Name)
 	}
+}
+
+templ dialogEditDeviceContent(address, port, name string) {
+	@Input(InputProps{
+		ID:          "address",
+		Type:        "text",
+		Label:       "Address",
+		Description: "Enter the IP address or hostname of the device.",
+		Value:       address,
+	})
+	@Input(InputProps{
+		ID:          "port",
+		Type:        "number",
+		Label:       "Port",
+		Description: "Enter the port number for the device.",
+		Value:       port,
+	})
+	@Input(InputProps{
+		ID:          "name",
+		Type:        "text",
+		Label:       "Name",
+		Description: "Enter a name for the device.",
+		Value:       name,
+	})
 }

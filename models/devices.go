@@ -1,6 +1,8 @@
 package models
 
 import (
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -21,4 +23,11 @@ func NewDevice(addr Addr, name string) *Device {
 
 func (d *Device) Validate() bool {
 	return d.ID >= 0 && d.Addr != ""
+}
+
+func (d *Device) GetAddrSplit() (string, int) {
+	s := strings.Split(string(d.Addr), ":")
+	address := s[0]
+	port, _ := strconv.Atoi(s[1])
+	return address, port
 }

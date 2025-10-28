@@ -29,7 +29,7 @@ templ PageHome_AdditionalHead() {
 templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.ResolvedDevice) {
 	{{
 		props := &HXProps{
-			Get:               HXHomeSectionDevices(),
+			Get:               HxUrlHomeSectionDevices(),
 			Target:            "#" + string(IDSectionDevices),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
@@ -41,7 +41,7 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolve
 		@Spinner()
 	} else {
 		@pageHome_SectionActions() {
-			@AddIconButton(HXEditDeviceDialog())
+			@AddIconButton(HxUrlEditDeviceDialog(nil))
 		}
 		if len(devices) > 0 {
 			// TODO: ...
@@ -54,7 +54,7 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolve
 templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGroup) {
 	{{
 		props := &HXProps{
-			Get:               HXHomeSectionGroups(),
+			Get:               HxUrlHomeSectionGroups(),
 			Target:            "#" + string(IDSectionGroups),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
@@ -66,7 +66,7 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 		@Spinner()
 	} else {
 		@pageHome_SectionActions() {
-			@AddIconButton(HXEditGroupDialog())
+			@AddIconButton(HxUrlEditGroupDialog(nil))
 		}
 		if len(groups) > 0 {
 			// TODO: ...

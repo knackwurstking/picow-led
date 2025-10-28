@@ -14,7 +14,7 @@
   - [x] Layout: add the manifest json file
   - [x] Handler: Home
   - [ ] Home: Section Devices [WIP]
-    - [ ] Edit dialog
+    - [ ] Edit dialog [WIP]
     - [ ] Render devices list
   - [ ] Home: Section Groups
     - [ ] Edit dialog
