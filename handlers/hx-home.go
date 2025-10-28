@@ -23,13 +23,13 @@ func (h HXHome) Register(e *echo.Echo) {
 }
 
 func (h HXHome) SectionDevices(c echo.Context) error {
-	// TODO: ...
+	// TODO: Continue here
 
 	return nil
 }
 
 func (h HXHome) SectionGroups(c echo.Context) error {
-	// TODO: ...
+	// TODO: Continue here
 
 	return nil
 }
