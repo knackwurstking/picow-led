@@ -1,0 +1,71 @@
+package components
+
+import "github.com/knackwurstking/picow-led/env"
+
+type LayoutOptions struct {
+	PageTitle      string // NOTE: "#page-title"
+	AppBarTitle    string // NOTE: "#app-bar-title"
+	NavContent     templ.Component
+	AdditionalHead templ.Component
+}
+
+templ Layout(options LayoutOptions) {
+	<!DOCTYPE html>
+	<html lang="de">
+		<head>
+			@metaTags()
+			@links()
+			@scripts()
+			<title id="page-title">{ options.PageTitle }</title>
+			if options.AdditionalHead != nil {
+				@options.AdditionalHead
+			}
+		</head>
+		<body hx-ext="ws">
+			@appBar(options.AppBarTitle, options.NavContent)
+			{ children... }
+		</body>
+	</html>
+}
+
+templ metaTags() {
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, viewport-fit=cover"/>
+	<meta name="mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-capable" content="yes"/>
+	<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+	<meta name="apple-mobile-web-app-title" content="pgpress"/>
+	<meta name="application-name" content="pgpress"/>
+	<meta name="msapplication-TileColor" content="#b8bb26"/>
+	<meta name="theme-color" content="#f9f5d7" id="theme-color-meta"/>
+}
+
+templ links() {
+	<link rel="icon" href={ AssetURL(env.Args.ServerPathPrefix, "/favicon.ico") } sizes="any"/>
+	<link rel="icon" href={ AssetURL(env.Args.ServerPathPrefix, "/icon.png") } type="image/png"/>
+	<link rel="apple-touch-icon" href={ AssetURL(env.Args.ServerPathPrefix, "/apple-touch-icon-180x180.png") }/>
+	<link rel="mask-icon" href={ AssetURL(env.Args.ServerPathPrefix, "/icon.png") } color="#b8bb26"/>
+	<link rel="manifest" href={ AssetURL(env.Args.ServerPathPrefix, "/manifest.json") }/>
+	<link rel="stylesheet" href={ AssetURL(env.Args.ServerPathPrefix, "/css/bootstrap-icons.min.css") }/>
+	<link rel="stylesheet" href={ AssetURL(env.Args.ServerPathPrefix, "/css/ui.min.css") }/>
+	<link rel="stylesheet" href={ AssetURL(env.Args.ServerPathPrefix, "/css/main-layout.css") }/>
+}
+
+templ scripts() {
+	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/htmx-v2.0.7.min.js") }></script>
+	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/htmx-ext-ws-v2.0.3.min.js") }></script>
+	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/main-layout.js") }></script>
+}
+
+templ appBar(title string, navContent templ.Component) {
+	<header class="app-bar top fixed shadow-sm">
+		<div class="app-bar-left">
+			<h5 id="app-bar-title">{ title }</h5>
+		</div>
+		<div class="app-bar-right">
+			if navContent != nil {
+				@navContent
+			}
+		</div>
+	</header>
+}

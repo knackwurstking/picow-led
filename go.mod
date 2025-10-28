@@ -3,6 +3,7 @@ module github.com/knackwurstking/picow-led
 go 1.25.0
 
 require (
+	github.com/a-h/templ v0.3.960
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/lmittmann/tint v1.1.2
 	github.com/mattn/go-sqlite3 v1.14.32

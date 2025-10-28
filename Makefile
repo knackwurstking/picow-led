@@ -10,6 +10,10 @@ init:
 	@echo "Initializing project..."
 	go mod tidy
 
+generate:
+	@echo "Generating templ files..."
+	templ generate
+
 # Build the binary
 build:
 	@echo "Building binary..."

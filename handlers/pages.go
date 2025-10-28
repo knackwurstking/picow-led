@@ -1,0 +1,21 @@
+package handlers
+
+import (
+	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/picow-led/services"
+	"github.com/labstack/echo/v4"
+)
+
+type Pages struct {
+	registry *services.Registry
+}
+
+func (p Pages) Register(e *echo.Echo) {
+	e.GET(env.Args.ServerPathPrefix+"/", p.Home)
+}
+
+func (p *Pages) Home(c echo.Context) error {
+	// TODO: ...
+
+	return nil
+}
