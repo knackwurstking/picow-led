@@ -11,20 +11,43 @@ func TestAddGroup(t *testing.T) {
 	r := openDB(t, true)
 	defer r.Close()
 
-	// Create a new group
+	_, err := r.Devices.Add(models.NewDevice("192.168.178.10", "Test Device 1"))
+	if err != nil {
+		t.Fatalf("Failed to add device 1: %v", err)
+	}
+
+	r.Devices.Add(models.NewDevice("192.168.178.20", "Test Device 2"))
+	if err != nil {
+		t.Fatalf("Failed to add device 2: %v", err)
+	}
+
+	r.Devices.Add(models.NewDevice("192.168.178.30", "Test Device 3"))
+	if err != nil {
+		t.Fatalf("Failed to add device 3: %v", err)
+	}
+
+	// Create a new group - test failure, invalid devices
 	group := &models.Group{
-		Name: "Test Group",
-		Setup: models.GroupSetup{
-			{DeviceID: 1, ColorID: 1},
-			{DeviceID: 2, ColorID: 2},
-			{DeviceID: 3, ColorID: 3},
-		},
+		Name:    "Test Group",
+		Devices: []models.DeviceID{1, 2, 3, 4},
 	}
 
 	// Add the group to the database
 	id, err := r.Groups.Add(group)
+	if err != ErrInvalidDeviceID {
+		t.Fatalf("Failed to add group: %#v", err)
+	}
+
+	// Create a new group
+	group = &models.Group{
+		Name:    "Test Group",
+		Devices: []models.DeviceID{1, 2, 3},
+	}
+
+	// Add the group to the database
+	id, err = r.Groups.Add(group)
 	if err != nil {
-		t.Fatalf("Failed to add group: %v", err)
+		t.Fatalf("Failed to add group: %#v", err)
 	}
 
 	retrievedGroup, err := r.Groups.Get(id)
@@ -37,8 +60,8 @@ func TestAddGroup(t *testing.T) {
 	if retrievedGroup.Name != group.Name {
 		t.Errorf("Expected group %v, got %v", group, retrievedGroup)
 	}
-	if !reflect.DeepEqual(retrievedGroup.Setup, group.Setup) {
-		t.Errorf("Expected group setup %#v, got %#v", group.Setup, retrievedGroup.Setup)
+	if !reflect.DeepEqual(retrievedGroup.Devices, group.Devices) {
+		t.Errorf("Expected group devices %#v, got %#v", group.Devices, retrievedGroup.Devices)
 	}
 }
 
@@ -46,18 +69,26 @@ func TestUpdateGroup(t *testing.T) {
 	r := openDB(t, false)
 	defer r.Close()
 
-	// Update the group in the database
+	// Update the group in the database - check fail
 	group := &models.Group{
-		ID:   1,
-		Name: "Updated Group",
-		Setup: models.GroupSetup{
-			{DeviceID: 1, ColorID: 1},
-			{DeviceID: 2, ColorID: 2},
-			{DeviceID: 3, ColorID: 4},
-		},
+		ID:      1,
+		Name:    "Updated Group",
+		Devices: []models.DeviceID{1, 2, 3, 4},
 	}
 
 	err := r.Groups.Update(group)
+	if err != ErrInvalidDeviceID {
+		t.Fatal("Expected error updating group with invalid devices")
+	}
+
+	// Update the group in the database
+	group = &models.Group{
+		ID:      1,
+		Name:    "Updated Group",
+		Devices: []models.DeviceID{1, 2},
+	}
+
+	err = r.Groups.Update(group)
 	if err != nil {
 		t.Fatalf("Failed to update group: %v", err)
 	}
@@ -72,8 +103,8 @@ func TestUpdateGroup(t *testing.T) {
 	if retrievedGroup.Name != group.Name {
 		t.Errorf("Expected group %v, got %v", group, retrievedGroup)
 	}
-	if !reflect.DeepEqual(retrievedGroup.Setup, group.Setup) {
-		t.Errorf("Expected group setup %#v, got %#v", group.Setup, retrievedGroup.Setup)
+	if !reflect.DeepEqual(retrievedGroup.Devices, group.Devices) {
+		t.Errorf("Expected group devices %#v, got %#v", group.Devices, retrievedGroup.Devices)
 	}
 }
 

@@ -10,7 +10,7 @@ type GroupSetup []ColorBinding
 type Group struct {
 	ID        GroupID    `json:"id"`
 	Name      string     `json:"name"`
-	Setup     GroupSetup `json:"setup"`
+	Devices   []DeviceID `json:"devices"`
 	CreatedAt string     `json:"created_at"`
 }
 
