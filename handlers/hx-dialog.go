@@ -18,17 +18,45 @@ func NewHXDialogs(r *services.Registry) *HXDialogs {
 }
 
 func (h HXDialogs) Register(e *echo.Echo) {
-	Register(e, http.MethodGet, "/htmx/dialog/edit-device", h.EditDevice)
-	Register(e, http.MethodGet, "/htmx/dialog/edit-group", h.EditGroup)
+	// Edit Device
+	Register(e, http.MethodGet, "/htmx/dialog/edit-device", h.GetEditDevice)
+	Register(e, http.MethodPost, "/htmx/dialog/edit-device", h.PostEditDevice)
+	Register(e, http.MethodPut, "/htmx/dialog/edit-device", h.PutEditDevice)
+
+	// Edit Group
+	Register(e, http.MethodGet, "/htmx/dialog/edit-group", h.GetEditGroup)
+	Register(e, http.MethodPost, "/htmx/dialog/edit-group", h.PostEditGroup)
+	Register(e, http.MethodPut, "/htmx/dialog/edit-group", h.PutEditGroup)
 }
 
-func (h HXDialogs) EditDevice(c echo.Context) error {
+func (h HXDialogs) GetEditDevice(c echo.Context) error {
+	// TODO: Continue here...
+
+	return nil
+}
+func (h HXDialogs) PostEditDevice(c echo.Context) error {
+	// TODO: ...
+
+	return nil
+}
+func (h HXDialogs) PutEditDevice(c echo.Context) error {
 	// TODO: ...
 
 	return nil
 }
 
-func (h HXDialogs) EditGroup(c echo.Context) error {
+func (h HXDialogs) GetEditGroup(c echo.Context) error {
+	// TODO: ...
+
+	return nil
+}
+
+func (h HXDialogs) PostEditGroup(c echo.Context) error {
+	// TODO: ...
+
+	return nil
+}
+func (h HXDialogs) PutEditGroup(c echo.Context) error {
 	// TODO: ...
 
 	return nil

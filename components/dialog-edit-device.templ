@@ -1,0 +1,30 @@
+package components
+
+import "net/http"
+
+const (
+	IDDialogNewDevice  = "new-device-dialog"
+	IDDialogEditDevice = "edit-device-dialog"
+)
+
+templ DialogNewDevice() {
+	@Dialog(DialogProps{
+		ID:               IDDialogNewDevice,
+		Method:           http.MethodPost,
+		Href:             HXEditDeviceDialog(),
+		SubmitButtonText: "Create",
+	}) {
+		// TODO: Content here...
+	}
+}
+
+templ DialogEditDevice(create bool) {
+	@Dialog(DialogProps{
+		ID:               IDDialogEditDevice,
+		Method:           http.MethodPut,
+		Href:             HXEditGroupDialog(),
+		SubmitButtonText: "Edit",
+	}) {
+		// TODO: Content here...
+	}
+}

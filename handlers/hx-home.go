@@ -19,11 +19,11 @@ func NewHXHome(r *services.Registry) *HXHome {
 }
 
 func (h HXHome) Register(e *echo.Echo) {
-	Register(e, http.MethodGet, "/htmx/home/section/devices", h.SectionDevices)
-	Register(e, http.MethodGet, "/htmx/home/section/groups", h.SectionGroups)
+	Register(e, http.MethodGet, "/htmx/home/section/devices", h.GetSectionDevices)
+	Register(e, http.MethodGet, "/htmx/home/section/groups", h.GetSectionGroups)
 }
 
-func (h HXHome) SectionDevices(c echo.Context) error {
+func (h HXHome) GetSectionDevices(c echo.Context) error {
 	// Get devices...
 	devices, err := h.registry.Devices.List()
 	if err != nil {
@@ -42,7 +42,7 @@ func (h HXHome) SectionDevices(c echo.Context) error {
 	).Render(c.Request().Context(), c.Response())
 }
 
-func (h HXHome) SectionGroups(c echo.Context) error {
+func (h HXHome) GetSectionGroups(c echo.Context) error {
 	// Get groups...
 	groups, err := h.registry.Groups.List()
 	if err != nil {

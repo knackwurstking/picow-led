@@ -5,22 +5,22 @@ import (
 	"github.com/knackwurstking/picow-led/env"
 )
 
-func buildURL(path string) string {
+func BuildURL(path string) string {
 	return env.Args.ServerPathPrefix + path
 }
 
 func HXHomeSectionDevices() templ.SafeURL {
-	return templ.SafeURL(buildURL("/htmx/home/section/devices"))
+	return templ.SafeURL(BuildURL("/htmx/home/section/devices"))
 }
 
 func HXHomeSectionGroups() templ.SafeURL {
-	return templ.SafeURL(buildURL("/htmx/home/section/groups"))
+	return templ.SafeURL(BuildURL("/htmx/home/section/groups"))
 }
 
 func HXEditDeviceDialog() templ.SafeURL {
-	return templ.SafeURL(buildURL("/htmx/dialog/edit-device"))
+	return templ.SafeURL(BuildURL("/htmx/dialog/edit-device"))
 }
 
 func HXEditGroupDialog() templ.SafeURL {
-	return templ.SafeURL(buildURL("/htmx/dialog/edit-group"))
+	return templ.SafeURL(BuildURL("/htmx/dialog/edit-group"))
 }

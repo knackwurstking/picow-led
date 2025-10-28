@@ -19,10 +19,10 @@ func NewPages(r *services.Registry) *Pages {
 }
 
 func (p Pages) Register(e *echo.Echo) {
-	Register(e, http.MethodGet, "", p.Home)
+	Register(e, http.MethodGet, "", p.GetHome)
 }
 
-func (p *Pages) Home(c echo.Context) error {
+func (p *Pages) GetHome(c echo.Context) error {
 	err := components.PageHome().Render(c.Request().Context(), c.Response())
 	if err != nil {
 		return err
