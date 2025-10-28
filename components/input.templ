@@ -1,0 +1,18 @@
+package components
+
+type InputProps struct {
+	ID          string
+	Type        string
+	Label       string
+	Description string
+}
+
+templ Input(props InputProps) {
+	<label for={ props.ID }>{ props.Label }</label>
+	<input
+		type={ props.Type }
+		id={ props.ID }
+		name={ props.ID }
+		placeholder={ props.Description }
+	/>
+}

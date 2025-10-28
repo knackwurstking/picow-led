@@ -14,7 +14,24 @@ templ DialogNewDevice() {
 		Href:             HXEditDeviceDialog(),
 		SubmitButtonText: "Create",
 	}) {
-		// TODO: Content here...
+		@Input(InputProps{
+			ID:          "address",
+			Type:        "text",
+			Label:       "Address",
+			Description: "Enter the IP address or hostname of the device.",
+		})
+		@Input(InputProps{
+			ID:          "port",
+			Type:        "number",
+			Label:       "Port",
+			Description: "Enter the port number for the device.",
+		})
+		@Input(InputProps{
+			ID:          "name",
+			Type:        "text",
+			Label:       "Name",
+			Description: "Enter a name for the device.",
+		})
 	}
 }
 
