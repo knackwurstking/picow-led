@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 )
@@ -23,13 +24,45 @@ func (h HXHome) Register(e *echo.Echo) {
 }
 
 func (h HXHome) SectionDevices(c echo.Context) error {
-	// TODO: Continue here
+	// Get devices...
+	devices, err := h.registry.Devices.List()
+	if err != nil {
+		return err
+	}
 
-	return nil
+	// ...resolve them
+	resolvedDevices, err := services.ResolveDevices(h.registry, devices...)
+	if err != nil {
+		return err
+	}
+
+	return components.PageHome_SectionDevices(
+		components.HXProps{
+			Get:    components.HXHomeSectionDevices(),
+			Target: "#" + string(components.IDSectionDevices),
+		},
+		resolvedDevices...,
+	).Render(c.Request().Context(), c.Response())
 }
 
 func (h HXHome) SectionGroups(c echo.Context) error {
-	// TODO: Continue here
+	// Get groups...
+	groups, err := h.registry.Groups.List()
+	if err != nil {
+		return err
+	}
 
-	return nil
+	// ...resolve them
+	resolvedGroups, err := services.ResolveGroups(h.registry, groups...)
+	if err != nil {
+		return err
+	}
+
+	return components.PageHome_SectionGroups(
+		components.HXProps{
+			Get:    components.HXHomeSectionGroups(),
+			Target: "#" + string(components.IDSectionGroups),
+		},
+		resolvedGroups...,
+	).Render(c.Request().Context(), c.Response())
 }

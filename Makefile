@@ -22,6 +22,8 @@ build:
 # Run the application
 dev-run:
 	@echo "Running server without building..."
+	make init
+	make generate
 	go run $(BINARY_NAME) server -debug -log-format=text -database-path=$(DATABASE_PATH)
 
 test:
