@@ -209,7 +209,7 @@ func dialogEditDeviceContent_AdditionalActions(id models.DeviceID) templ.Compone
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span class=\"flex gap justify-end items-center\"><button class=\"destructive\" hx-delete=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span class=\"flex gap justify-end items-center\"><button class=\"destructive flex gap\" hx-delete=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,7 +222,7 @@ func dialogEditDeviceContent_AdditionalActions(id models.DeviceID) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-confirm=\"Are you sure you want to delete this device?\" hx-on:htmx:after-request=\"if (event.detail.successful) this.closest('dialog').close();\">Delete Device</button></span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-confirm=\"Are you sure you want to delete this device?\" hx-on:htmx:after-request=\"if (event.detail.successful) this.closest('dialog').close();\"><i class=\"bi bi-trash\"></i> Delete</button></span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
