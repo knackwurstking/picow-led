@@ -2,10 +2,41 @@ package components
 
 templ AddIconButton(props *HXProps) {
 	<button
-		class="icon contrast ghost visible"
+		class="icon contrast ghost"
 		{ props.Attributes()... }
 		title="Edit"
 	>
 		<i class="bi bi-plus-circle"></i>
+	</button>
+}
+
+templ EditIconButton(props *HXProps) {
+	<button
+		class="icon secondary ghost"
+		{ props.Attributes()... }
+		title="Edit"
+	>
+		<i class="bi bi-pencil-square"></i>
+	</button>
+}
+
+// NOTE: Currently unused
+templ DeleteIconButton(props *HXProps) {
+	<button
+		class="icon destructive ghost"
+		{ props.Attributes()... }
+		title="Delete"
+	>
+		<i class="bi bi-trash"></i>
+	</button>
+}
+
+templ PowerIconButton(props *HXProps) {
+	<button
+		class="icon primary ghost"
+		{ props.Attributes()... }
+		title="Edit"
+	>
+		<i class="bi bi-power"></i>
 	</button>
 }

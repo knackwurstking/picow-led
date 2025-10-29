@@ -90,15 +90,23 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 	}
 }
 
-// TODO: Style the device item, also need an edit button (also allow deletion) and a power button, ...
 templ PageHome_Device(device *models.ResolvedDevice) {
-	<div class="card outline flex gap justify-between">
-		<div class="card-body flex flex-col gap-sm">
-			<small>{ device.Addr }</small>
-			<strong>{ device.Name }</strong>
-		</div>
-		<div>
-			// TODO: Actions like edit & delete, power
+	<div class="card outline">
+		<div class="card-body flex gap justify-between items-center">
+			<div class="flex flex-col gap-sm">
+				<small>{ device.Addr }</small>
+				<strong>{ device.Name }</strong>
+			</div>
+			<div class="button-group">
+				@EditIconButton(&HXProps{
+					Get:     "", // TODO: ...
+					Trigger: "reload from:body",
+				})
+				@PowerIconButton(&HXProps{
+					Get:     "", // TODO: ...
+					Trigger: "reload from:body",
+				})
+			</div>
 		</div>
 	</div>
 }
