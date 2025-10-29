@@ -3,6 +3,7 @@
     "knackwurstking",
     "picow",
     "labstack",
-    "htmx"
+    "htmx",
+    "microcontroller"
   ]
 }
