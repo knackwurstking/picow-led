@@ -38,7 +38,7 @@ func QueryParam(c echo.Context, paramName string, optional bool) (string, error)
 		return "", nil
 	}
 
-	return "", NewValidationError("missing %s query parameter: %s", paramName)
+	return "", NewValidationError("missing %s query parameter", paramName)
 }
 
 func QueryParamDeviceID(c echo.Context, paramName string, optional bool) (models.DeviceID, error) {

@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 )
@@ -32,22 +34,44 @@ func (h HXDialogs) Register(e *echo.Echo) {
 func (h HXDialogs) GetEditDevice(c echo.Context) error {
 	deviceID, err := QueryParamDeviceID(c, "id", true)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
+	var device *models.Device
 	if deviceID > 0 {
-		// TODO: Fetch device data from registry
+		device, err = h.registry.Devices.Get(deviceID)
+		if err != nil {
+			if services.ErrNotFound == err {
+				return echo.NewHTTPError(
+					http.StatusBadRequest,
+					NewValidationError("device with ID %d not found", deviceID),
+				)
+			}
+			return NewDatabaseError("failed to fetch device with ID %d", deviceID)
+		}
 	}
 
-	// TODO: Render dialog
+	if device != nil {
+		err = components.DialogEditDevice(device).Render(c.Request().Context(), c.Response())
+		if err != nil {
+			return err
+		}
+	} else {
+		err = components.DialogNewDevice().Render(c.Request().Context(), c.Response())
+		if err != nil {
+			return err
+		}
+	}
 
-	return nil
+	return err
 }
+
 func (h HXDialogs) PostEditDevice(c echo.Context) error {
 	// TODO: ...
 
 	return nil
 }
+
 func (h HXDialogs) PutEditDevice(c echo.Context) error {
 	// TODO: ...
 
