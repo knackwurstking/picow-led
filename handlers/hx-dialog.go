@@ -53,7 +53,7 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 	}
 
 	if device != nil {
-		err = components.DialogEditDevice(device).Render(c.Request().Context(), c.Response())
+		err = components.DialogEditDevice(device, false, nil).Render(c.Request().Context(), c.Response())
 		if err != nil {
 			return err
 		}
@@ -99,7 +99,37 @@ func (h HXDialogs) PostEditDevice(c echo.Context) error {
 }
 
 func (h HXDialogs) PutEditDevice(c echo.Context) error {
-	// TODO: ...
+	deviceID, err := QueryParamDeviceID(c, "id", true)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	device := h.parseEditDeviceForm(c)
+	device.ID = deviceID
+
+	if !device.Validate() {
+		err := NewValidationError("device validation failed, invalid form data %#v", device)
+
+		if err := components.DialogEditDevice(device, true, err).Render(
+			c.Request().Context(), c.Response(),
+		); err != nil {
+			return err
+		}
+
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	if err := h.registry.Devices.Update(device); err != nil {
+		err = NewDatabaseError("failed to update device %s", device.Name)
+
+		if err := components.DialogEditDevice(device, true, err).Render(
+			c.Request().Context(), c.Response(),
+		); err != nil {
+			return err
+		}
+
+		return err
+	}
 
 	c.Response().Header().Set("HX-Trigger", "reload")
 	return nil

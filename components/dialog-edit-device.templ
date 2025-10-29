@@ -24,12 +24,14 @@ templ DialogNewDevice(oob bool, err error) {
 	}
 }
 
-templ DialogEditDevice(device *models.Device) {
+templ DialogEditDevice(device *models.Device, oob bool, err error) {
 	@Dialog(DialogProps{
 		ID:               IDDialogEditDevice,
 		Method:           http.MethodPut,
 		Href:             HxUrlEditDeviceDialog(&device.ID),
 		SubmitButtonText: "Edit",
+		OOB:              oob,
+		Error:            err,
 	}) {
 		{{
 			address, port := device.GetAddrSplit()
