@@ -69,12 +69,14 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 func (h HXDialogs) PostEditDevice(c echo.Context) error {
 	// TODO: ...
 
+	c.Response().Header().Set("HX-Trigger", "reload")
 	return nil
 }
 
 func (h HXDialogs) PutEditDevice(c echo.Context) error {
 	// TODO: ...
 
+	c.Response().Header().Set("HX-Trigger", "reload")
 	return nil
 }
 
@@ -87,10 +89,12 @@ func (h HXDialogs) GetEditGroup(c echo.Context) error {
 func (h HXDialogs) PostEditGroup(c echo.Context) error {
 	// TODO: ...
 
+	c.Response().Header().Set("HX-Trigger", "reload")
 	return nil
 }
 func (h HXDialogs) PutEditGroup(c echo.Context) error {
 	// TODO: ...
 
+	c.Response().Header().Set("HX-Trigger", "reload")
 	return nil
 }
