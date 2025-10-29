@@ -152,6 +152,7 @@ func dialogEditDeviceContent(address, port, name string) templ.Component {
 			Label:       "Address",
 			Description: "Enter the IP address or hostname of the device.",
 			Value:       address,
+			Required:    true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -162,6 +163,7 @@ func dialogEditDeviceContent(address, port, name string) templ.Component {
 			Label:       "Port",
 			Description: "Enter the port number for the device.",
 			Value:       port,
+			Required:    true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -172,6 +174,7 @@ func dialogEditDeviceContent(address, port, name string) templ.Component {
 			Label:       "Name",
 			Description: "Enter a name for the device.",
 			Value:       name,
+			Required:    true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

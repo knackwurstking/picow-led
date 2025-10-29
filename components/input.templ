@@ -6,6 +6,7 @@ type InputProps struct {
 	Label       string
 	Description string
 	Value       string
+	Required    bool
 }
 
 templ Input(props InputProps) {
@@ -16,5 +17,6 @@ templ Input(props InputProps) {
 		name={ props.ID }
 		placeholder={ props.Description }
 		value={ props.Value }
+		required?={ props.Required }
 	/>
 }
