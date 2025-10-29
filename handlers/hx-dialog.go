@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/knackwurstking/picow-led/components"
@@ -66,8 +67,20 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 	return err
 }
 
+// TODO: Find a way how to re render dialogs with error message, maybe do an oob render whatever
 func (h HXDialogs) PostEditDevice(c echo.Context) error {
-	// TODO: ...
+	device := h.parseEditDeviceForm(c)
+
+	if !device.Validate() {
+		return echo.NewHTTPError(
+			http.StatusBadRequest,
+			NewValidationError("device validation failed, invalid form data %#v", device),
+		)
+	}
+
+	if _, err := h.registry.Devices.Add(device); err != nil {
+		return NewDatabaseError("failed to add device %s", device.Name)
+	}
 
 	c.Response().Header().Set("HX-Trigger", "reload")
 	return nil
@@ -97,4 +110,12 @@ func (h HXDialogs) PutEditGroup(c echo.Context) error {
 
 	c.Response().Header().Set("HX-Trigger", "reload")
 	return nil
+}
+
+func (h *HXDialogs) parseEditDeviceForm(c echo.Context) *models.Device {
+	address := c.FormValue("address")
+	port := c.FormValue("port")
+	name := c.FormValue("name")
+
+	return models.NewDevice(models.Addr(fmt.Sprintf("%s:%s", address, port)), name)
 }
