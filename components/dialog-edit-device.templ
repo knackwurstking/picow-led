@@ -40,9 +40,9 @@ templ DialogEditDevice(device *models.Device) {
 
 templ dialogEditDeviceContent(address, port, name string) {
 	@Input(InputProps{
-		ID:          "address",
+		ID:          "host",
 		Type:        "text",
-		Label:       "Address",
+		Label:       "Host",
 		Description: "Enter the IP address or hostname of the device.",
 		Value:       address,
 		Required:    true,
@@ -56,7 +56,7 @@ templ dialogEditDeviceContent(address, port, name string) {
 		Required:    true,
 	})
 	@Input(InputProps{
-		ID:          "name",
+		ID:          "device-name",
 		Type:        "text",
 		Label:       "Name",
 		Description: "Enter a name for the device.",
