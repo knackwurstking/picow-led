@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"log/slog"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -34,6 +35,9 @@ func (c *Colors) Get(id models.ColorID) (*models.Color, error) {
 	query := `SELECT * FROM colors WHERE id = ?`
 	color, err := ScanColor(c.registry.db.QueryRow(query, id))
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
 

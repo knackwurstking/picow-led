@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"log/slog"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -32,6 +33,9 @@ func (p *DeviceSetups) Get(id models.DeviceID) (*models.DeviceSetup, error) {
 	query := `SELECT * FROM device_setups WHERE device_id = ?`
 	devicesSetup, err := ScanDevicesSetup(p.registry.db.QueryRow(query, id))
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
 

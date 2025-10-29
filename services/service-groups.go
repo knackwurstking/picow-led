@@ -37,6 +37,9 @@ func (g *Groups) Get(id models.GroupID) (*models.Group, error) {
 	query := `SELECT * FROM groups WHERE id = ?`
 	group, err := ScanGroup(g.registry.db.QueryRow(query, id))
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
 

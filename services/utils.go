@@ -1,12 +1,14 @@
 package services
 
-import "github.com/knackwurstking/picow-led/models"
+import (
+	"github.com/knackwurstking/picow-led/models"
+)
 
 func ResolveDevices(r *Registry, devices ...*models.Device) ([]*models.ResolvedDevice, error) {
 	resolvedDevices := make([]*models.ResolvedDevice, 0, len(devices))
 	for _, device := range devices {
 		setup, err := r.DeviceSetups.Get(device.ID)
-		if err != nil {
+		if err != nil && err != ErrNotFound {
 			return nil, err
 		}
 		resolvedDevice := models.NewResolvedDevice(device, setup)
@@ -23,7 +25,7 @@ func ResolveGroups(r *Registry, groups ...*models.Group) ([]*models.ResolvedGrou
 
 		for _, deviceID := range group.Devices {
 			device, err := r.Devices.Get(deviceID)
-			if err != nil {
+			if err != nil && err != ErrNotFound {
 				return nil, err
 			}
 
