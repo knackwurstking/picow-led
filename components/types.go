@@ -1,8 +1,6 @@
 package components
 
 import (
-	"strings"
-
 	"github.com/a-h/templ"
 )
 
@@ -21,7 +19,7 @@ func (hx *HXProps) Attributes() templ.Attributes {
 		"hx-get":     string(hx.Get),
 		"hx-target":  hx.Target,
 		"hx-swap":    hx.getSwap(),
-		"hx-trigger": hx.getTrigger("click"),
+		"hx-trigger": hx.getTrigger(),
 	}
 }
 
@@ -32,14 +30,14 @@ func (hx HXProps) getSwap() string {
 	return hx.Swap
 }
 
-func (hx *HXProps) getTrigger(events ...string) string {
-	if len(events) == 0 && !hx.EnableLoadTrigger {
+func (hx *HXProps) getTrigger() string {
+	if hx.Trigger == "" && !hx.EnableLoadTrigger {
 		panic("no trigger events provided")
 	}
 
 	if hx.EnableLoadTrigger {
-		return "load, " + strings.Join(events, ", ")
+		return "load, " + hx.Trigger
 	}
 
-	return strings.Join(events, ", ")
+	return hx.Trigger
 }
