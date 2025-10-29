@@ -49,7 +49,11 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolve
 			})
 		}
 		if len(devices) > 0 {
-			// TODO: ...
+			<div class="flex gap-lg">
+				for _, device := range devices {
+					@PageHome_Device(device)
+				}
+			</div>
 		} else {
 			<p class="muted ghost italic">No devices found.</p>
 		}
@@ -84,6 +88,14 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 			<p class="muted ghost italic">No groups found.</p>
 		}
 	}
+}
+
+// TODO: Style the device item, also need an edit button (also allow deletion) and a power button, ...
+templ PageHome_Device(device *models.ResolvedDevice) {
+	<div class="flex gap justify-between">
+		<span>{ device.Name }</span>
+		<span>{ device.Addr }</span>
+	</div>
 }
 
 templ pageHome_Section(id ID) {
