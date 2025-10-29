@@ -99,12 +99,16 @@ templ PageHome_Device(device *models.ResolvedDevice) {
 			</div>
 			<div class="button-group">
 				@EditIconButton(&HXProps{
-					Get:     "", // TODO: Continue here, also add delete button to the edit dialog
-					Trigger: "reload from:body",
+					Get:     HxUrlEditDeviceDialog(&device.ID),
+					Target:  "body",
+					Swap:    "beforeend",
+					Trigger: "click",
 				})
 				@PowerIconButton(&HXProps{
-					Get:     "", // TODO: ...
-					Trigger: "reload from:body",
+					Get:     "",     // TODO: ...
+					Target:  "this", // TODO: How to disable target and swap?
+					Swap:    "none",
+					Trigger: "click",
 				})
 			</div>
 		</div>

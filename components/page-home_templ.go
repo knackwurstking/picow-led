@@ -388,15 +388,19 @@ func PageHome_Device(device *models.ResolvedDevice) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = EditIconButton(&HXProps{
-			Get:     "", // TODO: Continue here, also add delete button to the edit dialog
-			Trigger: "reload from:body",
+			Get:     HxUrlEditDeviceDialog(&device.ID),
+			Target:  "body",
+			Swap:    "beforeend",
+			Trigger: "click",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = PowerIconButton(&HXProps{
-			Get:     "", // TODO: ...
-			Trigger: "reload from:body",
+			Get:     "",     // TODO: ...
+			Target:  "this", // TODO: How to disable target and swap?
+			Swap:    "none",
+			Trigger: "click",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -437,7 +441,7 @@ func pageHome_Section(id ID) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 115, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 119, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -487,7 +491,7 @@ func pageHome_SectionSummary(title string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 122, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 126, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
