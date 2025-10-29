@@ -14,7 +14,7 @@ type HXDialogs struct {
 	registry *services.Registry
 }
 
-func NewHXDialogs(r *services.Registry) *HXDialogs {
+func NewHxDialogs(r *services.Registry) *HXDialogs {
 	return &HXDialogs{
 		registry: r,
 	}

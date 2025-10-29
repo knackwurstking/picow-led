@@ -18,7 +18,7 @@ func NewHxDevices(registry *services.Registry) *HxDevices {
 }
 
 func (h *HxDevices) Register(e *echo.Echo) {
-	Register(e, http.MethodGet, "/htmx/devices/delete", h.Delete)
+	Register(e, http.MethodDelete, "/htmx/devices/delete", h.Delete)
 }
 
 func (h *HxDevices) Delete(c echo.Context) error {
@@ -31,5 +31,6 @@ func (h *HxDevices) Delete(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
+	c.Response().Header().Set("HX-Trigger", "reload")
 	return nil
 }

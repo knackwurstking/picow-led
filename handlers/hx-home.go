@@ -12,7 +12,7 @@ type HXHome struct {
 	registry *services.Registry
 }
 
-func NewHXHome(r *services.Registry) *HXHome {
+func NewHxHome(r *services.Registry) *HXHome {
 	return &HXHome{
 		registry: r,
 	}

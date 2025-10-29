@@ -12,7 +12,8 @@ type Handler interface {
 func GetAll(r *services.Registry) []Handler {
 	return []Handler{
 		NewPages(r),
-		NewHXHome(r),
-		NewHXDialogs(r),
+		NewHxHome(r),
+		NewHxDialogs(r),
+		NewHxDevices(r),
 	}
 }

@@ -14,11 +14,11 @@
   - [x] Layout: add the manifest json file
   - [x] Handler: Home
   - [ ] Home: Section Devices [WIP]
-    - [ ] Edit dialog [WIP]
-      - [ ] Add a delete button to the NewEditDialog component and update or add the handler for that
+    - [x] Edit dialog
+      - [x] Add a delete button to the DialogEditDevice component and update or add the handler for that
     - [ ] Render devices list
   - [ ] Home: Section Groups
     - [ ] Edit dialog
     - [ ] Render groups list
-  - [ ] Dialog: Edit device dialog [WIP]
+  - [x] Dialog: Edit device dialog
   - [ ] Dialog: Edit group dialog

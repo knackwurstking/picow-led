@@ -160,7 +160,7 @@ func startServer(r *services.Registry) {
 	// Middleware
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Output:           os.Stderr,
-		Format:           "${time_custom} ${method} ${status} ${uri} ${latency_human} ${remote_ip} ${query} ${form} ${error}\n",
+		Format:           "${time_custom} ${method} ${status} ${uri} ${latency_human} ${remote_ip} ${error}\n",
 		CustomTimeFormat: "2006-01-02 15:04:05",
 	}))
 

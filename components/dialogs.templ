@@ -3,12 +3,13 @@ package components
 import "net/http"
 
 type DialogProps struct {
-	ID               string
-	Method           string
-	Href             templ.SafeURL
-	SubmitButtonText string
-	Error            error
-	OOB              bool
+	ID                string
+	Method            string
+	Href              templ.SafeURL
+	SubmitButtonText  string
+	Error             error
+	OOB               bool
+	AdditionalActions templ.Component
 }
 
 templ Dialog(props DialogProps) {
@@ -56,6 +57,9 @@ templ Dialog(props DialogProps) {
 				{ children... }
 			</div>
 			<footer class="flex gap justify-end">
+				if props.AdditionalActions != nil {
+					@props.AdditionalActions
+				}
 				<button
 					name="close"
 					class="secondary flex gap"

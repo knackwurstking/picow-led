@@ -26,12 +26,13 @@ templ DialogNewDevice(oob bool, err error) {
 
 templ DialogEditDevice(device *models.Device, oob bool, err error) {
 	@Dialog(DialogProps{
-		ID:               IDDialogEditDevice,
-		Method:           http.MethodPut,
-		Href:             HxUrlEditDeviceDialog(&device.ID),
-		SubmitButtonText: "Edit",
-		OOB:              oob,
-		Error:            err,
+		ID:                IDDialogEditDevice,
+		Method:            http.MethodPut,
+		Href:              HxUrlEditDeviceDialog(&device.ID),
+		SubmitButtonText:  "Edit",
+		OOB:               oob,
+		Error:             err,
+		AdditionalActions: dialogEditDeviceContent_AdditionalActions(device.ID),
 	}) {
 		{{
 			address, port := device.GetAddrSplit()
@@ -65,4 +66,17 @@ templ dialogEditDeviceContent(address, port, name string) {
 		Value:       name,
 		Required:    true,
 	})
+}
+
+templ dialogEditDeviceContent_AdditionalActions(id models.DeviceID) {
+	<span class="flex gap justify-end items-center">
+		<button
+			class="destructive"
+			hx-delete={ HxUrlDeleteDevice(id) }
+			hx-confirm="Are you sure you want to delete this device?"
+			hx-on:htmx:after-request="if (event.detail.successful) this.closest('dialog').close();"
+		>
+			Delete Device
+		</button>
+	</span>
 }
