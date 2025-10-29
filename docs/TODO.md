@@ -38,7 +38,9 @@
 
 ## Device Control Handling
 
-- [ ] Establish a new package `package control` with a global registry-like object (WIP).
-- [ ] Upon server startup, establish connections and configurations for all devices.
-- [ ] Pass the registry-like object from the `package control` to the `package services` handlers.
-- [ ] After each change in services (get, update), synchronize the devices. Ensure that the handler or equivalent is passed to the service.
+- [ ] Establish a new package `package control`.
+- [ ] Refactor the service handlers to use control, ensuring that all operations are handled through these services.
+  - Example: Implement device setup using control.
+  - Example: Update a device using control.
+  - Example: Retrieve the current color (duty) from a device using control.
+  - Example: Set a new color for a device, update it using control, and modify the "device_setups" table and "current_color" field accordingly.
