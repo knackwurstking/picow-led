@@ -15,6 +15,7 @@
   - [x] Handler: Home
   - [ ] Home: Section Devices [WIP]
     - [ ] Edit dialog [WIP]
+      - [ ] Add a delete button to the NewEditDialog component and update or add the handler for that
     - [ ] Render devices list
   - [ ] Home: Section Groups
     - [ ] Edit dialog
