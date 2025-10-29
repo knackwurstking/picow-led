@@ -30,7 +30,16 @@ func (h HXDialogs) Register(e *echo.Echo) {
 }
 
 func (h HXDialogs) GetEditDevice(c echo.Context) error {
-	// TODO: Continue here...
+	deviceID, err := QueryParamDeviceID(c, "id", true)
+	if err != nil {
+		return err
+	}
+
+	if deviceID > 0 {
+		// TODO: Fetch device data from registry
+	}
+
+	// TODO: Render dialog
 
 	return nil
 }
