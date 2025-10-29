@@ -30,6 +30,12 @@ func HxUrlEditDeviceDialog(deviceID *models.DeviceID) templ.SafeURL {
 	))
 }
 
+func HxUrlDeleteDevice(deviceID models.DeviceID) templ.SafeURL {
+	return templ.SafeURL(BuildUrl(
+		fmt.Sprintf("/htmx/devices/delete?id=%d", deviceID),
+	))
+}
+
 func HxUrlEditGroupDialog(groupID *models.GroupID) templ.SafeURL {
 	if groupID == nil {
 		return templ.SafeURL(BuildUrl("/htmx/dialog/edit-group"))
