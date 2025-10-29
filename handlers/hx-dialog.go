@@ -125,9 +125,9 @@ func (h HXDialogs) PutEditGroup(c echo.Context) error {
 }
 
 func (h *HXDialogs) parseEditDeviceForm(c echo.Context) *models.Device {
-	address := c.FormValue("address")
+	host := c.FormValue("host")
 	port := c.FormValue("port")
-	name := c.FormValue("name")
+	name := c.FormValue("device-name")
 
-	return models.NewDevice(models.Addr(fmt.Sprintf("%s:%s", address, port)), name)
+	return models.NewDevice(models.Addr(fmt.Sprintf("%s:%s", host, port)), name)
 }
