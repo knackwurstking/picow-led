@@ -49,7 +49,7 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolve
 			})
 		}
 		if len(devices) > 0 {
-			<div class="flex gap-lg">
+			<div class="flex flex-col gap-lg mt">
 				for _, device := range devices {
 					@PageHome_Device(device)
 				}
@@ -92,9 +92,14 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 
 // TODO: Style the device item, also need an edit button (also allow deletion) and a power button, ...
 templ PageHome_Device(device *models.ResolvedDevice) {
-	<div class="flex gap justify-between">
-		<span>{ device.Name }</span>
-		<span>{ device.Addr }</span>
+	<div class="card outline flex gap justify-between">
+		<div class="card-body flex flex-col gap-sm">
+			<small>{ device.Addr }</small>
+			<strong>{ device.Name }</strong>
+		</div>
+		<div>
+			// TODO: Actions like edit & delete, power
+		</div>
 	</div>
 }
 
