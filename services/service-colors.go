@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"log/slog"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -35,10 +34,7 @@ func (c *Colors) Get(id models.ColorID) (*models.Color, error) {
 	query := `SELECT * FROM colors WHERE id = ?`
 	color, err := ScanColor(c.registry.db.QueryRow(query, id))
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, ErrNotFound
-		}
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 
 	return color, nil
@@ -50,7 +46,7 @@ func (c *Colors) List() ([]*models.Color, error) {
 	query := `SELECT * FROM colors`
 	rows, err := c.registry.db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 	defer rows.Close()
 
@@ -58,7 +54,7 @@ func (c *Colors) List() ([]*models.Color, error) {
 	for rows.Next() {
 		color, err := ScanColor(rows)
 		if err != nil {
-			return nil, err
+			return nil, HandleSqlError(err)
 		}
 		colors = append(colors, color)
 	}
@@ -76,12 +72,12 @@ func (c *Colors) Add(color *models.Color) (models.ColorID, error) {
 	query := `INSERT INTO colors (name, duty) VALUES (?, ?)`
 	result, err := c.registry.db.Exec(query, color.Name, color.Duty)
 	if err != nil {
-		return 0, err
+		return 0, HandleSqlError(err)
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, err
+		return 0, HandleSqlError(err)
 	}
 
 	return models.ColorID(id), nil
@@ -96,7 +92,7 @@ func (c *Colors) Update(color *models.Color) error {
 
 	query := `UPDATE colors SET name = ?, duty = ? WHERE id = ?`
 	_, err := c.registry.db.Exec(query, color.Name, color.Duty, color.ID)
-	return err
+	return HandleSqlError(err)
 }
 
 func (c *Colors) Delete(id models.ColorID) error {
@@ -104,7 +100,7 @@ func (c *Colors) Delete(id models.ColorID) error {
 
 	query := `DELETE FROM colors WHERE id = ?`
 	_, err := c.registry.db.Exec(query, id)
-	return err
+	return HandleSqlError(err)
 }
 
 func ScanColor(scannable Scannable) (*models.Color, error) {

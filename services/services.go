@@ -13,6 +13,14 @@ var (
 	ErrNotFound           = errors.New("not found")
 )
 
+func HandleSqlError(err error) error {
+	if err == sql.ErrNoRows {
+		return ErrNotFound
+	}
+
+	return err
+}
+
 type Scannable interface {
 	Scan(dest ...any) error
 }

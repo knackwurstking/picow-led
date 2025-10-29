@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"encoding/json"
 	"log/slog"
 	"slices"
@@ -37,10 +36,7 @@ func (g *Groups) Get(id models.GroupID) (*models.Group, error) {
 	query := `SELECT * FROM groups WHERE id = ?`
 	group, err := ScanGroup(g.registry.db.QueryRow(query, id))
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, ErrNotFound
-		}
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 
 	return group, nil
@@ -52,7 +48,7 @@ func (g *Groups) List() ([]*models.Group, error) {
 	query := `SELECT * FROM groups`
 	rows, err := g.registry.db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 	defer rows.Close()
 
@@ -60,7 +56,7 @@ func (g *Groups) List() ([]*models.Group, error) {
 	for rows.Next() {
 		group, err := ScanGroup(rows)
 		if err != nil {
-			return nil, err
+			return nil, HandleSqlError(err)
 		}
 		groups = append(groups, group)
 	}
@@ -83,12 +79,12 @@ func (g *Groups) Add(group *models.Group) (models.GroupID, error) {
 	query := `INSERT INTO groups (name, devices) VALUES (?, ?)`
 	result, err := g.registry.db.Exec(query, group.Name, devices)
 	if err != nil {
-		return 0, err
+		return 0, HandleSqlError(err)
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, err
+		return 0, HandleSqlError(err)
 	}
 
 	return models.GroupID(id), nil
@@ -108,7 +104,7 @@ func (g *Groups) Update(group *models.Group) error {
 
 	query := `UPDATE groups SET name = ?, devices = ? WHERE id = ?`
 	_, err = g.registry.db.Exec(query, group.Name, devices, group.ID)
-	return err
+	return HandleSqlError(err)
 }
 
 func (g *Groups) Delete(id models.GroupID) error {
@@ -116,7 +112,7 @@ func (g *Groups) Delete(id models.GroupID) error {
 
 	query := `DELETE FROM groups WHERE id = ?`
 	_, err := g.registry.db.Exec(query, id)
-	return err
+	return HandleSqlError(err)
 }
 
 func (g *Groups) validateDevices(devices []models.DeviceID) error {
@@ -125,7 +121,7 @@ func (g *Groups) validateDevices(devices []models.DeviceID) error {
 	}
 	// Check database if this device exists
 	for _, device := range devices {
-		if _, err := g.registry.Devices.Get(device); err != nil && err == sql.ErrNoRows {
+		if _, err := g.registry.Devices.Get(device); err != nil && err == ErrNotFound {
 			return ErrInvalidDeviceID
 		} else if err != nil {
 			return err

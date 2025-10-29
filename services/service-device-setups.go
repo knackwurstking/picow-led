@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"log/slog"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -33,10 +32,7 @@ func (p *DeviceSetups) Get(id models.DeviceID) (*models.DeviceSetup, error) {
 	query := `SELECT * FROM device_setups WHERE device_id = ?`
 	devicesSetup, err := ScanDevicesSetup(p.registry.db.QueryRow(query, id))
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, ErrNotFound
-		}
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 
 	return devicesSetup, nil
@@ -48,7 +44,7 @@ func (p *DeviceSetups) List() ([]*models.DeviceSetup, error) {
 	query := `SELECT * FROM device_setups`
 	rows, err := p.registry.db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 	defer rows.Close()
 
@@ -56,7 +52,7 @@ func (p *DeviceSetups) List() ([]*models.DeviceSetup, error) {
 	for rows.Next() {
 		devicesSetup, err := ScanDevicesSetup(rows)
 		if err != nil {
-			return nil, err
+			return nil, HandleSqlError(err)
 		}
 		deviceSetups = append(deviceSetups, devicesSetup)
 	}
@@ -74,12 +70,12 @@ func (p *DeviceSetups) Add(deviceSetup *models.DeviceSetup) (models.DeviceID, er
 	query := `INSERT INTO device_setups (device_id, pins) VALUES (?, ?)`
 	result, err := p.registry.db.Exec(query, deviceSetup.DeviceID, deviceSetup.Pins)
 	if err != nil {
-		return 0, err
+		return 0, HandleSqlError(err)
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, err
+		return 0, HandleSqlError(err)
 	}
 
 	return models.DeviceID(id), nil
@@ -94,7 +90,7 @@ func (p *DeviceSetups) Update(deviceSetup *models.DeviceSetup) error {
 
 	query := `UPDATE device_setups SET pins = ? WHERE device_id = ?`
 	_, err := p.registry.db.Exec(query, deviceSetup.Pins, deviceSetup.DeviceID)
-	return err
+	return HandleSqlError(err)
 }
 
 func (p *DeviceSetups) Delete(id models.DeviceID) error {
@@ -102,7 +98,7 @@ func (p *DeviceSetups) Delete(id models.DeviceID) error {
 
 	query := `DELETE FROM device_setups WHERE device_id = ?`
 	_, err := p.registry.db.Exec(query, id)
-	return err
+	return HandleSqlError(err)
 }
 
 func ScanDevicesSetup(r Scannable) (*models.DeviceSetup, error) {

@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"log/slog"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -35,10 +34,7 @@ func (d *Devices) Get(id models.DeviceID) (*models.Device, error) {
 	query := `SELECT * FROM devices WHERE id = ?`
 	device, err := ScanDevice(d.registry.db.QueryRow(query, id))
 	if err != nil {
-		if err != sql.ErrNoRows {
-			return nil, ErrNotFound
-		}
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 
 	return device, nil
@@ -50,7 +46,7 @@ func (d *Devices) GetByAddr(addr models.Addr) (*models.Device, error) {
 	query := `SELECT * FROM devices WHERE addr = ?`
 	device, err := ScanDevice(d.registry.db.QueryRow(query, addr))
 	if err != nil {
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 
 	return device, nil
@@ -61,7 +57,7 @@ func (d *Devices) List() ([]*models.Device, error) {
 
 	rows, err := d.registry.db.Query(`SELECT * FROM devices`)
 	if err != nil {
-		return nil, err
+		return nil, HandleSqlError(err)
 	}
 	defer rows.Close()
 
@@ -69,7 +65,7 @@ func (d *Devices) List() ([]*models.Device, error) {
 	for rows.Next() {
 		device, err := ScanDevice(rows)
 		if err != nil {
-			return nil, err
+			return nil, HandleSqlError(err)
 		}
 		devices = append(devices, device)
 	}
@@ -87,12 +83,12 @@ func (d *Devices) Add(device *models.Device) (models.DeviceID, error) {
 	query := `INSERT INTO devices (addr, name) VALUES (?, ?)`
 	result, err := d.registry.db.Exec(query, device.Addr, device.Name)
 	if err != nil {
-		return 0, err
+		return 0, HandleSqlError(err)
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, err
+		return 0, HandleSqlError(err)
 	}
 
 	return models.DeviceID(id), nil
@@ -108,7 +104,7 @@ func (d *Devices) Update(device *models.Device) error {
 	query := `UPDATE devices SET addr = ?, name = ? WHERE id = ?`
 	_, err := d.registry.db.Exec(query, device.Addr, device.Name, device.ID)
 	if err != nil {
-		return err
+		return HandleSqlError(err)
 	}
 
 	return nil
@@ -121,12 +117,12 @@ func (d *Devices) Delete(id models.DeviceID) error {
 
 	query := `DELETE FROM pins WHERE device_id = ?`
 	if err = d.registry.DeviceSetups.Delete(id); err != nil {
-		return err
+		return HandleSqlError(err)
 	}
 
 	query = `DELETE FROM devices WHERE id = ?`
 	if _, err = d.registry.db.Exec(query, id); err != nil {
-		return err
+		return HandleSqlError(err)
 	}
 
 	return nil
