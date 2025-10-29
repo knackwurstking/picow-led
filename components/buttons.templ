@@ -1,14 +1,6 @@
 package components
 
-templ AddIconButton(url templ.SafeURL) {
-	{{
-		props := &HXProps{
-			Get:     url,
-			Target:  "body",
-			Swap:    "beforeend",
-			Trigger: "click",
-		}
-	}}
+templ AddIconButton(props *HXProps) {
 	<button
 		class="icon contrast ghost visible"
 		{ props.Attributes()... }

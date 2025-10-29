@@ -41,7 +41,12 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolve
 		@Spinner()
 	} else {
 		@pageHome_SectionActions() {
-			@AddIconButton(HxUrlEditDeviceDialog(nil))
+			@AddIconButton(&HXProps{
+				Get:     HxUrlEditDeviceDialog(nil),
+				Target:  "body",
+				Swap:    "beforeend",
+				Trigger: "click",
+			})
 		}
 		if len(devices) > 0 {
 			// TODO: ...
@@ -66,7 +71,12 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 		@Spinner()
 	} else {
 		@pageHome_SectionActions() {
-			@AddIconButton(HxUrlEditGroupDialog(nil))
+			@AddIconButton(&HXProps{
+				Get:     HxUrlEditGroupDialog(nil),
+				Target:  "body",
+				Swap:    "beforeend",
+				Trigger: "click",
+			})
 		}
 		if len(groups) > 0 {
 			// TODO: ...

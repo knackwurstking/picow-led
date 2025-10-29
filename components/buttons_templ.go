@@ -8,7 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func AddIconButton(url templ.SafeURL) templ.Component {
+func AddIconButton(props *HXProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -29,13 +29,6 @@ func AddIconButton(url templ.SafeURL) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-
-		props := &HXProps{
-			Get:     url,
-			Target:  "body",
-			Swap:    "beforeend",
-			Trigger: "click",
-		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<button class=\"icon contrast ghost visible\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

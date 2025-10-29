@@ -198,7 +198,12 @@ func PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolved
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = AddIconButton(HxUrlEditDeviceDialog(nil)).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = AddIconButton(&HXProps{
+					Get:     HxUrlEditDeviceDialog(nil),
+					Target:  "body",
+					Swap:    "beforeend",
+					Trigger: "click",
+				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -286,7 +291,12 @@ func PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGr
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = AddIconButton(HxUrlEditGroupDialog(nil)).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = AddIconButton(&HXProps{
+					Get:     HxUrlEditGroupDialog(nil),
+					Target:  "body",
+					Swap:    "beforeend",
+					Trigger: "click",
+				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -340,7 +350,7 @@ func pageHome_Section(id ID) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 80, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 90, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -390,7 +400,7 @@ func pageHome_SectionSummary(title string) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 87, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 97, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {

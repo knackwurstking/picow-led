@@ -11,12 +11,14 @@ const (
 	IDDialogEditDevice = "edit-device-dialog"
 )
 
-templ DialogNewDevice() {
+templ DialogNewDevice(oob bool, err error) {
 	@Dialog(DialogProps{
 		ID:               IDDialogNewDevice,
 		Method:           http.MethodPost,
 		Href:             HxUrlEditDeviceDialog(nil),
 		SubmitButtonText: "Create",
+		OOB:              oob,
+		Error:            err,
 	}) {
 		@dialogEditDeviceContent("", "", "")
 	}

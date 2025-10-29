@@ -58,7 +58,7 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 			return err
 		}
 	} else {
-		err = components.DialogNewDevice().Render(c.Request().Context(), c.Response())
+		err = components.DialogNewDevice(false, nil).Render(c.Request().Context(), c.Response())
 		if err != nil {
 			return err
 		}
@@ -67,19 +67,31 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 	return err
 }
 
-// TODO: Find a way how to re render dialogs with error message, maybe do an oob render whatever
 func (h HXDialogs) PostEditDevice(c echo.Context) error {
 	device := h.parseEditDeviceForm(c)
 
 	if !device.Validate() {
-		return echo.NewHTTPError(
-			http.StatusBadRequest,
-			NewValidationError("device validation failed, invalid form data %#v", device),
-		)
+		err := NewValidationError("device validation failed, invalid form data %#v", device)
+
+		if err := components.DialogNewDevice(true, err).Render(
+			c.Request().Context(), c.Response(),
+		); err != nil {
+			return err
+		}
+
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	if _, err := h.registry.Devices.Add(device); err != nil {
-		return NewDatabaseError("failed to add device %s", device.Name)
+		err = NewDatabaseError("failed to add device %s", device.Name)
+
+		if err := components.DialogNewDevice(true, err).Render(
+			c.Request().Context(), c.Response(),
+		); err != nil {
+			return err
+		}
+
+		return err
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reload")

@@ -7,7 +7,8 @@ type DialogProps struct {
 	Method           string
 	Href             templ.SafeURL
 	SubmitButtonText string
-	Error            string
+	Error            error
+	OOB              bool
 }
 
 templ Dialog(props DialogProps) {
@@ -22,6 +23,9 @@ templ Dialog(props DialogProps) {
 		onclose={ onclose }
 		oncancel="event.preventDefault()"
 		onclick="if (event.target === this) event.preventDefault()"
+		if props.OOB {
+			hx-swap-oob="true"
+		}
 	>
 		<form
 			class="flex flex-col gap p w-full"
@@ -38,17 +42,17 @@ templ Dialog(props DialogProps) {
 			enctype="multipart/form-data"
 			onclick="event.stopPropagation()"
 		>
-			if props.Error != "" {
-				<div class="card compact destructive">
-					<div class="card-body">
-						{ props.Error }
-					</div>
-				</div>
-			}
 			<div
 				name="dialog-content"
 				class="flex flex-col gap overflow-y-scroll scroll-smooth no-scrollbar p h-full"
 			>
+				if props.Error != nil {
+					<div class="card compact destructive debug">
+						<div class="card-body">
+							{ props.Error.Error() }
+						</div>
+					</div>
+				}
 				{ children... }
 			</div>
 			<footer class="flex gap justify-end">
