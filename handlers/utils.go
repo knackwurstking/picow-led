@@ -47,6 +47,10 @@ func QueryParamDeviceID(c echo.Context, paramName string, optional bool) (models
 		return 0, err
 	}
 
+	if optional && param == "" {
+		return 0, nil
+	}
+
 	deviceIDConversion, err := strconv.Atoi(param)
 	if err != nil {
 		return 0, NewValidationError("invalid device ID query parameter: %s=%s", paramName, param)
