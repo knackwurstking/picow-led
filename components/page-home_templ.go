@@ -388,7 +388,7 @@ func PageHome_Device(device *models.ResolvedDevice) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = EditIconButton(&HXProps{
-			Get:     "", // TODO: ...
+			Get:     "", // TODO: Continue here, also add delete button to the edit dialog
 			Trigger: "reload from:body",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
