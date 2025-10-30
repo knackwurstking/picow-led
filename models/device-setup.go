@@ -2,16 +2,13 @@ package models
 
 import "time"
 
-type Pin uint8
-type Pins []Pin
-
 type DeviceSetup struct {
 	DeviceID  DeviceID  `json:"device_id"`
-	Pins      Pins      `json:"pins"`
+	Pins      []uint8   `json:"pins"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func NewDeviceSetup(deviceID DeviceID, pins Pins) *DeviceSetup {
+func NewDeviceSetup(deviceID DeviceID, pins []uint8) *DeviceSetup {
 	return &DeviceSetup{
 		DeviceID:  deviceID,
 		Pins:      pins,

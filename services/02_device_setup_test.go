@@ -52,7 +52,7 @@ func TestAddDeviceSetup(t *testing.T) {
 	defer r.Close()
 
 	// Setup for the first device
-	deviceSetup := models.NewDeviceSetup(1, models.Pins{0, 1, 2, 3})
+	deviceSetup := models.NewDeviceSetup(1, []uint8{0, 1, 2, 3})
 
 	id, err := r.DeviceSetups.Add(deviceSetup)
 	if err != nil {
@@ -75,14 +75,14 @@ func TestAddDeviceSetup(t *testing.T) {
 
 	// Second setup for the first device
 	// This should be not possible, adding 2 setups for one device
-	deviceSetup = models.NewDeviceSetup(1, models.Pins{4, 5, 6, 7})
+	deviceSetup = models.NewDeviceSetup(1, []uint8{4, 5, 6, 7})
 	_, err = r.DeviceSetups.Add(deviceSetup)
 	if err == nil {
 		t.Fatal("Expected an error while trying to add a second setup for device 1, got nil")
 	}
 
 	// Setup for the second device
-	_, err = r.DeviceSetups.Add(models.NewDeviceSetup(2, models.Pins{0, 1, 2, 3}))
+	_, err = r.DeviceSetups.Add(models.NewDeviceSetup(2, []uint8{0, 1, 2, 3}))
 	if err != nil {
 		t.Fatalf("Failed to add device 2 setup: %v", err)
 	}
