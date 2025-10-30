@@ -1,7 +1,5 @@
 package control
 
-import "github.com/knackwurstking/picow-led/models"
-
 const (
 	MinRange uint8 = 0
 	MaxRange uint8 = 255
@@ -12,10 +10,10 @@ const (
 
 // Pins
 
-func GetPins() (models.Pins, error)
-func SetPins(pins models.Pins) error
+//func GetPins() (models.Pins, error)
+//func SetPins(pins models.Pins) error
 
 // Duty
 
-func GetDuty() (models.Duty, error)
-func SetDuty(duty models.Duty) error
+//func GetDuty() (models.Duty, error)
+//func SetDuty(duty models.Duty) error
