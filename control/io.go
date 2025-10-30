@@ -73,21 +73,21 @@ type Response[T any] struct {
 	Data  T         `json:"data"`
 }
 
-type Device struct {
+type PicoW struct {
 	*models.Device
 	*models.DeviceSetup
 
 	conn net.Conn
 }
 
-func NewDevice(device *models.Device, setup *models.DeviceSetup) *Device {
-	return &Device{
+func NewPicoW(device *models.Device, setup *models.DeviceSetup) *PicoW {
+	return &PicoW{
 		Device:      device,
 		DeviceSetup: setup,
 	}
 }
 
-func (d *Device) Write(request []byte) (n int, err error) {
+func (d *PicoW) Write(request []byte) (n int, err error) {
 	// TODO: Connect, Send, Return
 	dialer := net.Dialer{
 		Timeout: time.Duration(time.Second * 5),
@@ -106,7 +106,7 @@ func (d *Device) Write(request []byte) (n int, err error) {
 	return n, nil
 }
 
-func (d *Device) Read(response []byte) (n int, err error) {
+func (d *PicoW) Read(response []byte) (n int, err error) {
 	// TODO: Implement the Read method: Read, Parse Response, Return
 	n, err = d.conn.Read(response)
 	if err != nil {
@@ -116,17 +116,17 @@ func (d *Device) Read(response []byte) (n int, err error) {
 	return n, nil
 }
 
-func (d *Device) Close() error {
+func (d *PicoW) Close() error {
 	return d.conn.Close()
 }
 
 // EndByte returns the data with the end byte appended, only if not already present, newline will be used as end byte here
-func (d *Device) EndByte(data []byte) []byte {
+func (d *PicoW) EndByte(data []byte) []byte {
 	if len(data) == 0 || data[len(data)-1] != '\n' {
 		return append(data, '\n')
 	}
 	return data
 }
 
-var _ io.Writer = &Device{}
-var _ io.Reader = &Device{}
+var _ io.Writer = &PicoW{}
+var _ io.Reader = &PicoW{}

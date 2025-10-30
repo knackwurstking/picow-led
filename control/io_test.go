@@ -9,7 +9,7 @@ import (
 )
 
 func TestEndByte(t *testing.T) {
-	device := NewDevice(
+	device := NewPicoW(
 		models.NewDevice("192.168.178.10:8888", "Test Device 1"),
 		models.NewDeviceSetup(1, []uint8{1, 2, 3, 4}),
 	)
