@@ -1,8 +1,9 @@
 package control
 
 import (
-	"fmt"
 	"io"
+	"net"
+	"time"
 
 	"github.com/knackwurstking/picow-led/models"
 )
@@ -75,18 +76,56 @@ type Response[T any] struct {
 type Device struct {
 	*models.Device
 	*models.DeviceSetup
+
+	conn net.Conn
+}
+
+func NewDevice(device *models.Device, setup *models.DeviceSetup) *Device {
+	return &Device{
+		Device:      device,
+		DeviceSetup: setup,
+	}
 }
 
 func (d *Device) Write(request []byte) (n int, err error) {
 	// TODO: Connect, Send, Return
+	dialer := net.Dialer{
+		Timeout: time.Duration(time.Second * 5),
+	}
 
-	return 0, fmt.Errorf("not implemented")
+	d.conn, err = dialer.Dial("tcp", string(d.Addr))
+	if err != nil {
+		return 0, err
+	}
+
+	n, err = d.conn.Write(request)
+	if err != nil {
+		return 0, err
+	}
+
+	return n, nil
 }
 
 func (d *Device) Read(response []byte) (n int, err error) {
 	// TODO: Implement the Read method: Read, Parse Response, Return
+	n, err = d.conn.Read(response)
+	if err != nil {
+		return 0, err
+	}
 
-	return 0, fmt.Errorf("not implemented")
+	return n, nil
+}
+
+func (d *Device) Close() error {
+	return d.conn.Close()
+}
+
+// EndByte returns the data with the end byte appended, only if not already present, newline will be used as end byte here
+func (d *Device) EndByte(data []byte) []byte {
+	if len(data) == 0 || data[len(data)-1] != '\n' {
+		return append(data, '\n')
+	}
+	return data
 }
 
 var _ io.Writer = &Device{}
