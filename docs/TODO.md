@@ -41,4 +41,4 @@
 - [x] Establish a new package `package control`.
 - [ ] Refactor the service handlers to use control, ensuring that all operations are handled through these services.
 - [x] Improve the doc comment for the NewRequest function
-- [ ] Add missing info commands (info get: "temp", "disk-usage", "version")
+- [x] Add missing info commands (info get: "temp", "disk-usage", "version")

@@ -96,3 +96,15 @@ func NewSetColorRequest(id RequestID, color []uint8) *Request {
 		args...,
 	)
 }
+
+func NewGetTemperatureRequest(id RequestID) *Request {
+	return NewRequest(id, TypeGet, "info", "temp")
+}
+
+func NewGetDiskUsageRequest(id RequestID) *Request {
+	return NewRequest(id, TypeGet, "info", "disk-usage")
+}
+
+func NewGetVersionRequest(id RequestID) *Request {
+	return NewRequest(id, TypeGet, "info", "version")
+}

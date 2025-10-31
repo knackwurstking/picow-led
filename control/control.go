@@ -174,3 +174,108 @@ func SetColor(id RequestID, device *models.ResolvedDevice, duty ...uint8) error 
 
 	return nil
 }
+
+func GetTemperature(id RequestID, device *models.ResolvedDevice) (float32, error) {
+	req := NewGetTemperatureRequest(id)
+	picow := NewPicoW(device)
+
+	data, err := json.Marshal(req)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal request: %v", err)
+	}
+	n, err := picow.Write(data)
+	if err != nil {
+		return 0, err
+	}
+	if n != len(data) {
+		return 0, ErrNoData
+	}
+
+	if id == RequestIDNoResponse {
+		return 0, nil
+	}
+
+	respData, err := picow.ReadAll()
+	if err != nil {
+		return 0, fmt.Errorf("failed to read response: %v", err)
+	}
+	var resp *GetTemperatureResponse
+	if err = json.Unmarshal(respData, &resp); err != nil {
+		return 0, fmt.Errorf("failed to unmarshal response: %v", err)
+	}
+	if resp.Error != "" {
+		return 0, fmt.Errorf("picow error: %s", resp.Error)
+	}
+
+	return resp.Data, nil
+}
+
+func GetDiskUsage(id RequestID, device *models.ResolvedDevice) (*DiskUsage, error) {
+	req := NewGetDiskUsageRequest(id)
+	picow := NewPicoW(device)
+
+	data, err := json.Marshal(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %v", err)
+	}
+	n, err := picow.Write(data)
+	if err != nil {
+		return nil, err
+	}
+	if n != len(data) {
+		return nil, ErrNoData
+	}
+
+	if id == RequestIDNoResponse {
+		return nil, nil
+	}
+
+	respData, err := picow.ReadAll()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %v", err)
+	}
+	var resp *GetDiskUsageResponse
+	if err = json.Unmarshal(respData, &resp); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response: %v", err)
+	}
+	if resp.Error != "" {
+		return nil, fmt.Errorf("picow error: %s", resp.Error)
+	}
+
+	return resp.Data, nil
+}
+
+func GetVersion(id RequestID, device *models.ResolvedDevice) (string, error) {
+	req := NewGetVersionRequest(id)
+	picow := NewPicoW(device)
+
+	data, err := json.Marshal(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal request: %v", err)
+	}
+	n, err := picow.Write(data)
+	if err != nil {
+		return "", err
+	}
+	if n != len(data) {
+		return "", ErrNoData
+	}
+
+	if id == RequestIDNoResponse {
+		return "", nil
+	}
+
+	respData, err := picow.ReadAll()
+	if err != nil {
+		return "", fmt.Errorf("failed to read response: %v", err)
+	}
+	var resp *GetVersionResponse
+	if err = json.Unmarshal(respData, &resp); err != nil {
+		return "", fmt.Errorf("failed to unmarshal response: %v", err)
+	}
+	if resp.Error != "" {
+		return "", fmt.Errorf("picow error: %s", resp.Error)
+	}
+
+	return resp.Data, nil
+}

@@ -12,4 +12,13 @@ type (
 
 	GetColorResponse Response[[]uint8]
 	SetColorResponse Response[struct{}]
+
+	GetTemperatureResponse Response[float32]
+	GetDiskUsageResponse   Response[*DiskUsage]
+	GetVersionResponse     Response[string]
 )
+
+type DiskUsage struct {
+	Total int64 `json:"total"`
+	Used  int64 `json:"used"`
+}
