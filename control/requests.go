@@ -27,25 +27,25 @@ type Request struct {
 //	COMMANDS = {
 //	   "config": {
 //	       "set": {
-//	           "pins": config_set_pins, # []uint8
+//	           "pins": config_set_pins, 			# []uint8
 //	       },
 //	       "get": {
-//	           "pins": config_get_pins, # => []uint8
+//	           "pins": config_get_pins, 			# => []uint8
 //	       },
 //	   },
 //	   "info": {
 //	       "get": {
-//	           "temp": info_get_temp, # => ???
-//	           "disk-usage": info_get_disk_usage, # => ???
-//	           "version": info_get_version, # => ???
+//	           "temp": info_get_temp, 				# => float32
+//	           "disk-usage": info_get_disk_usage, 	# => struct { Used, Total int64 }
+//	           "version": info_get_version, 		# => string
 //	       },
 //	   },
 //	   "led": {
 //	       "set": {
-//	           "color": led_set_color, # []uint8
+//	           "color": led_set_color, 				# []uint8
 //	       },
 //	       "get": {
-//	           "color": led_get_color, # => []uint8
+//	           "color": led_get_color, 				# => []uint8
 //	       },
 //	   },
 //	}
