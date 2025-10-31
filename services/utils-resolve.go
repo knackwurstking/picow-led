@@ -4,16 +4,50 @@ import (
 	"github.com/knackwurstking/picow-led/models"
 )
 
+func ResolveDevice(r *Registry, device *models.Device) (*models.ResolvedDevice, error) {
+	setup, err := r.DeviceSetups.Get(device.ID)
+	if err != nil && err != ErrNotFound {
+		return nil, err
+	}
+
+	resolvedDevice := models.NewResolvedDevice(device, setup)
+	return resolvedDevice, nil
+}
+
+func ResolveDeviceID(r *Registry, deviceID models.DeviceID) (*models.ResolvedDevice, error) {
+	device, err := r.Devices.Get(deviceID)
+	if err != nil && err != ErrNotFound {
+		return nil, err
+	}
+
+	return ResolveDevice(r, device)
+}
+
 func ResolveDevices(r *Registry, devices ...*models.Device) ([]*models.ResolvedDevice, error) {
 	resolvedDevices := make([]*models.ResolvedDevice, 0, len(devices))
+
 	for _, device := range devices {
-		setup, err := r.DeviceSetups.Get(device.ID)
-		if err != nil && err != ErrNotFound {
+		resolvedDevice, err := ResolveDevice(r, device)
+		if err != nil {
 			return nil, err
 		}
-		resolvedDevice := models.NewResolvedDevice(device, setup)
 		resolvedDevices = append(resolvedDevices, resolvedDevice)
 	}
+
+	return resolvedDevices, nil
+}
+
+func ResolveDevicesID(r *Registry, devicesID ...models.DeviceID) ([]*models.ResolvedDevice, error) {
+	resolvedDevices := make([]*models.ResolvedDevice, 0, len(devicesID))
+
+	for _, deviceID := range devicesID {
+		resolvedDevice, err := ResolveDeviceID(r, deviceID)
+		if err != nil {
+			return nil, err
+		}
+		resolvedDevices = append(resolvedDevices, resolvedDevice)
+	}
+
 	return resolvedDevices, nil
 }
 
