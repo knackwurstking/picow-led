@@ -28,7 +28,9 @@ func NewPicoW(device *models.Device) *PicoW {
 
 // Write sends data to the Picow device. It first connects to the device if not already connected, then appends a newline character to the data and writes it.
 func (p *PicoW) Write(request []byte) (n int, err error) {
-	p.Connect()
+	if err := p.Connect(); err != nil {
+		return 0, err
+	}
 
 	n, err = p.Conn.Write(p.EndByte(request))
 	if err != nil {
