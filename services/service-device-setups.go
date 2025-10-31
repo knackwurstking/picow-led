@@ -78,6 +78,8 @@ func (p *DeviceSetups) Add(deviceSetup *models.DeviceSetup) (models.DeviceID, er
 		return 0, HandleSqlError(err)
 	}
 
+	// TODO: Pins changed, using controls package to update the picow device
+
 	return models.DeviceID(id), nil
 }
 
@@ -90,7 +92,13 @@ func (p *DeviceSetups) Update(deviceSetup *models.DeviceSetup) error {
 
 	query := `UPDATE device_setups SET pins = ? WHERE device_id = ?`
 	_, err := p.registry.db.Exec(query, deviceSetup.Pins, deviceSetup.DeviceID)
-	return HandleSqlError(err)
+	if err != nil {
+		return HandleSqlError(err)
+	}
+
+	// TODO: Pins changed, using controls package to update the picow device
+
+	return nil
 }
 
 func (p *DeviceSetups) Delete(id models.DeviceID) error {

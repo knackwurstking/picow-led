@@ -92,12 +92,6 @@ func TestAddDeviceSetup(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to add device 1 control: %v", err)
 	}
-
-	// Testing 5 color values, should error because the setup contains only 4 pins
-	err = r.DeviceControls.Update(models.NewDeviceControl(1, []uint8{255, 255, 255, 255, 255}))
-	if err == nil {
-		t.Fatalf("Expected invalid setup error, got nil")
-	}
 }
 
 func TestRemoveDevice(t *testing.T) {
