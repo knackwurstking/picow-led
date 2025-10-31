@@ -17,3 +17,5 @@ func NewColor(name string, duty []uint8) *Color {
 func (c *Color) Validate() bool {
 	return c.Name != "" && len(c.Duty) > 0
 }
+
+var _ ServiceModel = (*Color)(nil)

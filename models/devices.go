@@ -31,3 +31,5 @@ func (d *Device) GetAddrSplit() (string, int) {
 	port, _ := strconv.Atoi(s[1])
 	return address, port
 }
+
+var _ ServiceModel = (*Device)(nil)

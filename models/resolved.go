@@ -3,6 +3,8 @@ package models
 type ResolvedDevice struct {
 	*Device
 	Setup *DeviceSetup
+
+	// TODO: Do i need to add the DeviceControl type here?
 }
 
 func NewResolvedDevice(device *Device, setup *DeviceSetup) *ResolvedDevice {
@@ -23,3 +25,6 @@ func NewResolvedGroup(group *Group, devices ...*ResolvedDevice) *ResolvedGroup {
 		Devices: devices,
 	}
 }
+
+var _ ServiceModel = (*ResolvedDevice)(nil)
+var _ ServiceModel = (*ResolvedGroup)(nil)

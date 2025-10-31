@@ -19,3 +19,5 @@ func NewDeviceSetup(deviceID DeviceID, pins []uint8) *DeviceSetup {
 func (p *DeviceSetup) Validate() bool {
 	return p.DeviceID != 0 && len(p.Pins) > 0
 }
+
+var _ ServiceModel = (*DeviceSetup)(nil)

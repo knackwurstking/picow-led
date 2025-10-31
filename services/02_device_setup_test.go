@@ -92,13 +92,19 @@ func TestRemoveDevice(t *testing.T) {
 	r := openDB(t, false)
 	defer r.Close()
 
+	deviceID := models.DeviceID(1)
+
 	// Remove device 1 for checking if the setup got removed too
-	if err := r.Devices.Delete(1); err != nil {
+	if err := r.Devices.Delete(deviceID); err != nil {
 		t.Fatalf("Failed to remove device: %v", err)
 	}
 
-	if _, err := r.DeviceSetups.Get(1); err == nil {
-		t.Errorf("Expected error, got nil, the pins with device_id 1 got not removed")
+	if _, err := r.DeviceSetups.Get(deviceID); err != ErrNotFound {
+		t.Errorf("Expected not found error, the setup for device_id 1 got not removed: %v", err)
+	}
+
+	if _, err := r.DeviceControl.Get(deviceID); err != ErrNotFound {
+		t.Errorf("Expected not found error, the setup for device_id 1 got not removed: %v", err)
 	}
 }
 

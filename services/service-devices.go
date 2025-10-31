@@ -115,7 +115,12 @@ func (d *Devices) Delete(id models.DeviceID) error {
 
 	var err error
 
-	query := `DELETE FROM pins WHERE device_id = ?`
+	query := `DELETE FROM device_control WHERE device_id = ?`
+	if err = d.registry.DeviceControl.Delete(id); err != nil {
+		return HandleSqlError(err)
+	}
+
+	query = `DELETE FROM device_setups WHERE device_id = ?`
 	if err = d.registry.DeviceSetups.Delete(id); err != nil {
 		return HandleSqlError(err)
 	}

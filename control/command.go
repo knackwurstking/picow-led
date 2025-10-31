@@ -2,23 +2,10 @@ package control
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
+	"github.com/knackwurstking/picow-led/env"
 	"github.com/knackwurstking/picow-led/models"
-)
-
-const (
-	MinDuty uint8 = 0
-	MaxDuty uint8 = 255
-
-	MinPin uint8 = 0
-	MaxPin uint8 = 15
-)
-
-var (
-	ErrNotConnected = errors.New("not connected")
-	ErrNoData       = errors.New("no data")
 )
 
 // RunCommand sends a JSON-encoded request to the Picow device and reads the response.
@@ -66,8 +53,8 @@ func GetPins(id RequestID, device *models.ResolvedDevice) ([]uint8, error) {
 func SetPins(id RequestID, device *models.ResolvedDevice, pins ...uint8) error {
 	// Validate pins first
 	for _, pin := range pins {
-		if pin < MinPin || pin > MaxPin {
-			return fmt.Errorf("invalid pin: %d (min: %d, max: %d)", pin, MinPin, MaxPin)
+		if pin < env.MinPin || pin > env.MaxPin {
+			return fmt.Errorf("invalid pin: %d (min: %d, max: %d)", pin, env.MinPin, env.MaxPin)
 		}
 	}
 
@@ -88,8 +75,8 @@ func GetColor(id RequestID, device *models.ResolvedDevice) ([]uint8, error) {
 func SetColor(id RequestID, device *models.ResolvedDevice, duty ...uint8) error {
 	// Validate duty first
 	for _, d := range duty {
-		if d < MinDuty || d > MaxDuty {
-			return fmt.Errorf("invalid duty: %d (min: %d, max: %d)", d, MinDuty, MaxDuty)
+		if d < env.MinDuty || d > env.MaxDuty {
+			return fmt.Errorf("invalid duty: %d (min: %d, max: %d)", d, env.MinDuty, env.MaxDuty)
 		}
 	}
 

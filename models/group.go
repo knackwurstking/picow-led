@@ -24,3 +24,5 @@ func NewGroup(name string, devices []DeviceID) *Group {
 func (g *Group) Validate() bool {
 	return g.Name != ""
 }
+
+var _ ServiceModel = (*Group)(nil)

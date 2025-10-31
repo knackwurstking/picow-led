@@ -117,8 +117,8 @@ func (p *PicoW) EndByte(data []byte) []byte {
 	return data
 }
 
-var _ io.Writer = &PicoW{}
-var _ io.Reader = &PicoW{}
+var _ io.Writer = (*PicoW)(nil)
+var _ io.Reader = (*PicoW)(nil)
 
 // Error types returned:
 //
