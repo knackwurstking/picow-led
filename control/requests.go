@@ -35,9 +35,9 @@ type Request struct {
 //	   },
 //	   "info": {
 //	       "get": {
-//	           "temp": info_get_temp,
-//	           "disk-usage": info_get_disk_usage,
-//	           "version": info_get_version,
+//	           "temp": info_get_temp, # => ???
+//	           "disk-usage": info_get_disk_usage, # => ???
+//	           "version": info_get_version, # => ???
 //	       },
 //	   },
 //	   "led": {
