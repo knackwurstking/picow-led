@@ -2,7 +2,7 @@ package models
 
 type ResolvedDevice struct {
 	*Device
-	Setup *DeviceSetup
+	Setup *DeviceSetup `json:"setup"`
 
 	// TODO: Do i need to add the DeviceControl type here?
 }
@@ -16,7 +16,7 @@ func NewResolvedDevice(device *Device, setup *DeviceSetup) *ResolvedDevice {
 
 type ResolvedGroup struct {
 	*Group
-	Devices []*ResolvedDevice
+	Devices []*ResolvedDevice `json:"devices"`
 }
 
 func NewResolvedGroup(group *Group, devices ...*ResolvedDevice) *ResolvedGroup {

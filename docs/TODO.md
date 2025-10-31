@@ -4,6 +4,11 @@
 
 - [x] Utilize the assets system from the previous project (pg-press) or integrate it into the UI library repository.
 
+## Models
+
+- [x] Rename service model type files
+- [x] Add missing json struct tags
+
 ## SQLite Database
 
 - [x] Open the database using a flag-specified path.

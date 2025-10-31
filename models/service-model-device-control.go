@@ -7,9 +7,9 @@ import (
 )
 
 type DeviceControl struct {
-	DeviceID  DeviceID
-	Color     []uint8
-	CreatedAt time.Time
+	DeviceID  DeviceID  `json:"device_id"`
+	Color     []uint8   `json:"color"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func NewDeviceControl(id DeviceID, color []uint8) *DeviceControl {
