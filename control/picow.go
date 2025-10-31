@@ -14,15 +14,15 @@ const (
 )
 
 type PicoW struct {
-	*models.ResolvedDevice
+	*models.Device
 
 	Conn net.Conn
 }
 
 // NewPicoW creates a new instance of the PicoW struct.
-func NewPicoW(device *models.ResolvedDevice) *PicoW {
+func NewPicoW(device *models.Device) *PicoW {
 	return &PicoW{
-		ResolvedDevice: device,
+		Device: device,
 	}
 }
 

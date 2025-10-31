@@ -10,11 +10,7 @@ import (
 )
 
 func TestEndByte(t *testing.T) {
-	device := models.NewResolvedDevice(
-		models.NewDevice("192.168.178.10:8888", "Test Device 1"),
-		models.NewDeviceSetup(1, []uint8{1, 2, 3, 4}),
-	)
-	picow := NewPicoW(device)
+	picow := NewPicoW(models.NewDevice("192.168.178.10:8888", "Test Device 1"))
 
 	r := NewRequest(
 		RequestIDDefault,
@@ -37,11 +33,7 @@ func TestEndByte(t *testing.T) {
 }
 
 func TestPicoWReadFromConnUntilEndByte(t *testing.T) {
-	device := models.NewResolvedDevice(
-		models.NewDevice("192.168.178.10:8888", "Test Device 1"),
-		models.NewDeviceSetup(1, []uint8{1, 2, 3, 4}),
-	)
-	picow := NewPicoW(device)
+	picow := NewPicoW(models.NewDevice("192.168.178.10:8888", "Test Device 1"))
 
 	server, client := net.Pipe()
 	picow.Conn = client
