@@ -14,6 +14,19 @@ type Device struct {
 }
 
 func NewDevice(addr Addr, name string) *Device {
+	// Validate address for host:port
+	if !strings.Contains(string(addr), ":") {
+		panic("invalid address: " + addr)
+	}
+	s := strings.Split(string(addr), ":")
+	if len(s) != 2 {
+		panic("invalid address: " + addr)
+	}
+	_, err := strconv.Atoi(s[1])
+	if err != nil {
+		panic("invalid port: " + s[1])
+	}
+
 	return &Device{
 		Addr:      addr,
 		Name:      name,
