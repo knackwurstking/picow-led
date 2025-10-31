@@ -12,6 +12,8 @@
   - Device Setups
   - Colors
   - Groups
+  - Device Control (WIP)
+- [ ] Service DeviceControl needs to be handled by the Device service, if a device got deleted, also remove the device from the DeviceControl table.
 
 ## Router, UI, Handlers
 
