@@ -40,7 +40,4 @@
 
 - [ ] Establish a new package `package control`.
 - [ ] Refactor the service handlers to use control, ensuring that all operations are handled through these services.
-  - Example: Implement device setup using control.
-  - Example: Update a device using control.
-  - Example: Retrieve the current color (duty) from a device using control.
-  - Example: Set a new color for a device, update it using control, and modify the "device_setups" table and "current_color" field accordingly.
+- [ ] Improve the doc comment for the NewRequest function
