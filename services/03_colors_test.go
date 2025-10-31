@@ -13,7 +13,7 @@ func TestAddColor(t *testing.T) {
 
 	color := &models.Color{
 		Name: "Test Color",
-		Duty: models.Duty{255, 255, 255, 255},
+		Duty: []uint8{255, 255, 255, 255},
 	}
 
 	id, err := r.Colors.Add(color)
@@ -47,7 +47,7 @@ func TestUpdateColor(t *testing.T) {
 	color := &models.Color{
 		ID:   1,
 		Name: "Updated Color",
-		Duty: models.Duty{128, 128, 128, 128},
+		Duty: []uint8{128, 128, 128, 128},
 	}
 
 	err := r.Colors.Update(color)

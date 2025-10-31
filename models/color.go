@@ -1,16 +1,13 @@
 package models
 
-// Duty contains rgb like values (0-255)
-type Duty []uint8
-
 type Color struct {
 	ID        ColorID `json:"id"`
 	Name      string  `json:"name"`
-	Duty      Duty    `json:"duty"`
+	Duty      []uint8 `json:"duty"`
 	CreatedAt string  `json:"created_at"`
 }
 
-func NewColor(name string, duty Duty) *Color {
+func NewColor(name string, duty []uint8) *Color {
 	return &Color{
 		Name: name,
 		Duty: duty,
