@@ -9,82 +9,15 @@ import (
 	"github.com/knackwurstking/picow-led/models"
 )
 
-const (
-	RequestIDNoResponse RequestID = -1
-	RequestIDDefault    RequestID = 0
-	TypeGet             Type      = "get"
-	TypeSet             Type      = "set"
-)
-
-type (
-	RequestID int
-	Type      string
-)
-
-type Request struct {
-	ID          RequestID `json:"id"`
-	Type        Type      `json:"type"`
-	Group       string    `json:"group"`
-	Command     string    `json:"command"`
-	CommandArgs []string  `json:"args"`
-}
-
-// ```python
-//
-//	COMMANDS = {
-//	   "config": {
-//	       "set": {
-//	           "pins": config_set_pins, # []uint8
-//	       },
-//	       "get": {
-//	           "pins": config_get_pins, # => []uint8
-//	       },
-//	   },
-//	   "info": {
-//	       "get": {
-//	           "temp": info_get_temp,
-//	           "disk-usage": info_get_disk_usage,
-//	           "version": info_get_version,
-//	       },
-//	   },
-//	   "led": {
-//	       "set": {
-//	           "color": led_set_color, # []uint8
-//	       },
-//	       "get": {
-//	           "color": led_get_color, # => []uint8
-//	       },
-//	   },
-//	}
-//
-// ```
-func NewRequest(id RequestID, t Type, group string, command string, args ...string) *Request {
-	return &Request{
-		ID:          id,
-		Type:        t,
-		Group:       group,
-		Command:     command,
-		CommandArgs: args,
-	}
-}
-
-type Response[T any] struct {
-	ID    RequestID `json:"id"`
-	Error string    `json:"error"`
-	Data  T         `json:"data"`
-}
-
 type PicoW struct {
-	*models.Device
-	*models.DeviceSetup
+	*models.ResolvedDevice
 
 	Conn net.Conn
 }
 
-func NewPicoW(device *models.Device, setup *models.DeviceSetup) *PicoW {
+func NewPicoW(device *models.ResolvedDevice) *PicoW {
 	return &PicoW{
-		Device:      device,
-		DeviceSetup: setup,
+		ResolvedDevice: device,
 	}
 }
 

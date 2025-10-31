@@ -10,10 +10,11 @@ import (
 )
 
 func TestEndByte(t *testing.T) {
-	device := NewPicoW(
+	device := models.NewResolvedDevice(
 		models.NewDevice("192.168.178.10:8888", "Test Device 1"),
 		models.NewDeviceSetup(1, []uint8{1, 2, 3, 4}),
 	)
+	picow := NewPicoW(device)
 
 	r := NewRequest(
 		RequestIDDefault,
@@ -30,16 +31,17 @@ func TestEndByte(t *testing.T) {
 	dataOriginal := make([]byte, len(data))
 	copy(dataOriginal, data)
 
-	if result := device.EndByte(data); !bytes.Equal(result[len(result)-1:], []byte("\n")) {
+	if result := picow.EndByte(data); !bytes.Equal(result[len(result)-1:], []byte("\n")) {
 		t.Errorf("Invalid last byte, got %#v != %#v", result[len(result)-1], []byte("\n")[0])
 	}
 }
 
 func TestPicoWReadFromConnUntilEndByte(t *testing.T) {
-	picow := NewPicoW(
+	device := models.NewResolvedDevice(
 		models.NewDevice("192.168.178.10:8888", "Test Device 1"),
 		models.NewDeviceSetup(1, []uint8{1, 2, 3, 4}),
 	)
+	picow := NewPicoW(device)
 
 	server, client := net.Pipe()
 	picow.Conn = client
