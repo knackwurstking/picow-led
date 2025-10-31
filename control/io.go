@@ -29,35 +29,35 @@ type Request struct {
 	CommandArgs []string  `json:"args"`
 }
 
-// NewRequest Mappings:
+// ```python
 //
-//	`TypeSet` ("set"):
-//		- group: "config" command: "pins"
-//		- group: "led"    command: "color"
+//	COMMANDS = {
+//	   "config": {
+//	       "set": {
+//	           "pins": config_set_pins, # []uint8
+//	       },
+//	       "get": {
+//	           "pins": config_get_pins, # => []uint8
+//	       },
+//	   },
+//	   "info": {
+//	       "get": {
+//	           "temp": info_get_temp,
+//	           "disk-usage": info_get_disk_usage,
+//	           "version": info_get_version,
+//	       },
+//	   },
+//	   "led": {
+//	       "set": {
+//	           "color": led_set_color, # []uint8
+//	       },
+//	       "get": {
+//	           "color": led_get_color, # => []uint8
+//	       },
+//	   },
+//	}
 //
-//	`TypeGet` ("get"):
-//		- group: "config" command: "pins"
-//		- group: "led"    command: "color"
-//		- group: "info"   command: "temp"
-//		- group: "info"   command: "disk-usage"
-//		- group: "info"   command: "version"
-//
-// Args (optional):
-//
-//	if `Type` is "set" and `Group` is "config" and `Command` is "pins":
-//		[]uint8 - range between 0-28 converted to a slice with strings
-//			https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2024/02/Raspberry-Pi-Pico-W-RP2040-Rev3-Board-Pinout-GPIOs.png?quality=100&strip=all&ssl=1
-//
-//	elif `Type` is "set" and `Group` is "led" and `Command` is "color":
-//		[]uint8 - range between 0-255 converted to a slice with strings
-//
-//	else:
-//		nil
-//
-// Examples:
-//
-//	`...(IDDefault, "get", "led", "color")`
-//	`...(IDDefault, "set", "led", "color")`
+// ```
 func NewRequest(id RequestID, t Type, group string, command string, args ...string) *Request {
 	return &Request{
 		ID:          id,
