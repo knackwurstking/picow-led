@@ -7,6 +7,7 @@ import (
 	"github.com/knackwurstking/picow-led/models"
 )
 
+// TODO: Continue refactoring (clean up)
 func TestAddColor(t *testing.T) {
 	r := openDB(t, true)
 	defer r.Close()

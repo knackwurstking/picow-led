@@ -11,6 +11,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// TODO: Continue refactoring (clean up)
 func TestAddDevice(t *testing.T) {
 	r := openDB(t, true)
 	defer r.Close()
