@@ -11,17 +11,17 @@ func TestAddGroup(t *testing.T) {
 	r := openDB(t, true)
 	defer r.Close()
 
-	_, err := r.Devices.Add(models.NewDevice("192.168.178.10", "Test Device 1"))
+	_, err := r.Devices.Add(models.NewDevice("192.168.178.10:8888", "Test Device 1"))
 	if err != nil {
 		t.Fatalf("Failed to add device 1: %v", err)
 	}
 
-	r.Devices.Add(models.NewDevice("192.168.178.20", "Test Device 2"))
+	r.Devices.Add(models.NewDevice("192.168.178.20:8888", "Test Device 2"))
 	if err != nil {
 		t.Fatalf("Failed to add device 2: %v", err)
 	}
 
-	r.Devices.Add(models.NewDevice("192.168.178.30", "Test Device 3"))
+	r.Devices.Add(models.NewDevice("192.168.178.30:8888", "Test Device 3"))
 	if err != nil {
 		t.Fatalf("Failed to add device 3: %v", err)
 	}
