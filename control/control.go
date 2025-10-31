@@ -21,39 +21,43 @@ var (
 	ErrNoData       = errors.New("no data")
 )
 
-func GetPins(id RequestID, device *models.ResolvedDevice) ([]uint8, error) {
-	req := NewGetPinsRequest(id)
+func RunCommand[T any](id RequestID, device *models.ResolvedDevice, req any, resp *Response[T]) (T, error) {
 	picow := NewPicoW(device)
 
 	data, err := json.Marshal(req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to marshal request: %v", err)
+		return *new(T), fmt.Errorf("failed to marshal request: %v", err)
 	}
 	n, err := picow.Write(data)
 	if err != nil {
-		return nil, err
+		return *new(T), err
 	}
 	if n != len(data) {
-		return nil, ErrNoData
+		return *new(T), ErrNoData
 	}
 
 	if id == RequestIDNoResponse {
-		return nil, nil
+		return *new(T), nil
 	}
 
 	respData, err := picow.ReadAll()
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response: %v", err)
+		return *new(T), fmt.Errorf("failed to read response: %v", err)
 	}
-	var resp *GetPinsResponse
 	if err = json.Unmarshal(respData, &resp); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %v", err)
+		return *new(T), fmt.Errorf("failed to unmarshal response: %v", err)
 	}
 	if resp.Error != "" {
-		return nil, fmt.Errorf("picow error: %s", resp.Error)
+		return *new(T), fmt.Errorf("picow error: %s", resp.Error)
 	}
 
 	return resp.Data, nil
+}
+
+func GetPins(id RequestID, device *models.ResolvedDevice) ([]uint8, error) {
+	req := NewGetPinsRequest(id)
+	resp := &Response[[]uint8]{}
+	return RunCommand(id, device, req, resp)
 }
 
 func SetPins(id RequestID, device *models.ResolvedDevice, pins ...uint8) error {
@@ -65,72 +69,15 @@ func SetPins(id RequestID, device *models.ResolvedDevice, pins ...uint8) error {
 	}
 
 	req := NewSetPinsRequest(id, pins)
-	picow := NewPicoW(device)
-
-	data, err := json.Marshal(req)
-	if err != nil {
-		return fmt.Errorf("failed to marshal request: %v", err)
-	}
-	n, err := picow.Write(data)
-	if err != nil {
-		return err
-	}
-	if n != len(data) {
-		return ErrNoData
-	}
-
-	if id == RequestIDNoResponse {
-		return nil
-	}
-
-	respData, err := picow.ReadAll()
-	if err != nil {
-		return fmt.Errorf("failed to read response: %v", err)
-	}
-	var resp *SetPinsResponse
-	if err = json.Unmarshal(respData, &resp); err != nil {
-		return fmt.Errorf("failed to unmarshal response: %v", err)
-	}
-	if resp.Error != "" {
-		return fmt.Errorf("picow error: %s", resp.Error)
-	}
-
-	return nil
+	resp := &Response[struct{}]{}
+	_, err := RunCommand(id, device, req, resp)
+	return err
 }
 
 func GetColor(id RequestID, device *models.ResolvedDevice) ([]uint8, error) {
 	req := NewGetColorRequest(id)
-	picow := NewPicoW(device)
-
-	data, err := json.Marshal(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal request: %v", err)
-	}
-	n, err := picow.Write(data)
-	if err != nil {
-		return nil, err
-	}
-	if n != len(data) {
-		return nil, ErrNoData
-	}
-
-	if id == RequestIDNoResponse {
-		return nil, nil
-	}
-
-	respData, err := picow.ReadAll()
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response: %v", err)
-	}
-	var resp *GetColorResponse
-	if err = json.Unmarshal(respData, &resp); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %v", err)
-	}
-	if resp.Error != "" {
-		return nil, fmt.Errorf("picow error: %s", resp.Error)
-	}
-
-	return resp.Data, nil
+	resp := &Response[[]uint8]{}
+	return RunCommand(id, device, req, resp)
 }
 
 func SetColor(id RequestID, device *models.ResolvedDevice, duty ...uint8) error {
@@ -142,140 +89,25 @@ func SetColor(id RequestID, device *models.ResolvedDevice, duty ...uint8) error 
 	}
 
 	req := NewSetColorRequest(id, duty)
-	picow := NewPicoW(device)
-
-	data, err := json.Marshal(req)
-	if err != nil {
-		return fmt.Errorf("failed to marshal request: %v", err)
-	}
-	n, err := picow.Write(data)
-	if err != nil {
-		return err
-	}
-	if n != len(data) {
-		return ErrNoData
-	}
-
-	if id == RequestIDNoResponse {
-		return nil
-	}
-
-	respData, err := picow.ReadAll()
-	if err != nil {
-		return fmt.Errorf("failed to read response: %v", err)
-	}
-	var resp *SetColorResponse
-	if err = json.Unmarshal(respData, &resp); err != nil {
-		return fmt.Errorf("failed to unmarshal response: %v", err)
-	}
-	if resp.Error != "" {
-		return fmt.Errorf("picow error: %s", resp.Error)
-	}
-
-	return nil
+	resp := &Response[struct{}]{}
+	_, err := RunCommand(id, device, req, resp)
+	return err
 }
 
 func GetTemperature(id RequestID, device *models.ResolvedDevice) (float32, error) {
 	req := NewGetTemperatureRequest(id)
-	picow := NewPicoW(device)
-
-	data, err := json.Marshal(req)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal request: %v", err)
-	}
-	n, err := picow.Write(data)
-	if err != nil {
-		return 0, err
-	}
-	if n != len(data) {
-		return 0, ErrNoData
-	}
-
-	if id == RequestIDNoResponse {
-		return 0, nil
-	}
-
-	respData, err := picow.ReadAll()
-	if err != nil {
-		return 0, fmt.Errorf("failed to read response: %v", err)
-	}
-	var resp *GetTemperatureResponse
-	if err = json.Unmarshal(respData, &resp); err != nil {
-		return 0, fmt.Errorf("failed to unmarshal response: %v", err)
-	}
-	if resp.Error != "" {
-		return 0, fmt.Errorf("picow error: %s", resp.Error)
-	}
-
-	return resp.Data, nil
+	resp := &Response[float32]{}
+	return RunCommand(id, device, req, resp)
 }
 
 func GetDiskUsage(id RequestID, device *models.ResolvedDevice) (*DiskUsage, error) {
 	req := NewGetDiskUsageRequest(id)
-	picow := NewPicoW(device)
-
-	data, err := json.Marshal(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal request: %v", err)
-	}
-	n, err := picow.Write(data)
-	if err != nil {
-		return nil, err
-	}
-	if n != len(data) {
-		return nil, ErrNoData
-	}
-
-	if id == RequestIDNoResponse {
-		return nil, nil
-	}
-
-	respData, err := picow.ReadAll()
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response: %v", err)
-	}
-	var resp *GetDiskUsageResponse
-	if err = json.Unmarshal(respData, &resp); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %v", err)
-	}
-	if resp.Error != "" {
-		return nil, fmt.Errorf("picow error: %s", resp.Error)
-	}
-
-	return resp.Data, nil
+	resp := &Response[*DiskUsage]{}
+	return RunCommand(id, device, req, resp)
 }
 
 func GetVersion(id RequestID, device *models.ResolvedDevice) (string, error) {
 	req := NewGetVersionRequest(id)
-	picow := NewPicoW(device)
-
-	data, err := json.Marshal(req)
-	if err != nil {
-		return "", fmt.Errorf("failed to marshal request: %v", err)
-	}
-	n, err := picow.Write(data)
-	if err != nil {
-		return "", err
-	}
-	if n != len(data) {
-		return "", ErrNoData
-	}
-
-	if id == RequestIDNoResponse {
-		return "", nil
-	}
-
-	respData, err := picow.ReadAll()
-	if err != nil {
-		return "", fmt.Errorf("failed to read response: %v", err)
-	}
-	var resp *GetVersionResponse
-	if err = json.Unmarshal(respData, &resp); err != nil {
-		return "", fmt.Errorf("failed to unmarshal response: %v", err)
-	}
-	if resp.Error != "" {
-		return "", fmt.Errorf("picow error: %s", resp.Error)
-	}
-
-	return resp.Data, nil
+	resp := &Response[string]{}
+	return RunCommand(id, device, req, resp)
 }
