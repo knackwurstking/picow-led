@@ -12,9 +12,10 @@ type DeviceControl struct {
 	CreatedAt time.Time
 }
 
-func NewDeviceControl(color []uint8) *DeviceControl {
+func NewDeviceControl(id DeviceID, color []uint8) *DeviceControl {
 	return &DeviceControl{
-		Color: color,
+		DeviceID: id,
+		Color:    color,
 	}
 }
 
