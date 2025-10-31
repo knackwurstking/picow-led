@@ -21,6 +21,7 @@ var (
 	ErrNoData       = errors.New("no data")
 )
 
+// RunCommand sends a JSON-encoded request to the Picow device and reads the response.
 func RunCommand[T any](id RequestID, device *models.ResolvedDevice, req any, resp *Response[T]) (T, error) {
 	picow := NewPicoW(device)
 
@@ -54,12 +55,14 @@ func RunCommand[T any](id RequestID, device *models.ResolvedDevice, req any, res
 	return resp.Data, nil
 }
 
+// GetPins retrieves the current state of GPIO pins from the Picow device.
 func GetPins(id RequestID, device *models.ResolvedDevice) ([]uint8, error) {
 	req := NewGetPinsRequest(id)
 	resp := &Response[[]uint8]{}
 	return RunCommand(id, device, req, resp)
 }
 
+// SetPins sets the state of GPIO pins on the Picow device.
 func SetPins(id RequestID, device *models.ResolvedDevice, pins ...uint8) error {
 	// Validate pins first
 	for _, pin := range pins {
@@ -74,12 +77,14 @@ func SetPins(id RequestID, device *models.ResolvedDevice, pins ...uint8) error {
 	return err
 }
 
+// GetColor retrieves the current color setting from the Picow device.
 func GetColor(id RequestID, device *models.ResolvedDevice) ([]uint8, error) {
 	req := NewGetColorRequest(id)
 	resp := &Response[[]uint8]{}
 	return RunCommand(id, device, req, resp)
 }
 
+// SetColor sets the color on the Picow device.
 func SetColor(id RequestID, device *models.ResolvedDevice, duty ...uint8) error {
 	// Validate duty first
 	for _, d := range duty {
@@ -94,18 +99,21 @@ func SetColor(id RequestID, device *models.ResolvedDevice, duty ...uint8) error 
 	return err
 }
 
+// GetTemperature retrieves the current temperature from the Picow device.
 func GetTemperature(id RequestID, device *models.ResolvedDevice) (float32, error) {
 	req := NewGetTemperatureRequest(id)
 	resp := &Response[float32]{}
 	return RunCommand(id, device, req, resp)
 }
 
+// GetDiskUsage retrieves disk usage information from the Picow device.
 func GetDiskUsage(id RequestID, device *models.ResolvedDevice) (*DiskUsage, error) {
 	req := NewGetDiskUsageRequest(id)
 	resp := &Response[*DiskUsage]{}
 	return RunCommand(id, device, req, resp)
 }
 
+// GetVersion retrieves the current version of the firmware running on the Picow device.
 func GetVersion(id RequestID, device *models.ResolvedDevice) (string, error) {
 	req := NewGetVersionRequest(id)
 	resp := &Response[string]{}

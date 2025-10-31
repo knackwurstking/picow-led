@@ -9,18 +9,24 @@ import (
 	"github.com/knackwurstking/picow-led/models"
 )
 
+const (
+	EndByte byte = byte('\n')
+)
+
 type PicoW struct {
 	*models.ResolvedDevice
 
 	Conn net.Conn
 }
 
+// NewPicoW creates a new instance of the PicoW struct.
 func NewPicoW(device *models.ResolvedDevice) *PicoW {
 	return &PicoW{
 		ResolvedDevice: device,
 	}
 }
 
+// Write sends data to the Picow device. It first connects to the device if not already connected, then appends a newline character to the data and writes it.
 func (p *PicoW) Write(request []byte) (n int, err error) {
 	p.Connect()
 
@@ -32,6 +38,7 @@ func (p *PicoW) Write(request []byte) (n int, err error) {
 	return n, nil
 }
 
+// Read reads up to len(response) bytes from the Picow device. It returns an error if not connected or no data is read.
 func (p *PicoW) Read(response []byte) (n int, err error) {
 	if p.Conn == nil {
 		return 0, ErrNotConnected
@@ -45,6 +52,7 @@ func (p *PicoW) Read(response []byte) (n int, err error) {
 	return n, nil
 }
 
+// ReadAll reads data from the Picow device until a newline character is encountered. It returns an error if not connected or no data is read.
 func (p *PicoW) ReadAll() (data []byte, err error) {
 	if p.Conn == nil {
 		return nil, ErrNotConnected
@@ -62,7 +70,7 @@ func (p *PicoW) ReadAll() (data []byte, err error) {
 			return nil, ErrNoData
 		}
 
-		if bytes.Contains(chunk, []byte{'\n'}) {
+		if bytes.Contains(chunk, []byte{EndByte}) {
 			break
 		}
 
@@ -72,6 +80,7 @@ func (p *PicoW) ReadAll() (data []byte, err error) {
 	return buffer.Bytes(), nil
 }
 
+// Connect establishes a connection to the Picow device. If already connected, it returns nil.
 func (p *PicoW) Connect() error {
 	if p.Conn != nil {
 		return nil
@@ -90,6 +99,7 @@ func (p *PicoW) Connect() error {
 	return nil
 }
 
+// Close closes the connection to the Picow device.
 func (p *PicoW) Close() error {
 	if err := p.Conn.Close(); err != nil {
 		return err
@@ -99,13 +109,18 @@ func (p *PicoW) Close() error {
 	return nil
 }
 
-// EndByte returns the data with the end byte appended, only if not already present, newline will be used as end byte here
+// EndByte returns the data with the end byte appended, only if not already present. The default end byte is a newline character.
 func (p *PicoW) EndByte(data []byte) []byte {
-	if len(data) == 0 || data[len(data)-1] != '\n' {
-		return append(data, '\n')
+	if len(data) == 0 || data[len(data)-1] != EndByte {
+		return append(data, EndByte)
 	}
 	return data
 }
 
 var _ io.Writer = &PicoW{}
 var _ io.Reader = &PicoW{}
+
+// Error types returned:
+//
+//   - ErrNotConnected: Indicates that the connection to the Picow device is not established.
+//   - ErrNoData: Indicates that no data was read from the Picow device.
