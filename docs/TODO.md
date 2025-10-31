@@ -40,5 +40,7 @@
 
 - [x] Establish a new package `package control`.
 - [ ] Refactor the service handlers to use control, ensuring that all operations are handled through these services.
+  - [ ] Service: DeviceSetups, when changing pins
+  - [ ] New DeviceControl (device_control) Service for color, version, temp and disk-usage
 - [x] Improve the doc comment for the NewRequest function
 - [x] Add missing info commands (info get: "temp", "disk-usage", "version")
