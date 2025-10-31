@@ -1,10 +1,15 @@
 package control
 
-import "errors"
+import (
+	"errors"
+)
 
 const (
-	MinRange uint8 = 0
-	MaxRange uint8 = 255
+	MinDuty uint8 = 0
+	MaxDuty uint8 = 255
+
+	MinPin uint8 = 0
+	MaxPin uint8 = 15
 )
 
 var (
@@ -17,10 +22,12 @@ var (
 
 // Pins
 
-//func GetPins() (models.Pins, error)
-//func SetPins(pins models.Pins) error
+func GetPins() ([]uint8, error)
+
+func SetPins(pins ...uint8) error
 
 // Duty
 
-//func GetDuty() (models.Duty, error)
-//func SetDuty(duty models.Duty) error
+func GetColor() ([]uint8, error)
+
+func SetColor(duty ...uint8) error
