@@ -20,6 +20,8 @@ func (p *DeviceControl) CreateTable() error {
 	return err
 }
 
+// TODO: Delete method first, so the devices table can be updated
+
 // TODO: Methods for read and set current color, always store color not 0 in table. Get current color from the picow device directly
 
 // TODO: Also handle version, temp and disk-usage
