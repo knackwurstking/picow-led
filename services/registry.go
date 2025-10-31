@@ -5,11 +5,11 @@ import "database/sql"
 type Registry struct {
 	db *sql.DB
 
-	Devices       *Devices
-	DeviceSetups  *DeviceSetups
-	Colors        *Colors
-	Groups        *Groups
-	DeviceControl *DeviceControl
+	Devices        *Devices
+	DeviceSetups   *DeviceSetups
+	Colors         *Colors
+	Groups         *Groups
+	DeviceControls *DeviceControls
 }
 
 // NewRegistry creates a new registry instance and will call the `CreateTables` method.
@@ -20,7 +20,7 @@ func NewRegistry(db *sql.DB) *Registry {
 	r.DeviceSetups = NewDeviceSetups(r)
 	r.Colors = NewColors(r)
 	r.Groups = NewGroups(r)
-	r.DeviceControl = NewDeviceControl(r)
+	r.DeviceControls = NewDeviceControls(r)
 
 	if err := r.CreateTables(); err != nil {
 		panic("failed to create tables: " + err.Error())
@@ -35,7 +35,7 @@ func (r *Registry) CreateTables() error {
 		r.DeviceSetups,
 		r.Colors,
 		r.Groups,
-		r.DeviceControl,
+		r.DeviceControls,
 	}
 
 	var err error

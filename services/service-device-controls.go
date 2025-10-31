@@ -6,22 +6,22 @@ import (
 	"github.com/knackwurstking/picow-led/models"
 )
 
-// DeviceControl struct manages the control of devices.
-type DeviceControl struct {
+// DeviceControls struct manages the control of devices.
+type DeviceControls struct {
 	registry *Registry
 }
 
-// NewDeviceControl creates a new instance of DeviceControl with the provided registry.
-func NewDeviceControl(registry *Registry) *DeviceControl {
-	return &DeviceControl{
+// NewDeviceControls creates a new instance of DeviceControls with the provided registry.
+func NewDeviceControls(registry *Registry) *DeviceControls {
+	return &DeviceControls{
 		registry: registry,
 	}
 }
 
 // CreateTable creates a table for device control data if it doesn't already exist.
 // It returns an error if the database execution fails.
-func (p *DeviceControl) CreateTable() error {
-	query := `CREATE TABLE IF NOT EXISTS device_control (
+func (p *DeviceControls) CreateTable() error {
+	query := `CREATE TABLE IF NOT EXISTS device_controls (
 		device_id INTEGER PRIMARY KEY NOT NULL,
 		color TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -32,10 +32,10 @@ func (p *DeviceControl) CreateTable() error {
 
 // Get retrieves a device control record from the database by device ID.
 // It returns a DeviceControl instance and an error if the record is not found or execution fails.
-func (p *DeviceControl) Get(deviceID models.DeviceID) (*models.DeviceControl, error) {
-	slog.Debug("Get device control from database", "table", "device_control", "id", deviceID)
+func (p *DeviceControls) Get(deviceID models.DeviceID) (*models.DeviceControl, error) {
+	slog.Debug("Get device control from database", "table", "device_controls", "id", deviceID)
 
-	query := `SELECT * FROM device_control WHERE device_id = ?`
+	query := `SELECT * FROM device_controls WHERE device_id = ?`
 	row := p.registry.db.QueryRow(query, deviceID)
 	deviceControl, err := ScanDeviceControl(row)
 	return deviceControl, HandleSqlError(err)
@@ -43,10 +43,10 @@ func (p *DeviceControl) Get(deviceID models.DeviceID) (*models.DeviceControl, er
 
 // List retrieves all device control records from the database.
 // It returns a slice of DeviceControl instances and an error if execution fails.
-func (p *DeviceControl) List() ([]*models.DeviceControl, error) {
-	slog.Debug("List device controls from database", "table", "device_control")
+func (p *DeviceControls) List() ([]*models.DeviceControl, error) {
+	slog.Debug("List device controls from database", "table", "device_controls")
 
-	query := `SELECT * FROM device_control`
+	query := `SELECT * FROM device_controls`
 	rows, err := p.registry.db.Query(query)
 	if err != nil {
 		return nil, HandleSqlError(err)
@@ -67,10 +67,10 @@ func (p *DeviceControl) List() ([]*models.DeviceControl, error) {
 
 // Add inserts a new device control record into the database.
 // It returns the inserted device ID and an error if execution fails.
-func (p *DeviceControl) Add(deviceControl *models.DeviceControl) (models.DeviceID, error) {
-	slog.Debug("Add device control to database", "table", "device_control", "device_id", deviceControl.DeviceID)
+func (p *DeviceControls) Add(deviceControl *models.DeviceControl) (models.DeviceID, error) {
+	slog.Debug("Add device control to database", "table", "device_controls", "device_id", deviceControl.DeviceID)
 
-	query := `INSERT INTO device_control (device_id, color) VALUES (?, ?)`
+	query := `INSERT INTO device_controls (device_id, color) VALUES (?, ?)`
 	result, err := p.registry.db.Exec(query, deviceControl.DeviceID, deviceControl.Color)
 	if err != nil {
 		return 0, HandleSqlError(err)
@@ -86,20 +86,20 @@ func (p *DeviceControl) Add(deviceControl *models.DeviceControl) (models.DeviceI
 
 // Update updates an existing device control record in the database.
 // It returns an error if execution fails or the record is not found.
-func (p *DeviceControl) Update(deviceControl *models.DeviceControl) error {
-	slog.Debug("Update device control in database", "table", "device_control", "id", deviceControl.DeviceID)
+func (p *DeviceControls) Update(deviceControl *models.DeviceControl) error {
+	slog.Debug("Update device control in database", "table", "device_controls", "id", deviceControl.DeviceID)
 
-	query := `UPDATE device_control SET color = ? WHERE device_id = ?`
+	query := `UPDATE device_controls SET color = ? WHERE device_id = ?`
 	_, err := p.registry.db.Exec(query, deviceControl.Color, deviceControl.DeviceID)
 	return HandleSqlError(err)
 }
 
 // Delete removes the record associated with a given device ID from the database.
 // It returns an error if the execution fails or if the device is not found.
-func (p *DeviceControl) Delete(deviceID models.DeviceID) error {
-	slog.Debug("Delete device control from database", "table", "device_control", "id", deviceID)
+func (p *DeviceControls) Delete(deviceID models.DeviceID) error {
+	slog.Debug("Delete device control from database", "table", "device_controls", "id", deviceID)
 
-	query := `DELETE FROM device_control WHERE device_id = ?`
+	query := `DELETE FROM device_controls WHERE device_id = ?`
 	_, err := p.registry.db.Exec(query, deviceID)
 	return HandleSqlError(err)
 }
