@@ -86,6 +86,18 @@ func TestAddDeviceSetup(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to add device 2 setup: %v", err)
 	}
+
+	// Add a device control column for the first device
+	_, err = r.DeviceControl.Add(models.NewDeviceControl(1, []uint8{255, 255, 255, 255}))
+	if err != nil {
+		t.Fatalf("Failed to add device 1 control: %v", err)
+	}
+
+	// Testing 5 color values, should error because the setup contains only 4 pins
+	err = r.DeviceControl.Update(models.NewDeviceControl(1, []uint8{255, 255, 255, 255, 255}))
+	if err == nil {
+		t.Fatalf("Expected invalid setup error, got nil")
+	}
 }
 
 func TestRemoveDevice(t *testing.T) {
@@ -104,7 +116,7 @@ func TestRemoveDevice(t *testing.T) {
 	}
 
 	if _, err := r.DeviceControl.Get(deviceID); err != ErrNotFound {
-		t.Errorf("Expected not found error, the setup for device_id 1 got not removed: %v", err)
+		t.Errorf("Expected not found error, the device control for device_id 1 got not removed: %v", err)
 	}
 }
 
