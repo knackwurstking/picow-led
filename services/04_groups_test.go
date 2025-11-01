@@ -70,41 +70,40 @@ func TestAddGroup(t *testing.T) {
 	}
 }
 
-// TODO: Continue refactoring (clean up) here
 func TestUpdateGroup(t *testing.T) {
 	r := openDB(t, false)
 	defer r.Close()
 
 	// Update the group in the database - check fail
-	group := models.NewGroup("Updated Group", []models.DeviceID{1, 2, 3, 4})
-	group.ID = 1
+	group1Name := "Updated Group"
+	group1Devices := []models.DeviceID{1, 2, 3, 4}
+	group1 := models.NewGroup(group1Name, group1Devices)
+	group1.ID = 1
 
-	err := r.Groups.Update(group)
+	err := r.Groups.Update(group1)
 	if err != ErrInvalidDeviceID {
 		t.Fatal("Expected error updating group with invalid devices")
 	}
 
 	// Update the group in the database
-	group = models.NewGroup("Updated Group", []models.DeviceID{1, 2})
-	group.ID = 1
+	group1.Devices = []models.DeviceID{1, 2}
 
-	err = r.Groups.Update(group)
-	if err != nil {
+	if err = r.Groups.Update(group1); err != nil {
 		t.Fatalf("Failed to update group: %v", err)
 	}
 
-	retrievedGroup, err := r.Groups.Get(1)
+	retrievedGroup, err := r.Groups.Get(group1.ID)
 	if err != nil {
 		t.Fatalf("Failed to retrieve group with ID 1")
 	}
-	if retrievedGroup.ID != 1 {
-		t.Errorf("Expected group ID 1, got %d", retrievedGroup.ID)
+	if retrievedGroup.ID != group1.ID {
+		t.Errorf("Expected group ID %d, got %d", group1.ID, retrievedGroup.ID)
 	}
-	if retrievedGroup.Name != group.Name {
-		t.Errorf("Expected group %v, got %v", group, retrievedGroup)
+	if retrievedGroup.Name != group1.Name {
+		t.Errorf("Expected group %v, got %v", group1.Name, retrievedGroup.Name)
 	}
-	if !reflect.DeepEqual(retrievedGroup.Devices, group.Devices) {
-		t.Errorf("Expected group devices %#v, got %#v", group.Devices, retrievedGroup.Devices)
+	if !reflect.DeepEqual(retrievedGroup.Devices, group1.Devices) {
+		t.Errorf("Expected group devices %#v, got %#v", group1.Devices, retrievedGroup.Devices)
 	}
 }
 
@@ -112,15 +111,15 @@ func TestDeleteGroup(t *testing.T) {
 	r := openDB(t, false)
 	defer r.Close()
 
+	groupID := models.GroupID(1)
+
 	// Delete the group from the database
-	err := r.Groups.Delete(1)
-	if err != nil {
-		t.Fatal("Failed to delete group with ID 1")
+	if err := r.Groups.Delete(groupID); err != nil {
+		t.Fatalf("Failed to delete group with ID %d: %v", groupID, err)
 	}
 
 	// Retrieve the group from the database
-	retrievedGroup, err := r.Groups.Get(1)
-	if err == nil {
+	if retrievedGroup, err := r.Groups.Get(groupID); err == nil {
 		t.Fatalf("Expected group to be deleted, got %v", retrievedGroup)
 	}
 }
