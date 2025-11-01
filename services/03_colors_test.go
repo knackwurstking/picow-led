@@ -12,17 +12,15 @@ func TestAddColor(t *testing.T) {
 	r := openDB(t, true)
 	defer r.Close()
 
-	color := &models.Color{
-		Name: "Test Color",
-		Duty: []uint8{255, 255, 255, 255},
-	}
+	color := models.NewColor("Test Color", []uint8{255, 255, 255, 255})
+	color.ID = models.ColorID(1)
 
 	id, err := r.Colors.Add(color)
 	if err != nil {
 		t.Fatalf("Failed to add color: %v", err)
 	}
-	if id != 1 {
-		t.Errorf("Expected color ID 1, got %d", id)
+	if id != color.ID {
+		t.Errorf("Expected color ID %d, got %d", color.ID, id)
 	}
 
 	// Verify that the color was added to the database
@@ -45,11 +43,8 @@ func TestUpdateColor(t *testing.T) {
 	r := openDB(t, false)
 	defer r.Close()
 
-	color := &models.Color{
-		ID:   1,
-		Name: "Updated Color",
-		Duty: []uint8{128, 128, 128, 128},
-	}
+	color := models.NewColor("Updated Color", []uint8{128, 128, 128, 128})
+	color.ID = models.ColorID(1)
 
 	err := r.Colors.Update(color)
 	if err != nil {
