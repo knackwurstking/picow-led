@@ -47,7 +47,10 @@
 
 - [x] Establish a new package `package control`.
 - Refactor the service handlers to use control, ensuring that all operations are handled through these services.
-  - [x] Service: DeviceSetups, when changing pins
-  - [ ] New DeviceControls (device_controls) Service for color, version, temp and disk-usage
+  - [x] DeviceSetups service should update the picow device after each pin change
+  - [x] Create the current color method
+  - [ ] Create the version method
+  - [ ] Create the disk usage method
+  - [ ] Create the temp method
 - [x] Improve the doc comment for the NewRequest function
 - [x] Add missing info commands (info get: "temp", "disk-usage", "version")

@@ -2,7 +2,9 @@ package services
 
 import (
 	"log/slog"
+	"slices"
 
+	"github.com/knackwurstking/picow-led/control"
 	"github.com/knackwurstking/picow-led/models"
 )
 
@@ -104,7 +106,56 @@ func (p *DeviceControls) Delete(deviceID models.DeviceID) error {
 	return HandleSqlError(err)
 }
 
-// TODO: Methods for read and set current color, always store color not 0 in table. Get current color from the picow device directly
+// CurrentColor retrieves the current color of the device from the database and will auto update the database if the color is different from the stored color and not 0.
+func (p *DeviceControls) CurrentColor(deviceID models.DeviceID) ([]uint8, error) {
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return nil, err
+	}
+
+	deviceControl, err := p.Get(device.ID)
+	if err != nil {
+		if err == ErrNotFound {
+			// Get the setup for the pins
+			deviceSetup, err := p.registry.DeviceSetups.Get(device.ID)
+			if err != nil {
+				return nil, err
+			}
+
+			// Create the initial color (duty) for each pin
+			initialColor := make([]uint8, len(deviceSetup.Pins))
+			for i := range initialColor {
+				initialColor[i] = 255
+			}
+
+			// Update the (global) deviceControl object
+			deviceControl = models.NewDeviceControl(device.ID, initialColor)
+
+			// Add the initial entry to the device control table
+			if _, err := p.Add(deviceControl); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	// Get the current color from the picow device
+	color, err := control.GetColor(device)
+	if err != nil {
+		return nil, err
+	}
+	// Check if the color is different from the stored color and not 0
+	if slices.Max(color) > 0 {
+		// Update the device control object with the new color
+		deviceControl.Color = color
+		if err = p.Update(deviceControl); err != nil {
+			return nil, err
+		}
+	}
+
+	return color, nil
+}
 
 // TODO: Also handle version, temp and disk-usage
 
