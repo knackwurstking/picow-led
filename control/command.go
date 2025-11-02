@@ -107,14 +107,14 @@ func SetColorWithID(id RequestID, device *models.Device, duty ...uint8) error {
 }
 
 // GetTemperature retrieves the current temperature from the Picow device. Default request ID will be used.
-func GetTemperature(device *models.Device) (float32, error) {
+func GetTemperature(device *models.Device) (float64, error) {
 	return GetTemperatureWithID(RequestIDDefault, device)
 }
 
 // GetTemperatureWithID retrieves the current temperature from the Picow device.
-func GetTemperatureWithID(id RequestID, device *models.Device) (float32, error) {
+func GetTemperatureWithID(id RequestID, device *models.Device) (float64, error) {
 	req := NewGetTemperatureRequest(id)
-	resp := &Response[float32]{}
+	resp := &Response[float64]{}
 	return RunCommand(id, device, req, resp)
 }
 
