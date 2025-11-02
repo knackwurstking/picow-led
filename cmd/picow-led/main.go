@@ -25,6 +25,9 @@ func main() {
 		initializeLogging()
 		r := initializeDatabase()
 
+		// TODO: Setup devices on server startup, tables: devices, device_setups
+		// (configure pins), log (warn) about missing device setups
+
 		startServer(r)
 	}
 }
