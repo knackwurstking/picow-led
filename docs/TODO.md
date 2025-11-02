@@ -17,7 +17,7 @@
   - Device Setups
   - Colors
   - Groups
-  - Device Control (WIP)
+  - Device Control
 - [x] Service DeviceControl needs to be handled by the Device service, if a device got deleted, also remove the device from the DeviceControl table.
 
 ## Router, UI, Handlers
@@ -49,8 +49,8 @@
 - Refactor the service handlers to use control, ensuring that all operations are handled through these services.
   - [x] DeviceSetups service should update the picow device after each pin change
   - [x] Create the current color method
-  - [ ] Create the version method
-  - [ ] Create the disk usage method
-  - [ ] Create the temp method
+  - [x] Create the version method
+  - [x] Create the disk usage method
+  - [x] Create the temp method
 - [x] Improve the doc comment for the NewRequest function
 - [x] Add missing info commands (info get: "temp", "disk-usage", "version")

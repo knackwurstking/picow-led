@@ -157,7 +157,32 @@ func (p *DeviceControls) CurrentColor(deviceID models.DeviceID) ([]uint8, error)
 	return color, nil
 }
 
-// TODO: Also handle version, temp and disk-usage
+func (p *DeviceControls) Version(deviceID models.DeviceID) (string, error) {
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return "", err
+	}
+
+	return control.GetVersion(device)
+}
+
+func (p *DeviceControls) DiskUsage(deviceID models.DeviceID) (*control.DiskUsage, error) {
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return nil, err
+	}
+
+	return control.GetDiskUsage(device)
+}
+
+func (p *DeviceControls) Temperature(deviceID models.DeviceID) (float64, error) {
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return 0, err
+	}
+
+	return control.GetTemperature(device)
+}
 
 func ScanDeviceControl(scanner Scannable) (*models.DeviceControl, error) {
 	control := &models.DeviceControl{}
