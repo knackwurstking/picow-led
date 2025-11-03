@@ -30,15 +30,8 @@ func (h HXHome) GetSectionDevices(c echo.Context) error {
 		return err
 	}
 
-	// ...resolve them
-	resolvedDevices, err := services.ResolveDevices(h.registry, devices...)
-	if err != nil {
-		return err
-	}
-
 	return components.PageHome_SectionDevices(
-		false,
-		resolvedDevices...,
+		false, devices...,
 	).Render(c.Request().Context(), c.Response())
 }
 
