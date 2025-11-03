@@ -7,15 +7,17 @@ import (
 )
 
 type DeviceControl struct {
-	DeviceID  DeviceID  `json:"device_id"`
-	Color     []uint8   `json:"color"`
-	CreatedAt time.Time `json:"created_at"`
+	DeviceID   DeviceID  `json:"device_id"`
+	Color      []uint8   `json:"color"`
+	ModifiedAt time.Time `json:"modified_at"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 func NewDeviceControl(id DeviceID, color []uint8) *DeviceControl {
 	return &DeviceControl{
-		DeviceID: id,
-		Color:    color,
+		DeviceID:   id,
+		Color:      color,
+		ModifiedAt: time.Now(),
 	}
 }
 

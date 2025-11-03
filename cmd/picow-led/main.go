@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/knackwurstking/picow-led/env"
@@ -24,12 +25,45 @@ func main() {
 	case env.CommandServer:
 		initializeLogging()
 		r := initializeDatabase()
-
-		// TODO: Setup devices on server startup, tables: devices, device_setups
-		// (configure pins), log (warn) about missing device setups
-
+		setupDevices(r)
 		startServer(r)
 	}
+}
+
+func setupDevices(r *services.Registry) {
+	devices, err := r.Devices.List()
+	if err != nil {
+		slog.Error("Failed to list devices", "error", err)
+		os.Exit(env.ExitCodeSetupDevices)
+	}
+
+	if len(devices) == 0 {
+		return
+	}
+
+	wg := &sync.WaitGroup{}
+	for _, device := range devices {
+		wg.Go(func() {
+			pins, err := r.DeviceControls.GetPins(device.ID)
+			if err != nil {
+				slog.Error("Failed to get device setup",
+					"device_id", device.ID, "device", device.Name, "error", err)
+				return
+			}
+
+			// This will get the color from the picow device and auto update the database
+			color, err := r.DeviceControls.GetCurrentColor(device.ID)
+			if err != nil {
+				slog.Error("Failed to get device control",
+					"device_id", device.ID, "device", device.Name, "error", err)
+				return
+			}
+
+			slog.Debug("Device control updated",
+				"device_id", device.ID, "device", device.Name, "pins", pins, "color", color)
+		})
+	}
+	wg.Wait()
 }
 
 func parseFlags() {

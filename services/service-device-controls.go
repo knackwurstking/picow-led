@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"log/slog"
 	"slices"
 
@@ -26,6 +27,7 @@ func (p *DeviceControls) CreateTable() error {
 	query := `CREATE TABLE IF NOT EXISTS device_controls (
 		device_id INTEGER PRIMARY KEY NOT NULL,
 		color TEXT NOT NULL,
+		modified_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
 	_, err := p.registry.db.Exec(query)
@@ -106,8 +108,30 @@ func (p *DeviceControls) Delete(deviceID models.DeviceID) error {
 	return HandleSqlError(err)
 }
 
+func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
+	slog.Debug("Get device pins from database", "table", "device_controls", "id", deviceID)
+
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return nil, err
+	}
+
+	pins, err := control.GetPins(device)
+	if err != nil {
+		return nil, err
+	}
+
+	// Store the pins in the database
+	_, err = p.registry.db.Exec("UPDATE device_controls SET pins = ? WHERE device_id = ?", pins, deviceID)
+	if err != nil {
+		return nil, HandleSqlError(err)
+	}
+
+	return pins, nil
+}
+
 // CurrentColor retrieves the current color of the device from the database and will auto update the database if the color is different from the stored color and not 0.
-func (p *DeviceControls) CurrentColor(deviceID models.DeviceID) ([]uint8, error) {
+func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, error) {
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return nil, err
@@ -115,27 +139,23 @@ func (p *DeviceControls) CurrentColor(deviceID models.DeviceID) ([]uint8, error)
 
 	deviceControl, err := p.Get(device.ID)
 	if err != nil {
-		if err == ErrNotFound {
-			// Get the setup for the pins
-			deviceSetup, err := p.registry.DeviceSetups.Get(device.ID)
-			if err != nil {
-				return nil, err
-			}
+		if err != ErrNotFound {
+			return nil, err
+		}
 
-			// Create the initial color (duty) for each pin
-			initialColor := make([]uint8, len(deviceSetup.Pins))
-			for i := range initialColor {
-				initialColor[i] = 255
-			}
+		pins, err := p.GetPins(device.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get pins for device %d: %v", device.ID, err)
+		}
 
-			// Update the (global) deviceControl object
-			deviceControl = models.NewDeviceControl(device.ID, initialColor)
+		// Create the initial color (duty) for each pin
+		initialColor := make([]uint8, len(pins))
+		for i := range initialColor {
+			initialColor[i] = 255
+		}
 
-			// Add the initial entry to the device control table
-			if _, err := p.Add(deviceControl); err != nil {
-				return nil, err
-			}
-		} else {
+		deviceControl = models.NewDeviceControl(device.ID, initialColor)
+		if _, err := p.Add(deviceControl); err != nil {
 			return nil, err
 		}
 	}
@@ -157,7 +177,7 @@ func (p *DeviceControls) CurrentColor(deviceID models.DeviceID) ([]uint8, error)
 	return color, nil
 }
 
-func (p *DeviceControls) Version(deviceID models.DeviceID) (string, error) {
+func (p *DeviceControls) GetVersion(deviceID models.DeviceID) (string, error) {
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return "", err
@@ -166,7 +186,7 @@ func (p *DeviceControls) Version(deviceID models.DeviceID) (string, error) {
 	return control.GetVersion(device)
 }
 
-func (p *DeviceControls) DiskUsage(deviceID models.DeviceID) (*control.DiskUsage, error) {
+func (p *DeviceControls) GetDiskUsage(deviceID models.DeviceID) (*control.DiskUsage, error) {
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return nil, err
@@ -175,7 +195,7 @@ func (p *DeviceControls) DiskUsage(deviceID models.DeviceID) (*control.DiskUsage
 	return control.GetDiskUsage(device)
 }
 
-func (p *DeviceControls) Temperature(deviceID models.DeviceID) (float64, error) {
+func (p *DeviceControls) GetTemperature(deviceID models.DeviceID) (float64, error) {
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return 0, err
@@ -186,6 +206,6 @@ func (p *DeviceControls) Temperature(deviceID models.DeviceID) (float64, error) 
 
 func ScanDeviceControl(scanner Scannable) (*models.DeviceControl, error) {
 	control := &models.DeviceControl{}
-	err := scanner.Scan(&control.DeviceID, &control.Color, &control.CreatedAt)
+	err := scanner.Scan(&control.DeviceID, &control.Color, &control.ModifiedAt, &control.CreatedAt)
 	return control, err
 }

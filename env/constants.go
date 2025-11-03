@@ -13,6 +13,7 @@ const (
 	ExitCodeInvalidDatabasePath = 6
 	ExitCodeInvalidFlags        = 8
 	ExitCodeDatabaseTables      = 9
+	ExitCodeSetupDevices        = 10
 )
 
 const (
