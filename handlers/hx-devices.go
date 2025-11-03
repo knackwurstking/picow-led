@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/knackwurstking/picow-led/services"
@@ -42,10 +43,18 @@ func (h *HxDevices) PostTogglePower(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err = h.registry.DeviceControls.TogglePower(deviceID); err != nil {
+	color, err := h.registry.DeviceControls.TogglePower(deviceID)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	c.Response().Header().Set("HX-Trigger", "reload")
+	data, _ := json.Marshal(struct {
+		Color []uint8 `json:"color"`
+	}{
+		Color: color,
+	})
+
+	c.Response().Header().Set("HX-Trigger-After-Settle", string(data))
+	//c.Response().Header().Set("HX-Trigger", "reload") // TODO: Set the correct trigger, right now there is no trigger needed
 	return nil
 }

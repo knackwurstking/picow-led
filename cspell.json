@@ -4,6 +4,7 @@
     "picow",
     "labstack",
     "htmx",
-    "microcontroller"
+    "microcontroller",
+    "templ"
   ]
 }

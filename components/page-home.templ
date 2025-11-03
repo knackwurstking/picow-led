@@ -104,11 +104,14 @@ templ PageHome_Device(device *models.Device) {
 					Swap:    "beforeend",
 					Trigger: "click",
 				})
+				// TODO: Add a spinner while this request is pending
 				@PowerIconButton(&HXProps{
-					Get:     HxUrlTogglePower(device.ID),
-					Target:  "this", // TODO: How to disable target and swap?
-					Swap:    "none",
-					Trigger: "click",
+					Get:           HxUrlTogglePower(device.ID),
+					Target:        "this",
+					Swap:          "none",
+					Trigger:       "click",
+					BeforeRequest: powerToggleBeforeRequest(),
+					AfterRequest:  powerToggleAfterRequest(templ.JSExpression("event")),
 				})
 			</div>
 		</div>
@@ -131,4 +134,13 @@ templ pageHome_SectionActions() {
 	<div class="w-full flex gap justify-end items-center">
 		{ children... }
 	</div>
+}
+
+script powerToggleBeforeRequest() {
+	// TODO: Start spinner
+}
+
+script powerToggleAfterRequest(event) {
+	// TODO: Stop spinner, get detail data from the event ("color")
+	console.debug("Power toggled for device: ", event.detail)
 }

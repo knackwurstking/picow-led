@@ -6,12 +6,15 @@ import (
 
 type ID string
 
+// TODO: Add a props to do things before and after the request
 type HXProps struct {
 	Get               templ.SafeURL
 	Target            string
 	Swap              string
 	Trigger           string
 	EnableLoadTrigger bool
+	BeforeRequest     templ.ComponentScript
+	AfterRequest      templ.ComponentScript
 }
 
 func (hx *HXProps) Attributes() templ.Attributes {
