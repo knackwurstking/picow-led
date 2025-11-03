@@ -204,16 +204,16 @@ func (p *DeviceControls) GetTemperature(deviceID models.DeviceID) (float64, erro
 	return control.GetTemperature(device)
 }
 
-func (p *DeviceControls) TogglePower(deviceID models.DeviceID) error {
+func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) {
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var newColor []uint8
 	currentColor, err := control.GetColor(device)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if slices.Max(currentColor) > 0 { // Just get the color for turning OFF
@@ -228,7 +228,7 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) error {
 			// Nope, no color in the database, get pins and set color to 255 for each pin
 			pins, err := control.GetPins(device)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			newColor = make([]uint8, len(pins))
@@ -238,7 +238,7 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) error {
 		}
 	}
 
-	return control.SetColor(device, newColor...)
+	return newColor, control.SetColor(device, newColor...)
 }
 
 func ScanDeviceControl(scanner Scannable) (*models.DeviceControl, error) {
