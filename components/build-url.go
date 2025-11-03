@@ -46,4 +46,8 @@ func HxUrlEditGroupDialog(groupID *models.GroupID) templ.SafeURL {
 	))
 }
 
-// TODO: Power toggle
+func HxUrlTogglePower(deviceID models.DeviceID) templ.SafeURL {
+	return templ.SafeURL(BuildUrl(
+		fmt.Sprintf("/htmx/devices/toggle-power?id=%d", deviceID),
+	))
+}
