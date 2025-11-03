@@ -110,7 +110,7 @@ templ PageHome_Device(device *models.Device) {
 					Target:        "this",
 					Swap:          "none",
 					Trigger:       "click",
-					BeforeRequest: powerToggleBeforeRequest(),
+					BeforeRequest: powerToggleBeforeRequest(templ.JSExpression("event")),
 					AfterRequest:  powerToggleAfterRequest(templ.JSExpression("event")),
 				})
 			</div>
@@ -136,11 +136,11 @@ templ pageHome_SectionActions() {
 	</div>
 }
 
-script powerToggleBeforeRequest() {
-	// TODO: Start spinner
+script powerToggleBeforeRequest(event) {
+	// TODO: Start spinner, disable the current target
 }
 
 script powerToggleAfterRequest(event) {
-	// TODO: Stop spinner, get detail data from the event ("color")
+	// TODO: Stop spinner, enable the current target, get detail data from the event ("color")
 	console.debug("Power toggled for device: ", event.detail)
 }
