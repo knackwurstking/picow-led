@@ -204,6 +204,36 @@ func (p *DeviceControls) GetTemperature(deviceID models.DeviceID) (float64, erro
 	return control.GetTemperature(device)
 }
 
+func (p *DeviceControls) TogglePower(deviceID models.DeviceID) error {
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return err
+	}
+
+	pins, err := control.GetPins(device)
+	if err != nil {
+		return err
+	}
+
+	color, err := control.GetColor(device)
+	if err != nil {
+		return err
+	}
+
+	newColor := make([]uint8, len(pins))
+	if slices.Max(color) > 0 {
+		for i, _ := range pins {
+			newColor[i] = 0
+		}
+	} else {
+		for i, _ := range pins {
+			newColor[i] = 255
+		}
+	}
+
+	return control.SetColor(device, newColor...)
+}
+
 func ScanDeviceControl(scanner Scannable) (*models.DeviceControl, error) {
 	control := &models.DeviceControl{}
 	err := scanner.Scan(&control.DeviceID, &control.Color, &control.ModifiedAt, &control.CreatedAt)

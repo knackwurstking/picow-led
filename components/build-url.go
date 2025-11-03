@@ -45,3 +45,5 @@ func HxUrlEditGroupDialog(groupID *models.GroupID) templ.SafeURL {
 		fmt.Sprintf("/htmx/dialog/edit-group?id=%d", *groupID),
 	))
 }
+
+// TODO: Power toggle
