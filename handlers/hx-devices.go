@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/knackwurstking/picow-led/services"
@@ -40,11 +41,15 @@ func (h *HxDevices) Delete(c echo.Context) error {
 func (h *HxDevices) PostTogglePower(c echo.Context) error {
 	deviceID, err := QueryParamDeviceID(c, "id", false)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest,
+			fmt.Errorf("Failed to toggle power for device %d: %s", deviceID, err.Error()),
+		)
 	}
 
 	color, err := h.registry.DeviceControls.TogglePower(deviceID)
 	if err != nil {
+		err = fmt.Errorf("Failed to toggle power for device %d: %s", deviceID, err.Error())
+		OOBSwapDeviceErrorMessage(deviceID, err)
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
@@ -57,5 +62,6 @@ func (h *HxDevices) PostTogglePower(c echo.Context) error {
 	c.Response().Header().Set("HX-Trigger-After-Settle", string(data))
 	// TODO: Set the correct trigger, right now there is no trigger needed
 	//c.Response().Header().Set("HX-Trigger", "reload")
+
 	return nil
 }
