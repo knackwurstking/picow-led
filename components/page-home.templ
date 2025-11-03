@@ -39,7 +39,6 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 			EnableLoadTrigger: enableLoadTrigger,
 		}
 	}}
-	// FIXME: Why the fuck is the hx-get attribute missing here?
 	<span { props.Attributes()... }></span>
 	@pageHome_SectionSummary("Devices")
 	if props.EnableLoadTrigger {
