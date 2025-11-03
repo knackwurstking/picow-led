@@ -55,6 +55,7 @@ func (h *HxDevices) PostTogglePower(c echo.Context) error {
 	})
 
 	c.Response().Header().Set("HX-Trigger-After-Settle", string(data))
-	//c.Response().Header().Set("HX-Trigger", "reload") // TODO: Set the correct trigger, right now there is no trigger needed
+	// TODO: Set the correct trigger, right now there is no trigger needed
+	//c.Response().Header().Set("HX-Trigger", "reload")
 	return nil
 }
