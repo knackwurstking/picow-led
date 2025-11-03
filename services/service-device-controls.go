@@ -210,24 +210,31 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) error {
 		return err
 	}
 
-	pins, err := control.GetPins(device)
+	var newColor []uint8
+	currentColor, err := control.GetColor(device)
 	if err != nil {
 		return err
 	}
 
-	color, err := control.GetColor(device)
-	if err != nil {
-		return err
-	}
-
-	newColor := make([]uint8, len(pins))
-	if slices.Max(color) > 0 {
-		for i, _ := range pins {
+	if slices.Max(currentColor) > 0 { // Just get the color for turning OFF
+		newColor = make([]uint8, len(currentColor))
+		for i := range currentColor {
 			newColor[i] = 0
 		}
-	} else {
-		for i, _ := range pins {
-			newColor[i] = 255
+	} else { // Need to get the color for turning ON (dc = deviceControl)
+		if dc, _ := p.Get(device.ID); dc != nil && len(dc.Color) > 0 {
+			newColor = dc.Color // Get the color from the database
+		} else {
+			// Nope, no color in the database, get pins and set color to 255 for each pin
+			pins, err := control.GetPins(device)
+			if err != nil {
+				return err
+			}
+
+			newColor = make([]uint8, len(pins))
+			for i := range pins {
+				newColor[i] = 255
+			}
 		}
 	}
 
