@@ -136,11 +136,14 @@ templ pageHome_SectionActions() {
 	</div>
 }
 
-script powerToggleBeforeRequest(event) {
-	// TODO: Start spinner, disable the current target
+script powerToggleBeforeRequest(event templ.JSExpression) {
+	const target = event.currentTarget;
+	target.disabled = true;
+	target.classList.add("spinner");
 }
 
-script powerToggleAfterRequest(event) {
-	// TODO: Stop spinner, enable the current target, get detail data from the event ("color")
-	console.debug("Power toggled for device: ", event.detail)
+script powerToggleAfterRequest(event templ.JSExpression) {
+	const target = event.currentTarget;
+	target.disabled = false;
+	target.classList.remove("spinner");
 }

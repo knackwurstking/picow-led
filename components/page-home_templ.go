@@ -397,10 +397,12 @@ func PageHome_Device(device *models.Device) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = PowerIconButton(&HXProps{
-			Get:     "",     // TODO: ...
-			Target:  "this", // TODO: How to disable target and swap?
-			Swap:    "none",
-			Trigger: "click",
+			Get:           HxUrlTogglePower(device.ID),
+			Target:        "this",
+			Swap:          "none",
+			Trigger:       "click",
+			BeforeRequest: powerToggleBeforeRequest(templ.JSExpression("event")),
+			AfterRequest:  powerToggleAfterRequest(templ.JSExpression("event")),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -441,7 +443,7 @@ func pageHome_Section(id ID) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 119, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 122, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -491,7 +493,7 @@ func pageHome_SectionSummary(title string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 126, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 129, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -540,6 +542,30 @@ func pageHome_SectionActions() templ.Component {
 		}
 		return nil
 	})
+}
+
+func powerToggleBeforeRequest(event templ.JSExpression) templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_powerToggleBeforeRequest_f921`,
+		Function: `function __templ_powerToggleBeforeRequest_f921(event){const target = event.currentTarget;
+	target.disabled = true;
+	target.classList.add("spinner");
+}`,
+		Call:       templ.SafeScript(`__templ_powerToggleBeforeRequest_f921`, event),
+		CallInline: templ.SafeScriptInline(`__templ_powerToggleBeforeRequest_f921`, event),
+	}
+}
+
+func powerToggleAfterRequest(event templ.JSExpression) templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_powerToggleAfterRequest_0d42`,
+		Function: `function __templ_powerToggleAfterRequest_0d42(event){const target = event.currentTarget;
+	target.disabled = false;
+	target.classList.remove("spinner");
+}`,
+		Call:       templ.SafeScript(`__templ_powerToggleAfterRequest_0d42`, event),
+		CallInline: templ.SafeScriptInline(`__templ_powerToggleAfterRequest_0d42`, event),
+	}
 }
 
 var _ = templruntime.GeneratedTemplate
