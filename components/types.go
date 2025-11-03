@@ -18,10 +18,12 @@ type HXProps struct {
 
 func (hx *HXProps) Attributes() templ.Attributes {
 	return map[string]any{
-		"hx-get":     string(hx.Get),
-		"hx-target":  hx.Target,
-		"hx-swap":    hx.getSwap(),
-		"hx-trigger": hx.getTrigger(),
+		"hx-get":                    string(hx.Get),
+		"hx-target":                 hx.Target,
+		"hx-swap":                   hx.getSwap(),
+		"hx-trigger":                hx.getTrigger(),
+		"hx-on:htmx:before-request": hx.BeforeRequest,
+		"hx-on:htmx:after-request":  hx.AfterRequest,
 	}
 }
 
