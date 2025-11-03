@@ -1,6 +1,9 @@
 package components
 
-import "github.com/knackwurstking/picow-led/models"
+import (
+	"github.com/knackwurstking/picow-led/models"
+	"net/http"
+)
 
 const (
 	IDSectionDevices ID = "section-devices"
@@ -29,13 +32,14 @@ templ PageHome_AdditionalHead() {
 templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device) {
 	{{
 		props := &HXProps{
-			Method:            "GET",
+			Method:            http.MethodGet,
 			URL:               HxUrlHomeSectionDevices(),
 			Target:            "#" + string(IDSectionDevices),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
 		}
 	}}
+	// FIXME: Why the fuck is the hx-get attribute missing here?
 	<span { props.Attributes()... }></span>
 	@pageHome_SectionSummary("Devices")
 	if props.EnableLoadTrigger {
@@ -43,7 +47,7 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 	} else {
 		@pageHome_SectionActions() {
 			@AddIconButton(&HXProps{
-				Method:  "GET",
+				Method:  http.MethodGet,
 				URL:     HxUrlEditDeviceDialog(nil),
 				Target:  "body",
 				Swap:    "beforeend",
@@ -65,7 +69,7 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGroup) {
 	{{
 		props := &HXProps{
-			Method:            "GET",
+			Method:            http.MethodGet,
 			URL:               HxUrlHomeSectionGroups(),
 			Target:            "#" + string(IDSectionGroups),
 			Trigger:           "reload from:body",
@@ -79,7 +83,7 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 	} else {
 		@pageHome_SectionActions() {
 			@AddIconButton(&HXProps{
-				Method:  "GET",
+				Method:  http.MethodGet,
 				URL:     HxUrlEditGroupDialog(nil),
 				Target:  "body",
 				Swap:    "beforeend",
@@ -103,20 +107,24 @@ templ PageHome_Device(device *models.Device) {
 			</div>
 			<div class="button-group">
 				@EditIconButton(&HXProps{
-					Method:  "GET",
+					Method:  http.MethodGet,
 					URL:     HxUrlEditDeviceDialog(&device.ID),
 					Target:  "body",
 					Swap:    "beforeend",
 					Trigger: "click",
 				})
+				{{
+					beforeRequest := powerToggleBeforeRequest(templ.JSExpression("event"))
+					afterRequest := powerToggleAfterRequest(templ.JSExpression("event"))
+				}}
 				@PowerIconButton(&HXProps{
-					Method:        "POST",
+					Method:        http.MethodPost,
 					URL:           HxUrlTogglePower(device.ID),
 					Target:        "this",
 					Swap:          "none",
 					Trigger:       "click",
-					BeforeRequest: powerToggleBeforeRequest(templ.JSExpression("event")),
-					AfterRequest:  powerToggleAfterRequest(templ.JSExpression("event")),
+					BeforeRequest: &beforeRequest,
+					AfterRequest:  &afterRequest,
 				})
 			</div>
 		</div>

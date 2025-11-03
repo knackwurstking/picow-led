@@ -8,7 +8,10 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/knackwurstking/picow-led/models"
+import (
+	"github.com/knackwurstking/picow-led/models"
+	"net/http"
+)
 
 const (
 	IDSectionDevices ID = "section-devices"
@@ -159,7 +162,7 @@ func PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device) 
 		ctx = templ.ClearChildren(ctx)
 
 		props := &HXProps{
-			Method:            "GET",
+			Method:            http.MethodGet,
 			URL:               HxUrlHomeSectionDevices(),
 			Target:            "#" + string(IDSectionDevices),
 			Trigger:           "reload from:body",
@@ -200,7 +203,7 @@ func PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device) 
 				}
 				ctx = templ.InitializeContext(ctx)
 				templ_7745c5c3_Err = AddIconButton(&HXProps{
-					Method:  "GET",
+					Method:  http.MethodGet,
 					URL:     HxUrlEditDeviceDialog(nil),
 					Target:  "body",
 					Swap:    "beforeend",
@@ -268,7 +271,7 @@ func PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGr
 		ctx = templ.ClearChildren(ctx)
 
 		props := &HXProps{
-			Method:            "GET",
+			Method:            http.MethodGet,
 			URL:               HxUrlHomeSectionGroups(),
 			Target:            "#" + string(IDSectionGroups),
 			Trigger:           "reload from:body",
@@ -309,7 +312,7 @@ func PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGr
 				}
 				ctx = templ.InitializeContext(ctx)
 				templ_7745c5c3_Err = AddIconButton(&HXProps{
-					Method:  "GET",
+					Method:  http.MethodGet,
 					URL:     HxUrlEditGroupDialog(nil),
 					Target:  "body",
 					Swap:    "beforeend",
@@ -368,7 +371,7 @@ func PageHome_Device(device *models.Device) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(device.Addr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 101, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 105, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -381,7 +384,7 @@ func PageHome_Device(device *models.Device) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(device.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 102, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 106, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -392,7 +395,7 @@ func PageHome_Device(device *models.Device) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = EditIconButton(&HXProps{
-			Method:  "GET",
+			Method:  http.MethodGet,
 			URL:     HxUrlEditDeviceDialog(&device.ID),
 			Target:  "body",
 			Swap:    "beforeend",
@@ -401,14 +404,17 @@ func PageHome_Device(device *models.Device) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+
+		beforeRequest := powerToggleBeforeRequest(templ.JSExpression("event"))
+		afterRequest := powerToggleAfterRequest(templ.JSExpression("event"))
 		templ_7745c5c3_Err = PowerIconButton(&HXProps{
-			Method:        "POST",
+			Method:        http.MethodPost,
 			URL:           HxUrlTogglePower(device.ID),
 			Target:        "this",
 			Swap:          "none",
 			Trigger:       "click",
-			BeforeRequest: powerToggleBeforeRequest(templ.JSExpression("event")),
-			AfterRequest:  powerToggleAfterRequest(templ.JSExpression("event")),
+			BeforeRequest: &beforeRequest,
+			AfterRequest:  &afterRequest,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -449,7 +455,7 @@ func pageHome_Section(id ID) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 127, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 135, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -499,7 +505,7 @@ func pageHome_SectionSummary(title string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 134, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 142, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {

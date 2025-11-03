@@ -1,6 +1,8 @@
 package components
 
 import (
+	"net/http"
+
 	"github.com/a-h/templ"
 )
 
@@ -13,28 +15,33 @@ type HXProps struct {
 	Swap              string
 	Trigger           string
 	EnableLoadTrigger bool
-	BeforeRequest     templ.ComponentScript
-	AfterRequest      templ.ComponentScript
+	BeforeRequest     *templ.ComponentScript
+	AfterRequest      *templ.ComponentScript
 }
 
 func (hx *HXProps) Attributes() templ.Attributes {
 	attributes := map[string]any{
-		"hx-target":                 hx.Target,
-		"hx-swap":                   hx.getSwap(),
-		"hx-trigger":                hx.getTrigger(),
-		"hx-on:htmx:before-request": hx.BeforeRequest,
-		"hx-on:htmx:after-request":  hx.AfterRequest,
+		"hx-target":  hx.Target,
+		"hx-swap":    hx.getSwap(),
+		"hx-trigger": hx.getTrigger(),
+	}
+
+	if hx.BeforeRequest != nil {
+		attributes["hx-on:htmx:before-request"] = hx.BeforeRequest
+	}
+	if hx.AfterRequest != nil {
+		attributes["hx-on:htmx:after-request"] = hx.AfterRequest
 	}
 
 	switch hx.Method {
-	case "GET":
-		attributes["hx-get"] = hx.URL
-	case "POST":
-		attributes["hx-post"] = hx.URL
-	case "PUT":
-		attributes["hx-put"] = hx.URL
-	case "DELETE":
-		attributes["hx-delete"] = hx.URL
+	case http.MethodGet:
+		attributes["hx-get"] = string(hx.URL)
+	case http.MethodPost:
+		attributes["hx-post"] = string(hx.URL)
+	case http.MethodPut:
+		attributes["hx-put"] = string(hx.URL)
+	case http.MethodDelete:
+		attributes["hx-delete"] = string(hx.URL)
 	default:
 		panic("unsupported method")
 	}
