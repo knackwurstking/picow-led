@@ -29,7 +29,8 @@ templ PageHome_AdditionalHead() {
 templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device) {
 	{{
 		props := &HXProps{
-			Get:               HxUrlHomeSectionDevices(),
+			Method:            "GET",
+			URL:               HxUrlHomeSectionDevices(),
 			Target:            "#" + string(IDSectionDevices),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
@@ -42,7 +43,8 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 	} else {
 		@pageHome_SectionActions() {
 			@AddIconButton(&HXProps{
-				Get:     HxUrlEditDeviceDialog(nil),
+				Method:  "GET",
+				URL:     HxUrlEditDeviceDialog(nil),
 				Target:  "body",
 				Swap:    "beforeend",
 				Trigger: "click",
@@ -63,7 +65,8 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGroup) {
 	{{
 		props := &HXProps{
-			Get:               HxUrlHomeSectionGroups(),
+			Method:            "GET",
+			URL:               HxUrlHomeSectionGroups(),
 			Target:            "#" + string(IDSectionGroups),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
@@ -76,7 +79,8 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 	} else {
 		@pageHome_SectionActions() {
 			@AddIconButton(&HXProps{
-				Get:     HxUrlEditGroupDialog(nil),
+				Method:  "GET",
+				URL:     HxUrlEditGroupDialog(nil),
 				Target:  "body",
 				Swap:    "beforeend",
 				Trigger: "click",
@@ -99,14 +103,15 @@ templ PageHome_Device(device *models.Device) {
 			</div>
 			<div class="button-group">
 				@EditIconButton(&HXProps{
-					Get:     HxUrlEditDeviceDialog(&device.ID),
+					Method:  "GET",
+					URL:     HxUrlEditDeviceDialog(&device.ID),
 					Target:  "body",
 					Swap:    "beforeend",
 					Trigger: "click",
 				})
-				// TODO: Add a spinner while this request is pending
 				@PowerIconButton(&HXProps{
-					Get:           HxUrlTogglePower(device.ID),
+					Method:        "POST",
+					URL:           HxUrlTogglePower(device.ID),
 					Target:        "this",
 					Swap:          "none",
 					Trigger:       "click",

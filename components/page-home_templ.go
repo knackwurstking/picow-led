@@ -159,7 +159,8 @@ func PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device) 
 		ctx = templ.ClearChildren(ctx)
 
 		props := &HXProps{
-			Get:               HxUrlHomeSectionDevices(),
+			Method:            "GET",
+			URL:               HxUrlHomeSectionDevices(),
 			Target:            "#" + string(IDSectionDevices),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
@@ -199,7 +200,8 @@ func PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device) 
 				}
 				ctx = templ.InitializeContext(ctx)
 				templ_7745c5c3_Err = AddIconButton(&HXProps{
-					Get:     HxUrlEditDeviceDialog(nil),
+					Method:  "GET",
+					URL:     HxUrlEditDeviceDialog(nil),
 					Target:  "body",
 					Swap:    "beforeend",
 					Trigger: "click",
@@ -266,7 +268,8 @@ func PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGr
 		ctx = templ.ClearChildren(ctx)
 
 		props := &HXProps{
-			Get:               HxUrlHomeSectionGroups(),
+			Method:            "GET",
+			URL:               HxUrlHomeSectionGroups(),
 			Target:            "#" + string(IDSectionGroups),
 			Trigger:           "reload from:body",
 			EnableLoadTrigger: enableLoadTrigger,
@@ -306,7 +309,8 @@ func PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGr
 				}
 				ctx = templ.InitializeContext(ctx)
 				templ_7745c5c3_Err = AddIconButton(&HXProps{
-					Get:     HxUrlEditGroupDialog(nil),
+					Method:  "GET",
+					URL:     HxUrlEditGroupDialog(nil),
 					Target:  "body",
 					Swap:    "beforeend",
 					Trigger: "click",
@@ -364,7 +368,7 @@ func PageHome_Device(device *models.Device) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(device.Addr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 97, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 101, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -377,7 +381,7 @@ func PageHome_Device(device *models.Device) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(device.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 98, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 102, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -388,7 +392,8 @@ func PageHome_Device(device *models.Device) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = EditIconButton(&HXProps{
-			Get:     HxUrlEditDeviceDialog(&device.ID),
+			Method:  "GET",
+			URL:     HxUrlEditDeviceDialog(&device.ID),
 			Target:  "body",
 			Swap:    "beforeend",
 			Trigger: "click",
@@ -397,7 +402,8 @@ func PageHome_Device(device *models.Device) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = PowerIconButton(&HXProps{
-			Get:           HxUrlTogglePower(device.ID),
+			Method:        "POST",
+			URL:           HxUrlTogglePower(device.ID),
 			Target:        "this",
 			Swap:          "none",
 			Trigger:       "click",
@@ -443,7 +449,7 @@ func pageHome_Section(id ID) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 122, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 127, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -493,7 +499,7 @@ func pageHome_SectionSummary(title string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 129, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home.templ`, Line: 134, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {

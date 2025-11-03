@@ -7,7 +7,8 @@ import (
 type ID string
 
 type HXProps struct {
-	Get               templ.SafeURL
+	URL               templ.SafeURL
+	Method            string
 	Target            string
 	Swap              string
 	Trigger           string
@@ -17,14 +18,28 @@ type HXProps struct {
 }
 
 func (hx *HXProps) Attributes() templ.Attributes {
-	return map[string]any{
-		"hx-get":                    string(hx.Get),
+	attributes := map[string]any{
 		"hx-target":                 hx.Target,
 		"hx-swap":                   hx.getSwap(),
 		"hx-trigger":                hx.getTrigger(),
 		"hx-on:htmx:before-request": hx.BeforeRequest,
 		"hx-on:htmx:after-request":  hx.AfterRequest,
 	}
+
+	switch hx.Method {
+	case "GET":
+		attributes["hx-get"] = hx.URL
+	case "POST":
+		attributes["hx-post"] = hx.URL
+	case "PUT":
+		attributes["hx-put"] = hx.URL
+	case "DELETE":
+		attributes["hx-delete"] = hx.URL
+	default:
+		panic("unsupported method")
+	}
+
+	return attributes
 }
 
 func (hx HXProps) getSwap() string {
