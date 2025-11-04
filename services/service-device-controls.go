@@ -143,19 +143,7 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 			return nil, err
 		}
 
-		pins, err := p.GetPins(device.ID)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get pins for device %d: %v", device.ID, err)
-		}
-
-		// Create the initial color (duty) for each pin
-		initialColor := make([]uint8, len(pins))
-		for i := range initialColor {
-			initialColor[i] = 255 // NOTE: Set initial default color (255)
-		}
-
-		deviceControl = models.NewDeviceControl(device.ID, initialColor)
-		if _, err := p.Add(deviceControl); err != nil {
+		if err = p.setInitialColumn(device.ID); err != nil {
 			return nil, err
 		}
 	}
@@ -239,6 +227,26 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) 
 	}
 
 	return newColor, control.SetColor(device, newColor...)
+}
+
+func (p *DeviceControls) setInitialColumn(deviceID models.DeviceID) error {
+	pins, err := p.GetPins(deviceID)
+	if err != nil {
+		return fmt.Errorf("failed to get pins for device %d: %v", deviceID, err)
+	}
+
+	// Create the initial color (duty) for each pin
+	initialColor := make([]uint8, len(pins))
+	for i := range initialColor {
+		initialColor[i] = 255 // NOTE: Set initial default color (255)
+	}
+
+	deviceControl := models.NewDeviceControl(deviceID, initialColor)
+	if _, err := p.Add(deviceControl); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func ScanDeviceControl(scanner Scannable) (*models.DeviceControl, error) {
