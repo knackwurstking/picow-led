@@ -24,6 +24,7 @@ templ PageHome() {
 }
 
 templ pageHome_additionalHead() {
+	<link rel="stylesheet" href={ AssetURL(env.Args.ServerPathPrefix, "/css/page-home.css") }/>
 	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/page-home.js") }></script>
 }
 
