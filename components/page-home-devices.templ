@@ -52,7 +52,7 @@ templ PageHome_SectionDevices_Device(device *models.Device) {
 			<div class="flex flex-col gap-sm">
 				<small>{ device.Addr }</small>
 				<strong>{ device.Name }</strong>
-				@PageHome_SectionDevices_DeviceError(device.ID, nil, true)
+				@PageHome_SectionDevices_DeviceError(device.ID, nil, false)
 			</div>
 			<div class="button-group">
 				@EditIconButton(&HXProps{
@@ -92,7 +92,7 @@ templ PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, o
 		{{ return }}
 	}
 	<div
-		id={ fmt.Sprintf("device-%d-error", deviceID) }
+		id={ fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID) }
 		class="card destructive compact"
 		if oob {
 			hx-swap-oob="true"
