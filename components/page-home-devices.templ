@@ -48,33 +48,37 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 
 templ PageHome_SectionDevices_Device(device *models.Device) {
 	<div class="card outline">
-		<div class="card-body flex gap justify-between items-center">
-			<div class="flex flex-col gap-sm">
-				<small>{ device.Addr }</small>
-				<strong>{ device.Name }</strong>
-				@PageHome_SectionDevices_DeviceError(device.ID, nil, false)
-			</div>
-			<div class="button-group">
-				@EditIconButton(&HXProps{
-					Method:  http.MethodGet,
-					URL:     HxUrlEditDeviceDialog(&device.ID),
-					Target:  "body",
-					Swap:    "beforeend",
-					Trigger: "click",
-				})
-				{{
+		<div class="card-body flex flex-col gap">
+			<div class="flex gap justify-between items-center">
+				<div class="flex flex-col gap-sm">
+					<small>{ device.Addr }</small>
+					<strong>{ device.Name }</strong>
+				</div>
+				<div class="button-group">
+					@EditIconButton(&HXProps{
+						Method:  http.MethodGet,
+						URL:     HxUrlEditDeviceDialog(&device.ID),
+						Target:  "body",
+						Swap:    "beforeend",
+						Trigger: "click",
+					})
+					{{
 					beforeRequest := powerToggleBeforeRequest(templ.JSExpression("event"))
 					afterRequest := powerToggleAfterRequest(templ.JSExpression("event"))
-				}}
-				@PowerIconButton(&HXProps{
-					Method:        http.MethodPost,
-					URL:           HxUrlTogglePower(device.ID),
-					Target:        "this",
-					Swap:          "none",
-					Trigger:       "click",
-					BeforeRequest: &beforeRequest,
-					AfterRequest:  &afterRequest,
-				})
+					}}
+					@PowerIconButton(&HXProps{
+						Method:        http.MethodPost,
+						URL:           HxUrlTogglePower(device.ID),
+						Target:        "this",
+						Swap:          "none",
+						Trigger:       "click",
+						BeforeRequest: &beforeRequest,
+						AfterRequest:  &afterRequest,
+					})
+				</div>
+			</div>
+			<div>
+				@PageHome_SectionDevices_DeviceError(device.ID, nil, false)
 			</div>
 		</div>
 	</div>
