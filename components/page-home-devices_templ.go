@@ -189,17 +189,18 @@ func PageHome_SectionDevices_Device(device *models.Device) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-
-		beforeRequest := powerToggleBeforeRequest(templ.JSExpression("event"))
-		afterRequest := powerToggleAfterRequest(templ.JSExpression("event"))
 		templ_7745c5c3_Err = PowerIconButton(&HXProps{
-			Method:        http.MethodPost,
-			URL:           HxUrlTogglePower(device.ID),
-			Target:        "this",
-			Swap:          "none",
-			Trigger:       "click",
-			BeforeRequest: &beforeRequest,
-			AfterRequest:  &afterRequest,
+			Method:  http.MethodPost,
+			URL:     HxUrlTogglePower(device.ID),
+			Target:  "this",
+			Swap:    "none",
+			Trigger: "click",
+			BeforeRequest: &templ.ComponentScript{
+				Call: "powerToggleBeforeRequest(event);",
+			},
+			AfterRequest: &templ.ComponentScript{
+				Call: "powerToggleAfterRequest(event);",
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -313,30 +314,6 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 		}
 		return nil
 	})
-}
-
-func powerToggleBeforeRequest(event templ.JSExpression) templ.ComponentScript {
-	return templ.ComponentScript{
-		Name: `__templ_powerToggleBeforeRequest_f921`,
-		Function: `function __templ_powerToggleBeforeRequest_f921(event){const target = event.currentTarget;
-	target.disabled = true;
-	target.classList.add("spinner");
-}`,
-		Call:       templ.SafeScript(`__templ_powerToggleBeforeRequest_f921`, event),
-		CallInline: templ.SafeScriptInline(`__templ_powerToggleBeforeRequest_f921`, event),
-	}
-}
-
-func powerToggleAfterRequest(event templ.JSExpression) templ.ComponentScript {
-	return templ.ComponentScript{
-		Name: `__templ_powerToggleAfterRequest_0d42`,
-		Function: `function __templ_powerToggleAfterRequest_0d42(event){const target = event.currentTarget;
-	target.disabled = false;
-	target.classList.remove("spinner");
-}`,
-		Call:       templ.SafeScript(`__templ_powerToggleAfterRequest_0d42`, event),
-		CallInline: templ.SafeScriptInline(`__templ_powerToggleAfterRequest_0d42`, event),
-	}
 }
 
 var _ = templruntime.GeneratedTemplate

@@ -63,18 +63,18 @@ templ PageHome_SectionDevices_Device(device *models.Device) {
 						Swap:    "beforeend",
 						Trigger: "click",
 					})
-					{{
-					beforeRequest := powerToggleBeforeRequest(templ.JSExpression("event"))
-					afterRequest := powerToggleAfterRequest(templ.JSExpression("event"))
-					}}
 					@PowerIconButton(&HXProps{
-						Method:        http.MethodPost,
-						URL:           HxUrlTogglePower(device.ID),
-						Target:        "this",
-						Swap:          "none",
-						Trigger:       "click",
-						BeforeRequest: &beforeRequest,
-						AfterRequest:  &afterRequest,
+						Method:  http.MethodPost,
+						URL:     HxUrlTogglePower(device.ID),
+						Target:  "this",
+						Swap:    "none",
+						Trigger: "click",
+						BeforeRequest: &templ.ComponentScript{
+							Call: "powerToggleBeforeRequest(event);",
+						},
+						AfterRequest: &templ.ComponentScript{
+							Call: "powerToggleAfterRequest(event);",
+						},
 					})
 				</div>
 			</div>
@@ -107,16 +107,4 @@ templ PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, o
 			{ err.Error() }
 		</div>
 	</div>
-}
-
-script powerToggleBeforeRequest(event templ.JSExpression) {
-	const target = event.currentTarget;
-	target.disabled = true;
-	target.classList.add("spinner");
-}
-
-script powerToggleAfterRequest(event templ.JSExpression) {
-	const target = event.currentTarget;
-	target.disabled = false;
-	target.classList.remove("spinner");
 }
