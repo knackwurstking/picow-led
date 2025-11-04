@@ -84,7 +84,7 @@ templ PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, o
 	if err == nil {
 		<span
 			id={ fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID) }
-			class="display: hidden;"
+			class="device-error"
 			if oob {
 				hx-swap-oob="true"
 			}
@@ -93,7 +93,7 @@ templ PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, o
 	}
 	<div
 		id={ fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID) }
-		class="card destructive compact"
+		class="device-error card destructive compact"
 		if oob {
 			hx-swap-oob="true"
 		}
@@ -102,4 +102,16 @@ templ PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, o
 			{ err.Error() }
 		</div>
 	</div>
+}
+
+script powerToggleBeforeRequest(event templ.JSExpression) {
+	const target = event.currentTarget;
+	target.disabled = true;
+	target.classList.add("spinner");
+}
+
+script powerToggleAfterRequest(event templ.JSExpression) {
+	const target = event.currentTarget;
+	target.disabled = false;
+	target.classList.remove("spinner");
 }

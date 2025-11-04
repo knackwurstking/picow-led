@@ -174,7 +174,7 @@ func PageHome_SectionDevices_Device(device *models.Device) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</strong> <span hx-preserve=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -182,7 +182,7 @@ func PageHome_SectionDevices_Device(device *models.Device) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><div class=\"button-group\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span></div><div class=\"button-group\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -248,13 +248,13 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 86, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 88, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"display: hidden;\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"device-error\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -277,13 +277,13 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 95, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 97, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" class=\"card destructive compact\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" class=\"device-error card destructive compact\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -300,7 +300,7 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(err.Error())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 102, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 104, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -312,6 +312,30 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 		}
 		return nil
 	})
+}
+
+func powerToggleBeforeRequest(event templ.JSExpression) templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_powerToggleBeforeRequest_f921`,
+		Function: `function __templ_powerToggleBeforeRequest_f921(event){const target = event.currentTarget;
+	target.disabled = true;
+	target.classList.add("spinner");
+}`,
+		Call:       templ.SafeScript(`__templ_powerToggleBeforeRequest_f921`, event),
+		CallInline: templ.SafeScriptInline(`__templ_powerToggleBeforeRequest_f921`, event),
+	}
+}
+
+func powerToggleAfterRequest(event templ.JSExpression) templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_powerToggleAfterRequest_0d42`,
+		Function: `function __templ_powerToggleAfterRequest_0d42(event){const target = event.currentTarget;
+	target.disabled = false;
+	target.classList.remove("spinner");
+}`,
+		Call:       templ.SafeScript(`__templ_powerToggleAfterRequest_0d42`, event),
+		CallInline: templ.SafeScriptInline(`__templ_powerToggleAfterRequest_0d42`, event),
+	}
 }
 
 var _ = templruntime.GeneratedTemplate

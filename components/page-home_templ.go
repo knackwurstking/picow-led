@@ -268,28 +268,4 @@ func pageHomeSectionScript() templ.ComponentScript {
 	}
 }
 
-func powerToggleBeforeRequest(event templ.JSExpression) templ.ComponentScript {
-	return templ.ComponentScript{
-		Name: `__templ_powerToggleBeforeRequest_f921`,
-		Function: `function __templ_powerToggleBeforeRequest_f921(event){const target = event.currentTarget;
-	target.disabled = true;
-	target.classList.add("spinner");
-}`,
-		Call:       templ.SafeScript(`__templ_powerToggleBeforeRequest_f921`, event),
-		CallInline: templ.SafeScriptInline(`__templ_powerToggleBeforeRequest_f921`, event),
-	}
-}
-
-func powerToggleAfterRequest(event templ.JSExpression) templ.ComponentScript {
-	return templ.ComponentScript{
-		Name: `__templ_powerToggleAfterRequest_0d42`,
-		Function: `function __templ_powerToggleAfterRequest_0d42(event){const target = event.currentTarget;
-	target.disabled = false;
-	target.classList.remove("spinner");
-}`,
-		Call:       templ.SafeScript(`__templ_powerToggleAfterRequest_0d42`, event),
-		CallInline: templ.SafeScriptInline(`__templ_powerToggleAfterRequest_0d42`, event),
-	}
-}
-
 var _ = templruntime.GeneratedTemplate
