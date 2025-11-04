@@ -1,56 +1,65 @@
 # TODO
 
+## Systemd Service File and Server Setup
+
+- [ ] Create a service file for systemd
+- [ ] Deploy the application to the server
+
+## Server Logs
+
+- [ ] Improve all server logs with AI assistance
+
 ## Assets System
 
-- [x] Utilize the assets system from the previous project (pg-press) or integrate it into the UI library repository.
+- [x] Use the assets system from the previous project (pg-press) or incorporate it into the UI library repository.
 
 ## Models
 
-- [x] Rename service model type files
-- [x] Add missing json struct tags
+- [x] Rename the model type files for services
+- [x] Ensure all JSON struct tags are present
 
 ## SQLite Database
 
-- [x] Open the database using a flag-specified path.
-- [x] Establish tables and models:
+- [x] Configure the database to open using a path specified by a flag.
+- [x] Define and set up tables and models:
   - Devices
-  - Device Setups
+  - ~Device Setups~
   - Colors
   - Groups
   - Device Control
-- [x] Service DeviceControl needs to be handled by the Device service, if a device got deleted, also remove the device from the DeviceControl table.
+- [x] Handle the DeviceControl service: If a device is deleted, remove it from the DeviceControl table as well.
 
 ## Router, UI, Handlers
 
-### Layout
+### Layout Enhancements
 
-- [x] Incorporate icons into the layout.
-- [x] Include the manifest JSON file.
+- [x] Integrate icons into the layout design.
+- [x] Incorporate the manifest JSON file into the project.
 
 ### Home Section: Devices
 
-- [x] Implement the edit dialog.
-- [x] Add a delete button to the `DialogEditDevice` component and update or add the corresponding handler.
-- [x] Render the devices list.
-- [x] Create a new device dialog (`DialogNewDevice`).
-- [x] Create an edit device dialog (`DialogEditDevice`).
-- [ ] Implement power toggle functionality (on/off).
+- [x] Implement an edit dialog for devices.
+- [x] Add a delete button to the `DialogEditDevice` component and add or update the corresponding handler.
+- [x] Display the list of devices on the home screen.
+- [x] Develop a dialog for creating a new device (`DialogNewDevice`).
+- [x] Enhance the `DialogEditDevice` for editing devices.
+- [x] Implement toggle functionality for power control (on/off).
 
 ### Home Section: Groups
 
-- [ ] Create an edit dialog for groups.
-- [ ] Render the groups list.
-- [ ] Develop a new group dialog (`DialogNewGroup`).
-- [ ] Build an edit group dialog (`DialogEditGroup`).
+- [ ] Build an edit dialog specifically for managing groups.
+- [ ] Display a list of existing groups.
+- [ ] Create a new group dialog (`DialogNewGroup`).
+- [ ] Construct an edit dialog for managing group settings (`DialogEditGroup`).
 
 ## Device Control Handling
 
-- [x] Establish a new package `package control`.
-- Refactor the service handlers to use control, ensuring that all operations are handled through these services.
-  - [x] DeviceSetups service should update the picow device after each pin change
-  - [x] Create the current color method
-  - [x] Create the version method
-  - [x] Create the disk usage method
-  - [x] Create the temp method
-- [x] Improve the doc comment for the NewRequest function
-- [x] Add missing info commands (info get: "temp", "disk-usage", "version")
+- [x] Create a new package called `control`.
+- Refactor service handlers to utilize the control package, ensuring all operations go through these services:
+  - [x] ~The DeviceSetups service should update the picow device after each pin change.~
+  - [x] Implement a method to retrieve the current color.
+  - [x] Add functionality to retrieve version information.
+  - [x] Create a method for obtaining disk usage details.
+  - [x] Implement a method to check temperature.
+- [x] Enhance the documentation comment for the `NewRequest` function.
+- [x] Add missing `info` commands for querying device properties like `temp`, `disk-usage`, and `version`.
