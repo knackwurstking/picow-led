@@ -1,0 +1,38 @@
+package components
+
+import (
+	"github.com/knackwurstking/picow-led/models"
+	"net/http"
+)
+
+templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGroup) {
+	{{
+		props := &HXProps{
+			Method:            http.MethodGet,
+			URL:               HxUrlHomeSectionGroups(),
+			Target:            "#" + string(IDPageHome_SectionGroups),
+			Trigger:           "reload from:body",
+			EnableLoadTrigger: enableLoadTrigger,
+		}
+	}}
+	<span { props.Attributes()... }></span>
+	@pageHome_sectionSummary("Groups")
+	if props.EnableLoadTrigger {
+		@Spinner()
+	} else {
+		@pageHome_sectionActions() {
+			@AddIconButton(&HXProps{
+				Method:  http.MethodGet,
+				URL:     HxUrlEditGroupDialog(nil),
+				Target:  "body",
+				Swap:    "beforeend",
+				Trigger: "click",
+			})
+		}
+		if len(groups) > 0 {
+			// TODO: ...
+		} else {
+			<p class="muted ghost italic">No groups found.</p>
+		}
+	}
+}

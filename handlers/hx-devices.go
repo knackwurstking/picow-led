@@ -49,7 +49,8 @@ func (h *HxDevices) PostTogglePower(c echo.Context) error {
 	color, err := h.registry.DeviceControls.TogglePower(deviceID)
 	if err != nil {
 		err = fmt.Errorf("Failed to toggle power for device %d: %s", deviceID, err.Error())
-		OOBSwapDeviceErrorMessage(deviceID, err)
+		OOBRenderPageHomeDeviceError(c, deviceID, err)
+
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 

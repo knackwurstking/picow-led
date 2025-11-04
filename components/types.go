@@ -6,8 +6,6 @@ import (
 	"github.com/a-h/templ"
 )
 
-type ID string
-
 type HXProps struct {
 	URL               templ.SafeURL
 	Method            string

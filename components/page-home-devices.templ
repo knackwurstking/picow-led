@@ -1,0 +1,93 @@
+package components
+
+import (
+	"fmt"
+	"github.com/knackwurstking/picow-led/models"
+	"net/http"
+)
+
+const (
+	IDPageHome_SectionDevices_DeviceError string = "device-%d-error"
+)
+
+templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device) {
+	{{
+		props := &HXProps{
+			Method:            http.MethodGet,
+			URL:               HxUrlHomeSectionDevices(),
+			Target:            "#" + string(IDPageHome_SectionDevices),
+			Trigger:           "reload from:body",
+			EnableLoadTrigger: enableLoadTrigger,
+		}
+	}}
+	<span { props.Attributes()... }></span>
+	@pageHome_sectionSummary("Devices")
+	if props.EnableLoadTrigger {
+		@Spinner()
+	} else {
+		@pageHome_sectionActions() {
+			@AddIconButton(&HXProps{
+				Method:  http.MethodGet,
+				URL:     HxUrlEditDeviceDialog(nil),
+				Target:  "body",
+				Swap:    "beforeend",
+				Trigger: "click",
+			})
+		}
+		if len(devices) > 0 {
+			<div class="flex flex-col gap-lg mt">
+				for _, device := range devices {
+					@PageHome_SectionDevices_Device(device)
+				}
+			</div>
+		} else {
+			<p class="muted ghost italic">No devices found.</p>
+		}
+	}
+}
+
+templ PageHome_SectionDevices_Device(device *models.Device) {
+	<div class="card outline">
+		<div class="card-body flex gap justify-between items-center">
+			<div class="flex flex-col gap-sm">
+				<small>{ device.Addr }</small>
+				<strong>{ device.Name }</strong>
+				@PageHome_SectionDevices_DeviceError(device.ID, nil, true)
+			</div>
+			<div class="button-group">
+				@EditIconButton(&HXProps{
+					Method:  http.MethodGet,
+					URL:     HxUrlEditDeviceDialog(&device.ID),
+					Target:  "body",
+					Swap:    "beforeend",
+					Trigger: "click",
+				})
+				{{
+					beforeRequest := powerToggleBeforeRequest(templ.JSExpression("event"))
+					afterRequest := powerToggleAfterRequest(templ.JSExpression("event"))
+				}}
+				@PowerIconButton(&HXProps{
+					Method:        http.MethodPost,
+					URL:           HxUrlTogglePower(device.ID),
+					Target:        "this",
+					Swap:          "none",
+					Trigger:       "click",
+					BeforeRequest: &beforeRequest,
+					AfterRequest:  &afterRequest,
+				})
+			</div>
+		</div>
+	</div>
+}
+
+templ PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oob bool) {
+	if err == nil {
+		<span id={ fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID) } class="display: hidden;"></span>
+		{{ return }}
+	}
+	<div id={ fmt.Sprintf("device-%d-error", deviceID) } class="card destructive compact">
+		<div class="card-body">
+			{ err.Error() }
+		</div>
+	</div>
+}
