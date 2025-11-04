@@ -29,7 +29,7 @@ func (d *Devices) CreateTable() error {
 }
 
 func (d *Devices) Get(id models.DeviceID) (*models.Device, error) {
-	slog.Debug("Get device from database", "table", "devices", "id", id)
+	slog.Debug("Get device from database", "table", "devices", "device_id", id)
 
 	query := `SELECT * FROM devices WHERE id = ?`
 	device, err := ScanDevice(d.registry.db.QueryRow(query, id))

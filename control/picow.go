@@ -2,7 +2,9 @@ package control
 
 import (
 	"bytes"
+	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"time"
 
@@ -32,6 +34,10 @@ func (p *PicoW) Write(request []byte) (n int, err error) {
 		return 0, err
 	}
 
+	slog.Debug("Write to device",
+		"device_id", p.ID, "device_name", p.Name, "device_addr", p.Addr,
+		"data", string(request))
+
 	n, err = p.Conn.Write(p.EndByte(request))
 	if err != nil {
 		return 0, err
@@ -43,7 +49,7 @@ func (p *PicoW) Write(request []byte) (n int, err error) {
 // Read reads up to len(response) bytes from the Picow device. It returns an error if not connected or no data is read.
 func (p *PicoW) Read(response []byte) (n int, err error) {
 	if p.Conn == nil {
-		return 0, ErrNotConnected
+		return 0, fmt.Errorf("not connected")
 	}
 
 	n, err = p.Conn.Read(response)
@@ -57,7 +63,7 @@ func (p *PicoW) Read(response []byte) (n int, err error) {
 // ReadAll reads data from the Picow device until a newline character is encountered. It returns an error if not connected or no data is read.
 func (p *PicoW) ReadAll() (data []byte, err error) {
 	if p.Conn == nil {
-		return nil, ErrNotConnected
+		return nil, fmt.Errorf("not connected")
 	}
 
 	buffer := bytes.NewBuffer(make([]byte, 0))
@@ -69,7 +75,7 @@ func (p *PicoW) ReadAll() (data []byte, err error) {
 			return nil, err
 		}
 		if n == 0 {
-			return nil, ErrNoData
+			return nil, fmt.Errorf("no data read")
 		}
 
 		if bytes.Contains(chunk, []byte{EndByte}) {
@@ -103,11 +109,14 @@ func (p *PicoW) Connect() error {
 
 // Close closes the connection to the Picow device.
 func (p *PicoW) Close() error {
-	if err := p.Conn.Close(); err != nil {
-		return err
+	if p.Conn != nil {
+		if err := p.Conn.Close(); err != nil {
+			return err
+		}
+
+		p.Conn = nil
 	}
 
-	p.Conn = nil
 	return nil
 }
 

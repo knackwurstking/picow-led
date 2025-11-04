@@ -25,6 +25,10 @@ type Request struct {
 
 // NewRequest creates a new Request instance with the specified parameters.
 func NewRequest(id RequestID, t Type, group string, command string, args ...string) *Request {
+	if args == nil {
+		args = make([]string, 0)
+	}
+
 	return &Request{
 		ID:          id,
 		Type:        t,

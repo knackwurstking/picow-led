@@ -46,15 +46,17 @@ func setupDevices(r *services.Registry) {
 		wg.Go(func() {
 			pins, err := r.DeviceControls.GetPins(device.ID)
 			if err != nil {
-				slog.Error("Failed to get device setup",
-					"device_id", device.ID, "device", device.Name, "error", err)
+				slog.Error("Failed to get device pins",
+					"device_id", device.ID,
+					"device_name", device.Name, "device_addr", device.Addr,
+					"error", err)
 				return
 			}
 
 			// This will get the color from the picow device and auto update the database
 			color, err := r.DeviceControls.GetCurrentColor(device.ID)
 			if err != nil {
-				slog.Error("Failed to get device control",
+				slog.Error("Failed to get device color",
 					"device_id", device.ID, "device", device.Name, "error", err)
 				return
 			}

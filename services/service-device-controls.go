@@ -109,22 +109,19 @@ func (p *DeviceControls) Delete(deviceID models.DeviceID) error {
 }
 
 func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
-	slog.Debug("Get device pins from database", "table", "device_controls", "id", deviceID)
+	slog.Debug("Get device pins from database", "table", "device_controls", "device_id", deviceID)
 
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
+		if err == ErrNotFound {
+			return nil, fmt.Errorf("device %d not found", deviceID)
+		}
 		return nil, err
 	}
 
 	pins, err := control.GetPins(device)
 	if err != nil {
-		return nil, err
-	}
-
-	// Store the pins in the database
-	_, err = p.registry.db.Exec("UPDATE device_controls SET pins = ? WHERE device_id = ?", pins, deviceID)
-	if err != nil {
-		return nil, HandleSqlError(err)
+		return nil, fmt.Errorf("failed to get device pins: %v", err)
 	}
 
 	return pins, nil
@@ -143,7 +140,7 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 			return nil, err
 		}
 
-		if err = p.setInitialColumn(device.ID); err != nil {
+		if err = p.setInitialEntry(device.ID); err != nil {
 			return nil, err
 		}
 	}
@@ -193,6 +190,8 @@ func (p *DeviceControls) GetTemperature(deviceID models.DeviceID) (float64, erro
 }
 
 func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) {
+	slog.Debug("Toggle power for device", "device_id", deviceID)
+
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return nil, err
@@ -203,6 +202,7 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) 
 	if err != nil {
 		return nil, err
 	}
+	slog.Debug("Current color", "color", currentColor)
 
 	if slices.Max(currentColor) > 0 { // Just get the color for turning OFF
 		newColor = make([]uint8, len(currentColor))
@@ -229,20 +229,19 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) 
 	return newColor, control.SetColor(device, newColor...)
 }
 
-func (p *DeviceControls) setInitialColumn(deviceID models.DeviceID) error {
+func (p *DeviceControls) setInitialEntry(deviceID models.DeviceID) error {
 	pins, err := p.GetPins(deviceID)
 	if err != nil {
-		return fmt.Errorf("failed to get pins for device %d: %v", deviceID, err)
+		return err
 	}
 
-	// Create the initial color (duty) for each pin
-	initialColor := make([]uint8, len(pins))
-	for i := range initialColor {
-		initialColor[i] = 255 // NOTE: Set initial default color (255)
+	color := make([]uint8, len(pins))
+	for i, _ := range pins {
+		color[i] = 255
 	}
 
-	deviceControl := models.NewDeviceControl(deviceID, initialColor)
-	if _, err := p.Add(deviceControl); err != nil {
+	data := models.NewDeviceControl(deviceID, color)
+	if _, err := p.Add(data); err != nil {
 		return err
 	}
 

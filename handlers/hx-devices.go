@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/knackwurstking/picow-led/services"
@@ -38,6 +39,8 @@ func (h *HxDevices) Delete(c echo.Context) error {
 }
 
 func (h *HxDevices) PostTogglePower(c echo.Context) error {
+	slog.Info("Toggle power for device")
+
 	deviceID, err := QueryParamDeviceID(c, "id", false)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest,
