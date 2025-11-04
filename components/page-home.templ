@@ -41,10 +41,10 @@ templ pageHome_sectionActions() {
 
 script pageHomeSectionScript() {
 	// Keep details tag state (open/closed)
-	document.addEventListener("DOMContentLoaded", func() {
+	document.addEventListener("DOMContentLoaded", function() {
 		const allDetails = document.querySelectorAll("details");
-		allDetails.forEach((detail) => {
-			detail.addEventListener("toggle", () => {
+		allDetails.forEach(function(detail) {
+			detail.addEventListener("toggle", function() {
 				if (!detail.id) return;
 				localStorage.setItem(detail.id, detail.open.toString());
 			});
