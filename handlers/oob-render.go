@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"fmt"
+	"log/slog"
 
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/models"
@@ -9,6 +9,8 @@ import (
 )
 
 func OOBRenderPageHomeDeviceError(c echo.Context, deviceID models.DeviceID, err error) {
-	// TODO: Swap error with "#device-%d-error"
-	id := fmt.Sprintf(components.IDPageHome_SectionDevices_DeviceError, deviceID)
+	deviceError := components.PageHome_SectionDevices_DeviceError(deviceID, err, true)
+	if err := deviceError.Render(c.Request().Context(), c.Response()); err != nil {
+		slog.Error("Failed to render device error page", "deviceID", deviceID, "error", err)
+	}
 }
