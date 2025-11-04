@@ -1,6 +1,7 @@
 package components
 
 import (
+	"fmt"
 	"github.com/knackwurstking/picow-led/models"
 	"net/http"
 )
@@ -17,10 +18,10 @@ templ PageHome() {
 			AdditionalHead: PageHome_AdditionalHead(),
 		},
 	) {
-		@pageHome_Section(IDSectionDevices) {
+		@pageHome_section(IDSectionDevices) {
 			@PageHome_SectionDevices(true, nil)
 		}
-		@pageHome_Section(IDSectionGroups) {
+		@pageHome_section(IDSectionGroups) {
 			@PageHome_SectionGroups(true, nil)
 		}
 	}
@@ -40,11 +41,11 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 		}
 	}}
 	<span { props.Attributes()... }></span>
-	@pageHome_SectionSummary("Devices")
+	@pageHome_section_summary("Devices")
 	if props.EnableLoadTrigger {
 		@Spinner()
 	} else {
-		@pageHome_SectionActions() {
+		@pageHome_section_actions() {
 			@AddIconButton(&HXProps{
 				Method:  http.MethodGet,
 				URL:     HxUrlEditDeviceDialog(nil),
@@ -76,11 +77,11 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 		}
 	}}
 	<span { props.Attributes()... }></span>
-	@pageHome_SectionSummary("Groups")
+	@pageHome_section_summary("Groups")
 	if props.EnableLoadTrigger {
 		@Spinner()
 	} else {
-		@pageHome_SectionActions() {
+		@pageHome_section_actions() {
 			@AddIconButton(&HXProps{
 				Method:  http.MethodGet,
 				URL:     HxUrlEditGroupDialog(nil),
@@ -103,6 +104,7 @@ templ PageHome_Device(device *models.Device) {
 			<div class="flex flex-col gap-sm">
 				<small>{ device.Addr }</small>
 				<strong>{ device.Name }</strong>
+				@PageHome_Device_Error(device.ID, nil, true)
 			</div>
 			<div class="button-group">
 				@EditIconButton(&HXProps{
@@ -130,19 +132,31 @@ templ PageHome_Device(device *models.Device) {
 	</div>
 }
 
-templ pageHome_Section(id ID) {
+templ PageHome_Device_Error(deviceID models.DeviceID, err error, oob bool) {
+	if err == nil {
+		<span id={ fmt.Sprintf("device-%d-error", deviceID) } class="display: hidden;"></span>
+		{{ return }}
+	}
+	<div id={ fmt.Sprintf("device-%d-error", deviceID) } class="card destructive compact">
+		<div class="card-body">
+			{ err.Error() }
+		</div>
+	</div>
+}
+
+templ pageHome_section(id ID) {
 	<details id={ id }>
 		{ children... }
 	</details>
 }
 
-templ pageHome_SectionSummary(title string) {
+templ pageHome_section_summary(title string) {
 	<summary class="flex gap justify-between">
 		<span>{ title }</span>
 	</summary>
 }
 
-templ pageHome_SectionActions() {
+templ pageHome_section_actions() {
 	<div class="w-full flex gap justify-end items-center">
 		{ children... }
 	</div>
