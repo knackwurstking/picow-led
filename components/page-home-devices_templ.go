@@ -190,17 +190,13 @@ func PageHome_SectionDevices_Device(device *models.Device) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = PowerIconButton(&HXProps{
-			Method:  http.MethodPost,
-			URL:     HxUrlTogglePower(device.ID),
-			Target:  "this",
-			Swap:    "none",
-			Trigger: "click",
-			BeforeRequest: &templ.ComponentScript{
-				Call: "powerToggleBeforeRequest(event);",
-			},
-			AfterRequest: &templ.ComponentScript{
-				Call: "powerToggleAfterRequest(event);",
-			},
+			Method:        http.MethodPost,
+			URL:           HxUrlTogglePower(device.ID),
+			Target:        "this",
+			Swap:          "none",
+			Trigger:       "click",
+			BeforeRequest: "powerToggleBeforeRequest(event);",
+			AfterRequest:  "powerToggleAfterRequest(event);",
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -250,7 +246,7 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 91, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 87, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -279,7 +275,7 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 100, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 96, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -302,7 +298,7 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(err.Error())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 107, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 103, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {

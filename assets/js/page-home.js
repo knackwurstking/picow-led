@@ -1,13 +1,27 @@
 function powerToggleBeforeRequest(event) {
 	const target = event.currentTarget;
 	target.disabled = true;
-	target.classList.add("spinner");
+
+	const spinner = document.createElement("span");
+	spinner.classList.add("spinner");
+
+	target.append(spinner);
+
+	console.debug("Power toggle before request", target);
 }
 
 function powerToggleAfterRequest(event) {
 	const target = event.currentTarget;
 	target.disabled = false;
-	target.classList.remove("spinner");
+
+	const allSpinners = target.querySelectorAll(".spinner");
+	if (allSpinners.length > 0) {
+		allSpinners.forEach(function (spinner) {
+			spinner.remove();
+		});
+	}
+
+	console.debug("Power toggle after request", target);
 }
 
 // Keep details tag state (open/closed)

@@ -13,8 +13,8 @@ type HXProps struct {
 	Swap              string
 	Trigger           string
 	EnableLoadTrigger bool
-	BeforeRequest     *templ.ComponentScript
-	AfterRequest      *templ.ComponentScript
+	BeforeRequest     string
+	AfterRequest      string
 }
 
 func (hx *HXProps) Attributes() templ.Attributes {
@@ -24,10 +24,10 @@ func (hx *HXProps) Attributes() templ.Attributes {
 		"hx-trigger": hx.getTrigger(),
 	}
 
-	if hx.BeforeRequest != nil {
+	if hx.BeforeRequest != "" {
 		attributes["hx-on:htmx:before-request"] = hx.BeforeRequest
 	}
-	if hx.AfterRequest != nil {
+	if hx.AfterRequest != "" {
 		attributes["hx-on:htmx:after-request"] = hx.AfterRequest
 	}
 

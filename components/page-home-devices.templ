@@ -64,17 +64,13 @@ templ PageHome_SectionDevices_Device(device *models.Device) {
 						Trigger: "click",
 					})
 					@PowerIconButton(&HXProps{
-						Method:  http.MethodPost,
-						URL:     HxUrlTogglePower(device.ID),
-						Target:  "this",
-						Swap:    "none",
-						Trigger: "click",
-						BeforeRequest: &templ.ComponentScript{
-							Call: "powerToggleBeforeRequest(event);",
-						},
-						AfterRequest: &templ.ComponentScript{
-							Call: "powerToggleAfterRequest(event);",
-						},
+						Method:        http.MethodPost,
+						URL:           HxUrlTogglePower(device.ID),
+						Target:        "this",
+						Swap:          "none",
+						Trigger:       "click",
+						BeforeRequest: "powerToggleBeforeRequest(event);",
+						AfterRequest:  "powerToggleAfterRequest(event);",
 					})
 				</div>
 			</div>
