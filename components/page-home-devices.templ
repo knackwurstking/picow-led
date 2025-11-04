@@ -82,10 +82,22 @@ templ PageHome_SectionDevices_Device(device *models.Device) {
 
 templ PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oob bool) {
 	if err == nil {
-		<span id={ fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID) } class="display: hidden;"></span>
+		<span
+			id={ fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID) }
+			class="display: hidden;"
+			if oob {
+				hx-swap-oob="true"
+			}
+		></span>
 		{{ return }}
 	}
-	<div id={ fmt.Sprintf("device-%d-error", deviceID) } class="card destructive compact">
+	<div
+		id={ fmt.Sprintf("device-%d-error", deviceID) }
+		class="card destructive compact"
+		if oob {
+			hx-swap-oob="true"
+		}
+	>
 		<div class="card-body">
 			{ err.Error() }
 		</div>
