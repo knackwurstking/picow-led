@@ -85,7 +85,7 @@ templ PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, currentColor
 	}}
 	<button
 		id={ fmt.Sprintf(IDPageHome_SectionDevices_PowerButton, deviceID) }
-		class="icon ghost"
+		class="power-button icon ghost"
 		style={ fmt.Sprintf("color: %s;", buttonColor) }
 		hx-post={ HxUrlTogglePower(deviceID) }
 		hx-target="this"
@@ -95,6 +95,8 @@ templ PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, currentColor
 			hx-swap-oob="true"
 		}
 		title="Edit"
+		hx-on::before-request="event.currentTarget.disabled = true"
+		hx-on::after-request="event.currentTarget.disabled = false"
 	>
 		<i class="bi bi-power"></i>
 	</button>
