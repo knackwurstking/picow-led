@@ -76,7 +76,7 @@ templ PageHome_SectionDevices_Device(device *models.ResolvedDevice) {
 
 templ PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, currentColor []uint8, oob bool) {
 	{{
-		buttonColor := "orange"
+		buttonColor := "red"
 		if len(currentColor) > 0 {
 			if slices.Max(currentColor) > 0 {
 				buttonColor = "green"

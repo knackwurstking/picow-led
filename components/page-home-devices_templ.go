@@ -232,7 +232,7 @@ func PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, currentColor 
 		}
 		ctx = templ.ClearChildren(ctx)
 
-		buttonColor := "orange"
+		buttonColor := "red"
 		if len(currentColor) > 0 {
 			if slices.Max(currentColor) > 0 {
 				buttonColor = "green"
@@ -277,7 +277,7 @@ func PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, currentColor 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" hx-target=\"this\" hx-swap=\"none\" hx-trigger=\"click\" onclick=\"event.currentTarget.disabled = true;\" hx-on:htmx:after-request=\"event.currentTarget.disabled = true;\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" hx-target=\"this\" hx-swap=\"none\" hx-trigger=\"click\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -324,7 +324,7 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 108, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 106, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -353,7 +353,7 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(IDPageHome_SectionDevices_DeviceError, deviceID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 117, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 115, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -376,7 +376,7 @@ func PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oo
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(err.Error())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 124, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/page-home-devices.templ`, Line: 122, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
