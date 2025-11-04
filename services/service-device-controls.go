@@ -151,7 +151,7 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 		// Create the initial color (duty) for each pin
 		initialColor := make([]uint8, len(pins))
 		for i := range initialColor {
-			initialColor[i] = 255
+			initialColor[i] = 255 // NOTE: Set initial default color (255)
 		}
 
 		deviceControl = models.NewDeviceControl(device.ID, initialColor)
