@@ -20,11 +20,10 @@ build:
 	go build -o ./bin/picow-led $(BINARY_NAME)
 
 # Run the application
-dev-run:
+run:
 	@echo "Running server without building..."
 	make init
 	make generate
-	make test
 	go run $(BINARY_NAME) server -debug -log-format=text -database-path=$(DATABASE_PATH)
 
 test:
