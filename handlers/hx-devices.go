@@ -60,6 +60,9 @@ func (h *HxDevices) PostTogglePower(c echo.Context) error {
 		Color: color,
 	})
 
+	// Remove any existing error message
+	OOBRenderPageHomeDeviceError(c, deviceID, nil)
+
 	c.Response().Header().Set("HX-Trigger-After-Settle", string(data))
 	// TODO: Set the correct trigger, right now there is no trigger needed
 	//c.Response().Header().Set("HX-Trigger", "reload")
