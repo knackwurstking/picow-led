@@ -131,13 +131,13 @@ func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
 func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, error) {
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get device: %v", err)
 	}
 
 	deviceControl, err := p.Get(device.ID)
 	if err != nil {
 		if err != ErrNotFound {
-			return nil, err
+			return nil, fmt.Errorf("failed to get device control: %v", err)
 		}
 
 		if err = p.setInitialEntry(device.ID); err != nil {
