@@ -17,6 +17,7 @@ templ PageHome() {
 		@pageHome_section(IDPageHome_SectionGroups) {
 			@PageHome_SectionGroups(true, nil)
 		}
+		@pageHomeSectionScript()
 	}
 }
 
@@ -36,6 +37,23 @@ templ pageHome_sectionActions() {
 	<div class="w-full flex gap justify-end items-center">
 		{ children... }
 	</div>
+}
+
+script pageHomeSectionScript() {
+	// Keep details tag state (open/closed)
+	document.addEventListener("DOMContentLoaded", func() {
+		const allDetails = document.querySelectorAll("details");
+		allDetails.forEach((detail) => {
+			detail.addEventListener("toggle", () => {
+				if (!detail.id) return;
+				localStorage.setItem(detail.id, detail.open.toString());
+			});
+			const savedState = localStorage.getItem(detail.id);
+			if (savedState !== null) {
+				detail.open = savedState === "true";
+			}
+		});
+	});
 }
 
 script powerToggleBeforeRequest(event templ.JSExpression) {
