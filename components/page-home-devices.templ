@@ -46,6 +46,7 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 	}
 }
 
+// TODO: Find a good way to store/preview/show the current device color
 templ PageHome_SectionDevices_Device(device *models.Device) {
 	<div class="card outline">
 		<div class="card-body flex flex-col gap">
