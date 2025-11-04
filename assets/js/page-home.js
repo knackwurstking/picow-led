@@ -6,8 +6,6 @@ function powerToggleBeforeRequest(event) {
 	spinner.classList.add("spinner");
 
 	target.append(spinner);
-
-	console.debug("Power toggle before request", target);
 }
 
 function powerToggleAfterRequest(event) {
@@ -20,8 +18,6 @@ function powerToggleAfterRequest(event) {
 			spinner.remove();
 		});
 	}
-
-	console.debug("Power toggle after request", target);
 }
 
 // Keep details tag state (open/closed)
