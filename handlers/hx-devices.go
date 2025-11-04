@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -42,7 +41,7 @@ func (h *HxDevices) PostTogglePower(c echo.Context) error {
 	deviceID, err := QueryParamDeviceID(c, "id", false)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest,
-			fmt.Errorf("Failed to toggle power for device %d: %s", deviceID, err.Error()),
+			fmt.Errorf("Failed to get device id from query parameter: %s", err.Error()),
 		)
 	}
 
@@ -50,22 +49,14 @@ func (h *HxDevices) PostTogglePower(c echo.Context) error {
 	if err != nil {
 		err = fmt.Errorf("Failed to toggle power for device %d: %s", deviceID, err.Error())
 		OOBRenderPageHomeDeviceError(c, deviceID, err)
+		OOBRenderPageHomeDevicePowerButton(c, deviceID, color)
 
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	data, _ := json.Marshal(struct {
-		Color []uint8 `json:"color"`
-	}{
-		Color: color,
-	})
-
 	// Remove any existing error message
 	OOBRenderPageHomeDeviceError(c, deviceID, nil)
-
-	c.Response().Header().Set("HX-Trigger-After-Settle", string(data))
-	// TODO: Set the correct trigger, right now there is no trigger needed
-	//c.Response().Header().Set("HX-Trigger", "reload")
+	OOBRenderPageHomeDevicePowerButton(c, deviceID, color)
 
 	return nil
 }

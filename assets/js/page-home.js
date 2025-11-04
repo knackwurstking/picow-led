@@ -1,25 +1,3 @@
-function powerToggleBeforeRequest(event) {
-	const target = event.currentTarget;
-	target.disabled = true;
-
-	const spinner = document.createElement("span");
-	spinner.classList.add("spinner");
-
-	target.append(spinner);
-}
-
-function powerToggleAfterRequest(event) {
-	const target = event.currentTarget;
-	target.disabled = false;
-
-	const allSpinners = target.querySelectorAll(".spinner");
-	if (allSpinners.length > 0) {
-		allSpinners.forEach(function (spinner) {
-			spinner.remove();
-		});
-	}
-}
-
 // Keep details tag state (open/closed)
 document.addEventListener("DOMContentLoaded", function () {
 	const allDetails = document.querySelectorAll("details");

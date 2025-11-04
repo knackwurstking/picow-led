@@ -14,3 +14,10 @@ func OOBRenderPageHomeDeviceError(c echo.Context, deviceID models.DeviceID, err 
 		slog.Error("Failed to render device error page", "deviceID", deviceID, "error", err)
 	}
 }
+
+func OOBRenderPageHomeDevicePowerButton(c echo.Context, deviceID models.DeviceID, color []uint8) {
+	devicePowerButton := components.PageHome_SectionDevices_PowerButton(deviceID, color, true)
+	if err := devicePowerButton.Render(c.Request().Context(), c.Response()); err != nil {
+		slog.Error("Failed to render device power button page", "deviceID", deviceID, "error", err)
+	}
+}

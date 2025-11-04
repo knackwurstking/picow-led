@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/models"
 	"net/http"
+	"slices"
 )
 
 const (
+	IDPageHome_SectionDevices_PowerButton string = "device-%d-power-button"
 	IDPageHome_SectionDevices_DeviceError string = "device-%d-error"
 )
 
@@ -46,7 +48,6 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 	}
 }
 
-// TODO: Find a good way to store/preview/show the current device color
 templ PageHome_SectionDevices_Device(device *models.Device) {
 	<div class="card outline">
 		<div class="card-body flex flex-col gap">
@@ -63,15 +64,8 @@ templ PageHome_SectionDevices_Device(device *models.Device) {
 						Swap:    "beforeend",
 						Trigger: "click",
 					})
-					@PowerIconButton(&HXProps{
-						Method:        http.MethodPost,
-						URL:           HxUrlTogglePower(device.ID),
-						Target:        "this",
-						Swap:          "none",
-						Trigger:       "click",
-						BeforeRequest: "powerToggleBeforeRequest(event);",
-						AfterRequest:  "powerToggleAfterRequest(event);",
-					})
+					// TODO: Pass device color here on initial render, resolve device data for this (type missing)
+					@PageHome_SectionDevices_PowerButton(device.ID, nil, false)
 				</div>
 			</div>
 			<div>
@@ -79,6 +73,34 @@ templ PageHome_SectionDevices_Device(device *models.Device) {
 			</div>
 		</div>
 	</div>
+}
+
+templ PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, color []uint8, oob bool) {
+	{{
+		buttonColor := "red"
+		if len(color) > 0 {
+			if slices.Max(color) > 0 {
+				buttonColor = "green"
+			}
+		}
+	}}
+	<button
+		id={ fmt.Sprintf(IDPageHome_SectionDevices_PowerButton, deviceID) }
+		class="icon ghost"
+		style={ fmt.Sprintf("color: %s;", buttonColor) }
+		hx-post={ HxUrlTogglePower(deviceID) }
+		hx-target="this"
+		hx-swap="none"
+		hx-trigger="click"
+		hx-before-request="event.currentTarget.disabled = true;"
+		hx-after-request="event.currentTarget.disabled = false;"
+		if oob {
+			hx-swap-oob="true"
+		}
+		title="Edit"
+	>
+		<i class="bi bi-power"></i>
+	</button>
 }
 
 templ PageHome_SectionDevices_DeviceError(deviceID models.DeviceID, err error, oob bool) {
