@@ -54,7 +54,6 @@ func (h *HxDevices) PostTogglePower(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	// Remove any existing error message
 	OOBRenderPageHomeDeviceError(c, deviceID, nil)
 	OOBRenderPageHomeDevicePowerButton(c, deviceID, color)
 

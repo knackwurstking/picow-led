@@ -12,7 +12,7 @@ const (
 	IDPageHome_SectionDevices_DeviceError string = "device-%d-error"
 )
 
-templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device) {
+templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.ResolvedDevice) {
 	{{
 		props := &HXProps{
 			Method:            http.MethodGet,
@@ -48,7 +48,7 @@ templ PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Device)
 	}
 }
 
-templ PageHome_SectionDevices_Device(device *models.Device) {
+templ PageHome_SectionDevices_Device(device *models.ResolvedDevice) {
 	<div class="card outline">
 		<div class="card-body flex flex-col gap">
 			<div class="flex gap justify-between items-center">
@@ -64,8 +64,7 @@ templ PageHome_SectionDevices_Device(device *models.Device) {
 						Swap:    "beforeend",
 						Trigger: "click",
 					})
-					// TODO: Pass device color here on initial render, resolve device data for this (type missing)
-					@PageHome_SectionDevices_PowerButton(device.ID, nil, false)
+					@PageHome_SectionDevices_PowerButton(device.ID, device.CurrentColor, false)
 				</div>
 			</div>
 			<div>
@@ -75,11 +74,11 @@ templ PageHome_SectionDevices_Device(device *models.Device) {
 	</div>
 }
 
-templ PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, color []uint8, oob bool) {
+templ PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, currentColor []uint8, oob bool) {
 	{{
-		buttonColor := "red"
-		if len(color) > 0 {
-			if slices.Max(color) > 0 {
+		buttonColor := "orange"
+		if len(currentColor) > 0 {
+			if slices.Max(currentColor) > 0 {
 				buttonColor = "green"
 			}
 		}
@@ -92,8 +91,6 @@ templ PageHome_SectionDevices_PowerButton(deviceID models.DeviceID, color []uint
 		hx-target="this"
 		hx-swap="none"
 		hx-trigger="click"
-		hx-before-request="event.currentTarget.disabled = true;"
-		hx-after-request="event.currentTarget.disabled = false;"
 		if oob {
 			hx-swap-oob="true"
 		}

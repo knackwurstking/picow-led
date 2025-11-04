@@ -1,8 +1,24 @@
 package services
 
 import (
+	"log/slog"
+
 	"github.com/knackwurstking/picow-led/models"
 )
+
+func ResolveDevices(r *Registry, devices ...*models.Device) ([]*models.ResolvedDevice, error) {
+	resolvedDevices := make([]*models.ResolvedDevice, 0, len(devices))
+
+	for _, device := range devices {
+		color, err := r.DeviceControls.GetCurrentColor(device.ID)
+		if err != nil {
+			slog.Warn("Failed to get current color for device", "device_id", device.ID, "error", err)
+		}
+		resolvedDevices = append(resolvedDevices, models.NewResolvedDevice(device, color))
+	}
+
+	return resolvedDevices, nil
+}
 
 func ResolveGroups(r *Registry, groups ...*models.Group) ([]*models.ResolvedGroup, error) {
 	resolvedGroups := make([]*models.ResolvedGroup, 0, len(groups))
