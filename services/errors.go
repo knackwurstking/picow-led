@@ -20,7 +20,7 @@ type NotFoundError struct {
 }
 
 func NewNotFoundError(format string, a ...any) error {
-	return NotFoundError{Message: fmt.Sprintf(format, a...)}
+	return &NotFoundError{Message: fmt.Sprintf(format, a...)}
 }
 
 func (e NotFoundError) Error() string {
