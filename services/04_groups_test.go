@@ -41,7 +41,7 @@ func TestAddGroup(t *testing.T) {
 	testGroup1 := models.NewGroup(testGroup1Name, testGroup1Devices)
 
 	// Add the group to the database
-	if _, err := r.Groups.Add(testGroup1); err != ErrInvalidDeviceID {
+	if _, err := r.Groups.Add(testGroup1); err != ErrInvalidGroupDeviceID {
 		t.Fatalf("Failed to add group: %#v", err)
 	}
 
@@ -81,7 +81,7 @@ func TestUpdateGroup(t *testing.T) {
 	group1.ID = 1
 
 	err := r.Groups.Update(group1)
-	if err != ErrInvalidDeviceID {
+	if err != ErrInvalidGroupDeviceID {
 		t.Fatal("Expected error updating group with invalid devices")
 	}
 

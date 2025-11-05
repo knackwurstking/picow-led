@@ -125,12 +125,12 @@ func (g *Groups) Delete(id models.GroupID) error {
 
 func (g *Groups) validateDevices(devices []models.DeviceID) error {
 	if slices.Contains(devices, 0) {
-		return ErrInvalidDeviceID
+		return ErrInvalidGroupDeviceID
 	}
 	// Check database if this device exists
 	for _, device := range devices {
-		if _, err := g.registry.Devices.Get(device); err != nil && err == ErrNotFound {
-			return ErrInvalidDeviceID
+		if _, err := g.registry.Devices.Get(device); err != nil && IsNotFoundError(err) {
+			return ErrInvalidGroupDeviceID
 		} else if err != nil {
 			return err
 		}

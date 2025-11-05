@@ -63,7 +63,7 @@ func TestRemoveDevice(t *testing.T) {
 		t.Fatalf("Failed to remove device: %v", err)
 	}
 
-	if _, err := r.DeviceControls.Get(deviceID); err != ErrNotFound {
+	if _, err := r.DeviceControls.Get(deviceID); !IsNotFoundError(err) {
 		t.Errorf("Expected not found error, the device control for device_id %d got not removed: %v", deviceID, err)
 	}
 }

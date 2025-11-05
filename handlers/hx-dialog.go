@@ -45,7 +45,7 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 	if deviceID > 0 {
 		device, err = h.registry.Devices.Get(deviceID)
 		if err != nil {
-			if services.ErrNotFound == err {
+			if services.IsNotFoundError(err) {
 				return echo.NewHTTPError(http.StatusBadRequest,
 					fmt.Errorf("device with ID %d not found", deviceID))
 			}

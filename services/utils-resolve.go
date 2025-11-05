@@ -28,7 +28,7 @@ func ResolveGroups(r *Registry, groups ...*models.Group) ([]*models.ResolvedGrou
 
 		for _, deviceID := range group.Devices {
 			device, err := r.Devices.Get(deviceID)
-			if err != nil && err != ErrNotFound {
+			if err != nil && !IsNotFoundError(err) {
 				return nil, err
 			}
 
