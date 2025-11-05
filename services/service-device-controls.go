@@ -37,7 +37,7 @@ func (p *DeviceControls) CreateTable() error {
 // Get retrieves a device control record from the database by device ID.
 // It returns a DeviceControl instance and an error if the record is not found or execution fails.
 func (p *DeviceControls) Get(deviceID models.DeviceID) (*models.DeviceControl, error) {
-	slog.Debug("Get device control from database", "table", "device_controls", "id", deviceID)
+	slog.Debug("Get device control record", "id", deviceID)
 
 	query := `SELECT * FROM device_controls WHERE device_id = ?`
 	row := p.registry.db.QueryRow(query, deviceID)
@@ -48,7 +48,7 @@ func (p *DeviceControls) Get(deviceID models.DeviceID) (*models.DeviceControl, e
 // List retrieves all device control records from the database.
 // It returns a slice of DeviceControl instances and an error if execution fails.
 func (p *DeviceControls) List() ([]*models.DeviceControl, error) {
-	slog.Debug("List device controls from database", "table", "device_controls")
+	slog.Debug("Get all device control records")
 
 	query := `SELECT * FROM device_controls`
 	rows, err := p.registry.db.Query(query)
@@ -72,7 +72,12 @@ func (p *DeviceControls) List() ([]*models.DeviceControl, error) {
 // Add inserts a new device control record into the database.
 // It returns the inserted device ID and an error if execution fails.
 func (p *DeviceControls) Add(deviceControl *models.DeviceControl) (models.DeviceID, error) {
-	slog.Debug("Add device control to database", "table", "device_controls", "device_id", deviceControl.DeviceID)
+	if !deviceControl.Validate() {
+		return 0, ErrInvalidDeviceSetup
+	}
+
+	slog.Debug("Adding device control", "id", deviceControl.DeviceID,
+		"color", deviceControl.Color, "modified", deviceControl.ModifiedAt)
 
 	query := `INSERT INTO device_controls (device_id, color) VALUES (?, ?)`
 	result, err := p.registry.db.Exec(query, deviceControl.DeviceID, deviceControl.Color)
@@ -91,7 +96,12 @@ func (p *DeviceControls) Add(deviceControl *models.DeviceControl) (models.Device
 // Update updates an existing device control record in the database.
 // It returns an error if execution fails or the record is not found.
 func (p *DeviceControls) Update(deviceControl *models.DeviceControl) error {
-	slog.Debug("Update device control in database", "table", "device_controls", "id", deviceControl.DeviceID)
+	if !deviceControl.Validate() {
+		return ErrInvalidDeviceSetup
+	}
+
+	slog.Debug("Updating device control", "id", deviceControl.DeviceID,
+		"color", deviceControl.Color, "modified", deviceControl.ModifiedAt)
 
 	query := `UPDATE device_controls SET color = ? WHERE device_id = ?`
 	_, err := p.registry.db.Exec(query, deviceControl.Color, deviceControl.DeviceID)
@@ -101,7 +111,7 @@ func (p *DeviceControls) Update(deviceControl *models.DeviceControl) error {
 // Delete removes the record associated with a given device ID from the database.
 // It returns an error if the execution fails or if the device is not found.
 func (p *DeviceControls) Delete(deviceID models.DeviceID) error {
-	slog.Debug("Delete device control from database", "table", "device_controls", "id", deviceID)
+	slog.Debug("Deleting device control", "id", deviceID)
 
 	query := `DELETE FROM device_controls WHERE device_id = ?`
 	_, err := p.registry.db.Exec(query, deviceID)
@@ -109,7 +119,7 @@ func (p *DeviceControls) Delete(deviceID models.DeviceID) error {
 }
 
 func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
-	slog.Debug("Get device pins from database", "table", "device_controls", "device_id", deviceID)
+	slog.Debug("Getting device pins", "id", deviceID)
 
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
@@ -119,6 +129,7 @@ func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
 		return nil, err
 	}
 
+	slog.Debug("Running GetPins from the controls package", "id", deviceID)
 	pins, err := control.GetPins(device)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get device pins: %v", err)
@@ -129,6 +140,8 @@ func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
 
 // CurrentColor retrieves the current color of the device from the database and will auto update the database if the color is different from the stored color and not 0.
 func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, error) {
+	slog.Debug("Getting device current color", "id", deviceID)
+
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get device: %v", err)
@@ -163,6 +176,8 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 }
 
 func (p *DeviceControls) GetVersion(deviceID models.DeviceID) (string, error) {
+	slog.Debug("Get version", "id", deviceID)
+
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return "", err
@@ -172,6 +187,8 @@ func (p *DeviceControls) GetVersion(deviceID models.DeviceID) (string, error) {
 }
 
 func (p *DeviceControls) GetDiskUsage(deviceID models.DeviceID) (*control.DiskUsage, error) {
+	slog.Debug("Get disk usage", "id", deviceID)
+
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return nil, err
@@ -181,6 +198,8 @@ func (p *DeviceControls) GetDiskUsage(deviceID models.DeviceID) (*control.DiskUs
 }
 
 func (p *DeviceControls) GetTemperature(deviceID models.DeviceID) (float64, error) {
+	slog.Debug("Get temperature", "id", deviceID)
+
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return 0, err
@@ -190,7 +209,7 @@ func (p *DeviceControls) GetTemperature(deviceID models.DeviceID) (float64, erro
 }
 
 func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) {
-	slog.Debug("Toggle power for device", "device_id", deviceID)
+	slog.Debug("Toggle power", "id", deviceID)
 
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
@@ -202,7 +221,6 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) 
 	if err != nil {
 		return nil, err
 	}
-	slog.Debug("Current color", "color", currentColor)
 
 	if slices.Max(currentColor) > 0 { // Just get the color for turning OFF
 		newColor = make([]uint8, len(currentColor))
@@ -230,6 +248,8 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) 
 }
 
 func (p *DeviceControls) setInitialEntry(deviceID models.DeviceID) error {
+	slog.Debug("Set the initial entry", "id", deviceID)
+
 	pins, err := p.GetPins(deviceID)
 	if err != nil {
 		return err

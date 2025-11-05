@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/knackwurstking/picow-led/components"
@@ -24,15 +26,17 @@ func (h HXHome) Register(e *echo.Echo) {
 }
 
 func (h HXHome) GetSectionDevices(c echo.Context) error {
+	slog.Info("Render devices section for the home page")
+
 	// Get devices...
 	devices, err := h.registry.Devices.List()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to list devices: %v", err)
 	}
 
 	rDevices, err := services.ResolveDevices(h.registry, devices...)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to resolve devices: %v", err)
 	}
 
 	return components.PageHome_SectionDevices(
@@ -41,16 +45,18 @@ func (h HXHome) GetSectionDevices(c echo.Context) error {
 }
 
 func (h HXHome) GetSectionGroups(c echo.Context) error {
+	slog.Info("Render groups section for the home page")
+
 	// Get groups...
 	groups, err := h.registry.Groups.List()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to list groups: %v", err)
 	}
 
 	// ...resolve them
 	resolvedGroups, err := services.ResolveGroups(h.registry, groups...)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to resolve groups: %v", err)
 	}
 
 	return components.PageHome_SectionGroups(

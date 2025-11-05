@@ -31,7 +31,7 @@ func (g *Groups) CreateTable() error {
 }
 
 func (g *Groups) Get(id models.GroupID) (*models.Group, error) {
-	slog.Debug("Get group from database", "table", "groups", "id", id)
+	slog.Debug("Getting group", "id", id)
 
 	query := `SELECT * FROM groups WHERE id = ?`
 	group, err := ScanGroup(g.registry.db.QueryRow(query, id))
@@ -43,7 +43,7 @@ func (g *Groups) Get(id models.GroupID) (*models.Group, error) {
 }
 
 func (g *Groups) List() ([]*models.Group, error) {
-	slog.Debug("List groups from database", "table", "groups")
+	slog.Debug("Listing groups")
 
 	query := `SELECT * FROM groups`
 	rows, err := g.registry.db.Query(query)
@@ -65,11 +65,15 @@ func (g *Groups) List() ([]*models.Group, error) {
 }
 
 func (g *Groups) Add(group *models.Group) (models.GroupID, error) {
-	slog.Debug("Add group to database", "table", "groups", "group", group)
+	if !group.Validate() {
+		return 0, ErrInvalidGroup
+	}
 
 	if err := g.validateDevices(group.Devices); err != nil {
 		return 0, err
 	}
+
+	slog.Debug("Adding group", "name", group.Name)
 
 	devices, err := json.Marshal(group.Devices)
 	if err != nil {
@@ -91,11 +95,15 @@ func (g *Groups) Add(group *models.Group) (models.GroupID, error) {
 }
 
 func (g *Groups) Update(group *models.Group) error {
-	slog.Debug("Update group in database", "table", "groups", "group", group)
+	if !group.Validate() {
+		return ErrInvalidGroup
+	}
 
 	if err := g.validateDevices(group.Devices); err != nil {
 		return err
 	}
+
+	slog.Debug("Updating group", "id", group.ID, "name", group.Name)
 
 	devices, err := json.Marshal(group.Devices)
 	if err != nil {
@@ -108,7 +116,7 @@ func (g *Groups) Update(group *models.Group) error {
 }
 
 func (g *Groups) Delete(id models.GroupID) error {
-	slog.Debug("Delete group from database", "table", "groups", "id", id)
+	slog.Debug("Deleting group", "id", id)
 
 	query := `DELETE FROM groups WHERE id = ?`
 	_, err := g.registry.db.Exec(query, id)

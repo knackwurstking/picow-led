@@ -7,7 +7,8 @@
 
 ## Server Logs
 
-- [ ] Improve all server logs with AI assistance
+- [x] Improve all server logs
+  - services package
 
 ## Assets System
 

@@ -25,7 +25,7 @@ func (p Pages) Register(e *echo.Echo) {
 func (p *Pages) GetHome(c echo.Context) error {
 	err := components.PageHome().Render(c.Request().Context(), c.Response())
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
 	return nil

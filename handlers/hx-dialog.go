@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/knackwurstking/picow-led/components"
@@ -38,60 +39,68 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
+	slog.Info("Get dialog for edit or create a device", "id", deviceID)
+
 	var device *models.Device
 	if deviceID > 0 {
 		device, err = h.registry.Devices.Get(deviceID)
 		if err != nil {
 			if services.ErrNotFound == err {
-				return echo.NewHTTPError(
-					http.StatusBadRequest,
-					NewValidationError("device with ID %d not found", deviceID),
-				)
+				return echo.NewHTTPError(http.StatusBadRequest,
+					fmt.Errorf("device with ID %d not found", deviceID))
 			}
-			return NewDatabaseError("failed to fetch device with ID %d", deviceID)
+
+			return fmt.Errorf("failed to fetch device with ID %d", deviceID)
 		}
 	}
 
 	if device != nil {
-		err = components.DialogEditDevice(device, false, nil).Render(c.Request().Context(), c.Response())
-		if err != nil {
-			return err
+		slog.Info("Device found, rendering edit dialog")
+		if err = components.DialogEditDevice(device, false, nil).Render(
+			c.Request().Context(), c.Response(),
+		); err != nil {
+			return fmt.Errorf("failed to render dialog: %v", err)
 		}
 	} else {
-		err = components.DialogNewDevice(false, nil).Render(c.Request().Context(), c.Response())
-		if err != nil {
-			return err
+		slog.Info("Device not found, rendering new device dialog")
+		if err = components.DialogNewDevice(false, nil).Render(
+			c.Request().Context(), c.Response(),
+		); err != nil {
+			return fmt.Errorf("failed to render dialog: %v", err)
 		}
 	}
 
-	return err
+	return nil
 }
 
 func (h HXDialogs) PostEditDevice(c echo.Context) error {
 	device := h.parseEditDeviceForm(c)
 
 	if !device.Validate() {
-		err := NewValidationError("device validation failed, invalid form data %#v", device)
+		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
 
-		if err := components.DialogNewDevice(true, err).Render(
+		if err := components.DialogNewDevice(true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return err
+			return fmt.Errorf("failed to render dialog: %v", err)
 		}
 
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, validationError)
 	}
 
-	if _, err := h.registry.Devices.Add(device); err != nil {
-		err = NewDatabaseError("failed to add device %s", device.Name)
+	slog.Info("Submit handler from the create device dialog",
+		"name", device.Name, "addr", device.Addr)
 
-		if err := components.DialogNewDevice(true, err).Render(
+	if _, err := h.registry.Devices.Add(device); err != nil {
+		databaseError := fmt.Errorf("failed to add device %s", device.Name)
+
+		if err := components.DialogNewDevice(true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return err
+			return fmt.Errorf("failed to render dialog: %v", err)
 		}
 
-		return err
+		return databaseError
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reload")
@@ -108,27 +117,30 @@ func (h HXDialogs) PutEditDevice(c echo.Context) error {
 	device.ID = deviceID
 
 	if !device.Validate() {
-		err := NewValidationError("device validation failed, invalid form data %#v", device)
+		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
 
-		if err := components.DialogEditDevice(device, true, err).Render(
+		if err := components.DialogEditDevice(device, true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return err
 		}
 
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, validationError)
 	}
 
-	if err := h.registry.Devices.Update(device); err != nil {
-		err = NewDatabaseError("failed to update device %s", device.Name)
+	slog.Info("Submit handler from the edit device dialog",
+		"id", device.ID, "name", device.Name, "addr", device.Addr)
 
-		if err := components.DialogEditDevice(device, true, err).Render(
+	if err := h.registry.Devices.Update(device); err != nil {
+		databaseError := fmt.Errorf("failed to update device %s", device.Name)
+
+		if err := components.DialogEditDevice(device, true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return err
+			return fmt.Errorf("failed to render dialog: %v", err)
 		}
 
-		return err
+		return databaseError
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reload")

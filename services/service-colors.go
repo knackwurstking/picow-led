@@ -29,7 +29,7 @@ func (c *Colors) CreateTable() error {
 }
 
 func (c *Colors) Get(id models.ColorID) (*models.Color, error) {
-	slog.Debug("Get color from database", "table", "colors", "id", id)
+	slog.Debug("Get color with ID", "id", id)
 
 	query := `SELECT * FROM colors WHERE id = ?`
 	color, err := ScanColor(c.registry.db.QueryRow(query, id))
@@ -41,7 +41,7 @@ func (c *Colors) Get(id models.ColorID) (*models.Color, error) {
 }
 
 func (c *Colors) List() ([]*models.Color, error) {
-	slog.Debug("List colors from database", "table", "colors")
+	slog.Debug("Get all colors")
 
 	query := `SELECT * FROM colors`
 	rows, err := c.registry.db.Query(query)
@@ -63,11 +63,11 @@ func (c *Colors) List() ([]*models.Color, error) {
 }
 
 func (c *Colors) Add(color *models.Color) (models.ColorID, error) {
-	slog.Debug("Add color to database", "table", "colors", "id", color.ID)
-
 	if !color.Validate() {
 		return 0, ErrInvalidColor
 	}
+
+	slog.Debug("Adding a new color", "name", color.Name, "duty", color.Duty)
 
 	query := `INSERT INTO colors (name, duty) VALUES (?, ?)`
 	result, err := c.registry.db.Exec(query, color.Name, color.Duty)
@@ -84,7 +84,7 @@ func (c *Colors) Add(color *models.Color) (models.ColorID, error) {
 }
 
 func (c *Colors) Update(color *models.Color) error {
-	slog.Debug("Update color in database", "table", "colors", "id", color.ID)
+	slog.Debug("Updating color", "id", color.ID, "name", color.Name, "duty", color.Duty)
 
 	if !color.Validate() {
 		return ErrInvalidColor
@@ -96,7 +96,7 @@ func (c *Colors) Update(color *models.Color) error {
 }
 
 func (c *Colors) Delete(id models.ColorID) error {
-	slog.Debug("Delete color from database", "table", "colors", "id", id)
+	slog.Debug("Deleting color", "id", id)
 
 	query := `DELETE FROM colors WHERE id = ?`
 	_, err := c.registry.db.Exec(query, id)

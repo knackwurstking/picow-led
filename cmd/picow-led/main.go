@@ -25,47 +25,9 @@ func main() {
 	case env.CommandServer:
 		initializeLogging()
 		r := initializeDatabase()
-		setupDevices(r)
+		initializeDevices(r)
 		startServer(r)
 	}
-}
-
-func setupDevices(r *services.Registry) {
-	devices, err := r.Devices.List()
-	if err != nil {
-		slog.Error("Failed to list devices", "error", err)
-		os.Exit(env.ExitCodeSetupDevices)
-	}
-
-	if len(devices) == 0 {
-		return
-	}
-
-	wg := &sync.WaitGroup{}
-	for _, device := range devices {
-		wg.Go(func() {
-			pins, err := r.DeviceControls.GetPins(device.ID)
-			if err != nil {
-				slog.Error("Failed to get device pins",
-					"device_id", device.ID,
-					"device_name", device.Name, "device_addr", device.Addr,
-					"error", err)
-				return
-			}
-
-			// This will get the color from the picow device and auto update the database
-			color, err := r.DeviceControls.GetCurrentColor(device.ID)
-			if err != nil {
-				slog.Error("Failed to get device color",
-					"device_id", device.ID, "device", device.Name, "error", err)
-				return
-			}
-
-			slog.Debug("Device control updated",
-				"device_id", device.ID, "device", device.Name, "pins", pins, "color", color)
-		})
-	}
-	wg.Wait()
 }
 
 func parseFlags() {
@@ -163,7 +125,7 @@ func initializeLogging() {
 }
 
 func initializeDatabase() *services.Registry {
-	slog.Debug("Initializing database", "database-path", env.Args.DatabasePath)
+	slog.Info("Initializing database", "path", env.Args.DatabasePath)
 
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
 	db, err := sql.Open("sqlite3", sqlPath)
@@ -193,7 +155,50 @@ func initializeDatabase() *services.Registry {
 	return r
 }
 
+func initializeDevices(r *services.Registry) {
+	slog.Info("Initializing devices from the database")
+
+	devices, err := r.Devices.List()
+	if err != nil {
+		slog.Error("Failed to list devices", "error", err)
+		os.Exit(env.ExitCodeSetupDevices)
+	}
+
+	if len(devices) == 0 {
+		return
+	}
+
+	wg := &sync.WaitGroup{}
+	for _, device := range devices {
+		wg.Go(func() {
+			pins, err := r.DeviceControls.GetPins(device.ID)
+			if err != nil {
+				slog.Error("Failed to get device pins",
+					"device_id", device.ID,
+					"device_name", device.Name, "device_addr", device.Addr,
+					"error", err)
+				return
+			}
+
+			// This will get the color from the picow device and auto update the database
+			currentColor, err := r.DeviceControls.GetCurrentColor(device.ID)
+			if err != nil {
+				slog.Error("Failed to get device color",
+					"device_id", device.ID, "device", device.Name, "error", err)
+				return
+			}
+
+			slog.Debug("Got device control data",
+				"id", device.ID, "name", device.Name, "addr", device.Addr,
+				"pins", pins, "current_color", currentColor)
+		})
+	}
+	wg.Wait()
+}
+
 func startServer(r *services.Registry) {
+	slog.Info("Starting server", "addr", env.Args.Addr, "prefix", env.Args.ServerPathPrefix)
+
 	e := echo.New()
 
 	// Middleware
@@ -206,7 +211,6 @@ func startServer(r *services.Registry) {
 	// Initialize routes
 	router(e, r)
 
-	slog.Debug("Server started", "addr", env.Args.Addr, "server-path-prefix", env.Args.ServerPathPrefix)
 	if err := e.Start(env.Args.Addr); err != nil {
 		slog.Error("Failed to start server", "error", err)
 		os.Exit(env.ExitCodeServerStart)

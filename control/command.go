@@ -19,7 +19,7 @@ func RunCommand[T any](id RequestID, device *models.Device, req any, resp *Respo
 	}
 	_, err = picow.Write(data)
 	if err != nil {
-		return *new(T), err
+		return *new(T), fmt.Errorf("failed to write request: %v", err)
 	}
 
 	if id == RequestIDNoResponse {
@@ -34,7 +34,7 @@ func RunCommand[T any](id RequestID, device *models.Device, req any, resp *Respo
 		return *new(T), fmt.Errorf("failed to unmarshal response: %v", err)
 	}
 	if resp.Error != "" {
-		return *new(T), fmt.Errorf("picow error: %s", resp.Error)
+		return *new(T), fmt.Errorf("picow error in response: %s", resp.Error)
 	}
 
 	return resp.Data, nil

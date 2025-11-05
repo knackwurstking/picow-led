@@ -29,7 +29,7 @@ func (d *Devices) CreateTable() error {
 }
 
 func (d *Devices) Get(id models.DeviceID) (*models.Device, error) {
-	slog.Debug("Get device from database", "table", "devices", "device_id", id)
+	slog.Debug("Getting device", "id", id)
 
 	query := `SELECT * FROM devices WHERE id = ?`
 	device, err := ScanDevice(d.registry.db.QueryRow(query, id))
@@ -41,7 +41,7 @@ func (d *Devices) Get(id models.DeviceID) (*models.Device, error) {
 }
 
 func (d *Devices) GetByAddr(addr models.Addr) (*models.Device, error) {
-	slog.Debug("Get device from database", "table", "devices", "addr", addr)
+	slog.Debug("Getting device by address", "addr", addr)
 
 	query := `SELECT * FROM devices WHERE addr = ?`
 	device, err := ScanDevice(d.registry.db.QueryRow(query, addr))
@@ -53,7 +53,7 @@ func (d *Devices) GetByAddr(addr models.Addr) (*models.Device, error) {
 }
 
 func (d *Devices) List() ([]*models.Device, error) {
-	slog.Debug("List devices from database", "table", "devices")
+	slog.Debug("Listing devices")
 
 	rows, err := d.registry.db.Query(`SELECT * FROM devices`)
 	if err != nil {
@@ -74,11 +74,11 @@ func (d *Devices) List() ([]*models.Device, error) {
 }
 
 func (d *Devices) Add(device *models.Device) (models.DeviceID, error) {
-	slog.Debug("Add device to database", "table", "devices", "device", device)
-
 	if !device.Validate() {
 		return 0, ErrInvalidDevice
 	}
+
+	slog.Debug("Adding device", "device", device)
 
 	query := `INSERT INTO devices (addr, name) VALUES (?, ?)`
 	result, err := d.registry.db.Exec(query, device.Addr, device.Name)
@@ -95,11 +95,11 @@ func (d *Devices) Add(device *models.Device) (models.DeviceID, error) {
 }
 
 func (d *Devices) Update(device *models.Device) error {
-	slog.Debug("Update device in database", "table", "devices", "device", device)
-
 	if !device.Validate() {
 		return ErrInvalidDevice
 	}
+
+	slog.Debug("Updating device", "device", device)
 
 	query := `UPDATE devices SET addr = ?, name = ? WHERE id = ?`
 	_, err := d.registry.db.Exec(query, device.Addr, device.Name, device.ID)
@@ -111,17 +111,15 @@ func (d *Devices) Update(device *models.Device) error {
 }
 
 func (d *Devices) Delete(id models.DeviceID) error {
-	slog.Debug("Delete device from database", "table", "devices", "id", id)
-
-	var err error
+	slog.Debug("Deleting device", "id", id)
 
 	query := `DELETE FROM device_controls WHERE device_id = ?`
-	if err = d.registry.DeviceControls.Delete(id); err != nil {
+	if err := d.registry.DeviceControls.Delete(id); err != nil {
 		return HandleSqlError(err)
 	}
 
 	query = `DELETE FROM devices WHERE id = ?`
-	if _, err = d.registry.db.Exec(query, id); err != nil {
+	if _, err := d.registry.db.Exec(query, id); err != nil {
 		return HandleSqlError(err)
 	}
 

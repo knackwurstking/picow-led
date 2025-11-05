@@ -38,13 +38,13 @@ func QueryParam(c echo.Context, paramName string, optional bool) (string, error)
 		return "", nil
 	}
 
-	return "", NewValidationError("missing %s query parameter", paramName)
+	return "", fmt.Errorf("missing %s query parameter", paramName)
 }
 
 func QueryParamDeviceID(c echo.Context, paramName string, optional bool) (models.DeviceID, error) {
 	param, err := QueryParam(c, paramName, optional)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to get device ID from query parameter: %v", err)
 	}
 
 	if optional && param == "" {
@@ -53,7 +53,7 @@ func QueryParamDeviceID(c echo.Context, paramName string, optional bool) (models
 
 	deviceIDConversion, err := strconv.Atoi(param)
 	if err != nil {
-		return 0, NewValidationError("invalid device ID query parameter: %s=%s", paramName, param)
+		return 0, fmt.Errorf("invalid device ID query parameter: %s=%s", paramName, param)
 	}
 	return models.DeviceID(deviceIDConversion), nil
 }

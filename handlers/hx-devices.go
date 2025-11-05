@@ -30,6 +30,8 @@ func (h *HxDevices) Delete(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
+	slog.Info("Delete a device", "id", deviceID)
+
 	if err = h.registry.Devices.Delete(deviceID); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
@@ -39,14 +41,12 @@ func (h *HxDevices) Delete(c echo.Context) error {
 }
 
 func (h *HxDevices) PostTogglePower(c echo.Context) error {
-	slog.Info("Toggle power for device")
-
 	deviceID, err := QueryParamDeviceID(c, "id", false)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest,
-			fmt.Errorf("Failed to get device id from query parameter: %s", err.Error()),
-		)
+		return fmt.Errorf("Failed to get device id from query parameter: %s", err.Error())
 	}
+
+	slog.Info("Toggle power for a device", "id", deviceID)
 
 	color, err := h.registry.DeviceControls.TogglePower(deviceID)
 	if err != nil {

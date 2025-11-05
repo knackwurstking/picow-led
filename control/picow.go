@@ -34,7 +34,7 @@ func (p *PicoW) Write(request []byte) (n int, err error) {
 		return 0, err
 	}
 
-	slog.Debug("Write to device",
+	slog.Debug("Write data to device",
 		"device_id", p.ID, "device_name", p.Name, "device_addr", p.Addr,
 		"data", string(request))
 
@@ -65,6 +65,9 @@ func (p *PicoW) ReadAll() (data []byte, err error) {
 	if p.Conn == nil {
 		return nil, fmt.Errorf("not connected")
 	}
+
+	slog.Debug("Read data from device",
+		"device_id", p.ID, "device_name", p.Name, "device_addr", p.Addr)
 
 	buffer := bytes.NewBuffer(make([]byte, 0))
 	chunk := make([]byte, 1)
