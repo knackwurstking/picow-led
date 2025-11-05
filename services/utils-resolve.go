@@ -2,6 +2,7 @@ package services
 
 import (
 	"log/slog"
+	"sort"
 	"sync"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -21,6 +22,10 @@ func ResolveDevices(r *Registry, devices ...*models.Device) ([]*models.ResolvedD
 		})
 	}
 	wg.Wait()
+
+	sort.Slice(resolvedDevices, func(i, j int) bool {
+		return resolvedDevices[i].Name < resolvedDevices[j].Name
+	})
 
 	return resolvedDevices, nil
 }
