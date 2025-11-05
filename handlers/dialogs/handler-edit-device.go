@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/knackwurstking/picow-led/handlers/dialogs/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/services"
@@ -34,14 +35,14 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 
 	if device != nil {
 		slog.Info("Device found, rendering edit dialog")
-		if err = DialogEditDevice(device, false, nil).Render(
+		if err = components.EditDeviceDialog(device, false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
 		}
 	} else {
 		slog.Info("Device not found, rendering new device dialog")
-		if err = DialogNewDevice(false, nil).Render(
+		if err = components.NewDeviceDialog(false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
@@ -57,7 +58,7 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 	if !device.Validate() {
 		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
 
-		if err := DialogNewDevice(true, validationError).Render(
+		if err := components.NewDeviceDialog(true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
@@ -72,7 +73,7 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 	if _, err := h.registry.Devices.Add(device); err != nil {
 		databaseError := fmt.Errorf("failed to add device %s", device.Name)
 
-		if err := DialogNewDevice(true, databaseError).Render(
+		if err := components.NewDeviceDialog(true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
@@ -97,7 +98,7 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 	if !device.Validate() {
 		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
 
-		if err := DialogEditDevice(device, true, validationError).Render(
+		if err := components.EditDeviceDialog(device, true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return err
@@ -112,7 +113,7 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 	if err := h.registry.Devices.Update(device); err != nil {
 		databaseError := fmt.Errorf("failed to update device %s", device.Name)
 
-		if err := DialogEditDevice(device, true, databaseError).Render(
+		if err := components.EditDeviceDialog(device, true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)

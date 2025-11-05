@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/knackwurstking/picow-led/handlers/home/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/services"
@@ -32,7 +33,7 @@ func (h *Handler) Register(e *echo.Echo) {
 }
 
 func (h *Handler) GetHomePage(c echo.Context) error {
-	err := PageHome().Render(c.Request().Context(), c.Response())
+	err := components.PageHome().Render(c.Request().Context(), c.Response())
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
@@ -54,7 +55,7 @@ func (h *Handler) GetSectionDevices(c echo.Context) error {
 		return fmt.Errorf("failed to resolve devices: %v", err)
 	}
 
-	return SectionDevices(
+	return components.SectionDevices(
 		false, rDevices...,
 	).Render(c.Request().Context(), c.Response())
 }
@@ -74,7 +75,7 @@ func (h *Handler) GetSectionGroups(c echo.Context) error {
 		return fmt.Errorf("failed to resolve groups: %v", err)
 	}
 
-	return SectionGroups(
+	return components.SectionGroups(
 		false,
 		resolvedGroups...,
 	).Render(c.Request().Context(), c.Response())
@@ -120,14 +121,14 @@ func (h *Handler) PostTogglePower(c echo.Context) error {
 }
 
 func OOBRenderPageHomeDeviceError(c echo.Context, deviceID models.DeviceID, err error) {
-	deviceError := OOBDeviceError(deviceID, err, true)
+	deviceError := components.OOBDeviceError(deviceID, err, true)
 	if err := deviceError.Render(c.Request().Context(), c.Response()); err != nil {
 		slog.Error("Failed to render device error page", "deviceID", deviceID, "error", err)
 	}
 }
 
 func OOBRenderPageHomeDevicePowerButton(c echo.Context, deviceID models.DeviceID, currentColor []uint8) {
-	devicePowerButton := OOBDevicePowerButton(deviceID, currentColor, true)
+	devicePowerButton := components.OOBDevicePowerButton(deviceID, currentColor, true)
 	if err := devicePowerButton.Render(c.Request().Context(), c.Response()); err != nil {
 		slog.Error("Failed to render device power button page", "deviceID", deviceID, "error", err)
 	}

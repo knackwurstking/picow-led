@@ -1,4 +1,4 @@
-package dialogs
+package components
 
 import (
 	"github.com/knackwurstking/picow-led/components"
@@ -8,27 +8,27 @@ import (
 )
 
 const (
-	IDDialogEditDevice = "edit-device-dialog"
+	IDEditDeviceDialog = "edit-device-dialog"
 )
 
-templ DialogEditDevice(device *models.Device, oob bool, err error) {
+templ EditDeviceDialog(device *models.Device, oob bool, err error) {
 	@components.Dialog(components.DialogProps{
-		ID:                IDDialogEditDevice,
+		ID:                IDEditDeviceDialog,
 		Method:            http.MethodPut,
 		Href:              components.HxUrlEditDeviceDialog(&device.ID),
 		SubmitButtonText:  "Edit",
 		OOB:               oob,
 		Error:             err,
-		AdditionalActions: dialogEditDeviceContent_AdditionalActions(device.ID),
+		AdditionalActions: editDeviceDialog_AdditionalActions(device.ID),
 	}) {
 		{{
 			address, port := device.GetAddrSplit()
 		}}
-		@dialogEditDeviceContent(address, strconv.Itoa(port), device.Name)
+		@editDeviceDialogContent(address, strconv.Itoa(port), device.Name)
 	}
 }
 
-templ dialogEditDeviceContent(address, port, name string) {
+templ editDeviceDialogContent(address, port, name string) {
 	@components.Input(components.InputProps{
 		ID:          "host",
 		Type:        "text",
@@ -55,7 +55,7 @@ templ dialogEditDeviceContent(address, port, name string) {
 	})
 }
 
-templ dialogEditDeviceContent_AdditionalActions(id models.DeviceID) {
+templ editDeviceDialog_AdditionalActions(id models.DeviceID) {
 	<button
 		class="destructive flex gap"
 		hx-delete={ components.HxUrlDeleteDevice(id) }
