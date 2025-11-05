@@ -6,6 +6,7 @@ import (
 	"io"
 	"log/slog"
 	"net"
+	"sync"
 	"time"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -15,10 +16,15 @@ const (
 	EndByte byte = byte('\n')
 )
 
+var (
+	controlMutexes = map[models.Addr]*sync.Mutex{}
+)
+
 type PicoW struct {
 	*models.Device
 
-	Conn net.Conn
+	Conn      net.Conn
+	connected models.Addr
 }
 
 // NewPicoW creates a new instance of the PicoW struct.
@@ -30,8 +36,8 @@ func NewPicoW(device *models.Device) *PicoW {
 
 // Write sends data to the Picow device. It first connects to the device if not already connected, then appends a newline character to the data and writes it.
 func (p *PicoW) Write(request []byte) (n int, err error) {
-	if err := p.Connect(); err != nil {
-		return 0, err
+	if p.Conn == nil {
+		return 0, fmt.Errorf("not connected")
 	}
 
 	slog.Debug("Write data to device",
@@ -97,15 +103,19 @@ func (p *PicoW) Connect() error {
 		return nil
 	}
 
+	p.connected = p.Addr
+	controlMutexes[p.connected] = &sync.Mutex{}
+
 	dialer := net.Dialer{
 		Timeout: time.Duration(time.Second * 5),
 	}
 
-	var err error
-	p.Conn, err = dialer.Dial("tcp", string(p.Addr))
+	conn, err := dialer.Dial("tcp", string(p.Addr))
 	if err != nil {
 		return err
 	}
+	p.Conn = conn
+	controlMutexes[p.connected].Lock()
 
 	return nil
 }
@@ -118,6 +128,11 @@ func (p *PicoW) Close() error {
 		}
 
 		p.Conn = nil
+		if m, ok := controlMutexes[p.connected]; ok {
+			m.Unlock()
+			delete(controlMutexes, p.connected)
+		}
+		p.connected = ""
 	}
 
 	return nil

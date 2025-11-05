@@ -11,6 +11,10 @@ import (
 // RunCommand sends a JSON-encoded request to the Picow device and reads the response.
 func RunCommand[T any](id RequestID, device *models.Device, req any, resp *Response[T]) (T, error) {
 	picow := NewPicoW(device)
+
+	if err := picow.Connect(); err != nil {
+		return *new(T), fmt.Errorf("failed to connect to Picow device: %v", err)
+	}
 	defer picow.Close()
 
 	data, err := json.Marshal(req)
