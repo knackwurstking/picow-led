@@ -1,0 +1,23 @@
+package dialogs
+
+import (
+	"github.com/knackwurstking/picow-led/components"
+	"net/http"
+)
+
+const (
+	IDDialogNewDevice = "new-device-dialog"
+)
+
+templ DialogNewDevice(oob bool, err error) {
+	@components.Dialog(components.DialogProps{
+		ID:               IDDialogNewDevice,
+		Method:           http.MethodPost,
+		Href:             components.HxUrlEditDeviceDialog(nil),
+		SubmitButtonText: "Create",
+		OOB:              oob,
+		Error:            err,
+	}) {
+		@dialogEditDeviceContent("", "", "")
+	}
+}

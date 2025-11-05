@@ -1,0 +1,50 @@
+package home
+
+import (
+	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/env"
+)
+
+const (
+	IDSectionDevices string = "section-devices"
+	IDSectionGroups  string = "section-groups"
+)
+
+templ PageHome() {
+	@components.Layout(
+		components.LayoutOptions{
+			PageTitle:      "PicoW LED",
+			AdditionalHead: additionalHead(),
+		},
+	) {
+		@section(IDSectionDevices) {
+			@SectionDevices(true, nil)
+		}
+		@section(IDSectionGroups) {
+			@SectionGroups(true, nil)
+		}
+	}
+}
+
+templ additionalHead() {
+	<link rel="stylesheet" href={ components.AssetURL(env.Args.ServerPathPrefix, "/css/page-home.css") }/>
+	<script src={ components.AssetURL(env.Args.ServerPathPrefix, "/js/page-home.js") }></script>
+}
+
+templ section(id string) {
+	<details id={ id } ontoggle="event.currentTarget.scrollIntoView({behavior: 'smooth', block: 'start'})">
+		{ children... }
+	</details>
+}
+
+templ sectionSummary(title string) {
+	<summary class="flex gap justify-between">
+		<span>{ title }</span>
+	</summary>
+}
+
+templ sectionActions() {
+	<div class="w-full flex gap justify-end items-center">
+		{ children... }
+	</div>
+}

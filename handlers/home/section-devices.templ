@@ -1,0 +1,74 @@
+package home
+
+import (
+	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/models"
+	"net/http"
+)
+
+const (
+	IDSectionDevices_PowerButton string = "device-%d-power-button"
+	IDSectionDevices_DeviceError string = "device-%d-error"
+)
+
+templ SectionDevices(enableLoadTrigger bool, devices ...*models.ResolvedDevice) {
+	{{
+		props := &components.HXProps{
+			Method:            http.MethodGet,
+			URL:               components.HxUrlHomeSectionDevices(),
+			Target:            "#" + string(IDSectionDevices),
+			Trigger:           "reload from:body, reloadDevices from:body",
+			EnableLoadTrigger: enableLoadTrigger,
+		}
+	}}
+	<span { props.Attributes()... }></span>
+	@sectionSummary("Devices")
+	if props.EnableLoadTrigger {
+		@components.Spinner()
+	} else {
+		@sectionActions() {
+			@components.AddIconButton(&components.HXProps{
+				Method:  http.MethodGet,
+				URL:     components.HxUrlEditDeviceDialog(nil),
+				Target:  "body",
+				Swap:    "beforeend",
+				Trigger: "click",
+			})
+		}
+		if len(devices) > 0 {
+			<div class="flex flex-col gap-lg mt">
+				for _, device := range devices {
+					@SectionDevices_Device(device)
+				}
+			</div>
+		} else {
+			<p class="muted ghost italic">No devices found.</p>
+		}
+	}
+}
+
+templ SectionDevices_Device(device *models.ResolvedDevice) {
+	<div class="card outline">
+		<div class="card-body flex flex-col gap">
+			<div class="flex gap justify-between items-center">
+				<div class="flex flex-col gap-sm">
+					<small>{ device.Addr }</small>
+					<strong>{ device.Name }</strong>
+				</div>
+				<div class="button-group">
+					@components.EditIconButton(&components.HXProps{
+						Method:  http.MethodGet,
+						URL:     components.HxUrlEditDeviceDialog(&device.ID),
+						Target:  "body",
+						Swap:    "beforeend",
+						Trigger: "click",
+					})
+					@OOBDevicePowerButton(device.ID, device.CurrentColor, false)
+				</div>
+			</div>
+			<div>
+				@OOBDeviceError(device.ID, nil, false)
+			</div>
+		</div>
+	</div>
+}

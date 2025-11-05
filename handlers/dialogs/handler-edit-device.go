@@ -1,40 +1,18 @@
-package handlers
+package dialogs
 
 import (
 	"fmt"
 	"log/slog"
 	"net/http"
 
-	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/utils"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 )
 
-type HXDialogs struct {
-	registry *services.Registry
-}
-
-func NewHxDialogs(r *services.Registry) *HXDialogs {
-	return &HXDialogs{
-		registry: r,
-	}
-}
-
-func (h HXDialogs) Register(e *echo.Echo) {
-	// Edit Device
-	Register(e, http.MethodGet, "/htmx/dialog/edit-device", h.GetEditDevice)
-	Register(e, http.MethodPost, "/htmx/dialog/edit-device", h.PostEditDevice)
-	Register(e, http.MethodPut, "/htmx/dialog/edit-device", h.PutEditDevice)
-
-	// Edit Group
-	Register(e, http.MethodGet, "/htmx/dialog/edit-group", h.GetEditGroup)
-	Register(e, http.MethodPost, "/htmx/dialog/edit-group", h.PostEditGroup)
-	Register(e, http.MethodPut, "/htmx/dialog/edit-group", h.PutEditGroup)
-}
-
-func (h HXDialogs) GetEditDevice(c echo.Context) error {
-	deviceID, err := QueryParamDeviceID(c, "id", true)
+func (h *Handler) GetEditDevice(c echo.Context) error {
+	deviceID, err := utils.QueryParamDeviceID(c, "id", true)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
@@ -56,14 +34,14 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 
 	if device != nil {
 		slog.Info("Device found, rendering edit dialog")
-		if err = components.DialogEditDevice(device, false, nil).Render(
+		if err = DialogEditDevice(device, false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
 		}
 	} else {
 		slog.Info("Device not found, rendering new device dialog")
-		if err = components.DialogNewDevice(false, nil).Render(
+		if err = DialogNewDevice(false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
@@ -73,13 +51,13 @@ func (h HXDialogs) GetEditDevice(c echo.Context) error {
 	return nil
 }
 
-func (h HXDialogs) PostEditDevice(c echo.Context) error {
+func (h *Handler) PostEditDevice(c echo.Context) error {
 	device := h.parseEditDeviceForm(c)
 
 	if !device.Validate() {
 		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
 
-		if err := components.DialogNewDevice(true, validationError).Render(
+		if err := DialogNewDevice(true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
@@ -94,7 +72,7 @@ func (h HXDialogs) PostEditDevice(c echo.Context) error {
 	if _, err := h.registry.Devices.Add(device); err != nil {
 		databaseError := fmt.Errorf("failed to add device %s", device.Name)
 
-		if err := components.DialogNewDevice(true, databaseError).Render(
+		if err := DialogNewDevice(true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
@@ -107,8 +85,8 @@ func (h HXDialogs) PostEditDevice(c echo.Context) error {
 	return nil
 }
 
-func (h HXDialogs) PutEditDevice(c echo.Context) error {
-	deviceID, err := QueryParamDeviceID(c, "id", true)
+func (h *Handler) PutEditDevice(c echo.Context) error {
+	deviceID, err := utils.QueryParamDeviceID(c, "id", true)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
@@ -119,7 +97,7 @@ func (h HXDialogs) PutEditDevice(c echo.Context) error {
 	if !device.Validate() {
 		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
 
-		if err := components.DialogEditDevice(device, true, validationError).Render(
+		if err := DialogEditDevice(device, true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return err
@@ -134,7 +112,7 @@ func (h HXDialogs) PutEditDevice(c echo.Context) error {
 	if err := h.registry.Devices.Update(device); err != nil {
 		databaseError := fmt.Errorf("failed to update device %s", device.Name)
 
-		if err := components.DialogEditDevice(device, true, databaseError).Render(
+		if err := DialogEditDevice(device, true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return fmt.Errorf("failed to render dialog: %v", err)
@@ -147,26 +125,7 @@ func (h HXDialogs) PutEditDevice(c echo.Context) error {
 	return nil
 }
 
-func (h HXDialogs) GetEditGroup(c echo.Context) error {
-	// TODO: ...
-
-	return nil
-}
-
-func (h HXDialogs) PostEditGroup(c echo.Context) error {
-	// TODO: ...
-
-	c.Response().Header().Set("HX-Trigger", "reloadGroups")
-	return nil
-}
-func (h HXDialogs) PutEditGroup(c echo.Context) error {
-	// TODO: ...
-
-	c.Response().Header().Set("HX-Trigger", "reloadGroups")
-	return nil
-}
-
-func (h *HXDialogs) parseEditDeviceForm(c echo.Context) *models.Device {
+func (h *Handler) parseEditDeviceForm(c echo.Context) *models.Device {
 	host := c.FormValue("host")
 	port := c.FormValue("port")
 	name := c.FormValue("device-name")

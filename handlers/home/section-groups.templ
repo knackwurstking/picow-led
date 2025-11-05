@@ -1,29 +1,30 @@
-package components
+package home
 
 import (
+	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/models"
 	"net/http"
 )
 
-templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGroup) {
+templ SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGroup) {
 	{{
-		props := &HXProps{
+		props := &components.HXProps{
 			Method:            http.MethodGet,
-			URL:               HxUrlHomeSectionGroups(),
-			Target:            "#" + string(IDPageHome_SectionGroups),
+			URL:               components.HxUrlHomeSectionGroups(),
+			Target:            "#" + string(IDSectionGroups),
 			Trigger:           "reload from:body, reloadGroups from:body",
 			EnableLoadTrigger: enableLoadTrigger,
 		}
 	}}
 	<span { props.Attributes()... }></span>
-	@pageHome_sectionSummary("Groups")
+	@sectionSummary("Groups")
 	if props.EnableLoadTrigger {
-		@Spinner()
+		@components.Spinner()
 	} else {
-		@pageHome_sectionActions() {
-			@AddIconButton(&HXProps{
+		@sectionActions() {
+			@components.AddIconButton(&components.HXProps{
 				Method:  http.MethodGet,
-				URL:     HxUrlEditGroupDialog(nil),
+				URL:     components.HxUrlEditGroupDialog(nil),
 				Target:  "body",
 				Swap:    "beforeend",
 				Trigger: "click",

@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"github.com/knackwurstking/picow-led/handlers/dialogs"
+	"github.com/knackwurstking/picow-led/handlers/home"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 )
@@ -11,9 +13,7 @@ type Handler interface {
 
 func GetAll(r *services.Registry) []Handler {
 	return []Handler{
-		NewPages(r),
-		NewHxHome(r),
-		NewHxDialogs(r),
-		NewHxDevices(r),
+		home.NewHandler(r),
+		dialogs.NewHandler(r),
 	}
 }
