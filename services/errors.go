@@ -28,7 +28,8 @@ func (e NotFoundError) Error() string {
 }
 
 func IsNotFoundError(err error) bool {
-	return errors.Is(err, &NotFoundError{})
+	_, ok := err.(*NotFoundError)
+	return ok
 }
 
 func HandleSqlError(err error) error {
