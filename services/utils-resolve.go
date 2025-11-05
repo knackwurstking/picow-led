@@ -2,6 +2,7 @@ package services
 
 import (
 	"log/slog"
+	"sync"
 
 	"github.com/knackwurstking/picow-led/models"
 )
@@ -9,13 +10,17 @@ import (
 func ResolveDevices(r *Registry, devices ...*models.Device) ([]*models.ResolvedDevice, error) {
 	resolvedDevices := make([]*models.ResolvedDevice, 0, len(devices))
 
+	wg := &sync.WaitGroup{}
 	for _, device := range devices {
-		color, err := r.DeviceControls.GetCurrentColor(device.ID)
-		if err != nil {
-			slog.Error("Failed to get current color for device", "id", device.ID, "error", err)
-		}
-		resolvedDevices = append(resolvedDevices, models.NewResolvedDevice(device, color))
+		wg.Go(func() {
+			color, err := r.DeviceControls.GetCurrentColor(device.ID)
+			if err != nil {
+				slog.Error("Failed to get current color for device", "id", device.ID, "error", err)
+			}
+			resolvedDevices = append(resolvedDevices, models.NewResolvedDevice(device, color))
+		})
 	}
+	wg.Wait()
 
 	return resolvedDevices, nil
 }
