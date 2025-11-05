@@ -2,7 +2,7 @@
 
 ## Code Quality
 
-- [ ] See if we can improve the handler and components structure
+- [x] See if we can improve the handler and components structure
 
 ## FIX
 
