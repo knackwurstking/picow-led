@@ -2,7 +2,7 @@
 
 ## FIX
 
-- [ ] Log: `2025-11-05 03:39:47 ERR services/utils-resolve.go:15 Failed to get current color for device id=1 error="failed to get device control: not found: sql: no rows in result set"`
+- [x] Log: `2025-11-05 03:39:47 ERR services/utils-resolve.go:15 Failed to get current color for device id=1 error="failed to get device control: not found: sql: no rows in result set"`
 
 ## Systemd Service File and Server Setup
 
