@@ -2,7 +2,7 @@ package env
 
 const (
 	DefaultServerAddress    = ":50835"
-	DefaultServerPathPrefix = "/picow-led"
+	DefaultServerPathPrefix = ""
 )
 
 const (
