@@ -36,7 +36,7 @@ func (h *HxDevices) Delete(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	c.Response().Header().Set("HX-Trigger", "reload")
+	c.Response().Header().Set("HX-Trigger", "reloadDevices")
 	return nil
 }
 

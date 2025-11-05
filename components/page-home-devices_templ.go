@@ -46,7 +46,7 @@ func PageHome_SectionDevices(enableLoadTrigger bool, devices ...*models.Resolved
 			Method:            http.MethodGet,
 			URL:               HxUrlHomeSectionDevices(),
 			Target:            "#" + string(IDPageHome_SectionDevices),
-			Trigger:           "reload from:body",
+			Trigger:           "reload from:body, reloadDevices from:body",
 			EnableLoadTrigger: enableLoadTrigger,
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span")

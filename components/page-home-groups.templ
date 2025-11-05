@@ -11,7 +11,7 @@ templ PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedG
 			Method:            http.MethodGet,
 			URL:               HxUrlHomeSectionGroups(),
 			Target:            "#" + string(IDPageHome_SectionGroups),
-			Trigger:           "reload from:body",
+			Trigger:           "reload from:body, reloadGroups from:body",
 			EnableLoadTrigger: enableLoadTrigger,
 		}
 	}}

@@ -39,7 +39,7 @@ func PageHome_SectionGroups(enableLoadTrigger bool, groups ...*models.ResolvedGr
 			Method:            http.MethodGet,
 			URL:               HxUrlHomeSectionGroups(),
 			Target:            "#" + string(IDPageHome_SectionGroups),
-			Trigger:           "reload from:body",
+			Trigger:           "reload from:body, reloadGroups from:body",
 			EnableLoadTrigger: enableLoadTrigger,
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<span")
