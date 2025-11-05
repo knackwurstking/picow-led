@@ -3,7 +3,7 @@ Description=PicoW LED Web Server
 After=network.target
 
 [Service]
-ExecStart=picow-led server -path-prefix /picow-led -addr :50836 -log-format text -database-path $HOME/.config/picow-led/picow-led.db
+ExecStart=picow-led server -path-prefix /picow-led -addr :50836 -log-format text -database-path %h/.config/picow-led/picow-led.db
 Restart=on-failure
 RestartSec=5
 StartLimitBurst=3
