@@ -48,3 +48,20 @@ templ sectionActions() {
 		{ children... }
 	</div>
 }
+
+templ sectionLoadingSpinner(id string, disabled bool) {
+	<div
+		id={ id }
+		class="spinner"
+		if disabled {
+			style="height: 100%; display: none;"
+		} else {
+			style="height: 100%;"
+		}
+	></div>
+}
+
+script enableSpinner(id string, event templ.JSExpression) {
+	var target = event.currentTarget.parentElement.querySelector(`#${id}`)
+	target.style.display = 'block'
+}

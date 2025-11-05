@@ -55,9 +55,7 @@ func (h *Handler) GetSectionDevices(c echo.Context) error {
 		return fmt.Errorf("failed to resolve devices: %v", err)
 	}
 
-	return components.SectionDevices(
-		false, rDevices...,
-	).Render(c.Request().Context(), c.Response())
+	return components.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
 }
 
 func (h *Handler) GetSectionGroups(c echo.Context) error {
@@ -75,10 +73,7 @@ func (h *Handler) GetSectionGroups(c echo.Context) error {
 		return fmt.Errorf("failed to resolve groups: %v", err)
 	}
 
-	return components.SectionGroups(
-		false,
-		resolvedGroups...,
-	).Render(c.Request().Context(), c.Response())
+	return components.SectionGroups(false, resolvedGroups).Render(c.Request().Context(), c.Response())
 }
 
 func (h *Handler) Delete(c echo.Context) error {

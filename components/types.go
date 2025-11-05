@@ -7,14 +7,13 @@ import (
 )
 
 type HXProps struct {
-	URL               templ.SafeURL
-	Method            string
-	Target            string
-	Swap              string
-	Trigger           string
-	EnableLoadTrigger bool
-	BeforeRequest     string
-	AfterRequest      string
+	URL           templ.SafeURL
+	Method        string
+	Target        string
+	Swap          string
+	Trigger       string
+	BeforeRequest string
+	AfterRequest  string
 }
 
 func (hx *HXProps) Attributes() templ.Attributes {
@@ -55,12 +54,8 @@ func (hx HXProps) getSwap() string {
 }
 
 func (hx *HXProps) getTrigger() string {
-	if hx.Trigger == "" && !hx.EnableLoadTrigger {
+	if hx.Trigger == "" {
 		panic("no trigger events provided")
-	}
-
-	if hx.EnableLoadTrigger {
-		return "load, " + hx.Trigger
 	}
 
 	return hx.Trigger

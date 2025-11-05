@@ -7,44 +7,44 @@ import (
 )
 
 const (
+	IDSectionDevicesSpinner      string = "section-devices-spinner"
 	IDSectionDevices_PowerButton string = "device-%d-power-button"
 	IDSectionDevices_DeviceError string = "device-%d-error"
 )
 
-templ SectionDevices(enableLoadTrigger bool, devices ...*models.ResolvedDevice) {
+templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 	{{
 		props := &components.HXProps{
-			Method:            http.MethodGet,
-			URL:               components.HxUrlHomeSectionDevices(),
-			Target:            "#" + string(IDSectionDevices),
-			Trigger:           "reload from:body, reloadDevices from:body",
-			EnableLoadTrigger: enableLoadTrigger,
+			Method:  http.MethodGet,
+			URL:     components.HxUrlHomeSectionDevices(),
+			Target:  "#" + string(IDSectionDevices),
+			Trigger: "reloadDevices from:body",
 		}
 	}}
-	<span { props.Attributes()... }></span>
+	<span
+		{ props.Attributes()... }
+		hx-on::before-request={ enableSpinner(IDSectionDevicesSpinner, templ.JSExpression("event")) }
+	></span>
 	@sectionSummary("Devices")
-	if props.EnableLoadTrigger {
-		@components.Spinner()
-	} else {
-		@sectionActions() {
-			@components.AddIconButton(&components.HXProps{
-				Method:  http.MethodGet,
-				URL:     components.HxUrlEditDeviceDialog(nil),
-				Target:  "body",
-				Swap:    "beforeend",
-				Trigger: "click",
-			})
-		}
-		if len(devices) > 0 {
-			<div class="flex flex-col gap-lg mt">
-				for _, device := range devices {
-					@SectionDevices_Device(device)
-				}
-			</div>
-		} else {
-			<p class="muted ghost italic">No devices found.</p>
-		}
+	@sectionActions() {
+		@components.AddIconButton(&components.HXProps{
+			Method:  http.MethodGet,
+			URL:     components.HxUrlEditDeviceDialog(nil),
+			Target:  "body",
+			Swap:    "beforeend",
+			Trigger: "click",
+		})
 	}
+	if len(devices) > 0 {
+		<div class="flex flex-col gap-lg mt">
+			for _, device := range devices {
+				@SectionDevices_Device(device)
+			}
+		</div>
+	} else {
+		<p class="muted ghost italic">No devices found.</p>
+	}
+	@sectionLoadingSpinner(IDSectionDevicesSpinner, !loading)
 }
 
 templ SectionDevices_Device(device *models.ResolvedDevice) {
