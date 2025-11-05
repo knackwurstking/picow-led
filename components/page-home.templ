@@ -29,7 +29,7 @@ templ pageHome_additionalHead() {
 }
 
 templ pageHome_section(id string) {
-	<details id={ id }>
+	<details id={ id } ontoggle="event.currentTarget.scrollIntoView({behavior: 'smooth', block: 'start'})">
 		{ children... }
 	</details>
 }
