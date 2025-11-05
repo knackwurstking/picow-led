@@ -2,7 +2,7 @@
 
 ## Systemd Service File and Server Setup
 
-- [ ] Create a service file for systemd
+- [x] Create a service file for systemd
 - [ ] Deploy the application to the server
 
 ## Server Logs
