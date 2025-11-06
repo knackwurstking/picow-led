@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/ui"
 	"net/http"
 	"strconv"
 )
@@ -60,12 +61,12 @@ func EditDeviceDialog(device *models.Device, oob bool, err error) templ.Componen
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = components.Dialog(components.DialogProps{
+		templ_7745c5c3_Err = ui.Dialog(ui.DialogProps{
 			ID:                IDEditDeviceDialog,
 			Method:            http.MethodPut,
 			Href:              components.HxUrlEditDeviceDialog(&device.ID),
 			SubmitButtonText:  "Edit",
-			OOB:               oob,
+			HxSwapOOB:         strconv.FormatBool(oob),
 			Error:             err,
 			AdditionalActions: editDeviceDialog_AdditionalActions(device.ID),
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
@@ -162,7 +163,7 @@ func editDeviceDialog_AdditionalActions(id models.DeviceID) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlDeleteDevice(id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/dialogs/components/dialog-edit-device.templ`, Line: 61, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/dialogs/components/dialog-edit-device.templ`, Line: 62, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

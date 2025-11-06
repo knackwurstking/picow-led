@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/ui"
 	"net/http"
 	"strconv"
 )
@@ -12,12 +13,12 @@ const (
 )
 
 templ EditDeviceDialog(device *models.Device, oob bool, err error) {
-	@components.Dialog(components.DialogProps{
+	@ui.Dialog(ui.DialogProps{
 		ID:                IDEditDeviceDialog,
 		Method:            http.MethodPut,
 		Href:              components.HxUrlEditDeviceDialog(&device.ID),
 		SubmitButtonText:  "Edit",
-		OOB:               oob,
+		HxSwapOOB:         strconv.FormatBool(oob),
 		Error:             err,
 		AdditionalActions: editDeviceDialog_AdditionalActions(device.ID),
 	}) {
