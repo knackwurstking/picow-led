@@ -1,3 +1,4 @@
+// TODO: This is stupid, remove it
 package components
 
 import (
