@@ -3,7 +3,6 @@ package components
 import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/models"
-	"net/http"
 )
 
 const (
@@ -11,26 +10,19 @@ const (
 )
 
 templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
-	{{
-		props := &components.HXProps{
-			Method:  http.MethodGet,
-			URL:     components.HxUrlHomeSectionGroups(),
-			Target:  "#" + string(IDSectionGroups),
-			Trigger: "reloadGroups from:body",
-		}
-	}}
 	<span
-		{ props.Attributes()... }
+		hx-get={ components.HxUrlHomeSectionGroups() }
+		hx-target={ "#" + string(IDSectionGroups) }
+		hx-trigger={ "reloadGroups from:body" }
 		hx-on::before-request={ enableSpinner(IDSectionGroupsSpinner, templ.JSExpression("event")) }
 	></span>
 	@sectionSummary("Groups")
 	@sectionActions() {
-		@components.AddIconButton(&components.HXProps{
-			Method:  http.MethodGet,
-			URL:     components.HxUrlEditGroupDialog(nil),
-			Target:  "body",
-			Swap:    "beforeend",
-			Trigger: "click",
+		@components.AddIconButton(templ.Attributes{
+			"hx-get":     components.HxUrlEditGroupDialog(nil),
+			"hx-target":  "body",
+			"hx-swap":    "beforeend",
+			"hx-trigger": "click",
 		})
 	}
 	if len(groups) > 0 {

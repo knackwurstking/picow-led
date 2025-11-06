@@ -3,7 +3,6 @@ package components
 import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/models"
-	"net/http"
 )
 
 const (
@@ -13,26 +12,19 @@ const (
 )
 
 templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
-	{{
-		props := &components.HXProps{
-			Method:  http.MethodGet,
-			URL:     components.HxUrlHomeSectionDevices(),
-			Target:  "#" + string(IDSectionDevices),
-			Trigger: "reloadDevices from:body",
-		}
-	}}
 	<span
-		{ props.Attributes()... }
+		hx-get={ components.HxUrlHomeSectionDevices() }
+		hx-target={ "#" + string(IDSectionDevices) }
+		hx-trigger={ "reloadDevices from:body" }
 		hx-on::before-request={ enableSpinner(IDSectionDevicesSpinner, templ.JSExpression("event")) }
 	></span>
 	@sectionSummary("Devices")
 	@sectionActions() {
-		@components.AddIconButton(&components.HXProps{
-			Method:  http.MethodGet,
-			URL:     components.HxUrlEditDeviceDialog(nil),
-			Target:  "body",
-			Swap:    "beforeend",
-			Trigger: "click",
+		@components.AddIconButton(templ.Attributes{
+			"hx-get":     components.HxUrlEditDeviceDialog(nil),
+			"hx-target":  "body",
+			"hx-swap":    "beforeend",
+			"hx-trigger": "click",
 		})
 	}
 	if len(devices) > 0 {
@@ -56,12 +48,11 @@ templ SectionDevices_Device(device *models.ResolvedDevice) {
 					<strong>{ device.Name }</strong>
 				</div>
 				<div class="button-group">
-					@components.EditIconButton(&components.HXProps{
-						Method:  http.MethodGet,
-						URL:     components.HxUrlEditDeviceDialog(&device.ID),
-						Target:  "body",
-						Swap:    "beforeend",
-						Trigger: "click",
+					@components.EditIconButton(templ.Attributes{
+						"hx-get":     components.HxUrlEditDeviceDialog(&device.ID),
+						"hx-target":  "body",
+						"hx-swap":    "beforeend",
+						"hx-trigger": "click",
 					})
 					@OOBDevicePowerButton(device.ID, device.CurrentColor, false)
 				</div>
