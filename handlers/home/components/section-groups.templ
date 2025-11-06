@@ -19,7 +19,7 @@ templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
 	@sectionSummary("Groups")
 	@sectionActions() {
 		@components.AddIconButton(templ.Attributes{
-			"hx-get":     components.HxUrlEditGroupDialog(nil),
+			"hx-get":     string(components.HxUrlEditGroupDialog(nil)),
 			"hx-target":  "body",
 			"hx-swap":    "beforeend",
 			"hx-trigger": "click",

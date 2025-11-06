@@ -4,7 +4,6 @@ import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/ui"
 	"net/http"
-	"strconv"
 )
 
 const (
@@ -12,12 +11,18 @@ const (
 )
 
 templ NewDeviceDialog(oob bool, err error) {
+	{{
+		hxSwapOOB := ""
+		if oob {
+			hxSwapOOB = "true"
+		}
+	}}
 	@ui.Dialog(ui.DialogProps{
 		ID:               IDNewDevice,
 		Method:           http.MethodPost,
 		Href:             components.HxUrlEditDeviceDialog(nil),
 		SubmitButtonText: "Create",
-		HxSwapOOB:        strconv.FormatBool(oob),
+		HxSwapOOB:        hxSwapOOB,
 		Error:            err,
 	}) {
 		@editDeviceDialogContent("", "", "")

@@ -21,7 +21,7 @@ templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 	@sectionSummary("Devices")
 	@sectionActions() {
 		@components.AddIconButton(templ.Attributes{
-			"hx-get":     components.HxUrlEditDeviceDialog(nil),
+			"hx-get":     string(components.HxUrlEditDeviceDialog(nil)),
 			"hx-target":  "body",
 			"hx-swap":    "beforeend",
 			"hx-trigger": "click",
@@ -49,7 +49,7 @@ templ SectionDevices_Device(device *models.ResolvedDevice) {
 				</div>
 				<div class="button-group">
 					@components.EditIconButton(templ.Attributes{
-						"hx-get":     components.HxUrlEditDeviceDialog(&device.ID),
+						"hx-get":     string(components.HxUrlEditDeviceDialog(&device.ID)),
 						"hx-target":  "body",
 						"hx-swap":    "beforeend",
 						"hx-trigger": "click",

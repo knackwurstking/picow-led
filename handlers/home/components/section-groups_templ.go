@@ -111,7 +111,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = components.AddIconButton(templ.Attributes{
-				"hx-get":     components.HxUrlEditGroupDialog(nil),
+				"hx-get":     string(components.HxUrlEditGroupDialog(nil)),
 				"hx-target":  "body",
 				"hx-swap":    "beforeend",
 				"hx-trigger": "click",

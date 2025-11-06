@@ -13,12 +13,18 @@ const (
 )
 
 templ EditDeviceDialog(device *models.Device, oob bool, err error) {
+	{{
+		hxSwapOOB := ""
+		if oob {
+			hxSwapOOB = "true"
+		}
+	}}
 	@ui.Dialog(ui.DialogProps{
 		ID:                IDEditDeviceDialog,
 		Method:            http.MethodPut,
 		Href:              components.HxUrlEditDeviceDialog(&device.ID),
 		SubmitButtonText:  "Edit",
-		HxSwapOOB:         strconv.FormatBool(oob),
+		HxSwapOOB:         hxSwapOOB,
 		Error:             err,
 		AdditionalActions: editDeviceDialog_AdditionalActions(device.ID),
 	}) {

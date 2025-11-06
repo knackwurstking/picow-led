@@ -113,7 +113,7 @@ func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Compon
 			}
 			ctx = templ.InitializeContext(ctx)
 			templ_7745c5c3_Err = components.AddIconButton(templ.Attributes{
-				"hx-get":     components.HxUrlEditDeviceDialog(nil),
+				"hx-get":     string(components.HxUrlEditDeviceDialog(nil)),
 				"hx-target":  "body",
 				"hx-swap":    "beforeend",
 				"hx-trigger": "click",
@@ -208,7 +208,7 @@ func SectionDevices_Device(device *models.ResolvedDevice) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = components.EditIconButton(templ.Attributes{
-			"hx-get":     components.HxUrlEditDeviceDialog(&device.ID),
+			"hx-get":     string(components.HxUrlEditDeviceDialog(&device.ID)),
 			"hx-target":  "body",
 			"hx-swap":    "beforeend",
 			"hx-trigger": "click",

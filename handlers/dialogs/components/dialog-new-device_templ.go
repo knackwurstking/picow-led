@@ -12,7 +12,6 @@ import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/ui"
 	"net/http"
-	"strconv"
 )
 
 const (
@@ -40,6 +39,11 @@ func NewDeviceDialog(oob bool, err error) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+
+		hxSwapOOB := ""
+		if oob {
+			hxSwapOOB = "true"
+		}
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -63,7 +67,7 @@ func NewDeviceDialog(oob bool, err error) templ.Component {
 			Method:           http.MethodPost,
 			Href:             components.HxUrlEditDeviceDialog(nil),
 			SubmitButtonText: "Create",
-			HxSwapOOB:        strconv.FormatBool(oob),
+			HxSwapOOB:        hxSwapOOB,
 			Error:            err,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
