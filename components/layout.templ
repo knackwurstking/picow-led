@@ -1,6 +1,9 @@
 package components
 
-import "github.com/knackwurstking/picow-led/env"
+import (
+	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/ui"
+)
 
 type LayoutOptions struct {
 	PageTitle      string // NOTE: "#page-title"
@@ -39,17 +42,17 @@ templ metaTags() {
 }
 
 templ links() {
-	<link rel="icon" href={ AssetURL(env.Args.ServerPathPrefix, "/icons/favicon.ico") } sizes="any"/>
-	<link rel="apple-touch-icon" href={ AssetURL(env.Args.ServerPathPrefix, "/icons/apple-touch-icon.png") }/>
-	<link rel="mask-icon" href={ AssetURL(env.Args.ServerPathPrefix, "/icons/icon-512-maskable.png") } color="#b8bb26"/>
-	<link rel="manifest" href={ AssetURL(env.Args.ServerPathPrefix, "/manifest.json") }/>
-	<link rel="stylesheet" href={ AssetURL(env.Args.ServerPathPrefix, "/css/bootstrap-icons.min.css") }/>
-	<link rel="stylesheet" href={ AssetURL(env.Args.ServerPathPrefix, "/css/ui.min.css") }/>
-	<link rel="stylesheet" href={ AssetURL(env.Args.ServerPathPrefix, "/css/main-layout.css") }/>
+	<link rel="icon" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/icons/favicon.ico") } sizes="any"/>
+	<link rel="apple-touch-icon" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/icons/apple-touch-icon.png") }/>
+	<link rel="mask-icon" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/icons/icon-512-maskable.png") } color="#b8bb26"/>
+	<link rel="manifest" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/manifest.json") }/>
+	<link rel="stylesheet" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/css/bootstrap-icons.min.css") }/>
+	<link rel="stylesheet" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/css/ui.min.css") }/>
+	<link rel="stylesheet" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/css/main-layout.css") }/>
 }
 
 templ scripts() {
-	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/htmx-v2.0.7.min.js") }></script>
-	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/htmx-ext-ws-v2.0.3.min.js") }></script>
-	<script src={ AssetURL(env.Args.ServerPathPrefix, "/js/main-layout.js") }></script>
+	<script src={ ui.AssetURL(env.Args.ServerPathPrefix, "/js/htmx-v2.0.7.min.js") }></script>
+	<script src={ ui.AssetURL(env.Args.ServerPathPrefix, "/js/htmx-ext-ws-v2.0.3.min.js") }></script>
+	<script src={ ui.AssetURL(env.Args.ServerPathPrefix, "/js/main-layout.js") }></script>
 }

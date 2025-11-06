@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/ui"
 )
 
 const (
@@ -27,8 +28,8 @@ templ PageHome() {
 }
 
 templ additionalHead() {
-	<link rel="stylesheet" href={ components.AssetURL(env.Args.ServerPathPrefix, "/css/page-home.css") }/>
-	<script src={ components.AssetURL(env.Args.ServerPathPrefix, "/js/page-home.js") }></script>
+	<link rel="stylesheet" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/css/page-home.css") }/>
+	<script src={ ui.AssetURL(env.Args.ServerPathPrefix, "/js/page-home.js") }></script>
 }
 
 templ section(id string) {
