@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	IDNewDevice = "new-device-dialog"
+	IDNewDeviceDialog = "new-device-dialog"
 )
 
 func NewDeviceDialog(oob bool, err error) templ.Component {
@@ -63,7 +63,7 @@ func NewDeviceDialog(oob bool, err error) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = ui.Dialog(ui.DialogProps{
-			ID:               IDNewDevice,
+			ID:               IDNewDeviceDialog,
 			Method:           http.MethodPost,
 			Href:             components.HxUrlEditDeviceDialog(nil),
 			SubmitButtonText: "Create",

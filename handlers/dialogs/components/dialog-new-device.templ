@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	IDNewDevice = "new-device-dialog"
+	IDNewDeviceDialog = "new-device-dialog"
 )
 
 templ NewDeviceDialog(oob bool, err error) {
@@ -18,7 +18,7 @@ templ NewDeviceDialog(oob bool, err error) {
 		}
 	}}
 	@ui.Dialog(ui.DialogProps{
-		ID:               IDNewDevice,
+		ID:               IDNewDeviceDialog,
 		Method:           http.MethodPost,
 		Href:             components.HxUrlEditDeviceDialog(nil),
 		SubmitButtonText: "Create",
