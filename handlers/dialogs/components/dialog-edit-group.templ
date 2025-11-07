@@ -44,5 +44,19 @@ templ editGroupDialog_AdditionalActions(id models.GroupID) {
 }
 
 templ editGroupDialogContent(name string, devices []*models.Device) {
-	// TODO: ...
+	@components.Input(components.InputProps{
+		ID:          "group-name",
+		Type:        "text",
+		Label:       "Name",
+		Description: "Enter a name for this group.",
+		Value:       name,
+		Required:    true,
+	})
+	<label for="group-devices"></label>
+	<select id="group-devices" multiple>
+		<option value="" disabled>Select devices</option>
+		for _, device := range devices {
+			<option value={ device.ID }>{ device.Name }</option>
+		}
+	</select>
 }
