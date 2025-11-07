@@ -1,15 +1,12 @@
 package components
 
 import (
+	"fmt"
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/ui"
 	"net/http"
 	"slices"
-)
-
-const (
-	IDEditGroupDialog = "edit-group-dialog"
 )
 
 templ EditGroupDialog(group *models.Group, devices []*models.Device, oob bool, err error) {
@@ -53,17 +50,19 @@ templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID
 		Value:       name,
 		Required:    true,
 	})
-	<label for="group-devices"></label>
-	// FIXME: this multiple select is not working this way
-	<select id="group-devices" multiple>
-		<option value="" disabled>Select devices</option>
+	<label for="group-devices">Select Devices</label>
+	<div id="group-devices">
 		for _, device := range allDevices {
-			<option
+			<input
+				type="checkbox"
+				id={ fmt.Sprintf(IDDevice, device.ID) }
+				name="devices"
 				value={ device.ID }
 				if slices.Contains(preselectedDeviceIDs, device.ID) {
-					selected
+					checked
 				}
-			>{ device.Name }</option>
+			/>
+			<label for={ fmt.Sprintf(IDDevice, device.ID) }>{ device.Name }</label>
 		}
-	</select>
+	</div>
 }

@@ -6,10 +6,6 @@ import (
 	"net/http"
 )
 
-const (
-	IDNewDeviceDialog = "new-device-dialog"
-)
-
 templ NewDeviceDialog(oob bool, err error) {
 	{{
 		hxSwapOOB := ""

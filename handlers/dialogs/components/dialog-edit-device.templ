@@ -8,10 +8,6 @@ import (
 	"strconv"
 )
 
-const (
-	IDEditDeviceDialog = "edit-device-dialog"
-)
-
 templ EditDeviceDialog(device *models.Device, oob bool, err error) {
 	{{
 		hxSwapOOB := ""
