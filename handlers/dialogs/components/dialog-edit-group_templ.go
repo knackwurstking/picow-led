@@ -154,7 +154,7 @@ func editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<label for=\"group-devices\"></label> <select id=\"group-devices\" multiple><option value=\"\" disabled>Select devices</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<label for=\"group-devices\"></label><select id=\"group-devices\" multiple><option value=\"\" disabled>Select devices</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -166,7 +166,7 @@ func editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID,
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(device.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/dialogs/components/dialog-edit-group.templ`, Line: 61, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/dialogs/components/dialog-edit-group.templ`, Line: 62, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -189,7 +189,7 @@ func editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID,
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(device.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/dialogs/components/dialog-edit-group.templ`, Line: 65, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/dialogs/components/dialog-edit-group.templ`, Line: 66, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {

@@ -54,6 +54,7 @@ templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID
 		Required:    true,
 	})
 	<label for="group-devices"></label>
+	// FIXME: this multiple select is not working this way
 	<select id="group-devices" multiple>
 		<option value="" disabled>Select devices</option>
 		for _, device := range allDevices {
