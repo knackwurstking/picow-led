@@ -11,7 +11,7 @@ const (
 	IDNewGroupDialog = "new-group-dialog"
 )
 
-templ NewGroupDialog(preselectedDevices []*models.Device, oob bool, err error) {
+templ NewGroupDialog(preselectedDeviceIDs []models.DeviceID, devices []*models.Device, oob bool, err error) {
 	{{
 		hxSwapOOB := ""
 		if oob {
@@ -26,6 +26,6 @@ templ NewGroupDialog(preselectedDevices []*models.Device, oob bool, err error) {
 		HxSwapOOB:        hxSwapOOB,
 		Error:            err,
 	}) {
-		@editGroupDialogContent("", preselectedDevices)
+		@editGroupDialogContent("", preselectedDeviceIDs, devices)
 	}
 }

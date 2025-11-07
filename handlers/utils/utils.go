@@ -51,9 +51,26 @@ func QueryParamDeviceID(c echo.Context, paramName string, optional bool) (models
 		return 0, nil
 	}
 
-	deviceIDConversion, err := strconv.Atoi(param)
+	deviceID, err := strconv.Atoi(param)
 	if err != nil {
 		return 0, fmt.Errorf("invalid device ID query parameter: %s=%s", paramName, param)
 	}
-	return models.DeviceID(deviceIDConversion), nil
+	return models.DeviceID(deviceID), nil
+}
+
+func QueryParamGroupID(c echo.Context, paramName string, optional bool) (models.GroupID, error) {
+	param, err := QueryParam(c, paramName, optional)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get group ID from query parameter: %v", err)
+	}
+
+	if optional && param == "" {
+		return 0, nil
+	}
+
+	groupID, err := strconv.Atoi(param)
+	if err != nil {
+		return 0, fmt.Errorf("invalid group ID query parameter: %s=%s", paramName, param)
+	}
+	return models.GroupID(groupID), nil
 }

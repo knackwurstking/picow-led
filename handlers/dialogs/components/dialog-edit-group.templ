@@ -5,13 +5,14 @@ import (
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/ui"
 	"net/http"
+	"slices"
 )
 
 const (
 	IDEditGroupDialog = "edit-group-dialog"
 )
 
-templ EditGroupDialog(group *models.ResolvedGroup, oob bool, err error) {
+templ EditGroupDialog(group *models.Group, devices []*models.Device, oob bool, err error) {
 	{{
 		hxSwapOOB := ""
 		if oob {
@@ -27,7 +28,7 @@ templ EditGroupDialog(group *models.ResolvedGroup, oob bool, err error) {
 		Error:             err,
 		AdditionalActions: editGroupDialog_AdditionalActions(group.ID),
 	}) {
-		@editGroupDialogContent(group.Name, group.Devices)
+		@editGroupDialogContent(group.Name, group.Devices, devices)
 	}
 }
 
@@ -43,7 +44,7 @@ templ editGroupDialog_AdditionalActions(id models.GroupID) {
 	</button>
 }
 
-templ editGroupDialogContent(name string, devices []*models.Device) {
+templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID, allDevices []*models.Device) {
 	@components.Input(components.InputProps{
 		ID:          "group-name",
 		Type:        "text",
@@ -55,8 +56,13 @@ templ editGroupDialogContent(name string, devices []*models.Device) {
 	<label for="group-devices"></label>
 	<select id="group-devices" multiple>
 		<option value="" disabled>Select devices</option>
-		for _, device := range devices {
-			<option value={ device.ID }>{ device.Name }</option>
+		for _, device := range allDevices {
+			<option
+				value={ device.ID }
+				if slices.Contains(preselectedDeviceIDs, device.ID) {
+					selected
+				}
+			>{ device.Name }</option>
 		}
 	</select>
 }
