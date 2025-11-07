@@ -35,6 +35,18 @@ templ EditDeviceDialog(device *models.Device, oob bool, err error) {
 	}
 }
 
+templ editDeviceDialog_AdditionalActions(id models.DeviceID) {
+	<button
+		class="destructive flex gap"
+		hx-delete={ components.HxUrlDeleteDevice(id) }
+		hx-confirm="Are you sure you want to delete this device?"
+		hx-on:htmx:after-request="if (event.detail.successful) this.closest('dialog').close();"
+	>
+		<i class="bi bi-trash"></i>
+		Delete
+	</button>
+}
+
 templ editDeviceDialogContent(address, port, name string) {
 	@components.Input(components.InputProps{
 		ID:          "host",
@@ -60,16 +72,4 @@ templ editDeviceDialogContent(address, port, name string) {
 		Value:       name,
 		Required:    true,
 	})
-}
-
-templ editDeviceDialog_AdditionalActions(id models.DeviceID) {
-	<button
-		class="destructive flex gap"
-		hx-delete={ components.HxUrlDeleteDevice(id) }
-		hx-confirm="Are you sure you want to delete this device?"
-		hx-on:htmx:after-request="if (event.detail.successful) this.closest('dialog').close();"
-	>
-		<i class="bi bi-trash"></i>
-		Delete
-	</button>
 }
