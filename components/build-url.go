@@ -36,6 +36,12 @@ func HxUrlDeleteDevice(deviceID models.DeviceID) templ.SafeURL {
 	))
 }
 
+func HxUrlTogglePower(deviceID models.DeviceID) templ.SafeURL {
+	return templ.SafeURL(BuildUrl(
+		fmt.Sprintf("/htmx/devices/toggle-power?id=%d", deviceID),
+	))
+}
+
 func HxUrlEditGroupDialog(groupID *models.GroupID) templ.SafeURL {
 	if groupID == nil {
 		return templ.SafeURL(BuildUrl("/htmx/dialog/edit-group"))
@@ -46,8 +52,8 @@ func HxUrlEditGroupDialog(groupID *models.GroupID) templ.SafeURL {
 	))
 }
 
-func HxUrlTogglePower(deviceID models.DeviceID) templ.SafeURL {
+func HxUrlDeleteGroup(groupID models.GroupID) templ.SafeURL {
 	return templ.SafeURL(BuildUrl(
-		fmt.Sprintf("/htmx/devices/toggle-power?id=%d", deviceID),
+		fmt.Sprintf("/htmx/groups/delete?id=%d", groupID),
 	))
 }
