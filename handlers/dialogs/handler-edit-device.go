@@ -25,7 +25,7 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 		device, err = h.registry.Devices.Get(deviceID)
 		if err != nil {
 			if services.IsNotFoundError(err) {
-				return echo.NewHTTPError(http.StatusBadRequest,
+				return echo.NewHTTPError(http.StatusNotFound,
 					fmt.Errorf("device with ID %d not found", deviceID))
 			}
 
