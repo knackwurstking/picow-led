@@ -58,6 +58,7 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 
 func (h *Handler) PostEditGroup(c echo.Context) error {
 	// TODO: ...
+	// Form Values: `map[devices:[1 2] group-name:[test]]`
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
 	return nil
