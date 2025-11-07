@@ -1,0 +1,31 @@
+package components
+
+import (
+	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/ui"
+	"net/http"
+)
+
+const (
+	IDNewGroupDialog = "new-group-dialog"
+)
+
+templ NewGroupDialog(preselectedDevices []*models.Device, oob bool, err error) {
+	{{
+		hxSwapOOB := ""
+		if oob {
+			hxSwapOOB = "true"
+		}
+	}}
+	@ui.Dialog(ui.DialogProps{
+		ID:               IDNewGroupDialog,
+		Method:           http.MethodPost,
+		Href:             components.HxUrlEditGroupDialog(nil),
+		SubmitButtonText: "Create",
+		HxSwapOOB:        hxSwapOOB,
+		Error:            err,
+	}) {
+		@editGroupDialogContent("", preselectedDevices)
+	}
+}

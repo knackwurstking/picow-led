@@ -1,0 +1,48 @@
+package components
+
+import (
+	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/ui"
+	"net/http"
+)
+
+const (
+	IDEditGroupDialog = "edit-group-dialog"
+)
+
+templ EditGroupDialog(group *models.ResolvedGroup, oob bool, err error) {
+	{{
+		hxSwapOOB := ""
+		if oob {
+			hxSwapOOB = "true"
+		}
+	}}
+	@ui.Dialog(ui.DialogProps{
+		ID:                IDEditGroupDialog,
+		Method:            http.MethodPut,
+		Href:              components.HxUrlEditGroupDialog(&group.ID),
+		SubmitButtonText:  "Edit",
+		HxSwapOOB:         hxSwapOOB,
+		Error:             err,
+		AdditionalActions: editGroupDialog_AdditionalActions(group.ID),
+	}) {
+		@editGroupDialogContent(group.Name, group.Devices)
+	}
+}
+
+templ editGroupDialog_AdditionalActions(id models.GroupID) {
+	<button
+		class="destructive flex gap"
+		hx-delete={ components.HxUrlDeleteGroup(id) }
+		hx-confirm="Are you sure you want to delete this group?"
+		hx-on:htmx:after-request="if (event.detail.successful) this.closest('dialog').close();"
+	>
+		<i class="bi bi-trash"></i>
+		Delete
+	</button>
+}
+
+templ editGroupDialogContent(name string, devices []*models.Device) {
+	// TODO: ...
+}
