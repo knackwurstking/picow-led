@@ -51,18 +51,20 @@ templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID
 		Required:    true,
 	})
 	<label for="group-devices">Select Devices</label>
-	<div id="group-devices">
+	<div id="group-devices" class="flex flex-col gap">
 		for _, device := range allDevices {
-			<input
-				type="checkbox"
-				id={ fmt.Sprintf(IDDevice, device.ID) }
-				name="devices"
-				value={ device.ID }
-				if slices.Contains(preselectedDeviceIDs, device.ID) {
-					checked
-				}
-			/>
-			<label for={ fmt.Sprintf(IDDevice, device.ID) }>{ device.Name }</label>
+			<span class="ml flex items-center">
+				<input
+					type="checkbox"
+					id={ fmt.Sprintf(IDDevice, device.ID) }
+					name="devices"
+					value={ device.ID }
+					if slices.Contains(preselectedDeviceIDs, device.ID) {
+						checked
+					}
+				/>
+				<label for={ fmt.Sprintf(IDDevice, device.ID) }>{ device.Name }</label>
+			</span>
 		}
 	</div>
 }
