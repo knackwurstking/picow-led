@@ -47,7 +47,10 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 			}
 		}
 
-		components.NewGroupDialog(preselectedDeviceIDs, devices, false, nil)
+		d := components.NewGroupDialog(preselectedDeviceIDs, devices, false, nil)
+		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
+			return fmt.Errorf("failed to render group dialog: %v", err)
+		}
 	}
 
 	return nil
