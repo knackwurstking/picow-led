@@ -2,6 +2,7 @@ package dialogs
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"slices"
 	"strconv"
@@ -58,32 +59,54 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 }
 
 func (h *Handler) PostEditGroup(c echo.Context) error {
-	group, err := h.parseEditGroupForm(c)
+	group, err := h.parseGroupForm(c)
 	if err != nil {
-		// TODO: re render the dialog (with oob set to true) and add the error to the dialog
-
 		return fmt.Errorf("failed to parse group form values: %v", err)
 	}
 
 	if !group.Validate() {
-		return models.ValidationError
+		message := "failed to validate group"
+		h.reRenderGroupDialogWithError(c, group, fmt.Errorf(message))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf(message))
 	}
 
-	// TODO: render dialog on error, add group to the database using `h.registry`, set the hx trigger and return
+	if _, err = h.registry.Groups.Add(group); err != nil {
+		err = fmt.Errorf("failed to add group: %v", err)
+		h.reRenderGroupDialogWithError(c, group, err)
+		return err
+	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
 	return nil
 }
 
 func (h *Handler) PutEditGroup(c echo.Context) error {
+	group, err := h.parseGroupForm(c)
+	if err != nil {
+		return fmt.Errorf("failed to parse group form values: %v", err)
+	}
+	group.ID, err = utils.QueryParamGroupID(c, "id", false)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("failed to get group ID: %v", err))
+	}
 
-	// TODO: ...
+	if !group.Validate() {
+		message := "failed to validate group"
+		h.reRenderGroupDialogWithError(c, group, fmt.Errorf(message))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf(message))
+	}
+
+	if err = h.registry.Groups.Update(group); err != nil {
+		err = fmt.Errorf("failed to update group: %v", err)
+		h.reRenderGroupDialogWithError(c, group, err)
+		return err
+	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
 	return nil
 }
 
-func (h *Handler) parseEditGroupForm(c echo.Context) (*models.Group, error) {
+func (h *Handler) parseGroupForm(c echo.Context) (*models.Group, error) {
 	formValues, err := c.FormParams()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get form parameters: %v", err)
@@ -104,4 +127,26 @@ func (h *Handler) parseEditGroupForm(c echo.Context) (*models.Group, error) {
 	}
 
 	return models.NewGroup(groupName, deviceIDs), nil
+}
+
+func (h *Handler) reRenderGroupDialogWithError(c echo.Context, group *models.Group, err error) {
+	devices, err := h.registry.Devices.List()
+	if err != nil {
+		slog.Warn("Failed to list devices for edit group dialog with error", "error", err)
+		return
+	}
+
+	if group.ID == 0 {
+		d := components.NewGroupDialog(group.Devices, devices, true, err)
+		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
+			slog.Warn("Failed to render edit group dialog with error", "error", err)
+			return
+		}
+	} else {
+		d := components.EditGroupDialog(group, devices, true, err)
+		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
+			slog.Warn("Failed to render edit group dialog with error", "error", err)
+			return
+		}
+	}
 }
