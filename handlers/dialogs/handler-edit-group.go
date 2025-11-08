@@ -65,7 +65,11 @@ func (h *Handler) PostEditGroup(c echo.Context) error {
 		return fmt.Errorf("failed to parse group form values: %v", err)
 	}
 
-	// TODO: validate group, render dialog on error, add group to the database using `h.registry`, set the hx trigger and return
+	if !group.Validate() {
+		return models.ValidationError
+	}
+
+	// TODO: render dialog on error, add group to the database using `h.registry`, set the hx trigger and return
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
 	return nil
