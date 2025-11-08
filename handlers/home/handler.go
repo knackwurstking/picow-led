@@ -7,7 +7,6 @@ import (
 
 	"github.com/knackwurstking/picow-led/handlers/home/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
-	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 )
@@ -22,14 +21,18 @@ func NewHandler(r *services.Registry) *Handler {
 	}
 }
 
+// TODO: Either move device and group methods to separate handlers or rename routes
 func (h *Handler) Register(e *echo.Echo) {
 	utils.Register(e, http.MethodGet, "", h.GetHomePage)
 
 	utils.Register(e, http.MethodGet, "/htmx/home/section/devices", h.GetSectionDevices)
 	utils.Register(e, http.MethodGet, "/htmx/home/section/groups", h.GetSectionGroups)
 
-	utils.Register(e, http.MethodDelete, "/htmx/devices/delete", h.Delete)
-	utils.Register(e, http.MethodPost, "/htmx/devices/toggle-power", h.PostTogglePower)
+	utils.Register(e, http.MethodDelete, "/htmx/devices/delete", h.DeleteDevice)
+	utils.Register(e, http.MethodPost, "/htmx/devices/toggle-power", h.PostDeviceTogglePower)
+
+	utils.Register(e, http.MethodDelete, "/htmx/groups/delete", h.DeleteGroup)
+	utils.Register(e, http.MethodPost, "/htmx/groups/toggle-power", h.PostGroupTogglePower)
 }
 
 func (h *Handler) GetHomePage(c echo.Context) error {
@@ -76,7 +79,7 @@ func (h *Handler) GetSectionGroups(c echo.Context) error {
 	return components.SectionGroups(false, resolvedGroups).Render(c.Request().Context(), c.Response())
 }
 
-func (h *Handler) Delete(c echo.Context) error {
+func (h *Handler) DeleteDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
@@ -92,7 +95,9 @@ func (h *Handler) Delete(c echo.Context) error {
 	return nil
 }
 
-func (h *Handler) PostTogglePower(c echo.Context) error {
+// TODO: Delete a group method
+
+func (h *Handler) PostDeviceTogglePower(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
 	if err != nil {
 		return fmt.Errorf("Failed to get device id from query parameter: %s", err.Error())
@@ -115,16 +120,4 @@ func (h *Handler) PostTogglePower(c echo.Context) error {
 	return nil
 }
 
-func OOBRenderPageHomeDeviceError(c echo.Context, deviceID models.DeviceID, err error) {
-	deviceError := components.OOBDeviceError(deviceID, err, true)
-	if err := deviceError.Render(c.Request().Context(), c.Response()); err != nil {
-		slog.Error("Failed to render device error page", "deviceID", deviceID, "error", err)
-	}
-}
-
-func OOBRenderPageHomeDevicePowerButton(c echo.Context, deviceID models.DeviceID, currentColor []uint8) {
-	devicePowerButton := components.OOBDevicePowerButton(deviceID, currentColor, true)
-	if err := devicePowerButton.Render(c.Request().Context(), c.Response()); err != nil {
-		slog.Error("Failed to render device power button page", "deviceID", deviceID, "error", err)
-	}
-}
+// TODO: Post device toggle power method
