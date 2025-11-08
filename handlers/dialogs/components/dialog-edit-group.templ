@@ -62,6 +62,7 @@ templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID
 					if slices.Contains(preselectedDeviceIDs, device.ID) {
 						checked
 					}
+					hx-preserve="true"
 				/>
 				<label for={ fmt.Sprintf(IDDevice, device.ID) }>{ device.Name }</label>
 			</span>
