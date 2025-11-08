@@ -3,6 +3,10 @@
 ## Code Quality
 
 - [x] See if we can improve the handler and components structure
+- [ ] Create s separate errors package with:
+  - Validation Error
+  - Sql Error (generic, mostly used in handlers)
+  - Not Found Error
 
 ## FIX
 
@@ -56,10 +60,9 @@
 
 ### Home Section: Groups
 
-- [ ] Build an edit dialog specifically for managing groups.
+- [ ] Create a new group dialog. [WIP]
+- [ ] Construct an edit dialog for managing group settings. [WIP]
 - [ ] Display a list of existing groups.
-- [ ] Create a new group dialog (`DialogNewGroup`).
-- [ ] Construct an edit dialog for managing group settings (`DialogEditGroup`).
 
 ## Device Control Handling
 
