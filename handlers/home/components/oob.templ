@@ -3,6 +3,7 @@ package components
 import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
 	"slices"
 )
@@ -17,7 +18,7 @@ templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob b
 		}
 	}}
 	<button
-		id={ fmt.Sprintf(IDSectionDevices_PowerButton, deviceID) }
+		id={ fmt.Sprintf(ids.HomeSectionDevicesPowerButton, deviceID) }
 		class="power-button icon ghost"
 		style={ fmt.Sprintf("color: %s;", buttonColor) }
 		hx-post={ components.HxUrlTogglePower(deviceID) }
@@ -38,7 +39,7 @@ templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob b
 templ OOBDeviceError(deviceID models.DeviceID, err error, oob bool) {
 	if err == nil {
 		<span
-			id={ fmt.Sprintf(IDSectionDevices_DeviceError, deviceID) }
+			id={ fmt.Sprintf(ids.HomeSectionDevicesDeviceError, deviceID) }
 			class="device-error"
 			if oob {
 				hx-swap-oob="true"
@@ -47,7 +48,7 @@ templ OOBDeviceError(deviceID models.DeviceID, err error, oob bool) {
 		{{ return }}
 	}
 	<div
-		id={ fmt.Sprintf(IDSectionDevices_DeviceError, deviceID) }
+		id={ fmt.Sprintf(ids.HomeSectionDevicesDeviceError, deviceID) }
 		class="device-error card destructive compact"
 		if oob {
 			hx-swap-oob="true"

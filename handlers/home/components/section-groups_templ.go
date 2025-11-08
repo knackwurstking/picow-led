@@ -10,11 +10,8 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
-)
-
-const (
-	IDSectionGroupsSpinner string = "section-groups-spinner"
 )
 
 func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component {
@@ -38,7 +35,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, enableSpinner(IDSectionGroupsSpinner, templ.JSExpression("event")))
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, enableSpinner(ids.HomeSectionGroupsSpinner, templ.JSExpression("event")))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -49,7 +46,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlHomeSectionGroups())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 14, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 11, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -60,9 +57,9 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("#" + string(IDSectionGroups))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("#" + ids.HomeSectionGroups)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 15, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 12, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +72,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("reloadGroups from:body")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 16, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 13, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -85,7 +82,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 templ.ComponentScript = enableSpinner(IDSectionGroupsSpinner, templ.JSExpression("event"))
+		var templ_7745c5c3_Var5 templ.ComponentScript = enableSpinner(ids.HomeSectionGroupsSpinner, templ.JSExpression("event"))
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -132,7 +129,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = sectionLoadingSpinner(IDSectionGroupsSpinner, !loading).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = sectionLoadingSpinner(ids.HomeSectionGroupsSpinner, !loading).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

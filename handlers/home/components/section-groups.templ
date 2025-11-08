@@ -2,19 +2,16 @@ package components
 
 import (
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
-)
-
-const (
-	IDSectionGroupsSpinner string = "section-groups-spinner"
 )
 
 templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
 	<span
 		hx-get={ components.HxUrlHomeSectionGroups() }
-		hx-target={ "#" + string(IDSectionGroups) }
+		hx-target={ "#" + ids.HomeSectionGroups }
 		hx-trigger={ "reloadGroups from:body" }
-		hx-on::before-request={ enableSpinner(IDSectionGroupsSpinner, templ.JSExpression("event")) }
+		hx-on::before-request={ enableSpinner(ids.HomeSectionGroupsSpinner, templ.JSExpression("event")) }
 	></span>
 	@sectionSummary("Groups")
 	@sectionActions() {
@@ -30,5 +27,5 @@ templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
 	} else {
 		<p class="muted ghost italic">No groups found.</p>
 	}
-	@sectionLoadingSpinner(IDSectionGroupsSpinner, !loading)
+	@sectionLoadingSpinner(ids.HomeSectionGroupsSpinner, !loading)
 }

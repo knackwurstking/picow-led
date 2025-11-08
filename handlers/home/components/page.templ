@@ -3,12 +3,8 @@ package components
 import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/ui"
-)
-
-const (
-	IDSectionDevices string = "section-devices"
-	IDSectionGroups  string = "section-groups"
 )
 
 templ PageHome() {
@@ -18,10 +14,10 @@ templ PageHome() {
 			AdditionalHead: additionalHead(),
 		},
 	) {
-		@section(IDSectionDevices) {
+		@section(ids.HomeSectionDevices) {
 			@SectionDevices(true, nil)
 		}
-		@section(IDSectionGroups) {
+		@section(ids.HomeSectionGroups) {
 			@SectionGroups(true, nil)
 		}
 	}

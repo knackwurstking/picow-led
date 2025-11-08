@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/ui"
 	"net/http"
@@ -60,7 +61,7 @@ func NewGroupDialog(preselectedDeviceIDs []models.DeviceID, devices []*models.De
 			return nil
 		})
 		templ_7745c5c3_Err = ui.Dialog(ui.DialogProps{
-			ID:               IDNewGroupDialog,
+			ID:               ids.DialogNewGroup,
 			Method:           http.MethodPost,
 			Href:             components.HxUrlEditGroupDialog(nil),
 			SubmitButtonText: "Create",

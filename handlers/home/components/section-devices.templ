@@ -3,23 +3,16 @@ package components
 import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
-)
-
-const (
-	IDSectionDevicesSpinner      string = "section-devices-spinner"
-	IDSectionDevices_PowerButton string = "device-%d-power-button"
-	IDSectionDevices_DeviceError string = "device-%d-error"
-	IDSectionDevices_Device      string = "device-%d"
-	IDSectionDevices_List        string = "devices-list"
 )
 
 templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 	<span
 		hx-get={ components.HxUrlHomeSectionDevices() }
-		hx-target={ "#" + string(IDSectionDevices) }
+		hx-target={ "#" + ids.HomeSectionDevices }
 		hx-trigger={ "reloadDevices from:body" }
-		hx-on::before-request={ enableSpinner(IDSectionDevicesSpinner, templ.JSExpression("event")) }
+		hx-on::before-request={ enableSpinner(ids.HomeSectionDevicesSpinner, templ.JSExpression("event")) }
 	></span>
 	@sectionSummary("Devices")
 	@sectionActions() {
@@ -31,7 +24,7 @@ templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 		})
 	}
 	if len(devices) > 0 {
-		<div id={ IDSectionDevices_List } class="flex flex-col gap-lg mt">
+		<div id={ ids.HomeSectionDevicesList } class="flex flex-col gap-lg mt">
 			for _, device := range devices {
 				@SectionDevices_Device(device)
 			}
@@ -39,11 +32,11 @@ templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 	} else {
 		<p class="muted ghost italic">No devices found.</p>
 	}
-	@sectionLoadingSpinner(IDSectionDevicesSpinner, !loading)
+	@sectionLoadingSpinner(ids.HomeSectionDevicesSpinner, !loading)
 }
 
 templ SectionDevices_Device(device *models.ResolvedDevice) {
-	<div class="device card outline" id={ fmt.Sprintf(IDSectionDevices_Device, device.ID) }>
+	<div class="device card outline" id={ fmt.Sprintf(ids.HomeSectionDevicesDevice, device.ID) }>
 		<div class="card-body flex flex-col gap">
 			<div class="flex gap justify-between items-center">
 				<div class="flex flex-col gap-sm">

@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/ui"
 	"net/http"
 )
@@ -59,7 +60,7 @@ func NewDeviceDialog(oob bool, err error) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = ui.Dialog(ui.DialogProps{
-			ID:               IDNewDeviceDialog,
+			ID:               ids.DialogNewDevice,
 			Method:           http.MethodPost,
 			Href:             components.HxUrlEditDeviceDialog(nil),
 			SubmitButtonText: "Create",

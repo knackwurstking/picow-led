@@ -11,15 +11,8 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
-)
-
-const (
-	IDSectionDevicesSpinner      string = "section-devices-spinner"
-	IDSectionDevices_PowerButton string = "device-%d-power-button"
-	IDSectionDevices_DeviceError string = "device-%d-error"
-	IDSectionDevices_Device      string = "device-%d"
-	IDSectionDevices_List        string = "devices-list"
 )
 
 func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Component {
@@ -43,7 +36,7 @@ func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Compon
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, enableSpinner(IDSectionDevicesSpinner, templ.JSExpression("event")))
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, enableSpinner(ids.HomeSectionDevicesSpinner, templ.JSExpression("event")))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -54,7 +47,7 @@ func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Compon
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlHomeSectionDevices())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 19, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 12, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -65,9 +58,9 @@ func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Compon
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("#" + string(IDSectionDevices))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("#" + ids.HomeSectionDevices)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 20, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 13, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -80,7 +73,7 @@ func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Compon
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("reloadDevices from:body")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 21, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 14, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -90,7 +83,7 @@ func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 templ.ComponentScript = enableSpinner(IDSectionDevicesSpinner, templ.JSExpression("event"))
+		var templ_7745c5c3_Var5 templ.ComponentScript = enableSpinner(ids.HomeSectionDevicesSpinner, templ.JSExpression("event"))
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5.Call)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -136,9 +129,9 @@ func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Compon
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(IDSectionDevices_List)
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(ids.HomeSectionDevicesList)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 34, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 27, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -164,7 +157,7 @@ func SectionDevices(loading bool, devices []*models.ResolvedDevice) templ.Compon
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = sectionLoadingSpinner(IDSectionDevicesSpinner, !loading).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = sectionLoadingSpinner(ids.HomeSectionDevicesSpinner, !loading).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -198,9 +191,9 @@ func SectionDevices_Device(device *models.ResolvedDevice) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(IDSectionDevices_Device, device.ID))
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(ids.HomeSectionDevicesDevice, device.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 46, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 39, Col: 91}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -213,7 +206,7 @@ func SectionDevices_Device(device *models.ResolvedDevice) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(device.Addr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 50, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 43, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -226,7 +219,7 @@ func SectionDevices_Device(device *models.ResolvedDevice) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(device.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 51, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-devices.templ`, Line: 44, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {

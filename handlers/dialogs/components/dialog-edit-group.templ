@@ -3,6 +3,7 @@ package components
 import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/ui"
 	"net/http"
@@ -17,7 +18,7 @@ templ EditGroupDialog(group *models.Group, devices []*models.Device, oob bool, e
 		}
 	}}
 	@ui.Dialog(ui.DialogProps{
-		ID:                IDEditGroupDialog,
+		ID:                ids.DialogEditGroup,
 		Method:            http.MethodPut,
 		Href:              components.HxUrlEditGroupDialog(&group.ID),
 		SubmitButtonText:  "Edit",
@@ -56,7 +57,7 @@ templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID
 			<span class="ml flex items-center">
 				<input
 					type="checkbox"
-					id={ fmt.Sprintf(IDDevice, device.ID) }
+					id={ fmt.Sprintf(ids.DialogDeviceCheckbox, device.ID) }
 					name="devices"
 					value={ device.ID }
 					if slices.Contains(preselectedDeviceIDs, device.ID) {
@@ -64,7 +65,7 @@ templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID
 					}
 					hx-preserve="true"
 				/>
-				<label for={ fmt.Sprintf(IDDevice, device.ID) }>{ device.Name }</label>
+				<label for={ fmt.Sprintf(ids.DialogDeviceCheckbox, device.ID) }>{ device.Name }</label>
 			</span>
 		}
 	</div>

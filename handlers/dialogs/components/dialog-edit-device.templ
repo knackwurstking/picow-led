@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/ui"
 	"net/http"
@@ -16,7 +17,7 @@ templ EditDeviceDialog(device *models.Device, oob bool, err error) {
 		}
 	}}
 	@ui.Dialog(ui.DialogProps{
-		ID:                IDEditDeviceDialog,
+		ID:                ids.DialogEditDevice,
 		Method:            http.MethodPut,
 		Href:              components.HxUrlEditDeviceDialog(&device.ID),
 		SubmitButtonText:  "Edit",
