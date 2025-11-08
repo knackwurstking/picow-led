@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"slices"
+	"strconv"
 
 	"github.com/knackwurstking/picow-led/handlers/dialogs/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
@@ -57,15 +58,46 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 }
 
 func (h *Handler) PostEditGroup(c echo.Context) error {
-	// TODO: ...
-	// Form Values: `map[devices:[1 2] group-name:[test]]`
+	group, err := h.parseEditGroupForm(c)
+	if err != nil {
+		// TODO: re render the dialog (with oob set to true) and add the error to the dialog
+
+		return fmt.Errorf("failed to parse group form values: %v", err)
+	}
+
+	// TODO: validate group, render dialog on error, add group to the database using `h.registry`, set the hx trigger and return
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
 	return nil
 }
+
 func (h *Handler) PutEditGroup(c echo.Context) error {
+
 	// TODO: ...
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
 	return nil
+}
+
+func (h *Handler) parseEditGroupForm(c echo.Context) (*models.Group, error) {
+	formValues, err := c.FormParams()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get form parameters: %v", err)
+	}
+
+	groupName := formValues.Get("group-name")
+	if groupName == "" {
+		return nil, fmt.Errorf("group name is required")
+	}
+
+	var deviceIDs []models.DeviceID
+	for _, value := range formValues["devices"] {
+		deviceID, err := strconv.Atoi(value)
+		if err != nil {
+			return nil, fmt.Errorf("invalid device ID: %v", err)
+		}
+		deviceIDs = append(deviceIDs, models.DeviceID(deviceID))
+	}
+
+	return models.NewGroup(groupName, deviceIDs), nil
 }
