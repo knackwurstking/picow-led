@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-templ NewGroupDialog(preselectedDeviceIDs []models.DeviceID, devices []*models.Device, oob bool, err error) {
+templ NewGroupDialog(devices []*models.Device, preselectedDeviceIDs []models.DeviceID, oob bool, err error) {
 	{{
 		hxSwapOOB := ""
 		if oob {

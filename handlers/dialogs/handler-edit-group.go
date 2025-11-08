@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"slices"
 	"strconv"
 
 	"github.com/knackwurstking/picow-led/handlers/dialogs/components"
@@ -14,7 +13,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// FIXME: Opening a new group dialog takes way too much time
 func (h *Handler) GetEditGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", true)
 	if err != nil {
@@ -43,17 +41,7 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 			return fmt.Errorf("failed to render edit group dialog: %v", err)
 		}
 	} else {
-		var preselectedDeviceIDs []models.DeviceID
-
-		// Preselect devices based on their current color state
-		for _, d := range devices {
-			color, _ := h.registry.DeviceControls.GetCurrentColor(d.ID)
-			if len(color) > 0 && slices.Max(color) > 0 {
-				preselectedDeviceIDs = append(preselectedDeviceIDs, d.ID)
-			}
-		}
-
-		d := components.NewGroupDialog(preselectedDeviceIDs, devices, false, nil)
+		d := components.NewGroupDialog(devices, nil, false, nil)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
 			return fmt.Errorf("failed to render new group dialog: %v", err)
 		}
@@ -141,7 +129,7 @@ func (h *Handler) reRenderGroupDialogWithError(c echo.Context, group *models.Gro
 	}
 
 	if group.ID == 0 {
-		d := components.NewGroupDialog(group.Devices, devices, true, err)
+		d := components.NewGroupDialog(devices, group.Devices, true, err)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
 			slog.Warn("Failed to render edit group dialog with error", "error", err)
 			return
