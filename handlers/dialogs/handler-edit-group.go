@@ -14,6 +14,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// FIXME: Opening a new group dialog takes way too much time
 func (h *Handler) GetEditGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", true)
 	if err != nil {
