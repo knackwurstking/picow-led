@@ -37,7 +37,10 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 	}
 
 	if group != nil {
-		components.EditGroupDialog(group, devices, false, nil)
+		d := components.EditGroupDialog(group, devices, false, nil)
+		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
+			return fmt.Errorf("failed to render edit group dialog: %v", err)
+		}
 	} else {
 		var preselectedDeviceIDs []models.DeviceID
 
@@ -51,7 +54,7 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 
 		d := components.NewGroupDialog(preselectedDeviceIDs, devices, false, nil)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
-			return fmt.Errorf("failed to render group dialog: %v", err)
+			return fmt.Errorf("failed to render new group dialog: %v", err)
 		}
 	}
 

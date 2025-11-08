@@ -23,9 +23,38 @@ templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
 		})
 	}
 	if len(groups) > 0 {
-		// TODO: ...
+		<div id={ ids.HomeSectionDevicesList } class="flex flex-col gap-lg mt">
+			for _, group := range groups {
+				@SectionGroups_Group(group)
+			}
+		</div>
 	} else {
 		<p class="muted ghost italic">No groups found.</p>
 	}
 	@sectionLoadingSpinner(ids.HomeSectionGroupsSpinner, !loading)
+}
+
+templ SectionGroups_Group(group *models.ResolvedGroup) {
+	<div class="group card outline" id={ ids.HomeSectionGroupsGroup(group.ID) }>
+		<div class="card-body flex flex-col gap">
+			<div class="flex gap justify-between items-center">
+				<div class="flex flex-col gap-sm">
+					<strong>{ group.Name }</strong>
+				</div>
+				<div class="button-group">
+					@components.EditIconButton(templ.Attributes{
+						"hx-get":     string(components.HxUrlEditGroupDialog(&group.ID)),
+						"hx-target":  "body",
+						"hx-swap":    "beforeend",
+						"hx-trigger": "click",
+					})
+					// TODO: The power button component for groups is missing, also need get get the current color somehow (could use 255 for now)
+					//@OOBGroupPowerButton(group.ID, group.CurrentColor, false)
+				</div>
+			</div>
+			<div>
+				@OOBGroupError(group.ID, nil, false)
+			</div>
+		</div>
+	</div>
 }

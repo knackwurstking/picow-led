@@ -18,7 +18,7 @@ templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob b
 		}
 	}}
 	<button
-		id={ fmt.Sprintf(ids.HomeSectionDevicesPowerButton, deviceID) }
+		id={ ids.HomeSectionDevicesPowerButton(deviceID) }
 		class="power-button icon ghost"
 		style={ fmt.Sprintf("color: %s;", buttonColor) }
 		hx-post={ components.HxUrlTogglePower(deviceID) }
@@ -39,7 +39,7 @@ templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob b
 templ OOBDeviceError(deviceID models.DeviceID, err error, oob bool) {
 	if err == nil {
 		<span
-			id={ fmt.Sprintf(ids.HomeSectionDevicesDeviceError, deviceID) }
+			id={ ids.HomeSectionDevicesDeviceError(deviceID) }
 			class="device-error"
 			if oob {
 				hx-swap-oob="true"
@@ -48,7 +48,31 @@ templ OOBDeviceError(deviceID models.DeviceID, err error, oob bool) {
 		{{ return }}
 	}
 	<div
-		id={ fmt.Sprintf(ids.HomeSectionDevicesDeviceError, deviceID) }
+		id={ ids.HomeSectionDevicesDeviceError(deviceID) }
+		class="device-error card destructive compact"
+		if oob {
+			hx-swap-oob="true"
+		}
+	>
+		<div class="card-body">
+			{ err.Error() }
+		</div>
+	</div>
+}
+
+templ OOBGroupError(groupID models.GroupID, err error, oob bool) {
+	if err == nil {
+		<span
+			id={ ids.HomeSectionGroupsGroupError(groupID) }
+			class="device-error"
+			if oob {
+				hx-swap-oob="true"
+			}
+		></span>
+		{{ return }}
+	}
+	<div
+		id={ ids.HomeSectionGroupsGroupError(groupID) }
 		class="device-error card destructive compact"
 		if oob {
 			hx-swap-oob="true"

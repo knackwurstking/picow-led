@@ -1,7 +1,6 @@
 package components
 
 import (
-	"fmt"
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
@@ -36,7 +35,7 @@ templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 }
 
 templ SectionDevices_Device(device *models.ResolvedDevice) {
-	<div class="device card outline" id={ fmt.Sprintf(ids.HomeSectionDevicesDevice, device.ID) }>
+	<div class="device card outline" id={ ids.HomeSectionDevicesDevice(device.ID) }>
 		<div class="card-body flex flex-col gap">
 			<div class="flex gap justify-between items-center">
 				<div class="flex flex-col gap-sm">
