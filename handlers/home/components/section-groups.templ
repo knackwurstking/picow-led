@@ -36,7 +36,7 @@ templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
 
 templ SectionGroups_Group(group *models.ResolvedGroup) {
 	<div class="group card outline" id={ ids.HomeSectionGroupsGroup(group.ID) }>
-		<div class="card-body flex flex-col gap">
+		<div class="card-body flex flex-col">
 			<div class="flex gap justify-between items-center">
 				<div class="flex flex-col gap-sm">
 					<strong>{ group.Name }</strong>
@@ -48,11 +48,13 @@ templ SectionGroups_Group(group *models.ResolvedGroup) {
 						"hx-swap":    "beforeend",
 						"hx-trigger": "click",
 					})
-					// TODO: The power button component for groups is missing, also need get get the current color somehow (could use 255 for now)
+					// TODO: The power button component for groups is missing,
+					// also need to get the current color somehow (could use 255
+					// for now)
 					//@OOBGroupPowerButton(group.ID, group.CurrentColor, false)
 				</div>
 			</div>
-			<div>
+			<div class="mt">
 				@OOBGroupError(group.ID, nil, false)
 			</div>
 		</div>

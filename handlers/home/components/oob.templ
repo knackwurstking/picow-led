@@ -28,7 +28,33 @@ templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob b
 		if oob {
 			hx-swap-oob="true"
 		}
-		title="Edit"
+		hx-on::before-request="event.currentTarget.disabled = true"
+		hx-on::after-request="event.currentTarget.disabled = false"
+	>
+		<i class="bi bi-power"></i>
+	</button>
+}
+
+templ OOBGroupPowerButton(groupID models.GroupID, currentColor []uint8, oob bool) {
+	{{
+		buttonColor := "red"
+		if len(currentColor) > 0 {
+			if slices.Max(currentColor) > 0 {
+				buttonColor = "green"
+			}
+		}
+	}}
+	<button
+		id={ ids.HomeSectionGroupsPowerButton(groupID) }
+		class="power-button icon ghost"
+		style={ fmt.Sprintf("color: %s;", buttonColor) }
+		hx-post={ components.HxUrlTogglePowerGroup(groupID) }
+		hx-target="this"
+		hx-swap="none"
+		hx-trigger="click"
+		if oob {
+			hx-swap-oob="true"
+		}
 		hx-on::before-request="event.currentTarget.disabled = true"
 		hx-on::after-request="event.currentTarget.disabled = false"
 	>

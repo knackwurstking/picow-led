@@ -36,7 +36,7 @@ templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 
 templ SectionDevices_Device(device *models.ResolvedDevice) {
 	<div class="device card outline" id={ ids.HomeSectionDevicesDevice(device.ID) }>
-		<div class="card-body flex flex-col gap">
+		<div class="card-body flex flex-col">
 			<div class="flex gap justify-between items-center">
 				<div class="flex flex-col gap-sm">
 					<small>{ device.Addr }</small>
@@ -52,7 +52,7 @@ templ SectionDevices_Device(device *models.ResolvedDevice) {
 					@OOBDevicePowerButton(device.ID, device.CurrentColor, false)
 				</div>
 			</div>
-			<div>
+			<div class="mt">
 				@OOBDeviceError(device.ID, nil, false)
 			</div>
 		</div>

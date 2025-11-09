@@ -291,25 +291,79 @@ func scripts() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\"></script><script src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(ui.AssetURL(env.Args.ServerPathPrefix, "/js/main-layout.js"))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/layout.templ`, Line: 57, Col: 75}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"></script>")
+		templ_7745c5c3_Err = layoutScript().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		return nil
 	})
+}
+
+func layoutScript() templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_layoutScript_8a54`,
+		Function: `function __templ_layoutScript_8a54(){// For the ui.min.css i need to set the data-theme to light/dark
+	function updateDataTheme() {
+		const themeColorMeta = document.getElementById("theme-color-meta");
+		if (matchMedia("(prefers-color-scheme: dark)").matches) {
+			document.querySelector("html").setAttribute("data-theme", "dark");
+			// Dark theme background color
+			if (themeColorMeta) themeColorMeta.setAttribute("content", "#1d2021");
+		} else {
+			document.querySelector("html").setAttribute("data-theme", "light");
+			// Light theme background color
+			if (themeColorMeta) themeColorMeta.setAttribute("content", "#f9f5d7");
+		}
+	}
+
+	updateDataTheme();
+
+	matchMedia("(prefers-color-scheme: dark)").addEventListener(
+		"change",
+		function (event) {
+			updateDataTheme();
+		},
+	);
+
+	document.addEventListener("DOMContentLoaded", function () {
+		// Debounce function to prevent rapid reloads
+		function debounce(func, wait) {
+			let timeout;
+			return function executedFunction(...args) {
+				const later = function () {
+					clearTimeout(timeout);
+					func(...args);
+				};
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+			};
+		}
+
+		// Debounced visible function
+		const debouncedReload = debounce(function () {
+			if (document.visibilityState === "visible") {
+				console.log("Page became visible - reloading HTMX sections");
+				document.body.dispatchEvent(new CustomEvent("visible"));
+			}
+		}, 500);
+
+		// Listen for visibility changes
+		window.addEventListener("visibilitychange", debouncedReload);
+
+		// Add manual refresh functionality
+		window.refreshPressSections = function () {
+			console.log("Manual refresh triggered");
+			document.body.dispatchEvent(new CustomEvent("visible"));
+		};
+	});
+}`,
+		Call:       templ.SafeScript(`__templ_layoutScript_8a54`),
+		CallInline: templ.SafeScriptInline(`__templ_layoutScript_8a54`),
+	}
 }
 
 var _ = templruntime.GeneratedTemplate

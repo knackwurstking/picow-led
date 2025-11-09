@@ -142,12 +142,16 @@ func (h *Handler) PostTogglePowerDevice(c echo.Context) error {
 func (h *Handler) PostTogglePowerGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", false)
 	if err != nil {
-		return fmt.Errorf("Failed to get group id from query parameter: %s", err.Error())
+		return fmt.Errorf(
+			"Failed to get group id from query parameter: %s",
+			err.Error(),
+		)
 	}
 
 	slog.Info("Toggle power for a group", "id", groupID)
 
-	// TODO: Resolve group and toggle power using goroutines
+	// TODO: Toggle power using goroutines for all devices in the group, turn
+	// off all devices not in this group
 
 	return fmt.Errorf("under construction")
 }

@@ -42,9 +42,9 @@ func HxUrlDeleteGroup(groupID models.GroupID) templ.SafeURL {
 	))
 }
 
-func HxUrlTogglePowerGroup(deviceID models.DeviceID) templ.SafeURL {
+func HxUrlTogglePowerGroup(groupID models.GroupID) templ.SafeURL {
 	return templ.SafeURL(BuildUrl(
-		fmt.Sprintf("/htmx/home/groups/toggle-power?id=%d", deviceID),
+		fmt.Sprintf("/htmx/home/groups/toggle-power?id=%d", groupID),
 	))
 }
 
