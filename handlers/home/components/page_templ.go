@@ -12,6 +12,7 @@ import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/env"
 	"github.com/knackwurstking/picow-led/handlers/ids"
+
 	"github.com/knackwurstking/ui"
 )
 
@@ -139,7 +140,7 @@ func additionalHead() templ.Component {
 		var templ_7745c5c3_Var6 templ.SafeURL
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(ui.AssetURL(env.Args.ServerPathPrefix, "/css/page-home.css"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/page.templ`, Line: 27, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/page.templ`, Line: 28, Col: 91}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -149,7 +150,7 @@ func additionalHead() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = pageScript().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = pageScript(ids.HomeSectionDevices, ids.HomeSectionGroups).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -185,7 +186,7 @@ func section(id string) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/page.templ`, Line: 32, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/page.templ`, Line: 33, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -235,7 +236,7 @@ func sectionSummary(title string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/page.templ`, Line: 39, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/page.templ`, Line: 40, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -314,7 +315,7 @@ func sectionLoadingSpinner(id string, disabled bool) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/page.templ`, Line: 51, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/page.templ`, Line: 52, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -354,12 +355,13 @@ func enableSpinner(id string, event templ.JSExpression) templ.ComponentScript {
 	}
 }
 
-func pageScript() templ.ComponentScript {
+func pageScript(deviceSectionID, groupSectionID string) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_pageScript_4cfb`,
-		Function: `function __templ_pageScript_4cfb(){// Keep details tag state (open/closed)
+		Name: `__templ_pageScript_3180`,
+		Function: `function __templ_pageScript_3180(deviceSectionID, groupSectionID){// Keep details tag state (open/closed)
 	document.addEventListener("DOMContentLoaded", function () {
-		const allDetails = document.querySelectorAll("details");
+		var allDetails = document.querySelectorAll("details");
+
 		allDetails.forEach(function (detail) {
 			if (!detail.id) return;
 
@@ -371,28 +373,40 @@ func pageScript() templ.ComponentScript {
 
 						detail2.open = false;
 					});
+
+					triggerReload(detail.id);
 				}
 
-				triggerReloads();
 				localStorage.setItem(detail.id, detail.open.toString());
 			});
 
-			const savedState = localStorage.getItem(detail.id);
+			var savedState = localStorage.getItem(detail.id);
 			if (savedState !== null) {
 				detail.open = savedState === "true";
 			}
 		});
 
-		function triggerReloads() {
-			document.body.dispatchEvent(new CustomEvent("reloadDevices"));
-			document.body.dispatchEvent(new CustomEvent("reloadGroups"));
+		function triggerReload(id) {
+			if (id === deviceSectionID) {
+				console.debug(` + "`" + `[${new Date().toLocaleString()}] Triggering reload: Devices` + "`" + `);
+				document.body.dispatchEvent(new CustomEvent("reloadDevices"));
+			} else if (id === groupSectionID) {
+				console.debug(` + "`" + `[${new Date().toLocaleString()}] Triggering reload: Groups` + "`" + `);
+				document.body.dispatchEvent(new CustomEvent("reloadGroups"));
+			} else {
+				console.warn(` + "`" + `Unknown detail ID: ${id}` + "`" + `);
+			}
 		}
-		document.body.addEventListener("visible", triggerReloads);
-		triggerReloads();
+
+		document.body.addEventListener("visible", function() {
+			document.querySelectorAll(` + "`" + `details[open]` + "`" + `).forEach(function(detail) {
+				triggerReload(detail.id);
+			});
+		});
 	});
 }`,
-		Call:       templ.SafeScript(`__templ_pageScript_4cfb`),
-		CallInline: templ.SafeScriptInline(`__templ_pageScript_4cfb`),
+		Call:       templ.SafeScript(`__templ_pageScript_3180`, deviceSectionID, groupSectionID),
+		CallInline: templ.SafeScriptInline(`__templ_pageScript_3180`, deviceSectionID, groupSectionID),
 	}
 }
 
