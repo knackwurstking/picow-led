@@ -13,11 +13,11 @@ const (
 	HomeSectionGroups         string = "section-groups"
 	HomeSectionGroupsSpinner  string = "section-groups-spinner"
 
-	DialogEditGroup      string = "edit-group-dialog"
-	DialogEditDevice     string = "edit-device-dialog"
-	DialogNewDevice      string = "new-device-dialog"
-	DialogNewGroup       string = "new-group-dialog"
-	DialogDeviceCheckbox string = "group-device-checkbox-%d"
+	DialogEditGroup    string = "edit-group-dialog"
+	DialogEditDevice   string = "edit-device-dialog"
+	DialogNewDevice    string = "new-device-dialog"
+	DialogNewGroup     string = "new-group-dialog"
+	DialogGroupDevices string = "group-devices"
 )
 
 func HomeSectionDevicesDevice(id models.DeviceID) string {
@@ -38,4 +38,8 @@ func HomeSectionGroupsGroup(id models.GroupID) string {
 
 func HomeSectionGroupsGroupError(id models.GroupID) string {
 	return fmt.Sprintf("group-%d-error", id)
+}
+
+func DialogDeviceCheckbox(id models.DeviceID) string {
+	return fmt.Sprintf("group-device-checkbox-%d", id)
 }

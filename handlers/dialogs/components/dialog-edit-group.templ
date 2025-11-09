@@ -1,7 +1,6 @@
 package components
 
 import (
-	"fmt"
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
@@ -51,21 +50,24 @@ templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID
 		Value:       name,
 		Required:    true,
 	})
-	<label for="group-devices">Select Devices</label>
-	<div id="group-devices" class="flex flex-col gap">
+	<label for={ ids.DialogGroupDevices }>Select Devices</label>
+	<div
+		id={ ids.DialogGroupDevices }
+		class="flex flex-col gap"
+		hx-preserve="true"
+	>
 		for _, device := range allDevices {
 			<span class="ml flex items-center">
 				<input
 					type="checkbox"
-					id={ fmt.Sprintf(ids.DialogDeviceCheckbox, device.ID) }
+					id={ ids.DialogDeviceCheckbox(device.ID) }
 					name="devices"
 					value={ device.ID }
 					if slices.Contains(preselectedDeviceIDs, device.ID) {
 						checked
 					}
-					hx-preserve="true"
 				/>
-				<label for={ fmt.Sprintf(ids.DialogDeviceCheckbox, device.ID) }>{ device.Name }</label>
+				<label for={ ids.DialogDeviceCheckbox(device.ID) }>{ device.Name }</label>
 			</span>
 		}
 	</div>

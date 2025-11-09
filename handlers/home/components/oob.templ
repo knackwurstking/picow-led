@@ -60,7 +60,7 @@ templ OOBDeviceError(deviceID models.DeviceID, err error, oob bool) {
 	</div>
 }
 
-templ OOBGroupError(groupID models.GroupID, err error, oob bool) {
+templ OOBGroupError(groupID models.GroupID, err []error, oob bool) {
 	if err == nil {
 		<span
 			id={ ids.HomeSectionGroupsGroupError(groupID) }
@@ -79,7 +79,9 @@ templ OOBGroupError(groupID models.GroupID, err error, oob bool) {
 		}
 	>
 		<div class="card-body">
-			{ err.Error() }
+			for _, e := range err {
+				<p>{ e.Error() }</p>
+			}
 		</div>
 	</div>
 }
