@@ -77,8 +77,11 @@ templ OOBGroupError(groupID models.GroupID, err []error, oob bool) {
 		}
 	>
 		<div class="card-body">
-			for _, e := range err {
-				<p>{ e.Error() }</p>
+			for i, e := range err {
+				{ e.Error() }
+				if i < len(err)-1 {
+					<br/>
+				}
 			}
 		</div>
 	</div>
