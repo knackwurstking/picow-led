@@ -172,7 +172,11 @@ func (h *Handler) PostTurnOnGroup(c echo.Context) error {
 	for _, id := range group.Devices {
 		wg.Go(func() {
 			if err := h.registry.DeviceControls.TurnOn(id); err != nil {
-				errs = append(errs, fmt.Errorf("Failed to turn on device %d: %v", id, err))
+				if device, err := h.registry.Devices.Get(id); err != nil {
+					errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", id, err))
+				} else {
+					errs = append(errs, fmt.Errorf("Failed to turn on device %s: %v", device.Name, err))
+				}
 			}
 		})
 	}
@@ -210,7 +214,11 @@ func (h *Handler) PostTurnOffGroup(c echo.Context) error {
 	for _, id := range group.Devices {
 		wg.Go(func() {
 			if err := h.registry.DeviceControls.TurnOff(id); err != nil {
-				errs = append(errs, fmt.Errorf("Failed to turn off device %d: %v", id, err))
+				if device, err := h.registry.Devices.Get(id); err != nil {
+					errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", id, err))
+				} else {
+					errs = append(errs, fmt.Errorf("Failed to turn off device %s: %v", device.Name, err))
+				}
 			}
 		})
 	}
