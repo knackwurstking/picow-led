@@ -10,7 +10,7 @@ templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 	<span
 		hx-get={ components.HxUrlHomeSectionDevices() }
 		hx-target={ "#" + ids.HomeSectionDevices }
-		hx-trigger={ "reloadDevices from:body" }
+		hx-trigger="reloadDevices from:body"
 		hx-on::before-request={ enableSpinner(ids.HomeSectionDevicesSpinner, templ.JSExpression("event")) }
 	></span>
 	@sectionSummary("Devices")

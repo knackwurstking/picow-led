@@ -68,8 +68,19 @@ script pageScript() {
 	document.addEventListener("DOMContentLoaded", function () {
 		const allDetails = document.querySelectorAll("details");
 		allDetails.forEach(function (detail) {
+			if (!detail.id) return;
+
 			detail.addEventListener("toggle", function () {
-				if (!detail.id) return;
+				if (detail.open) {
+					// Close all other detail tags
+					allDetails.forEach(function (detail2) {
+						if (!detail2.id || detail2.id === detail.id) return;
+
+						detail2.open = false;
+					});
+				}
+
+				triggerReloads();
 				localStorage.setItem(detail.id, detail.open.toString());
 			});
 

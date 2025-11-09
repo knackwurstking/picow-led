@@ -356,13 +356,24 @@ func enableSpinner(id string, event templ.JSExpression) templ.ComponentScript {
 
 func pageScript() templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_pageScript_6cf2`,
-		Function: `function __templ_pageScript_6cf2(){// Keep details tag state (open/closed)
+		Name: `__templ_pageScript_4cfb`,
+		Function: `function __templ_pageScript_4cfb(){// Keep details tag state (open/closed)
 	document.addEventListener("DOMContentLoaded", function () {
 		const allDetails = document.querySelectorAll("details");
 		allDetails.forEach(function (detail) {
+			if (!detail.id) return;
+
 			detail.addEventListener("toggle", function () {
-				if (!detail.id) return;
+				if (detail.open) {
+					// Close all other detail tags
+					allDetails.forEach(function (detail2) {
+						if (!detail2.id || detail2.id === detail.id) return;
+
+						detail2.open = false;
+					});
+				}
+
+				triggerReloads();
 				localStorage.setItem(detail.id, detail.open.toString());
 			});
 
@@ -380,8 +391,8 @@ func pageScript() templ.ComponentScript {
 		triggerReloads();
 	});
 }`,
-		Call:       templ.SafeScript(`__templ_pageScript_6cf2`),
-		CallInline: templ.SafeScriptInline(`__templ_pageScript_6cf2`),
+		Call:       templ.SafeScript(`__templ_pageScript_4cfb`),
+		CallInline: templ.SafeScriptInline(`__templ_pageScript_4cfb`),
 	}
 }
 
