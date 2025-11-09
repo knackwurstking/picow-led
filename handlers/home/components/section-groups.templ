@@ -1,12 +1,18 @@
 package components
 
 import (
-	"fmt"
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
 	"strings"
 )
+
+const (
+	PowerButtonStateOn  PowerButtonState = "ON"
+	PowerButtonStateOff PowerButtonState = "OFF"
+)
+
+type PowerButtonState string
 
 templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
 	<span
@@ -50,8 +56,8 @@ templ SectionGroups_Group(group *models.ResolvedGroup) {
 						"hx-swap":    "beforeend",
 						"hx-trigger": "click",
 					})
-					@GroupPowerButton("OFF", group.ID)
-					@GroupPowerButton("ON", group.ID)
+					@GroupPowerButton(PowerButtonStateOff, group.ID)
+					@GroupPowerButton(PowerButtonStateOn, group.ID)
 				</div>
 			</div>
 			<div>
@@ -61,16 +67,16 @@ templ SectionGroups_Group(group *models.ResolvedGroup) {
 	</div>
 }
 
-templ GroupPowerButton(state string, groupID models.GroupID) {
+templ GroupPowerButton(state PowerButtonState, groupID models.GroupID) {
 	{{
 		var buttonColor string
 		switch state {
 		case "ON":
-			buttonColor = "primary ghost"
+			buttonColor = "primary"
 		case "OFF":
-			buttonColor = "destructive ghost"
+			buttonColor = "destructive"
 		default:
-			panic(fmt.Errorf("unknown state: %s, expected ON or OFF", state))
+			buttonColor = "contrast"
 		}
 	}}
 	<button
