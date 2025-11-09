@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"time"
 
 	"github.com/knackwurstking/picow-led/control"
 	"github.com/knackwurstking/picow-led/models"
@@ -99,6 +100,7 @@ func (p *DeviceControls) Update(deviceControl *models.DeviceControl) error {
 	if !deviceControl.Validate() {
 		return ErrInvalidDeviceSetup
 	}
+	deviceControl.ModifiedAt = time.Now()
 
 	slog.Debug("Updating device control", "id", deviceControl.DeviceID,
 		"color", deviceControl.Color, "modified", deviceControl.ModifiedAt)
@@ -245,6 +247,83 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) 
 	}
 
 	return newColor, control.SetColor(device, newColor...)
+}
+
+func (p *DeviceControls) SetCurrentColor(deviceID models.DeviceID, color []uint8) error {
+	slog.Debug("Set current color", "id", deviceID)
+
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return err
+	}
+
+	if slices.Max(color) > 0 {
+		if err = p.Update(models.NewDeviceControl(deviceID, color)); err != nil {
+			if IsNotFoundError(err) {
+				if err = p.setInitialEntry(deviceID); err != nil {
+					return err
+				}
+
+				if err = p.Update(models.NewDeviceControl(deviceID, color)); err != nil {
+					return err
+				}
+			} else {
+				return err
+			}
+		}
+	}
+
+	return control.SetColor(device, color...)
+}
+
+func (p *DeviceControls) TurnOn(deviceID models.DeviceID) error {
+	slog.Debug("Turn on", "id", deviceID)
+
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return err
+	}
+
+	deviceControl, err := p.Get(deviceID)
+	if err != nil {
+		if IsNotFoundError(err) {
+			if err = p.setInitialEntry(deviceID); err != nil {
+				return err
+			}
+
+			deviceControl, err = p.Get(deviceID)
+			if err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+
+	return control.SetColor(device, deviceControl.Color...)
+}
+
+// TurnOff turns off the device by setting its color to zero.
+func (p *DeviceControls) TurnOff(deviceID models.DeviceID) error {
+	slog.Debug("Turn off", "id", deviceID)
+
+	device, err := p.registry.Devices.Get(deviceID)
+	if err != nil {
+		return err
+	}
+
+	// Get the current color from the device
+	currentColor, err := control.GetColor(device)
+	if err != nil {
+		return err
+	}
+
+	// Set the color to zero (turn off)
+	if err = control.SetColor(device, make([]uint8, len(currentColor))...); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *DeviceControls) setInitialEntry(deviceID models.DeviceID) error {

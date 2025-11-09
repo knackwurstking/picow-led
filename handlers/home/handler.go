@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"sync"
 
 	"github.com/knackwurstking/picow-led/handlers/home/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
@@ -36,7 +37,9 @@ func (h *Handler) Register(e *echo.Echo) {
 	utils.Register(e, http.MethodDelete,
 		"/htmx/home/groups/delete", h.DeleteGroup)
 	utils.Register(e, http.MethodPost,
-		"/htmx/home/groups/toggle-power", h.PostTogglePowerGroup)
+		"/htmx/home/groups/turn-on", h.PostTurnOnGroup)
+	utils.Register(e, http.MethodPost,
+		"/htmx/home/groups/turn-off", h.PostTurnOffGroup)
 }
 
 func (h *Handler) GetPage(c echo.Context) error {
@@ -129,6 +132,10 @@ func (h *Handler) PostTogglePowerDevice(c echo.Context) error {
 		OOBRenderPageHomeDeviceError(c, deviceID, err)
 		OOBRenderPageHomeDevicePowerButton(c, deviceID, color)
 
+		if services.IsNotFoundError(err) {
+			return echo.NewHTTPError(http.StatusNotFound, err)
+		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
@@ -138,7 +145,7 @@ func (h *Handler) PostTogglePowerDevice(c echo.Context) error {
 	return nil
 }
 
-func (h *Handler) PostTogglePowerGroup(c echo.Context) error {
+func (h *Handler) PostTurnOnGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", false)
 	if err != nil {
 		return fmt.Errorf(
@@ -147,10 +154,69 @@ func (h *Handler) PostTogglePowerGroup(c echo.Context) error {
 		)
 	}
 
-	slog.Info("Toggle power for a group", "id", groupID)
+	group, err := h.registry.Groups.Get(groupID)
+	if err != nil {
+		OOBRenderPageHomeGroupError(c, groupID, []error{err})
 
-	// TODO: Toggle power using goroutines for all devices in the group, turn
-	// off all devices not in this group
+		if services.IsNotFoundError(err) {
+			return echo.NewHTTPError(http.StatusNotFound, err)
+		}
 
-	return fmt.Errorf("under construction")
+		return err
+	}
+
+	slog.Info("Turn on a group", "id", groupID, "devices", group.Devices)
+
+	wg := &sync.WaitGroup{}
+	errs := make([]error, 0)
+	for _, id := range group.Devices {
+		wg.Go(func() {
+			if err := h.registry.DeviceControls.TurnOn(id); err != nil {
+				errs = append(errs, fmt.Errorf("Failed to turn on device %d: %v", id, err))
+			}
+		})
+	}
+	wg.Wait()
+
+	OOBRenderPageHomeGroupError(c, groupID, errs)
+
+	return nil
+}
+
+func (h *Handler) PostTurnOffGroup(c echo.Context) error {
+	groupID, err := utils.QueryParamGroupID(c, "id", false)
+	if err != nil {
+		return fmt.Errorf(
+			"Failed to get group id from query parameter: %s",
+			err.Error(),
+		)
+	}
+
+	group, err := h.registry.Groups.Get(groupID)
+	if err != nil {
+		OOBRenderPageHomeGroupError(c, groupID, []error{err})
+
+		if services.IsNotFoundError(err) {
+			return echo.NewHTTPError(http.StatusNotFound, err)
+		}
+
+		return err
+	}
+
+	slog.Info("Turn off a group", "id", groupID, "devices", group.Devices)
+
+	wg := &sync.WaitGroup{}
+	errs := make([]error, 0)
+	for _, id := range group.Devices {
+		wg.Go(func() {
+			if err := h.registry.DeviceControls.TurnOff(id); err != nil {
+				errs = append(errs, fmt.Errorf("Failed to turn off device %d: %v", id, err))
+			}
+		})
+	}
+	wg.Wait()
+
+	OOBRenderPageHomeGroupError(c, groupID, errs)
+
+	return nil
 }
