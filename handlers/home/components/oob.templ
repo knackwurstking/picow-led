@@ -59,7 +59,7 @@ templ OOBDeviceError(deviceID models.DeviceID, err error, oob bool) {
 }
 
 templ OOBGroupError(groupID models.GroupID, err []error, oob bool) {
-	if err == nil {
+	if len(err) == 0 {
 		<span
 			id={ ids.HomeSectionGroupsGroupError(groupID) }
 			class="device-error"
