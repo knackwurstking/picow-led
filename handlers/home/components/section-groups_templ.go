@@ -13,6 +13,7 @@ import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
+	"strings"
 )
 
 func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component {
@@ -47,7 +48,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlHomeSectionGroups())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 12, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 13, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -60,7 +61,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("#" + ids.HomeSectionGroups)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 13, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 14, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -73,7 +74,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("reloadGroups from:body")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 14, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 15, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -131,7 +132,7 @@ func SectionGroups(loading bool, groups []*models.ResolvedGroup) templ.Component
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(ids.HomeSectionDevicesList)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 27, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 28, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -193,7 +194,7 @@ func SectionGroups_Group(group *models.ResolvedGroup) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(ids.HomeSectionGroupsGroup(group.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 39, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 40, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -206,7 +207,7 @@ func SectionGroups_Group(group *models.ResolvedGroup) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(group.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 43, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 44, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -274,35 +275,40 @@ func GroupPowerButton(state string, groupID models.GroupID) templ.Component {
 		var buttonColor string
 		switch state {
 		case "ON":
-			buttonColor = "green"
+			buttonColor = "primary ghost"
 		case "OFF":
-			buttonColor = "red"
+			buttonColor = "destructive ghost"
 		default:
 			panic(fmt.Errorf("unknown state: %s, expected ON or OFF", state))
+		}
+		var templ_7745c5c3_Var12 = []any{strings.Trim("power-button icon ghost "+buttonColor, " ")}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(ids.HomeSectionGroupsPowerButton(groupID))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 76, Col: 48}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" class=\"power-button icon ghost\" style=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("color: %s;", buttonColor))
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(ids.HomeSectionGroupsPowerButton(groupID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 78, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 77, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var12).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -310,12 +316,12 @@ func GroupPowerButton(state string, groupID models.GroupID) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlTogglePowerGroup(groupID))
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlTogglePowerGroup(groupID))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/section-groups.templ`, Line: 79, Col: 53}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

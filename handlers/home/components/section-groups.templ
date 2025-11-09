@@ -5,6 +5,7 @@ import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
+	"strings"
 )
 
 templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
@@ -65,17 +66,16 @@ templ GroupPowerButton(state string, groupID models.GroupID) {
 		var buttonColor string
 		switch state {
 		case "ON":
-			buttonColor = "green"
+			buttonColor = "primary ghost"
 		case "OFF":
-			buttonColor = "red"
+			buttonColor = "destructive ghost"
 		default:
 			panic(fmt.Errorf("unknown state: %s, expected ON or OFF", state))
 		}
 	}}
 	<button
 		id={ ids.HomeSectionGroupsPowerButton(groupID) }
-		class="power-button icon ghost"
-		style={ fmt.Sprintf("color: %s;", buttonColor) }
+		class={ strings.Trim("power-button icon ghost "+buttonColor, " ") }
 		hx-post={ components.HxUrlTogglePowerGroup(groupID) }
 		hx-target="this"
 		hx-swap="none"
