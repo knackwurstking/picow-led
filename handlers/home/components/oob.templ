@@ -1,26 +1,25 @@
 package components
 
 import (
-	"fmt"
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
 	"slices"
+	"strings"
 )
 
 templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob bool) {
 	{{
-		buttonColor := "red"
+		buttonColor := "destructive"
 		if len(currentColor) > 0 {
 			if slices.Max(currentColor) > 0 {
-				buttonColor = "green"
+				buttonColor = "primary"
 			}
 		}
 	}}
 	<button
 		id={ ids.HomeSectionDevicesPowerButton(deviceID) }
-		class="power-button icon ghost"
-		style={ fmt.Sprintf("color: %s;", buttonColor) }
+		class={ strings.Trim("power-button icon ghost "+buttonColor, "") }
 		hx-post={ components.HxUrlTogglePowerDevice(deviceID) }
 		hx-target="this"
 		hx-swap="none"
