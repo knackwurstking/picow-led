@@ -75,9 +75,9 @@ func OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob bo
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlTogglePower(deviceID))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlTogglePowerDevice(deviceID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/oob.templ`, Line: 24, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/home/components/oob.templ`, Line: 24, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

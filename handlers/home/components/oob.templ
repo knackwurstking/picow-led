@@ -21,7 +21,7 @@ templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob b
 		id={ ids.HomeSectionDevicesPowerButton(deviceID) }
 		class="power-button icon ghost"
 		style={ fmt.Sprintf("color: %s;", buttonColor) }
-		hx-post={ components.HxUrlTogglePower(deviceID) }
+		hx-post={ components.HxUrlTogglePowerDevice(deviceID) }
 		hx-target="this"
 		hx-swap="none"
 		hx-trigger="click"
