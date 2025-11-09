@@ -23,19 +23,24 @@ func NewHandler(r *services.Registry) *Handler {
 
 // TODO: Either move device and group methods to separate handlers or rename routes
 func (h *Handler) Register(e *echo.Echo) {
-	utils.Register(e, http.MethodGet, "", h.GetHomePage)
+	utils.Register(e, http.MethodGet, "", h.GetPage)
 
-	utils.Register(e, http.MethodGet, "/htmx/home/section/devices", h.GetSectionDevices)
-	utils.Register(e, http.MethodGet, "/htmx/home/section/groups", h.GetSectionGroups)
+	utils.Register(e, http.MethodGet,
+		"/htmx/home/devices", h.GetDevices)
+	utils.Register(e, http.MethodDelete,
+		"/htmx/home/devices/delete", h.DeleteDevice)
+	utils.Register(e, http.MethodPost,
+		"/htmx/home/devices/toggle-power", h.PostTogglePowerDevice)
 
-	utils.Register(e, http.MethodDelete, "/htmx/devices/delete", h.DeleteDevice)
-	utils.Register(e, http.MethodPost, "/htmx/devices/toggle-power", h.PostDeviceTogglePower)
-
-	utils.Register(e, http.MethodDelete, "/htmx/groups/delete", h.DeleteGroup)
-	utils.Register(e, http.MethodPost, "/htmx/groups/toggle-power", h.PostGroupTogglePower)
+	utils.Register(e, http.MethodGet,
+		"/htmx/home/groups", h.GetGroups)
+	utils.Register(e, http.MethodDelete,
+		"/htmx/home/groups/delete", h.DeleteGroup)
+	utils.Register(e, http.MethodPost,
+		"/htmx/home/groups/toggle-power", h.PostTogglePowerGroup)
 }
 
-func (h *Handler) GetHomePage(c echo.Context) error {
+func (h *Handler) GetPage(c echo.Context) error {
 	err := components.PageHome().Render(c.Request().Context(), c.Response())
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
@@ -44,7 +49,7 @@ func (h *Handler) GetHomePage(c echo.Context) error {
 	return nil
 }
 
-func (h *Handler) GetSectionDevices(c echo.Context) error {
+func (h *Handler) GetDevices(c echo.Context) error {
 	slog.Info("Render devices section for the home page")
 
 	// Get devices...
@@ -61,7 +66,7 @@ func (h *Handler) GetSectionDevices(c echo.Context) error {
 	return components.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
 }
 
-func (h *Handler) GetSectionGroups(c echo.Context) error {
+func (h *Handler) GetGroups(c echo.Context) error {
 	slog.Info("Render groups section for the home page")
 
 	// Get groups...
@@ -95,9 +100,23 @@ func (h *Handler) DeleteDevice(c echo.Context) error {
 	return nil
 }
 
-// TODO: Delete a group method
+func (h *Handler) DeleteGroup(c echo.Context) error {
+	groupID, err := utils.QueryParamGroupID(c, "id", false)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
 
-func (h *Handler) PostDeviceTogglePower(c echo.Context) error {
+	slog.Info("Delete a group", "id", groupID)
+
+	if err = h.registry.Groups.Delete(groupID); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	c.Response().Header().Set("HX-Trigger", "reloadGroups")
+	return nil
+}
+
+func (h *Handler) PostTogglePowerDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
 	if err != nil {
 		return fmt.Errorf("Failed to get device id from query parameter: %s", err.Error())
@@ -120,4 +139,15 @@ func (h *Handler) PostDeviceTogglePower(c echo.Context) error {
 	return nil
 }
 
-// TODO: Post device toggle power method
+func (h *Handler) PostTogglePowerGroup(c echo.Context) error {
+	groupID, err := utils.QueryParamGroupID(c, "id", false)
+	if err != nil {
+		return fmt.Errorf("Failed to get group id from query parameter: %s", err.Error())
+	}
+
+	slog.Info("Toggle power for a group", "id", groupID)
+
+	// TODO: Resolve group and toggle power using goroutines
+
+	return fmt.Errorf("under construction")
+}
