@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"slices"
 	"sync"
 
 	"github.com/knackwurstking/picow-led/handlers/home/components"
@@ -167,15 +168,32 @@ func (h *Handler) PostTurnOnGroup(c echo.Context) error {
 
 	slog.Info("Turn on a group", "id", groupID, "devices", group.Devices)
 
+	devices, err := h.registry.Devices.List()
+	if err != nil {
+		return fmt.Errorf("Failed to list devices: %v", err)
+	}
+
 	wg := &sync.WaitGroup{}
 	errs := make([]error, 0)
-	for _, id := range group.Devices {
+	for _, d := range devices {
 		wg.Go(func() {
-			if err := h.registry.DeviceControls.TurnOn(id); err != nil {
-				if device, err2 := h.registry.Devices.Get(id); err2 != nil {
-					errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", id, err2))
+			if !slices.Contains(group.Devices, d.ID) {
+				if err := h.registry.DeviceControls.TurnOff(d.ID); err != nil {
+					if device, err2 := h.registry.Devices.Get(d.ID); err2 != nil {
+						errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", d.ID, err2))
+					} else {
+						errs = append(errs, fmt.Errorf("Failed to turn off device \"%s\", which is not in this group: %v", device.Name, err))
+					}
+				}
+
+				return
+			}
+
+			if err := h.registry.DeviceControls.TurnOn(d.ID); err != nil {
+				if device, err2 := h.registry.Devices.Get(d.ID); err2 != nil {
+					errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", d.ID, err2))
 				} else {
-					errs = append(errs, fmt.Errorf("Failed to turn on device %s: %v", device.Name, err))
+					errs = append(errs, fmt.Errorf("Failed to turn on device \"%s\": %v", device.Name, err))
 				}
 			}
 		})
@@ -209,15 +227,20 @@ func (h *Handler) PostTurnOffGroup(c echo.Context) error {
 
 	slog.Info("Turn off a group", "id", groupID, "devices", group.Devices)
 
+	devices, err := h.registry.Devices.List()
+	if err != nil {
+		return fmt.Errorf("Failed to list devices: %v", err)
+	}
+
 	wg := &sync.WaitGroup{}
 	errs := make([]error, 0)
-	for _, id := range group.Devices {
+	for _, d := range devices {
 		wg.Go(func() {
-			if err := h.registry.DeviceControls.TurnOff(id); err != nil {
-				if device, err2 := h.registry.Devices.Get(id); err2 != nil {
-					errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", id, err2))
+			if err := h.registry.DeviceControls.TurnOff(d.ID); err != nil {
+				if device, err2 := h.registry.Devices.Get(d.ID); err2 != nil {
+					errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", d.ID, err2))
 				} else {
-					errs = append(errs, fmt.Errorf("Failed to turn off device %s: %v", device.Name, err))
+					errs = append(errs, fmt.Errorf("Failed to turn off device \"%s\": %v", device.Name, err))
 				}
 			}
 		})
