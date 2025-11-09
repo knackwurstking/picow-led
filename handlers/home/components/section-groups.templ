@@ -1,6 +1,7 @@
 package components
 
 import (
+	"fmt"
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
@@ -48,10 +49,8 @@ templ SectionGroups_Group(group *models.ResolvedGroup) {
 						"hx-swap":    "beforeend",
 						"hx-trigger": "click",
 					})
-					// TODO: The power button component for groups is missing,
-					// also need to get the current color somehow (could use 255
-					// for now)
-					//@OOBGroupPowerButton(group.ID, group.CurrentColor, false)
+					@GroupPowerButton("OFF", group.ID)
+					@GroupPowerButton("ON", group.ID)
 				</div>
 			</div>
 			<div>
@@ -59,4 +58,31 @@ templ SectionGroups_Group(group *models.ResolvedGroup) {
 			</div>
 		</div>
 	</div>
+}
+
+templ GroupPowerButton(state string, groupID models.GroupID) {
+	{{
+		var buttonColor string
+		switch state {
+		case "ON":
+			buttonColor = "green"
+		case "OFF":
+			buttonColor = "red"
+		default:
+			panic(fmt.Errorf("unknown state: %s, expected ON or OFF", state))
+		}
+	}}
+	<button
+		id={ ids.HomeSectionGroupsPowerButton(groupID) }
+		class="power-button icon ghost"
+		style={ fmt.Sprintf("color: %s;", buttonColor) }
+		hx-post={ components.HxUrlTogglePowerGroup(groupID) }
+		hx-target="this"
+		hx-swap="none"
+		hx-trigger="click"
+		hx-on::before-request="event.currentTarget.disabled = true"
+		hx-on::after-request="event.currentTarget.disabled = false"
+	>
+		<i class="bi bi-power"></i>
+	</button>
 }

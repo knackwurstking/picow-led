@@ -36,10 +36,3 @@ func OOBRenderPageHomeGroupError(c echo.Context, groupID models.GroupID, err []e
 		slog.Error("Failed to render device error page", "deviceID", groupID, "error", err)
 	}
 }
-
-func OOBRenderPageHomeGroupPowerButton(c echo.Context, groupID models.GroupID, currentColor []uint8) {
-	devicePowerButton := components.OOBGroupPowerButton(groupID, currentColor, true)
-	if err := devicePowerButton.Render(c.Request().Context(), c.Response()); err != nil {
-		slog.Error("Failed to render device power button page", "groupID", groupID, "error", err)
-	}
-}
