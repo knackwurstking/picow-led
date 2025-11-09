@@ -21,7 +21,6 @@ func NewHandler(r *services.Registry) *Handler {
 	}
 }
 
-// TODO: Either move device and group methods to separate handlers or rename routes
 func (h *Handler) Register(e *echo.Echo) {
 	utils.Register(e, http.MethodGet, "", h.GetPage)
 
