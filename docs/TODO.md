@@ -16,3 +16,6 @@
 - **Unnecessary Database Operations**: The `services/device-controls.go` file has a method called `GetPins` that calls `control.GetPins` which seems to be a separate function. This could be optimized by caching or pre-fetching pins.
 
 - **Caching**: There's no caching mechanism for frequently accessed data, which could lead to performance issues.
+
+- [ ] Improve the device controls service, prefetch pins and cache it (no database needed)
+- [ ] Also do this for the current device color
