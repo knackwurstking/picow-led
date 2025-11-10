@@ -127,6 +127,7 @@ func initializeLogging() {
 func initializeDatabase() *services.Registry {
 	slog.Info("Initializing database", "path", env.Args.DatabasePath)
 
+	// TODO: Move this database open and setup statement to the `services.NewRegistry` function
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
 	db, err := sql.Open("sqlite3", sqlPath)
 	if err != nil {
