@@ -34,5 +34,3 @@ Here are my general tips regarding mattn's driver, which my team has used to bui
 With these few settings, we get good performance for our use case (>2K mid-size writes/sec, 30K reads per second on 2 vCPU and an SSD). I'd also recommend using Litestream to perform WAL shipping to S3.
 
 > [SQLite performance tuning](https://phiresky.github.io/blog/2020/sqlite-performance-tuning/)
-
-Also see here: [Database Connection Bottleneck in Services](./Database_Connection_Bottleneck_in_Services.md)
