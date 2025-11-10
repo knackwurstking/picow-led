@@ -6,7 +6,6 @@ import (
 	"io"
 	"log/slog"
 	"net"
-	"sync"
 	"time"
 
 	"github.com/knackwurstking/picow-led/models"
@@ -16,15 +15,10 @@ const (
 	EndByte byte = byte('\n')
 )
 
-var (
-	controlMutexes = map[models.Addr]*sync.Mutex{}
-)
-
 type PicoW struct {
 	*models.Device
 
-	Conn      net.Conn
-	connected models.Addr
+	Conn net.Conn
 }
 
 // NewPicoW creates a new instance of the PicoW struct.
@@ -103,9 +97,6 @@ func (p *PicoW) Connect() error {
 		return nil
 	}
 
-	p.connected = p.Addr
-	controlMutexes[p.connected] = &sync.Mutex{}
-
 	dialer := net.Dialer{
 		Timeout: time.Duration(time.Second * 5),
 	}
@@ -115,7 +106,6 @@ func (p *PicoW) Connect() error {
 		return err
 	}
 	p.Conn = conn
-	controlMutexes[p.connected].Lock()
 
 	return nil
 }
@@ -128,11 +118,6 @@ func (p *PicoW) Close() error {
 		}
 
 		p.Conn = nil
-		if m, ok := controlMutexes[p.connected]; ok {
-			m.Unlock()
-			delete(controlMutexes, p.connected)
-		}
-		p.connected = ""
 	}
 
 	return nil
