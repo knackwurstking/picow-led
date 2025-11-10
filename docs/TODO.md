@@ -1,5 +1,9 @@
 # TODO
 
+## Project
+
+- [ ] Think about separating the home handler in to more handlers, one for devices and one for groups?
+
 ## Features
 
 - [ ] Change group power on/off to toggle, just like devices
