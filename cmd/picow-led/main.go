@@ -127,7 +127,6 @@ func initializeLogging() {
 func initializeDatabase() *services.Registry {
 	slog.Info("Initializing database", "path", env.Args.DatabasePath)
 
-	// TODO: Move this database open and setup statement to the `services.NewRegistry` function
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
 	db, err := sql.Open("sqlite3", sqlPath)
 	if err != nil {
@@ -135,9 +134,9 @@ func initializeDatabase() *services.Registry {
 		os.Exit(env.ExitCodeDatabaseConnection)
 	}
 
-	// Configure connection pool to prevent resource exhaustion
-	db.SetMaxOpenConns(1)    // SQLite works best with single writer
-	db.SetMaxIdleConns(1)    // Keep one connection alive
+	// Configure connection pool to handle multiple connections
+	db.SetMaxOpenConns(25)   // Allow up to 25 open connections
+	db.SetMaxIdleConns(25)   // Allow up to 25 idle connections
 	db.SetConnMaxLifetime(0) // No maximum lifetime
 
 	// Ping the database to verify the connection
