@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"sync"
 	"time"
 
 	"github.com/knackwurstking/picow-led/control"
@@ -13,12 +14,22 @@ import (
 // DeviceControls struct manages the control of devices.
 type DeviceControls struct {
 	registry *Registry
+
+	// Cache for device pins
+	pinCache sync.Map
+
+	// Cache for device colors
+	colorCache sync.Map
+
+	// Cache expiration time (optional, can be adjusted)
+	cacheExpiration time.Duration
 }
 
 // NewDeviceControls creates a new instance of DeviceControls with the provided registry.
 func NewDeviceControls(registry *Registry) *DeviceControls {
 	return &DeviceControls{
-		registry: registry,
+		registry:        registry,
+		cacheExpiration: 24 * time.Hour, // Cache for 24 hours
 	}
 }
 
@@ -120,15 +131,20 @@ func (p *DeviceControls) Delete(deviceID models.DeviceID) error {
 	return HandleSqlError(err)
 }
 
+// GetPins retrieves the pins for a device, with caching.
 func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
 	slog.Debug("Getting device pins", "id", deviceID)
 
+	// Check if we have a cached value
+	if cached, ok := p.pinCache.Load(deviceID); ok {
+		slog.Debug("Using cached pins", "id", deviceID)
+		return cached.([]uint8), nil
+	}
+
+	// If not cached, fetch from control layer
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
-		if IsNotFoundError(err) {
-			return nil, fmt.Errorf("device %d not found", deviceID)
-		}
-		return nil, err
+		return nil, fmt.Errorf("failed to get device: %v", err)
 	}
 
 	slog.Debug("Running GetPins from the controls package", "id", deviceID)
@@ -137,18 +153,30 @@ func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
 		return nil, fmt.Errorf("failed to get device pins: %v", err)
 	}
 
+	// Cache the result
+	p.pinCache.Store(deviceID, pins)
+
+	slog.Debug("Cached pins", "id", deviceID)
 	return pins, nil
 }
 
-// CurrentColor retrieves the current color of the device from the database and will auto update the database if the color is different from the stored color and not 0.
+// GetCurrentColor retrieves the current color of the device from the database and will auto update the database if the color is different from the stored color and not 0.
 func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, error) {
 	slog.Debug("Getting device current color", "id", deviceID)
 
+	// Check if we have a cached value
+	if cached, ok := p.colorCache.Load(deviceID); ok {
+		slog.Debug("Using cached color", "id", deviceID)
+		return cached.([]uint8), nil
+	}
+
+	// Fetch device
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get device: %v", err)
 	}
 
+	// Get the device control record
 	deviceControl, err := p.Get(device.ID)
 	if err != nil {
 		if !IsNotFoundError(err) {
@@ -165,6 +193,7 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 	if err != nil {
 		return nil, err
 	}
+
 	// Check if the color is different from the stored color and not 0
 	if slices.Max(color) > 0 {
 		// Update the device control object with the new color
@@ -174,6 +203,10 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 		}
 	}
 
+	// Cache the result
+	p.colorCache.Store(deviceID, color)
+
+	slog.Debug("Cached color", "id", deviceID)
 	return color, nil
 }
 
@@ -234,7 +267,7 @@ func (p *DeviceControls) TogglePower(deviceID models.DeviceID) ([]uint8, error) 
 			newColor = dc.Color // Get the color from the database
 		} else {
 			// Nope, no color in the database, get pins and set color to 255 for each pin
-			pins, err := control.GetPins(device)
+			pins, err := p.GetPins(device.ID) // Use the cached version
 			if err != nil {
 				return nil, err
 			}
@@ -329,6 +362,7 @@ func (p *DeviceControls) TurnOff(deviceID models.DeviceID) error {
 func (p *DeviceControls) setInitialEntry(deviceID models.DeviceID) error {
 	slog.Debug("Set the initial entry", "id", deviceID)
 
+	// Get pins using the cached version
 	pins, err := p.GetPins(deviceID)
 	if err != nil {
 		return err
