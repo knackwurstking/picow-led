@@ -11,6 +11,10 @@
 - [ ] OOB render group power buttons
 - [ ] ~Find a good way to show devices overview, show power on/off, color, pins~
 
+## Fixes
+
+- [ ] Remove the color cache, only keep the pins cache, also check the expiration validation
+
 ## Performance
 
 Unnecessary Database Operations: The `services/device-controls.go` file has a method called `GetPins` that calls `control.GetPins` which seems to be a separate function. This could be optimized by caching or pre-fetching pins.
