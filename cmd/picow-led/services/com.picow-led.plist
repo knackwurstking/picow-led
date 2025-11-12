@@ -16,7 +16,7 @@
         <string>-log-format</string>
         <string>text</string>
         <string>-database-path</string>
-        <string>%h/.config/picow-led/picow-led.db</string>
+        <string>/Users/knackwurstking/.config/picow-led/picow-led.db</string>
     </array>
 
     <key>RunAtLoad</key>
@@ -26,12 +26,9 @@
     <false/>
 
     <key>StandardOutPath</key>
-    <string>%h/.config/picow-led/picow-led.log</string>
+    <string>/Users/knackwurstking/.config/picow-led/picow-led.log</string>
 
     <key>StandardErrorPath</key>
-    <string>%h/.config/picow-led/picow-led.log</string>
-
-    <key>WorkingDirectory</key>
-    <string>%h/.config/picow-led</string>
+    <string>/Users/knackwurstking/.config/picow-led/picow-led.log</string>
 </dict>
 </plist>
