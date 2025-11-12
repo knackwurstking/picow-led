@@ -2,6 +2,7 @@
 
 BINARY_NAME = ./cmd/picow-led
 TEST_DATABASE_PATH = ./services/picow-led.test.db
+APP_DATA = "$(HOME)/.config/picow-led"
 
 all: init build
 
@@ -23,7 +24,7 @@ run:
 	@echo "Running server without building..."
 	make init
 	make generate
-	go run $(BINARY_NAME) server -debug -log-format text -database-path ~/.config/picow-led/picow-led.db -path-prefix /picow-led
+	go run $(BINARY_NAME) server -debug -log-format text -database-path $(APP_DATA)/picow-led.db -path-prefix /picow-led
 
 test:
 	@echo "Running tests..."
@@ -56,7 +57,7 @@ define LAUNCHCTL_PLIST
 		<string>-log-format</string>
 		<string>text</string>
 		<string>-database-path</string>
-		<string>$(HOME)/.config/picow-led/picow-led.db</string>
+		<string>$(APP_DATA)/picow-led.db</string>
 	</array>
 
 	<key>RunAtLoad</key>
@@ -66,10 +67,10 @@ define LAUNCHCTL_PLIST
 	<false/>
 
 	<key>StandardOutPath</key>
-	<string>$(HOME)/.config/picow-led/picow-led.log</string>
+	<string>$(APP_DATA)/picow-led.log</string>
 
 	<key>StandardErrorPath</key>
-	<string>$(HOME)/.config/picow-led/picow-led.log</string>
+	<string>$(APP_DATA)/picow-led.log</string>
 </dict>
 </plist>
 endef
@@ -80,7 +81,7 @@ macos-install:
 	mkdir -p /usr/local/bin
 	cp ./bin/picow-led /usr/local/bin/picow-led
 	chmod +x /usr/local/bin/picow-led
-	mkdir -p $(HOME)/.config/picow-led
+	mkdir -p $(APP_DATA)
 	@echo "$$LAUNCHCTL_PLIST" > ~/Library/LaunchAgents/com.picow-led.plist
 	@echo "picow-led installed successfully"
 
