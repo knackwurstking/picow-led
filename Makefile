@@ -75,7 +75,7 @@ define LAUNCHCTL_PLIST
 endef
 
 export LAUNCHCTL_PLIST
-install-macos:
+macos-install:
 	@echo "Installing picow-led for macOS..."
 	@mkdir -p /usr/local/bin
 	@cp ./bin/picow-led /usr/local/bin/picow-led
@@ -83,3 +83,22 @@ install-macos:
 	@mkdir -p $(HOME)/.config/picow-led
 	@echo "$$LAUNCHCTL_PLIST" > cmd/picow-led/services/com.picow-led.plist
 	@echo "picow-led installed successfully"
+
+macos-start-service:
+	@echo "Starting picow-led service..."
+	@launchctl load -w ~/Library/LaunchAgents/com.picow-led.plist
+	@launchctl start com.picow-led
+
+macos-stop-service:
+	@echo "Stopping picow-led service..."
+	@launchctl stop com.picow-led
+	@launchctl unload -w ~/Library/LaunchAgents/com.picow-led.plist
+
+macos-restart-service:
+	@echo "Restarting picow-led service..."
+	@make macos-stop-service
+	@make macos-start-service
+
+macos-print-service:
+	@echo "picow-led service information:"
+	@launchctl print gui/$(id -u)/com.picow-led || echo "Service not loaded or running"
