@@ -15,8 +15,6 @@
         <string>:50836</string>
         <string>-log-format</string>
         <string>text</string>
-        <string>-database-path</string>
-        <string>%h/.config/picow-led/picow-led.db</string>
     </array>
 
     <key>RunAtLoad</key>
