@@ -23,7 +23,7 @@ run:
 	@echo "Running server without building..."
 	make init
 	make generate
-	go run $(BINARY_NAME) server -debug -log-format text -database-path ./picow-led.db -path-prefix /picow-led
+	go run $(BINARY_NAME) server -debug -log-format text -database-path ~/.config/picow-led/picow-led.db -path-prefix /picow-led
 
 test:
 	@echo "Running tests..."
