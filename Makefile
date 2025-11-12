@@ -38,38 +38,38 @@ clean:
 	rm -rf $(TEST_DATABASE_PATH)
 
 define LAUNCHCTL_PLIST
-<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
-<plist version=\"1.0\">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <dict>
-    <key>Label</key>
-    <string>com.picow-led</string>
+	<key>Label</key>
+	<string>com.picow-led</string>
 
-    <key>ProgramArguments</key>
-    <array>
-        <string>/usr/local/bin/picow-led</string>
-        <string>server</string>
-        <string>-path-prefix</string>
-        <string>/picow-led</string>
-        <string>-addr</string>
-        <string>:50836</string>
-        <string>-log-format</string>
-        <string>text</string>
-        <string>-database-path</string>
-        <string>'$(HOME)'/'.config/picow-led/picow-led.db</string>
-    </array>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/usr/local/bin/picow-led</string>
+		<string>server</string>
+		<string>-path-prefix</string>
+		<string>/picow-led</string>
+		<string>-addr</string>
+		<string>:50836</string>
+		<string>-log-format</string>
+		<string>text</string>
+		<string>-database-path</string>
+		<string>$(HOME)/.config/picow-led/picow-led.db</string>
+	</array>
 
-    <key>RunAtLoad</key>
-    <false/>
+	<key>RunAtLoad</key>
+	<false/>
 
-    <key>KeepAlive</key>
-    <false/>
+	<key>KeepAlive</key>
+	<false/>
 
-    <key>StandardOutPath</key>
-    <string>'$(HOME)'/'.config/picow-led/picow-led.log</string>
+	<key>StandardOutPath</key>
+	<string>$(HOME)/.config/picow-led/picow-led.log</string>
 
-    <key>StandardErrorPath</key>
-    <string>'$(HOME)'/'.config/picow-led/picow-led.log</string>
+	<key>StandardErrorPath</key>
+	<string>$(HOME)/.config/picow-led/picow-led.log</string>
 </dict>
 </plist>
 endef
@@ -77,28 +77,28 @@ endef
 export LAUNCHCTL_PLIST
 macos-install:
 	@echo "Installing picow-led for macOS..."
-	@mkdir -p /usr/local/bin
-	@cp ./bin/picow-led /usr/local/bin/picow-led
-	@chmod +x /usr/local/bin/picow-led
-	@mkdir -p $(HOME)/.config/picow-led
-	@echo "$$LAUNCHCTL_PLIST" > cmd/picow-led/services/com.picow-led.plist
+	mkdir -p /usr/local/bin
+	cp ./bin/picow-led /usr/local/bin/picow-led
+	chmod +x /usr/local/bin/picow-led
+	mkdir -p $(HOME)/.config/picow-led
+	@echo "$$LAUNCHCTL_PLIST" > ~/Library/LaunchAgents/com.picow-led.plist
 	@echo "picow-led installed successfully"
 
 macos-start-service:
 	@echo "Starting picow-led service..."
-	@launchctl load -w ~/Library/LaunchAgents/com.picow-led.plist
-	@launchctl start com.picow-led
+	launchctl load -w ~/Library/LaunchAgents/com.picow-led.plist
+	launchctl start com.picow-led
 
 macos-stop-service:
 	@echo "Stopping picow-led service..."
-	@launchctl stop com.picow-led
-	@launchctl unload -w ~/Library/LaunchAgents/com.picow-led.plist
+	launchctl stop com.picow-led
+	launchctl unload -w ~/Library/LaunchAgents/com.picow-led.plist
 
 macos-restart-service:
 	@echo "Restarting picow-led service..."
-	@make macos-stop-service
-	@make macos-start-service
+	make macos-stop-service
+	make macos-start-service
 
 macos-print-service:
 	@echo "picow-led service information:"
-	@launchctl print gui/$(id -u)/com.picow-led || echo "Service not loaded or running"
+	@launchctl print gui/$$(id -u)/com.picow-led || echo "Service not loaded or running"
