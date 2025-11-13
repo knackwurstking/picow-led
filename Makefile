@@ -2,7 +2,7 @@
 
 BINARY_NAME = ./cmd/picow-led
 TEST_DATABASE_PATH = ./services/picow-led.test.db
-APP_DATA = "$(HOME)/.config/picow-led"
+APP_DATA = $(HOME)/.config/picow-led
 
 all: init build
 
@@ -61,10 +61,10 @@ define LAUNCHCTL_PLIST
 	</array>
 
 	<key>RunAtLoad</key>
-	<false/>
+	<true/>
 
 	<key>KeepAlive</key>
-	<false/>
+	<true/>
 
 	<key>StandardOutPath</key>
 	<string>$(APP_DATA)/picow-led.log</string>
