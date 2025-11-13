@@ -79,8 +79,8 @@ export LAUNCHCTL_PLIST
 macos-install:
 	@echo "Installing picow-led for macOS..."
 	mkdir -p /usr/local/bin
-	cp ./bin/picow-led /usr/local/bin/picow-led
-	chmod +x /usr/local/bin/picow-led
+	sudo cp ./bin/picow-led /usr/local/bin/picow-led
+	sudo chmod +x /usr/local/bin/picow-led
 	mkdir -p $(APP_DATA)
 	@echo "$$LAUNCHCTL_PLIST" > ~/Library/LaunchAgents/com.picow-led.plist
 	@echo "picow-led installed successfully"
