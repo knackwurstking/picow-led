@@ -103,3 +103,13 @@ macos-restart-service:
 macos-print-service:
 	@echo "picow-led service information:"
 	@launchctl print gui/$$(id -u)/com.picow-led || echo "Service not loaded or running"
+
+macos-watch-service:
+	@echo "picow-led watch server logs @ \"$(APP_DATA)/picow-led.log\":"
+	@if [ -f "$(APP_DATA)/picow-led.log" ]; then \
+		echo "Watching logs... Press Ctrl+C to stop"; \
+		tail -f "$(APP_DATA)/picow-led.log"; \
+	else \
+		echo "Log file not found. Make sure the service is running or has been started."; \
+		echo "Log file path: $(APP_DATA)/picow-led.log"; \
+	fi
