@@ -17,19 +17,12 @@ type DeviceControls struct {
 
 	// Cache for device pins
 	pinCache sync.Map
-
-	// Cache for device colors
-	colorCache sync.Map
-
-	// Cache expiration time (optional, can be adjusted)
-	cacheExpiration time.Duration
 }
 
 // NewDeviceControls creates a new instance of DeviceControls with the provided registry.
 func NewDeviceControls(registry *Registry) *DeviceControls {
 	return &DeviceControls{
-		registry:        registry,
-		cacheExpiration: 24 * time.Hour, // Cache for 24 hours
+		registry: registry,
 	}
 }
 
@@ -164,11 +157,6 @@ func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
 func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, error) {
 	slog.Debug("Getting device current color", "id", deviceID)
 
-	// Check if we have a cached value
-	if color, ok := p.getCachedColor(deviceID); ok {
-		return color, nil
-	}
-
 	// Fetch device
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
@@ -202,7 +190,6 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 		}
 	}
 
-	p.setCachedColor(deviceID, color)
 	return color, nil
 }
 
@@ -302,7 +289,6 @@ func (p *DeviceControls) SetCurrentColor(deviceID models.DeviceID, color []uint8
 		}
 	}
 
-	p.setCachedColor(deviceID, color)
 	return control.SetColor(device, color...)
 }
 
@@ -333,7 +319,6 @@ func (p *DeviceControls) TurnOn(deviceID models.DeviceID) error {
 	if err := control.SetColor(device, deviceControl.Color...); err != nil {
 		return err
 	}
-	p.setCachedColor(deviceID, deviceControl.Color)
 
 	return nil
 }
@@ -358,7 +343,6 @@ func (p *DeviceControls) TurnOff(deviceID models.DeviceID) error {
 	if err := control.SetColor(device, color...); err != nil {
 		return err
 	}
-	p.setCachedColor(deviceID, color)
 
 	return nil
 }
@@ -383,19 +367,6 @@ func (p *DeviceControls) setInitialEntry(deviceID models.DeviceID) error {
 	}
 
 	return nil
-}
-
-func (p *DeviceControls) getCachedColor(id models.DeviceID) (color []uint8, ok bool) {
-	if cached, ok := p.colorCache.Load(id); ok {
-		slog.Debug("Using cached color", "id", id, "color", cached)
-		return cached.([]uint8), ok
-	}
-	return nil, ok
-}
-
-func (p *DeviceControls) setCachedColor(id models.DeviceID, color []uint8) {
-	slog.Debug("Caching device current color", "id", id, "color", color)
-	p.colorCache.Store(id, color)
 }
 
 func ScanDeviceControl(scanner Scannable) (*models.DeviceControl, error) {
