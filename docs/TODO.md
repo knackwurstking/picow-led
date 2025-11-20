@@ -5,12 +5,6 @@
 - [ ] Think about separating the home handler into more handlers, one for devices and one for groups?
 - [ ] Improve error handling and create a errors package
 
-## Features
-
-- [ ] Change group power on/off to toggle, just like devices
-- [ ] OOB render group power buttons
-- [ ] ~Find a good way to show devices overview, show power on/off, color, pins~
-
 ## Fixes
 
 - [x] Remove the color cache, only keep the pins cache, also check the expiration validation [WIP]
