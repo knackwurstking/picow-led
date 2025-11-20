@@ -57,7 +57,7 @@ func (h *Handler) PostEditGroup(c echo.Context) error {
 	}
 
 	if !group.Validate() {
-		message := "failed to validate group"
+		const message = "failed to validate group"
 		h.reRenderGroupDialogWithError(c, group, fmt.Errorf(message))
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf(message))
 	}
@@ -83,7 +83,7 @@ func (h *Handler) PutEditGroup(c echo.Context) error {
 	}
 
 	if !group.Validate() {
-		message := "failed to validate group"
+		const message = "failed to validate group"
 		h.reRenderGroupDialogWithError(c, group, fmt.Errorf(message))
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf(message))
 	}
