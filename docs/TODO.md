@@ -4,7 +4,7 @@
 
 - [x] Auto sort groups (alphabetical)
 - [ ] Think about separating the home handler into more handlers, one for devices and one for groups?
-- [ ] Improve error handling and create a errors package
+- [ ] Improve error handling and create an errors package
 
 ## Fixes
 
