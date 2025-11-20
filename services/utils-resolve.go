@@ -48,5 +48,9 @@ func ResolveGroups(r *Registry, groups ...*models.Group) ([]*models.ResolvedGrou
 		resolvedGroups = append(resolvedGroups, models.NewResolvedGroup(group, devices...))
 	}
 
+	sort.Slice(resolvedGroups, func(i, j int) bool {
+		return resolvedGroups[i].Name < resolvedGroups[j].Name
+	})
+
 	return resolvedGroups, nil
 }
