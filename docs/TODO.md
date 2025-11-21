@@ -8,7 +8,7 @@
 
 ## Fixes
 
-- [x] Remove the color cache, only keep the pins cache, also check the expiration validation [WIP]
+- [x] Remove the color cache, only keep the pins cache, also check the expiration validation
 - [x] Makefile: Database path for the macos service, Need to use the correct path: ~/Library/Application\ Support/picow-led.
 
 ## Performance
