@@ -1,11 +1,11 @@
-package errors
+package utils
 
 import (
 	"errors"
 	"fmt"
 )
 
-func Wrap(err error, format string, a ...any) error {
+func WrapError(err error, format string, a ...any) error {
 	msg := fmt.Sprintf(format, a...)
 	if err == nil {
 		return errors.New(msg)
