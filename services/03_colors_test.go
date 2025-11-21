@@ -16,7 +16,7 @@ func TestAddColor(t *testing.T) {
 
 	id, err := r.Colors.Add(color)
 	if err != nil {
-		t.Fatalf("Failed to add color: %v", err)
+		t.Fatalf("add color: %v", err)
 	}
 	if id != color.ID {
 		t.Errorf("Expected color ID %d, got %d", color.ID, id)
@@ -25,7 +25,7 @@ func TestAddColor(t *testing.T) {
 	// Verify that the color was added to the database
 	dbColor, err := r.Colors.Get(id)
 	if err != nil {
-		t.Fatalf("Failed to get color: %v", err)
+		t.Fatalf("get color: %v", err)
 	}
 	if dbColor.ID != id {
 		t.Errorf("Expected color ID %d, got %d", id, dbColor.ID)
@@ -47,13 +47,13 @@ func TestUpdateColor(t *testing.T) {
 
 	err := r.Colors.Update(color)
 	if err != nil {
-		t.Fatalf("Failed to update color: %v", err)
+		t.Fatalf("update color: %v", err)
 	}
 
 	// Verify that the color was updated in the database
 	dbColor, err := r.Colors.Get(color.ID)
 	if err != nil {
-		t.Fatalf("Failed to get color: %v", err)
+		t.Fatalf("get color: %v", err)
 	}
 	if dbColor.ID != color.ID {
 		t.Errorf("Expected color ID %d, got %d", color.ID, dbColor.ID)

@@ -51,7 +51,7 @@ func TestAddGroup(t *testing.T) {
 
 	// Add the group to the database
 	if _, err := r.Groups.Add(testGroup1); err != ErrInvalidGroupDeviceID {
-		t.Fatalf("Failed to add group: %#v", err)
+		t.Fatalf("add group: %#v", err)
 	}
 
 	// Create a new group
@@ -124,7 +124,7 @@ func TestDeleteGroup(t *testing.T) {
 
 	// Delete the group from the database
 	if err := r.Groups.Delete(groupID); err != nil {
-		t.Fatalf("Failed to delete group with ID %d: %v", groupID, err)
+		t.Fatalf("delete group with ID %d: %v", groupID, err)
 	}
 
 	// Retrieve the group from the database

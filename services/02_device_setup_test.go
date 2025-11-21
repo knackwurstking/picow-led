@@ -16,13 +16,13 @@ func TestAddDevice(t *testing.T) {
 	// First device
 	device1, err := models.NewDevice("192.168.178.10:8888", "Test Device 1")
 	if err != nil {
-		t.Fatalf("Failed to create device: %v", err)
+		t.Fatalf("create device: %v", err)
 	}
 	device1.ID = models.DeviceID(1)
 
 	id, err := r.Devices.Add(device1)
 	if err != nil {
-		t.Fatalf("Failed to add device: %v", err)
+		t.Fatalf("add device: %v", err)
 	}
 	if id != device1.ID {
 		t.Errorf("Expected ID 1, got %d", id)
@@ -30,7 +30,7 @@ func TestAddDevice(t *testing.T) {
 
 	dbDevice, err := r.Devices.Get(id)
 	if err != nil {
-		t.Fatalf("Failed to get device: %v", err)
+		t.Fatalf("get device: %v", err)
 	}
 	if dbDevice.ID != id {
 		t.Errorf("Expected ID %d, got %d", id, dbDevice.ID)
@@ -45,13 +45,13 @@ func TestAddDevice(t *testing.T) {
 	// Second device
 	device2, err := models.NewDevice("192.168.178.20:8888", "Test Device 2")
 	if err != nil {
-		t.Fatalf("Failed to create device: %v", err)
+		t.Fatalf("create device: %v", err)
 	}
 	device2.ID = models.DeviceID(2)
 
 	id, err = r.Devices.Add(device2)
 	if err != nil {
-		t.Fatalf("Failed to add device: %v", err)
+		t.Fatalf("add device: %v", err)
 	}
 	if id != device2.ID {
 		t.Errorf("Expected ID %d, got %d", device2.ID, id)
@@ -66,7 +66,7 @@ func TestRemoveDevice(t *testing.T) {
 
 	// Remove device 1 for checking if the setup got removed too
 	if err := r.Devices.Delete(deviceID); err != nil {
-		t.Fatalf("Failed to remove device: %v", err)
+		t.Fatalf("remove device: %v", err)
 	}
 
 	if _, err := r.DeviceControls.Get(deviceID); !IsNotFoundError(err) {

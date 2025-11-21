@@ -12,7 +12,7 @@ import (
 func TestEndByte(t *testing.T) {
 	device, err := models.NewDevice("192.168.178.10:8888", "Test Device 1")
 	if err != nil {
-		t.Fatalf("Failed to create device: %v", err)
+		t.Fatalf("create device: %v", err)
 	}
 
 	picow := NewPicoW(device)
@@ -26,7 +26,7 @@ func TestEndByte(t *testing.T) {
 
 	data, err := json.Marshal(r)
 	if err != nil {
-		t.Fatalf("Failed to marshal request: %v", err)
+		t.Fatalf("marshal request: %v", err)
 	}
 
 	dataOriginal := make([]byte, len(data))
@@ -40,7 +40,7 @@ func TestEndByte(t *testing.T) {
 func TestPicoWReadFromConnUntilEndByte(t *testing.T) {
 	device, err := models.NewDevice("192.168.178.10:8888", "Test Device 1")
 	if err != nil {
-		t.Fatalf("Failed to create device: %v", err)
+		t.Fatalf("create device: %v", err)
 	}
 
 	picow := NewPicoW(device)
@@ -55,13 +55,13 @@ func TestPicoWReadFromConnUntilEndByte(t *testing.T) {
 
 		_, err := server.Write([]byte("test\n"))
 		if err != nil {
-			t.Errorf("Failed to write to server: %v", err)
+			t.Errorf("write to server: %v", err)
 		}
 	}()
 
 	data, err := picow.ReadAll()
 	if err != nil {
-		t.Fatalf("Failed to read from connection: %v", err)
+		t.Fatalf("read from connection: %v", err)
 	}
 
 	if !bytes.Equal(data, []byte("test")) {

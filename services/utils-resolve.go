@@ -16,7 +16,7 @@ func ResolveDevices(r *Registry, devices ...*models.Device) ([]*models.ResolvedD
 		wg.Go(func() {
 			color, err := r.DeviceControls.GetCurrentColor(device.ID)
 			if err != nil {
-				slog.Error("Failed to get current color for device", "id", device.ID, "error", err)
+				slog.Error("get current color for device", "id", device.ID, "error", err)
 			}
 			resolvedDevices = append(resolvedDevices, models.NewResolvedDevice(device, color))
 		})
