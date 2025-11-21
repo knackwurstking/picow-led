@@ -10,7 +10,12 @@ import (
 )
 
 func TestEndByte(t *testing.T) {
-	picow := NewPicoW(models.NewDevice("192.168.178.10:8888", "Test Device 1"))
+	device, err := models.NewDevice("192.168.178.10:8888", "Test Device 1")
+	if err != nil {
+		t.Fatalf("Failed to create device: %v", err)
+	}
+
+	picow := NewPicoW(device)
 
 	r := NewRequest(
 		RequestIDDefault,
@@ -33,7 +38,12 @@ func TestEndByte(t *testing.T) {
 }
 
 func TestPicoWReadFromConnUntilEndByte(t *testing.T) {
-	picow := NewPicoW(models.NewDevice("192.168.178.10:8888", "Test Device 1"))
+	device, err := models.NewDevice("192.168.178.10:8888", "Test Device 1")
+	if err != nil {
+		t.Fatalf("Failed to create device: %v", err)
+	}
+
+	picow := NewPicoW(device)
 
 	server, client := net.Pipe()
 	picow.Conn = client

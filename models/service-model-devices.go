@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -13,25 +14,25 @@ type Device struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func NewDevice(addr Addr, name string) *Device {
+func NewDevice(addr Addr, name string) (*Device, error) {
 	// Validate address for host:port
 	if !strings.Contains(string(addr), ":") {
-		panic("invalid address: " + addr)
+		return nil, errors.New("invalid address format: " + string(addr) + " (expected host:port)")
 	}
 	s := strings.Split(string(addr), ":")
 	if len(s) != 2 {
-		panic("invalid address: " + addr)
+		return nil, errors.New("invalid address format: " + string(addr) + " (expected host:port)")
 	}
 	_, err := strconv.Atoi(s[1])
 	if err != nil {
-		panic("invalid port: " + s[1])
+		return nil, errors.New("invalid port in address: " + string(addr) + " (port must be numeric)")
 	}
 
 	return &Device{
 		Addr:      addr,
 		Name:      name,
 		CreatedAt: time.Now(),
-	}
+	}, nil
 }
 
 func (d *Device) Validate() bool {

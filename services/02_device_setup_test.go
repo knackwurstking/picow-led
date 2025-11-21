@@ -14,7 +14,10 @@ func TestAddDevice(t *testing.T) {
 	defer r.Close()
 
 	// First device
-	device1 := models.NewDevice("192.168.178.10:8888", "Test Device 1")
+	device1, err := models.NewDevice("192.168.178.10:8888", "Test Device 1")
+	if err != nil {
+		t.Fatalf("Failed to create device: %v", err)
+	}
 	device1.ID = models.DeviceID(1)
 
 	id, err := r.Devices.Add(device1)
@@ -40,7 +43,10 @@ func TestAddDevice(t *testing.T) {
 	}
 
 	// Second device
-	device2 := models.NewDevice("192.168.178.20:8888", "Test Device 2")
+	device2, err := models.NewDevice("192.168.178.20:8888", "Test Device 2")
+	if err != nil {
+		t.Fatalf("Failed to create device: %v", err)
+	}
 	device2.ID = models.DeviceID(2)
 
 	id, err = r.Devices.Add(device2)

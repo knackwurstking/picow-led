@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/picow-led/errors"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -19,21 +20,59 @@ import (
 )
 
 func main() {
-	parseFlags()
-
-	switch env.Args.Command {
-	case env.CommandServer:
-		initializeLogging()
-		r := initializeDatabase()
-		initializeDevices(r)
-		startServer(r)
+	err := run()
+	if err != nil {
+		slog.Error("Application failed", "error", err)
+		os.Exit(1)
 	}
 }
 
-func parseFlags() {
+func run() error {
+	err := parseFlags()
+	if err != nil {
+		return errors.Wrap(err, errors.CodeInvalidFlags, "Failed to parse flags", map[string]any{
+			"error": err,
+		})
+	}
+
+	switch env.Args.Command {
+	case env.CommandServer:
+		err = initializeLogging()
+		if err != nil {
+			return errors.Wrap(err, errors.CodeInvalidLogFormat, "Failed to initialize logging", map[string]any{
+				"error": err,
+			})
+		}
+
+		r, err := initializeDatabase()
+		if err != nil {
+			return errors.Wrap(err, errors.CodeDatabaseConnection, "Failed to initialize database", map[string]any{
+				"error": err,
+			})
+		}
+
+		err = initializeDevices(r)
+		if err != nil {
+			return errors.Wrap(err, errors.CodeSetupDevices, "Failed to initialize devices", map[string]any{
+				"error": err,
+			})
+		}
+
+		err = startServer(r)
+		if err != nil {
+			return errors.Wrap(err, errors.CodeServerStart, "Failed to start server", map[string]any{
+				"error": err,
+			})
+		}
+	}
+
+	return nil
+}
+
+func parseFlags() error {
 	var logFormat string = string(env.Args.LogFormat)
 
-	subCmd := flag.NewFlagSet("server", flag.ExitOnError)
+	subCmd := flag.NewFlagSet("server", flag.ContinueOnError)
 
 	// Server Address
 	subCmd.StringVar(&env.Args.Addr, "addr", env.Args.Addr, "Server address")
@@ -69,8 +108,9 @@ func parseFlags() {
 	if len(os.Args) > 1 && os.Args[1] == "server" {
 		err := subCmd.Parse(os.Args[2:])
 		if err != nil {
-			slog.Error("Failed to parse flags", "error", err)
-			os.Exit(env.ExitCodeInvalidFlags)
+			return errors.Wrap(err, errors.CodeInvalidFlags, "Failed to parse server flags", map[string]any{
+				"error": err,
+			})
 		}
 
 		switch logFormat {
@@ -79,25 +119,34 @@ func parseFlags() {
 		case "json":
 			env.Args.LogFormat = env.LogFormatJSON
 		default:
-			slog.Error("Invalid log format", "format", logFormat)
-			os.Exit(env.ExitCodeInvalidLogFormat)
+			return errors.New(errors.CodeInvalidLogFormat, "Invalid log format", nil, map[string]any{
+				"format": logFormat,
+			})
 		}
 
-		verifyDatabasePath()
+		err = verifyDatabasePath()
+		if err != nil {
+			return errors.Wrap(err, errors.CodeInvalidDatabasePath, "Database path validation failed", map[string]any{
+				"error": err,
+			})
+		}
 
 		env.Args.Command = env.CommandServer
 	}
+
+	return nil
 }
 
-func verifyDatabasePath() {
+func verifyDatabasePath() error {
 	// Verify the database path
 	if env.Args.DatabasePath == "" {
-		slog.Error("Database path is required")
-		os.Exit(env.ExitCodeInvalidDatabasePath)
+		return errors.ErrInvalidDatabasePath
 	}
+
+	return nil
 }
 
-func initializeLogging() {
+func initializeLogging() error {
 	var level slog.Leveler
 	if env.Args.Debug {
 		level = slog.LevelDebug
@@ -122,16 +171,19 @@ func initializeLogging() {
 	}
 
 	slog.SetDefault(slog.New(handler))
+	return nil
 }
 
-func initializeDatabase() *services.Registry {
+func initializeDatabase() (*services.Registry, error) {
 	slog.Info("Initializing database", "path", env.Args.DatabasePath)
 
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
 	db, err := sql.Open("sqlite3", sqlPath)
 	if err != nil {
-		slog.Error("Failed to open database connection", "error", err)
-		os.Exit(env.ExitCodeDatabaseConnection)
+		return nil, errors.Wrap(err, errors.CodeDatabaseConnection, "Failed to open database connection", map[string]any{
+			"error": err,
+			"path":  sqlPath,
+		})
 	}
 
 	// Configure connection pool to handle multiple connections
@@ -142,30 +194,33 @@ func initializeDatabase() *services.Registry {
 	// Ping the database to verify the connection
 	err = db.Ping()
 	if err != nil {
-		slog.Error("Failed to ping database", "error", err)
-		os.Exit(env.ExitCodeDatabasePing)
+		return nil, errors.Wrap(err, errors.CodeDatabasePing, "Failed to ping database", map[string]any{
+			"error": err,
+		})
 	}
 
-	r := services.NewRegistry(db)
-	if err := r.CreateTables(); err != nil {
-		slog.Error("Failed to create tables", "error", err)
-		os.Exit(env.ExitCodeDatabaseTables)
+	r, err := services.NewRegistry(db)
+	if err != nil {
+		return nil, errors.Wrap(err, errors.CodeDatabaseTables, "Failed to create tables", map[string]any{
+			"error": err,
+		})
 	}
 
-	return r
+	return r, nil
 }
 
-func initializeDevices(r *services.Registry) {
+func initializeDevices(r *services.Registry) error {
 	slog.Info("Initializing devices from the database")
 
 	devices, err := r.Devices.List()
 	if err != nil {
-		slog.Error("Failed to list devices", "error", err)
-		os.Exit(env.ExitCodeSetupDevices)
+		return errors.Wrap(err, errors.CodeSetupDevices, "Failed to list devices", map[string]any{
+			"error": err,
+		})
 	}
 
 	if len(devices) == 0 {
-		return
+		return nil
 	}
 
 	wg := &sync.WaitGroup{}
@@ -194,9 +249,11 @@ func initializeDevices(r *services.Registry) {
 		})
 	}
 	wg.Wait()
+
+	return nil
 }
 
-func startServer(r *services.Registry) {
+func startServer(r *services.Registry) error {
 	slog.Info("Starting server", "addr", env.Args.Addr, "prefix", env.Args.ServerPathPrefix)
 
 	e := echo.New()
@@ -212,7 +269,11 @@ func startServer(r *services.Registry) {
 	router(e, r)
 
 	if err := e.Start(env.Args.Addr); err != nil {
-		slog.Error("Failed to start server", "error", err)
-		os.Exit(env.ExitCodeServerStart)
+		return errors.Wrap(err, errors.CodeServerStart, "Failed to start server", map[string]any{
+			"error": err,
+			"addr":  env.Args.Addr,
+		})
 	}
+
+	return nil
 }

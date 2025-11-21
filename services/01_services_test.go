@@ -22,9 +22,9 @@ func openDB(t *testing.T, clean bool) *Registry {
 		t.Fatalf("Failed to open database: %v", err)
 	}
 
-	registry := NewRegistry(db)
-	if err := registry.CreateTables(); err != nil {
-		panic(err)
+	registry, err := NewRegistry(db)
+	if err != nil {
+		t.Fatalf("Failed to create registry: %v", err)
 	}
 
 	return registry

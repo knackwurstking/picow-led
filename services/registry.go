@@ -1,6 +1,10 @@
 package services
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/knackwurstking/picow-led/errors"
+)
 
 type Registry struct {
 	db *sql.DB
@@ -12,7 +16,7 @@ type Registry struct {
 }
 
 // NewRegistry creates a new registry instance and will call the `CreateTables` method.
-func NewRegistry(db *sql.DB) *Registry {
+func NewRegistry(db *sql.DB) (*Registry, error) {
 	r := &Registry{db: db}
 
 	r.Devices = NewDevices(r)
@@ -21,10 +25,12 @@ func NewRegistry(db *sql.DB) *Registry {
 	r.DeviceControls = NewDeviceControls(r)
 
 	if err := r.CreateTables(); err != nil {
-		panic("failed to create tables: " + err.Error())
+		return nil, errors.Wrap(err, errors.CodeDatabaseTables, "failed to create tables", map[string]any{
+			"error": err,
+		})
 	}
 
-	return r
+	return r, nil
 }
 
 func (r *Registry) CreateTables() error {

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/knackwurstking/picow-led/errors"
 	"github.com/knackwurstking/picow-led/handlers/dialogs/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
 	"github.com/knackwurstking/picow-led/models"
@@ -53,7 +54,12 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 }
 
 func (h *Handler) PostEditDevice(c echo.Context) error {
-	device := h.parseEditDeviceForm(c)
+	device, err := h.parseEditDeviceForm(c)
+	if err != nil {
+		return errors.Wrap(err, errors.CodeInvalidAddress, "Failed to parse device form", map[string]any{
+			"error": err,
+		})
+	}
 
 	if !device.Validate() {
 		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
@@ -92,7 +98,12 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	device := h.parseEditDeviceForm(c)
+	device, err := h.parseEditDeviceForm(c)
+	if err != nil {
+		return errors.Wrap(err, errors.CodeInvalidAddress, "Failed to parse device form", map[string]any{
+			"error": err,
+		})
+	}
 	device.ID = deviceID
 
 	if !device.Validate() {
@@ -126,10 +137,18 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 	return nil
 }
 
-func (h *Handler) parseEditDeviceForm(c echo.Context) *models.Device {
+func (h *Handler) parseEditDeviceForm(c echo.Context) (*models.Device, error) {
 	host := c.FormValue("host")
 	port := c.FormValue("port")
 	name := c.FormValue("device-name")
 
-	return models.NewDevice(models.Addr(fmt.Sprintf("%s:%s", host, port)), name)
+	device, err := models.NewDevice(models.Addr(fmt.Sprintf("%s:%s", host, port)), name)
+	if err != nil {
+		return nil, errors.Wrap(err, errors.CodeInvalidAddress, "Invalid device address", map[string]any{
+			"host": host,
+			"port": port,
+		})
+	}
+
+	return device, nil
 }

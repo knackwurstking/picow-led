@@ -13,7 +13,10 @@ func TestAddGroup(t *testing.T) {
 
 	testDevice1Address := models.Addr("192.168.178.10:8888")
 	testDevice1Name := "Test Device 1"
-	testDevice1 := models.NewDevice(testDevice1Address, testDevice1Name)
+	testDevice1, err := models.NewDevice(testDevice1Address, testDevice1Name)
+	if err != nil {
+		t.Fatalf("Failed to create device 1: %v", err)
+	}
 
 	if _, err := r.Devices.Add(testDevice1); err != nil {
 		t.Fatalf("Failed to add device 1: %v", err)
@@ -21,7 +24,10 @@ func TestAddGroup(t *testing.T) {
 
 	testDevice2Address := models.Addr("192.168.178.20:8888")
 	testDevice2Name := "Test Device 2"
-	testDevice2 := models.NewDevice(testDevice2Address, testDevice2Name)
+	testDevice2, err := models.NewDevice(testDevice2Address, testDevice2Name)
+	if err != nil {
+		t.Fatalf("Failed to create device 2: %v", err)
+	}
 
 	if _, err := r.Devices.Add(testDevice2); err != nil {
 		t.Fatalf("Failed to add device 2: %v", err)
@@ -29,7 +35,10 @@ func TestAddGroup(t *testing.T) {
 
 	testDevice3Address := models.Addr("192.168.178.30:8888")
 	testDevice3Name := "Test Device 3"
-	testDevice3 := models.NewDevice(testDevice3Address, testDevice3Name)
+	testDevice3, err := models.NewDevice(testDevice3Address, testDevice3Name)
+	if err != nil {
+		t.Fatalf("Failed to create device 3: %v", err)
+	}
 
 	if _, err := r.Devices.Add(testDevice3); err != nil {
 		t.Fatalf("Failed to add device 3: %v", err)
