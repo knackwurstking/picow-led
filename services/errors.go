@@ -12,9 +12,6 @@ var (
 	ErrInvalidDevice        = errors.New("invalid device provided")
 	ErrInvalidGroup         = errors.New("invalid group provided")
 	ErrInvalidGroupDeviceID = errors.New("invalid device ID in group")
-
-	// ErrNotFound is returned when a resource is not found
-	ErrNotFound = errors.New("resource not found")
 )
 
 // NotFoundError represents an error when a resource is not found
@@ -23,8 +20,8 @@ type NotFoundError struct {
 }
 
 // NewNotFoundError creates a new NotFoundError with formatted message
-func NewNotFoundError(format string, a ...any) error {
-	return &NotFoundError{Message: fmt.Sprintf(format, a...)}
+func NewNotFoundError(msg string) error {
+	return &NotFoundError{Message: msg}
 }
 
 // Error implements the error interface for NotFoundError
@@ -34,6 +31,10 @@ func (e NotFoundError) Error() string {
 
 // IsNotFoundError checks if an error is a NotFoundError
 func IsNotFoundError(err error) bool {
+	if e, ok := err.(*ServiceError); ok {
+		err = e.Unwrap()
+	}
+
 	_, ok := err.(*NotFoundError)
 	return ok
 }
@@ -46,9 +47,9 @@ func HandleSqlError(err error) error {
 
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
-		return fmt.Errorf("%w: %v", ErrNotFound, err)
+		return NewServiceError("not found", err)
 	default:
-		return fmt.Errorf("database operation failed: %v", err)
+		return NewServiceError("database operation failed", err)
 	}
 }
 
