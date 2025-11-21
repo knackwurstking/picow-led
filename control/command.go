@@ -13,17 +13,17 @@ func RunCommand[T any](id RequestID, device *models.Device, req any, resp *Respo
 	picow := NewPicoW(device)
 
 	if err := picow.Connect(); err != nil {
-		return *new(T), fmt.Errorf("failed to connect to Picow device: %v", err)
+		return *new(T), fmt.Errorf("connect: %v", err)
 	}
 	defer picow.Close()
 
 	data, err := json.Marshal(req)
 	if err != nil {
-		return *new(T), fmt.Errorf("failed to marshal request: %v", err)
+		return *new(T), fmt.Errorf("marshal request: %v", err)
 	}
 	_, err = picow.Write(data)
 	if err != nil {
-		return *new(T), fmt.Errorf("failed to write request: %v", err)
+		return *new(T), fmt.Errorf("write request: %v", err)
 	}
 
 	if id == RequestIDNoResponse {
@@ -32,13 +32,13 @@ func RunCommand[T any](id RequestID, device *models.Device, req any, resp *Respo
 
 	respData, err := picow.ReadAll()
 	if err != nil {
-		return *new(T), fmt.Errorf("failed to read response: %v", err)
+		return *new(T), fmt.Errorf("response: %v", err)
 	}
 	if err = json.Unmarshal(respData, &resp); err != nil {
-		return *new(T), fmt.Errorf("failed to unmarshal response: %v", err)
+		return *new(T), fmt.Errorf("unmarshal response: %v", err)
 	}
 	if resp.Error != "" {
-		return *new(T), fmt.Errorf("picow error in response: %s", resp.Error)
+		return *new(T), fmt.Errorf("device repond with an error: %s", resp.Error)
 	}
 
 	return resp.Data, nil

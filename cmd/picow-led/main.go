@@ -30,29 +30,29 @@ func main() {
 func run() error {
 	err := parseFlags()
 	if err != nil {
-		return errors.Wrap(err, "failed to parse flags")
+		return errors.Wrap(err, "parse flags")
 	}
 
 	switch env.Args.Command {
 	case env.CommandServer:
 		err = initializeLogging()
 		if err != nil {
-			return errors.Wrap(err, "failed to initialize logging")
+			return errors.Wrap(err, "initialize logging")
 		}
 
 		r, err := initializeDatabase()
 		if err != nil {
-			return errors.Wrap(err, "failed to initialize database")
+			return errors.Wrap(err, "initialize database")
 		}
 
 		err = initializeDevices(r)
 		if err != nil {
-			return errors.Wrap(err, "failed to initialize devices")
+			return errors.Wrap(err, "initialize devices")
 		}
 
 		err = startServer(r)
 		if err != nil {
-			return errors.Wrap(err, "failed to start server")
+			return errors.Wrap(err, "start server")
 		}
 	}
 
@@ -98,7 +98,7 @@ func parseFlags() error {
 	if len(os.Args) > 1 && os.Args[1] == "server" {
 		err := subCmd.Parse(os.Args[2:])
 		if err != nil {
-			return errors.Wrap(err, "failed to parse server flags")
+			return errors.Wrap(err, "parse server flags")
 		}
 
 		switch logFormat {
@@ -164,7 +164,7 @@ func initializeDatabase() (*services.Registry, error) {
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
 	db, err := sql.Open("sqlite3", sqlPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to open database connection: %s", sqlPath)
+		return nil, errors.Wrap(err, "open database connection: %s", sqlPath)
 	}
 
 	// Configure connection pool to handle multiple connections
@@ -175,12 +175,12 @@ func initializeDatabase() (*services.Registry, error) {
 	// Ping the database to verify the connection
 	err = db.Ping()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to ping database")
+		return nil, errors.Wrap(err, "ping database")
 	}
 
 	r, err := services.NewRegistry(db)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create tables")
+		return nil, errors.Wrap(err, "create tables")
 	}
 
 	return r, nil
@@ -191,7 +191,7 @@ func initializeDevices(r *services.Registry) error {
 
 	devices, err := r.Devices.List()
 	if err != nil {
-		return errors.Wrap(err, "failed to list devices")
+		return errors.Wrap(err, "list devices")
 	}
 
 	if len(devices) == 0 {
@@ -244,7 +244,7 @@ func startServer(r *services.Registry) error {
 	router(e, r)
 
 	if err := e.Start(env.Args.Addr); err != nil {
-		return errors.Wrap(err, "failed to start server: %s", env.Args.Addr)
+		return errors.Wrap(err, "start server: %s", env.Args.Addr)
 	}
 
 	return nil

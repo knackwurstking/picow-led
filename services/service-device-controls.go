@@ -137,13 +137,13 @@ func (p *DeviceControls) GetPins(deviceID models.DeviceID) ([]uint8, error) {
 	// If not cached, fetch from control layer
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get device: %v", err)
+		return nil, fmt.Errorf("get device: %v", err)
 	}
 
 	slog.Debug("Running GetPins from the controls package", "id", deviceID)
 	pins, err := control.GetPins(device)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get device pins: %v", err)
+		return nil, fmt.Errorf("get device pins: %v", err)
 	}
 
 	// Cache the result
@@ -160,14 +160,14 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 	// Fetch device
 	device, err := p.registry.Devices.Get(deviceID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get device: %v", err)
+		return nil, fmt.Errorf("get device: %v", err)
 	}
 
 	// Get the device control record
 	deviceControl, err := p.Get(device.ID)
 	if err != nil {
 		if !IsNotFoundError(err) {
-			return nil, fmt.Errorf("failed to get device control: %v", err)
+			return nil, fmt.Errorf("get device control: %v", err)
 		}
 
 		if err = p.setInitialEntry(device.ID); err != nil {

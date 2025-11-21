@@ -6,7 +6,7 @@
 - [x] Improve error handling and create an errors package
 - [x] Think about separating the home handler into more handlers, one for devices and one for groups?
 
-- [ ] Improve error wrapping...
+- [x] Shorten error messges a bit
 ```bash
 2025-11-21 06:04:17 ERR picow-led/main.go:206 Failed to get device pins device_id=5 device_name=Kino device_addr=192.168.178.50:3000 error="failed to get device pins: failed to connect to Picow device: dial tcp 192.168.178.50:3000: connect: no route to host"
 ```

@@ -37,12 +37,12 @@ func (h *Handler) GetDevices(c echo.Context) error {
 	// Get devices...
 	devices, err := h.registry.Devices.List()
 	if err != nil {
-		return errors.Wrap(err, "failed to list devices")
+		return errors.Wrap(err, "list devices")
 	}
 
 	rDevices, err := services.ResolveDevices(h.registry, devices...)
 	if err != nil {
-		return errors.Wrap(err, "failed to resolve devices")
+		return errors.Wrap(err, "resolve devices")
 	}
 
 	return components.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
@@ -51,13 +51,13 @@ func (h *Handler) GetDevices(c echo.Context) error {
 func (h *Handler) DeleteDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get device ID from query parameter"))
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "get device ID from query parameter"))
 	}
 
 	slog.Info("Delete a device", "id", deviceID)
 
 	if err = h.registry.Devices.Delete(deviceID); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to delete device"))
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "delete device"))
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadDevices")
@@ -67,14 +67,14 @@ func (h *Handler) DeleteDevice(c echo.Context) error {
 func (h *Handler) PostTogglePowerDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get device ID from query parameter"))
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "get device ID from query parameter"))
 	}
 
 	slog.Info("Toggle power for a device", "id", deviceID)
 
 	color, err := h.registry.DeviceControls.TogglePower(deviceID)
 	if err != nil {
-		err = errors.Wrap(err, "failed to toggle power for device %d", deviceID)
+		err = errors.Wrap(err, "toggle power for device %d", deviceID)
 		oob.OOBRenderPageHomeDeviceError(c, deviceID, err)
 		oob.OOBRenderPageHomeDevicePowerButton(c, deviceID, color)
 

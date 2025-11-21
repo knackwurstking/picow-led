@@ -44,7 +44,7 @@ func QueryParam(c echo.Context, paramName string, optional bool) (string, error)
 func QueryParamDeviceID(c echo.Context, paramName string, optional bool) (models.DeviceID, error) {
 	param, err := QueryParam(c, paramName, optional)
 	if err != nil {
-		return 0, fmt.Errorf("failed to get device ID from query parameter: %v", err)
+		return 0, fmt.Errorf("get device ID from query parameter: %v", err)
 	}
 
 	if optional && param == "" {
@@ -61,7 +61,7 @@ func QueryParamDeviceID(c echo.Context, paramName string, optional bool) (models
 func QueryParamGroupID(c echo.Context, paramName string, optional bool) (models.GroupID, error) {
 	param, err := QueryParam(c, paramName, optional)
 	if err != nil {
-		return 0, fmt.Errorf("failed to get group ID from query parameter: %v", err)
+		return 0, fmt.Errorf("get group ID from query parameter: %v", err)
 	}
 
 	if optional && param == "" {

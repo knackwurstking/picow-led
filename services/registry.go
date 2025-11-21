@@ -25,7 +25,7 @@ func NewRegistry(db *sql.DB) (*Registry, error) {
 	r.DeviceControls = NewDeviceControls(r)
 
 	if err := r.CreateTables(); err != nil {
-		return nil, errors.Wrap(err, "failed to create tables")
+		return nil, errors.Wrap(err, "create tables")
 	}
 
 	return r, nil
