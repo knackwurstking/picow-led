@@ -1,15 +1,16 @@
 package components
 
 import (
-	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
+	"github.com/knackwurstking/picow-led/handlers/components"
 	"github.com/knackwurstking/picow-led/handlers/components/oob"
 	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/picow-led/utils"
 )
 
 templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 	<span
-		hx-get={ components.HxUrlHomeSectionDevices() }
+		hx-get={ utils.HxUrlHomeSectionDevices() }
 		hx-target={ "#" + ids.HomeSectionDevices }
 		hx-trigger="reloadDevices from:body"
 		hx-on::before-request={ enableSpinner(ids.HomeSectionDevicesSpinner, templ.JSExpression("event")) }
@@ -17,7 +18,7 @@ templ SectionDevices(loading bool, devices []*models.ResolvedDevice) {
 	@sectionSummary("Devices")
 	@sectionActions() {
 		@components.AddIconButton(templ.Attributes{
-			"hx-get":     string(components.HxUrlEditDeviceDialog(nil)),
+			"hx-get":     string(utils.HxUrlEditDeviceDialog(nil)),
 			"hx-target":  "body",
 			"hx-swap":    "beforeend",
 			"hx-trigger": "click",
@@ -45,7 +46,7 @@ templ SectionDevices_Device(device *models.ResolvedDevice) {
 				</div>
 				<div class="button-group">
 					@components.EditIconButton(templ.Attributes{
-						"hx-get":     string(components.HxUrlEditDeviceDialog(&device.ID)),
+						"hx-get":     string(utils.HxUrlEditDeviceDialog(&device.ID)),
 						"hx-target":  "body",
 						"hx-swap":    "beforeend",
 						"hx-trigger": "click",

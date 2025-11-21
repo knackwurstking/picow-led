@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/picow-led/handlers/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 
 	"github.com/knackwurstking/ui"

@@ -4,9 +4,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/picow-led/utils"
 )
 
 templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob bool) {
@@ -21,7 +21,7 @@ templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob b
 	<button
 		id={ ids.HomeSectionDevicesPowerButton(deviceID) }
 		class={ strings.Trim("power-button icon ghost "+buttonColor, "") }
-		hx-post={ components.HxUrlTogglePowerDevice(deviceID) }
+		hx-post={ utils.HxUrlTogglePowerDevice(deviceID) }
 		hx-target="this"
 		hx-swap="none"
 		hx-trigger="click"

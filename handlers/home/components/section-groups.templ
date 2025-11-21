@@ -2,9 +2,10 @@ package components
 
 import (
 	"fmt"
-	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/components/oob"
+	"github.com/knackwurstking/picow-led/handlers/components"
 	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/picow-led/utils"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"strings"
 )
@@ -18,7 +19,7 @@ type PowerButtonState string
 
 templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
 	<span
-		hx-get={ components.HxUrlHomeSectionGroups() }
+		hx-get={ utils.HxUrlHomeSectionGroups() }
 		hx-target={ "#" + ids.HomeSectionGroups }
 		hx-trigger={ "reloadGroups from:body" }
 		hx-on::before-request={ enableSpinner(ids.HomeSectionGroupsSpinner, templ.JSExpression("event")) }
@@ -26,7 +27,7 @@ templ SectionGroups(loading bool, groups []*models.ResolvedGroup) {
 	@sectionSummary("Groups")
 	@sectionActions() {
 		@components.AddIconButton(templ.Attributes{
-			"hx-get":     string(components.HxUrlEditGroupDialog(nil)),
+			"hx-get":     string(utils.HxUrlEditGroupDialog(nil)),
 			"hx-target":  "body",
 			"hx-swap":    "beforeend",
 			"hx-trigger": "click",
@@ -53,7 +54,7 @@ templ SectionGroups_Group(group *models.ResolvedGroup) {
 				</div>
 				<div class="button-group">
 					@components.EditIconButton(templ.Attributes{
-						"hx-get":     string(components.HxUrlEditGroupDialog(&group.ID)),
+						"hx-get":     string(utils.HxUrlEditGroupDialog(&group.ID)),
 						"hx-target":  "body",
 						"hx-swap":    "beforeend",
 						"hx-trigger": "click",
@@ -76,10 +77,10 @@ templ GroupPowerButton(state PowerButtonState, groupID models.GroupID) {
 		switch state {
 		case "ON":
 			buttonColor = "primary"
-			href = components.HxUrlTurnOnGroup(groupID)
+			href = utils.HxUrlTurnOnGroup(groupID)
 		case "OFF":
 			buttonColor = "destructive"
-			href = components.HxUrlTurnOffGroup(groupID)
+			href = utils.HxUrlTurnOffGroup(groupID)
 		default:
 			panic(fmt.Errorf("unknown power button state: %s, expected ON or OFF", state))
 		}

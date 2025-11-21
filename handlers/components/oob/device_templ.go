@@ -12,9 +12,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/picow-led/utils"
 )
 
 func OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob bool) templ.Component {
@@ -80,9 +80,9 @@ func OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob bo
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(components.HxUrlTogglePowerDevice(deviceID))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(utils.HxUrlTogglePowerDevice(deviceID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/components/oob/device.templ`, Line: 24, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `handlers/components/oob/device.templ`, Line: 24, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

@@ -1,9 +1,9 @@
 package components
 
 import (
-	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/picow-led/utils"
 	"github.com/knackwurstking/ui"
 	"net/http"
 )
@@ -18,7 +18,7 @@ templ NewGroupDialog(devices []*models.Device, preselectedDeviceIDs []models.Dev
 	@ui.Dialog(ui.DialogProps{
 		ID:               ids.DialogNewGroup,
 		Method:           http.MethodPost,
-		Href:             components.HxUrlEditGroupDialog(nil),
+		Href:             utils.HxUrlEditGroupDialog(nil),
 		SubmitButtonText: "Create",
 		HxSwapOOB:        hxSwapOOB,
 		Error:            err,
