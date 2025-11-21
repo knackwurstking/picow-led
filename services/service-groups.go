@@ -1,9 +1,8 @@
 package services
 
 import (
-	"encoding/json"
+	"fmt"
 	"log/slog"
-	"slices"
 
 	"github.com/knackwurstking/picow-led/models"
 )
@@ -22,43 +21,54 @@ func (g *Groups) CreateTable() error {
 	query := `CREATE TABLE IF NOT EXISTS groups (
 		id INTEGER PRIMARY KEY NOT NULL,
 		name TEXT NOT NULL,
-		devices TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
 
 	_, err := g.registry.db.Exec(query)
-	return err
+	if err != nil {
+		return NewServiceError("create groups table", err)
+	}
+
+	return nil
 }
 
 func (g *Groups) Get(id models.GroupID) (*models.Group, error) {
-	slog.Debug("Getting group", "id", id)
+	slog.Debug("Get group with ID", "id", id)
 
 	query := `SELECT * FROM groups WHERE id = ?`
 	group, err := ScanGroup(g.registry.db.QueryRow(query, id))
 	if err != nil {
-		return nil, HandleSqlError(err)
+		return nil, NewServiceError("get group by ID", HandleSqlError(err))
 	}
 
 	return group, nil
 }
 
 func (g *Groups) List() ([]*models.Group, error) {
-	slog.Debug("Listing groups")
+	slog.Debug("Get all groups")
 
 	query := `SELECT * FROM groups`
 	rows, err := g.registry.db.Query(query)
 	if err != nil {
-		return nil, HandleSqlError(err)
+		return nil, NewServiceError("list groups", HandleSqlError(err))
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Warn("failed to close groups rows", "error", err)
+		}
+	}()
 
-	groups := make([]*models.Group, 0)
+	var groups []*models.Group
 	for rows.Next() {
 		group, err := ScanGroup(rows)
 		if err != nil {
-			return nil, HandleSqlError(err)
+			return nil, NewServiceError("scan group from rows", HandleSqlError(err))
 		}
 		groups = append(groups, group)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, NewServiceError("iterate group rows", err)
 	}
 
 	return groups, nil
@@ -66,53 +76,39 @@ func (g *Groups) List() ([]*models.Group, error) {
 
 func (g *Groups) Add(group *models.Group) (models.GroupID, error) {
 	if !group.Validate() {
-		return 0, ErrInvalidGroup
+		return 0, fmt.Errorf("%w: %v", ErrInvalidGroup, "group validation failed")
 	}
 
-	if err := g.validateDevices(group.Devices); err != nil {
-		return 0, err
-	}
+	slog.Debug("Adding a new group", "name", group.Name)
 
-	slog.Debug("Adding group", "name", group.Name)
-
-	devices, err := json.Marshal(group.Devices)
+	query := `INSERT INTO groups (name) VALUES (?)`
+	result, err := g.registry.db.Exec(query, group.Name)
 	if err != nil {
-		return 0, err
-	}
-
-	query := `INSERT INTO groups (name, devices) VALUES (?, ?)`
-	result, err := g.registry.db.Exec(query, group.Name, devices)
-	if err != nil {
-		return 0, HandleSqlError(err)
+		return 0, NewServiceError("add group", HandleSqlError(err))
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, HandleSqlError(err)
+		return 0, NewServiceError("get last inserted group ID", HandleSqlError(err))
 	}
 
 	return models.GroupID(id), nil
 }
 
 func (g *Groups) Update(group *models.Group) error {
-	if !group.Validate() {
-		return ErrInvalidGroup
-	}
-
-	if err := g.validateDevices(group.Devices); err != nil {
-		return err
-	}
-
 	slog.Debug("Updating group", "id", group.ID, "name", group.Name)
 
-	devices, err := json.Marshal(group.Devices)
-	if err != nil {
-		return err
+	if !group.Validate() {
+		return fmt.Errorf("%w: %v", ErrInvalidGroup, "group validation failed")
 	}
 
-	query := `UPDATE groups SET name = ?, devices = ? WHERE id = ?`
-	_, err = g.registry.db.Exec(query, group.Name, devices, group.ID)
-	return HandleSqlError(err)
+	query := `UPDATE groups SET name = ? WHERE id = ?`
+	_, err := g.registry.db.Exec(query, group.Name, group.ID)
+	if err != nil {
+		return NewServiceError("update group", HandleSqlError(err))
+	}
+
+	return nil
 }
 
 func (g *Groups) Delete(id models.GroupID) error {
@@ -120,28 +116,19 @@ func (g *Groups) Delete(id models.GroupID) error {
 
 	query := `DELETE FROM groups WHERE id = ?`
 	_, err := g.registry.db.Exec(query, id)
-	return HandleSqlError(err)
-}
+	if err != nil {
+		return NewServiceError("delete group", HandleSqlError(err))
+	}
 
-func (g *Groups) validateDevices(devices []models.DeviceID) error {
-	if slices.Contains(devices, 0) {
-		return ErrInvalidGroupDeviceID
-	}
-	// Check database if this device exists
-	for _, device := range devices {
-		if _, err := g.registry.Devices.Get(device); err != nil && IsNotFoundError(err) {
-			return ErrInvalidGroupDeviceID
-		} else if err != nil {
-			return err
-		}
-	}
 	return nil
 }
 
 func ScanGroup(scannable Scannable) (*models.Group, error) {
 	group := &models.Group{}
-	var devices string
-	err := scannable.Scan(&group.ID, &group.Name, &devices, &group.CreatedAt)
-	err = json.Unmarshal([]byte(devices), &group.Devices)
-	return group, err
+	err := scannable.Scan(&group.ID, &group.Name, &group.CreatedAt)
+	if err != nil {
+		return nil, NewServiceError("scan group", err)
+	}
+
+	return group, nil
 }
