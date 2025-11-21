@@ -3,8 +3,8 @@ package dialogs
 import (
 	"net/http"
 
-	"github.com/knackwurstking/picow-led/handlers/utils"
 	"github.com/knackwurstking/picow-led/services"
+	"github.com/knackwurstking/picow-led/utils"
 	"github.com/labstack/echo/v4"
 )
 

@@ -5,18 +5,17 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/knackwurstking/picow-led/errors"
 	"github.com/knackwurstking/picow-led/handlers/dialogs/components"
-	"github.com/knackwurstking/picow-led/handlers/utils"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/services"
+	"github.com/knackwurstking/picow-led/utils"
 	"github.com/labstack/echo/v4"
 )
 
 func (h *Handler) GetEditDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "get device ID from query parameter"))
+		return echo.NewHTTPError(http.StatusBadRequest, utils.WrapError(err, "get device ID from query parameter"))
 	}
 
 	slog.Info("Get dialog for edit or create a device", "id", deviceID)
@@ -27,10 +26,10 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 		if err != nil {
 			if services.IsNotFoundError(err) {
 				return echo.NewHTTPError(http.StatusNotFound,
-					errors.Wrap(fmt.Errorf("device with ID %d not found", deviceID), "fetch device"))
+					utils.WrapError(fmt.Errorf("device with ID %d not found", deviceID), "fetch device"))
 			}
 
-			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "fetch device with ID %d", deviceID))
+			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "fetch device with ID %d", deviceID))
 		}
 	}
 
@@ -39,14 +38,14 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 		if err = components.EditDeviceDialog(device, false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "render edit device dialog"))
+			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render edit device dialog"))
 		}
 	} else {
 		slog.Info("Device not found, rendering new device dialog")
 		if err = components.NewDeviceDialog(false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "render new device dialog"))
+			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render new device dialog"))
 		}
 	}
 
@@ -56,7 +55,7 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 func (h *Handler) PostEditDevice(c echo.Context) error {
 	device, err := h.parseEditDeviceForm(c)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "parse device form"))
+		return echo.NewHTTPError(http.StatusBadRequest, utils.WrapError(err, "parse device form"))
 	}
 
 	if !device.Validate() {
@@ -65,7 +64,7 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 		if err := components.NewDeviceDialog(true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "render device dialog"))
+			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render device dialog"))
 		}
 
 		return echo.NewHTTPError(http.StatusBadRequest, validationError)
@@ -75,12 +74,12 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 		"name", device.Name, "addr", device.Addr)
 
 	if _, err := h.registry.Devices.Add(device); err != nil {
-		databaseError := errors.Wrap(err, "add device %s", device.Name)
+		databaseError := utils.WrapError(err, "add device %s", device.Name)
 
 		if err := components.NewDeviceDialog(true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "render device dialog"))
+			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render device dialog"))
 		}
 
 		return echo.NewHTTPError(http.StatusInternalServerError, databaseError)
@@ -93,12 +92,12 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 func (h *Handler) PutEditDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "get device ID from query parameter"))
+		return echo.NewHTTPError(http.StatusBadRequest, utils.WrapError(err, "get device ID from query parameter"))
 	}
 
 	device, err := h.parseEditDeviceForm(c)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "parse device form"))
+		return echo.NewHTTPError(http.StatusBadRequest, utils.WrapError(err, "parse device form"))
 	}
 	device.ID = deviceID
 
@@ -108,7 +107,7 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 		if err := components.EditDeviceDialog(device, true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "render device dialog"))
+			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render device dialog"))
 		}
 
 		return echo.NewHTTPError(http.StatusBadRequest, validationError)
@@ -118,12 +117,12 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 		"id", device.ID, "name", device.Name, "addr", device.Addr)
 
 	if err := h.registry.Devices.Update(device); err != nil {
-		databaseError := errors.Wrap(err, "update device %s", device.Name)
+		databaseError := utils.WrapError(err, "update device %s", device.Name)
 
 		if err := components.EditDeviceDialog(device, true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "render device dialog"))
+			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render device dialog"))
 		}
 
 		return echo.NewHTTPError(http.StatusInternalServerError, databaseError)
@@ -140,7 +139,7 @@ func (h *Handler) parseEditDeviceForm(c echo.Context) (*models.Device, error) {
 
 	device, err := models.NewDevice(models.Addr(fmt.Sprintf("%s:%s", host, port)), name)
 	if err != nil {
-		return nil, errors.Wrap(err, "invalid device address: %s:%s", host, port)
+		return nil, utils.WrapError(err, "invalid device address: %s:%s", host, port)
 	}
 
 	return device, nil

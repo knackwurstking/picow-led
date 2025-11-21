@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/knackwurstking/picow-led/env"
-	"github.com/knackwurstking/picow-led/errors"
 	"github.com/knackwurstking/picow-led/services"
+	"github.com/knackwurstking/picow-led/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/lmittmann/tint"
@@ -30,29 +30,29 @@ func main() {
 func run() error {
 	err := parseFlags()
 	if err != nil {
-		return errors.Wrap(err, "parse flags")
+		return utils.WrapError(err, "parse flags")
 	}
 
 	switch env.Args.Command {
 	case env.CommandServer:
 		err = initializeLogging()
 		if err != nil {
-			return errors.Wrap(err, "initialize logging")
+			return utils.WrapError(err, "initialize logging")
 		}
 
 		r, err := initializeDatabase()
 		if err != nil {
-			return errors.Wrap(err, "initialize database")
+			return utils.WrapError(err, "initialize database")
 		}
 
 		err = initializeDevices(r)
 		if err != nil {
-			return errors.Wrap(err, "initialize devices")
+			return utils.WrapError(err, "initialize devices")
 		}
 
 		err = startServer(r)
 		if err != nil {
-			return errors.Wrap(err, "start server")
+			return utils.WrapError(err, "start server")
 		}
 	}
 
@@ -98,7 +98,7 @@ func parseFlags() error {
 	if len(os.Args) > 1 && os.Args[1] == "server" {
 		err := subCmd.Parse(os.Args[2:])
 		if err != nil {
-			return errors.Wrap(err, "parse server flags")
+			return utils.WrapError(err, "parse server flags")
 		}
 
 		switch logFormat {
@@ -107,12 +107,12 @@ func parseFlags() error {
 		case "json":
 			env.Args.LogFormat = env.LogFormatJSON
 		default:
-			return errors.Wrap(nil, "invalid log format: %s", logFormat)
+			return utils.WrapError(nil, "invalid log format: %s", logFormat)
 		}
 
 		err = verifyDatabasePath()
 		if err != nil {
-			return errors.Wrap(err, "database path validation failed")
+			return utils.WrapError(err, "database path validation failed")
 		}
 
 		env.Args.Command = env.CommandServer
@@ -124,7 +124,7 @@ func parseFlags() error {
 func verifyDatabasePath() error {
 	// Verify the database path
 	if env.Args.DatabasePath == "" {
-		return errors.Wrap(nil, "database path is required")
+		return utils.WrapError(nil, "database path is required")
 	}
 
 	return nil
@@ -164,7 +164,7 @@ func initializeDatabase() (*services.Registry, error) {
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
 	db, err := sql.Open("sqlite3", sqlPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "open database connection: %s", sqlPath)
+		return nil, utils.WrapError(err, "open database connection: %s", sqlPath)
 	}
 
 	// Configure connection pool to handle multiple connections
@@ -175,12 +175,12 @@ func initializeDatabase() (*services.Registry, error) {
 	// Ping the database to verify the connection
 	err = db.Ping()
 	if err != nil {
-		return nil, errors.Wrap(err, "ping database")
+		return nil, utils.WrapError(err, "ping database")
 	}
 
 	r, err := services.NewRegistry(db)
 	if err != nil {
-		return nil, errors.Wrap(err, "create tables")
+		return nil, utils.WrapError(err, "create tables")
 	}
 
 	return r, nil
@@ -191,7 +191,7 @@ func initializeDevices(r *services.Registry) error {
 
 	devices, err := r.Devices.List()
 	if err != nil {
-		return errors.Wrap(err, "list devices")
+		return utils.WrapError(err, "list devices")
 	}
 
 	if len(devices) == 0 {
@@ -244,7 +244,7 @@ func startServer(r *services.Registry) error {
 	router(e, r)
 
 	if err := e.Start(env.Args.Addr); err != nil {
-		return errors.Wrap(err, "start server: %s", env.Args.Addr)
+		return utils.WrapError(err, "start server: %s", env.Args.Addr)
 	}
 
 	return nil
