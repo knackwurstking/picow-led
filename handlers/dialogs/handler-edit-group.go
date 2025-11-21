@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/knackwurstking/picow-led/errors"
 	"github.com/knackwurstking/picow-led/handlers/dialogs/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
 	"github.com/knackwurstking/picow-led/models"
@@ -16,7 +17,7 @@ import (
 func (h *Handler) GetEditGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get group ID from query parameter"))
 	}
 
 	var group *models.Group
@@ -24,26 +25,26 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 		group, err = h.registry.Groups.Get(groupID)
 		if err != nil {
 			if services.IsNotFoundError(err) {
-				return echo.NewHTTPError(http.StatusNotFound, fmt.Errorf("group with ID %d not found", groupID))
+				return echo.NewHTTPError(http.StatusNotFound, errors.Wrap(fmt.Errorf("group with ID %d not found", groupID), "failed to get group"))
 			}
-			return fmt.Errorf("failed to get group with ID %d: %v", groupID, err)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to get group with ID %d", groupID))
 		}
 	}
 
 	devices, err := h.registry.Devices.List()
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to list devices"))
 	}
 
 	if group != nil {
 		d := components.EditGroupDialog(group, devices, false, nil)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
-			return fmt.Errorf("failed to render edit group dialog: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to render edit group dialog"))
 		}
 	} else {
 		d := components.NewGroupDialog(devices, nil, false, nil)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
-			return fmt.Errorf("failed to render new group dialog: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to render new group dialog"))
 		}
 	}
 
@@ -53,19 +54,19 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 func (h *Handler) PostEditGroup(c echo.Context) error {
 	group, err := h.parseGroupForm(c)
 	if err != nil {
-		return fmt.Errorf("failed to parse group form values: %v", err)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to parse group form values"))
 	}
 
 	if !group.Validate() {
 		const message = "failed to validate group"
 		h.reRenderGroupDialogWithError(c, group, fmt.Errorf(message))
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf(message))
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(fmt.Errorf(message), "failed to validate group"))
 	}
 
 	if _, err = h.registry.Groups.Add(group); err != nil {
-		err = fmt.Errorf("failed to add group: %v", err)
+		err = errors.Wrap(err, "failed to add group")
 		h.reRenderGroupDialogWithError(c, group, err)
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
@@ -75,23 +76,23 @@ func (h *Handler) PostEditGroup(c echo.Context) error {
 func (h *Handler) PutEditGroup(c echo.Context) error {
 	group, err := h.parseGroupForm(c)
 	if err != nil {
-		return fmt.Errorf("failed to parse group form values: %v", err)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to parse group form values"))
 	}
 	group.ID, err = utils.QueryParamGroupID(c, "id", false)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("failed to get group ID: %v", err))
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get group ID"))
 	}
 
 	if !group.Validate() {
 		const message = "failed to validate group"
 		h.reRenderGroupDialogWithError(c, group, fmt.Errorf(message))
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf(message))
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(fmt.Errorf(message), "failed to validate group"))
 	}
 
 	if err = h.registry.Groups.Update(group); err != nil {
-		err = fmt.Errorf("failed to update group: %v", err)
+		err = errors.Wrap(err, "failed to update group")
 		h.reRenderGroupDialogWithError(c, group, err)
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
@@ -101,19 +102,19 @@ func (h *Handler) PutEditGroup(c echo.Context) error {
 func (h *Handler) parseGroupForm(c echo.Context) (*models.Group, error) {
 	formValues, err := c.FormParams()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get form parameters: %v", err)
+		return nil, errors.Wrap(err, "failed to get form parameters")
 	}
 
 	groupName := formValues.Get("group-name")
 	if groupName == "" {
-		return nil, fmt.Errorf("group name is required")
+		return nil, errors.Wrap(fmt.Errorf("group name is required"), "failed to parse group form: missing group name")
 	}
 
 	var deviceIDs []models.DeviceID
 	for _, value := range formValues["devices"] {
 		deviceID, err := strconv.Atoi(value)
 		if err != nil {
-			return nil, fmt.Errorf("invalid device ID: %v", err)
+			return nil, errors.Wrap(err, "invalid device ID in form")
 		}
 		deviceIDs = append(deviceIDs, models.DeviceID(deviceID))
 	}
