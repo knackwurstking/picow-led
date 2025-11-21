@@ -124,20 +124,20 @@ func (h *Handler) parseGroupForm(c echo.Context) (*models.Group, error) {
 func (h *Handler) reRenderGroupDialogWithError(c echo.Context, group *models.Group, err error) {
 	devices, err := h.registry.Devices.List()
 	if err != nil {
-		slog.Warn("Failed to list devices for edit group dialog with error", "error", err)
+		slog.Warn("list devices for edit group dialog with error", "error", err)
 		return
 	}
 
 	if group.ID == 0 {
 		d := components.NewGroupDialog(devices, group.Devices, true, err)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
-			slog.Warn("Failed to render edit group dialog with error", "error", err)
+			slog.Warn("render edit group dialog with error", "error", err)
 			return
 		}
 	} else {
 		d := components.EditGroupDialog(group, devices, true, err)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
-			slog.Warn("Failed to render edit group dialog with error", "error", err)
+			slog.Warn("render edit group dialog with error", "error", err)
 			return
 		}
 	}

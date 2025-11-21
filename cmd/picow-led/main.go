@@ -22,7 +22,7 @@ import (
 func main() {
 	err := run()
 	if err != nil {
-		slog.Error("Application failed", "error", err)
+		slog.Error("Application", "error", err)
 		os.Exit(1)
 	}
 }
@@ -112,7 +112,7 @@ func parseFlags() error {
 
 		err = verifyDatabasePath()
 		if err != nil {
-			return utils.WrapError(err, "database path validation failed")
+			return utils.WrapError(err, "database path validation")
 		}
 
 		env.Args.Command = env.CommandServer
@@ -203,7 +203,7 @@ func initializeDevices(r *services.Registry) error {
 		wg.Go(func() {
 			pins, err := r.DeviceControls.GetPins(device.ID)
 			if err != nil {
-				slog.Error("Failed to get device pins",
+				slog.Error("get device pins",
 					"device_id", device.ID,
 					"device_name", device.Name, "device_addr", device.Addr,
 					"error", err)
@@ -213,7 +213,7 @@ func initializeDevices(r *services.Registry) error {
 			// This will get the color from the picow device and auto update the database
 			currentColor, err := r.DeviceControls.GetCurrentColor(device.ID)
 			if err != nil {
-				slog.Error("Failed to get device color",
+				slog.Error("get device color",
 					"device_id", device.ID, "device", device.Name, "error", err)
 				return
 			}

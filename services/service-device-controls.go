@@ -68,7 +68,7 @@ func (p *DeviceControls) List() ([]*models.DeviceControl, error) {
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			slog.Warn("failed to close device controls rows", "error", err)
+			slog.Warn("close device controls rows", "error", err)
 		}
 	}()
 

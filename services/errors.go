@@ -73,7 +73,7 @@ func NewServiceError(operation string, err error) error {
 
 // Error implements the error interface for ServiceError
 func (e *ServiceError) Error() string {
-	return fmt.Sprintf("service operation '%s' failed: %v", e.Operation, e.Err)
+	return fmt.Sprintf("service operation '%s': %v", e.Operation, e.Err)
 }
 
 // Unwrap returns the wrapped error

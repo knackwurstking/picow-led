@@ -55,7 +55,7 @@ func (c *Colors) List() ([]*models.Color, error) {
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			slog.Warn("failed to close colors rows", "error", err)
+			slog.Warn("close colors rows", "error", err)
 		}
 	}()
 

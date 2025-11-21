@@ -57,7 +57,7 @@ func (g *Groups) List() ([]*models.Group, error) {
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			slog.Warn("failed to close groups rows", "error", err)
+			slog.Warn("close groups rows", "error", err)
 		}
 	}()
 

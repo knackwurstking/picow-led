@@ -59,7 +59,7 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 	}
 
 	if !device.Validate() {
-		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
+		validationError := fmt.Errorf("device validation, invalid form data %#v", device)
 
 		if err := components.NewDeviceDialog(true, validationError).Render(
 			c.Request().Context(), c.Response(),
@@ -102,7 +102,7 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 	device.ID = deviceID
 
 	if !device.Validate() {
-		validationError := fmt.Errorf("device validation failed, invalid form data %#v", device)
+		validationError := fmt.Errorf("device validation, invalid form data %#v", device)
 
 		if err := components.EditDeviceDialog(device, true, validationError).Render(
 			c.Request().Context(), c.Response(),
