@@ -26,22 +26,6 @@ func NewHandler(r *services.Registry) *Handler {
 
 func (h *Handler) Register(e *echo.Echo) {
 	utils.Register(e, http.MethodGet, "", h.GetPage)
-
-	utils.Register(e, http.MethodGet,
-		"/htmx/home/devices", h.GetDevices)
-	utils.Register(e, http.MethodDelete,
-		"/htmx/home/devices/delete", h.DeleteDevice)
-	utils.Register(e, http.MethodPost,
-		"/htmx/home/devices/toggle-power", h.PostTogglePowerDevice)
-
-	utils.Register(e, http.MethodGet,
-		"/htmx/home/groups", h.GetGroups)
-	utils.Register(e, http.MethodDelete,
-		"/htmx/home/groups/delete", h.DeleteGroup)
-	utils.Register(e, http.MethodPost,
-		"/htmx/home/groups/turn-on", h.PostTurnOnGroup)
-	utils.Register(e, http.MethodPost,
-		"/htmx/home/groups/turn-off", h.PostTurnOffGroup)
 }
 
 func (h *Handler) GetPage(c echo.Context) error {
