@@ -16,7 +16,7 @@ import (
 func (h *Handler) GetEditDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get device ID from query parameter"))
 	}
 
 	slog.Info("Get dialog for edit or create a device", "id", deviceID)
@@ -27,10 +27,10 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 		if err != nil {
 			if services.IsNotFoundError(err) {
 				return echo.NewHTTPError(http.StatusNotFound,
-					fmt.Errorf("device with ID %d not found", deviceID))
+					errors.Wrap(fmt.Errorf("device with ID %d not found", deviceID), "failed to fetch device"))
 			}
 
-			return fmt.Errorf("failed to fetch device with ID %d", deviceID)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to fetch device with ID %d", deviceID))
 		}
 	}
 
@@ -39,14 +39,14 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 		if err = components.EditDeviceDialog(device, false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return fmt.Errorf("failed to render dialog: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to render edit device dialog"))
 		}
 	} else {
 		slog.Info("Device not found, rendering new device dialog")
 		if err = components.NewDeviceDialog(false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return fmt.Errorf("failed to render dialog: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to render new device dialog"))
 		}
 	}
 
@@ -56,7 +56,7 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 func (h *Handler) PostEditDevice(c echo.Context) error {
 	device, err := h.parseEditDeviceForm(c)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse device form")
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to parse device form"))
 	}
 
 	if !device.Validate() {
@@ -65,7 +65,7 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 		if err := components.NewDeviceDialog(true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return fmt.Errorf("failed to render dialog: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to render device dialog"))
 		}
 
 		return echo.NewHTTPError(http.StatusBadRequest, validationError)
@@ -75,15 +75,15 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 		"name", device.Name, "addr", device.Addr)
 
 	if _, err := h.registry.Devices.Add(device); err != nil {
-		databaseError := fmt.Errorf("failed to add device %s", device.Name)
+		databaseError := errors.Wrap(err, "failed to add device %s", device.Name)
 
 		if err := components.NewDeviceDialog(true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return fmt.Errorf("failed to render dialog: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to render device dialog"))
 		}
 
-		return databaseError
+		return echo.NewHTTPError(http.StatusInternalServerError, databaseError)
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadDevices")
@@ -93,12 +93,12 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 func (h *Handler) PutEditDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", true)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get device ID from query parameter"))
 	}
 
 	device, err := h.parseEditDeviceForm(c)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse device form")
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to parse device form"))
 	}
 	device.ID = deviceID
 
@@ -108,7 +108,7 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 		if err := components.EditDeviceDialog(device, true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to render device dialog"))
 		}
 
 		return echo.NewHTTPError(http.StatusBadRequest, validationError)
@@ -118,15 +118,15 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 		"id", device.ID, "name", device.Name, "addr", device.Addr)
 
 	if err := h.registry.Devices.Update(device); err != nil {
-		databaseError := fmt.Errorf("failed to update device %s", device.Name)
+		databaseError := errors.Wrap(err, "failed to update device %s", device.Name)
 
 		if err := components.EditDeviceDialog(device, true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
-			return fmt.Errorf("failed to render dialog: %v", err)
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to render device dialog"))
 		}
 
-		return databaseError
+		return echo.NewHTTPError(http.StatusInternalServerError, databaseError)
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadDevices")

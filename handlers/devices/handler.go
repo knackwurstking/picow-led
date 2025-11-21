@@ -1,10 +1,10 @@
 package devices
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 
+	"github.com/knackwurstking/picow-led/errors"
 	"github.com/knackwurstking/picow-led/handlers/components/oob"
 	"github.com/knackwurstking/picow-led/handlers/home/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
@@ -37,12 +37,12 @@ func (h *Handler) GetDevices(c echo.Context) error {
 	// Get devices...
 	devices, err := h.registry.Devices.List()
 	if err != nil {
-		return fmt.Errorf("failed to list devices: %v", err)
+		return errors.Wrap(err, "failed to list devices")
 	}
 
 	rDevices, err := services.ResolveDevices(h.registry, devices...)
 	if err != nil {
-		return fmt.Errorf("failed to resolve devices: %v", err)
+		return errors.Wrap(err, "failed to resolve devices")
 	}
 
 	return components.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
@@ -51,13 +51,13 @@ func (h *Handler) GetDevices(c echo.Context) error {
 func (h *Handler) DeleteDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get device ID from query parameter"))
 	}
 
 	slog.Info("Delete a device", "id", deviceID)
 
 	if err = h.registry.Devices.Delete(deviceID); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to delete device"))
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadDevices")
@@ -67,14 +67,14 @@ func (h *Handler) DeleteDevice(c echo.Context) error {
 func (h *Handler) PostTogglePowerDevice(c echo.Context) error {
 	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
 	if err != nil {
-		return fmt.Errorf("Failed to get device id from query parameter: %s", err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get device ID from query parameter"))
 	}
 
 	slog.Info("Toggle power for a device", "id", deviceID)
 
 	color, err := h.registry.DeviceControls.TogglePower(deviceID)
 	if err != nil {
-		err = fmt.Errorf("Failed to toggle power for device %d: %s", deviceID, err.Error())
+		err = errors.Wrap(err, "failed to toggle power for device %d", deviceID)
 		oob.OOBRenderPageHomeDeviceError(c, deviceID, err)
 		oob.OOBRenderPageHomeDevicePowerButton(c, deviceID, color)
 

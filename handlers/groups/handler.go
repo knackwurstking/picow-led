@@ -1,12 +1,12 @@
 package groups
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"slices"
 	"sync"
 
+	"github.com/knackwurstking/picow-led/errors"
 	"github.com/knackwurstking/picow-led/handlers/components/oob"
 	"github.com/knackwurstking/picow-led/handlers/home/components"
 	"github.com/knackwurstking/picow-led/handlers/utils"
@@ -41,13 +41,13 @@ func (h *Handler) GetGroups(c echo.Context) error {
 	// Get groups...
 	groups, err := h.registry.Groups.List()
 	if err != nil {
-		return fmt.Errorf("failed to list groups: %v", err)
+		return errors.Wrap(err, "failed to list groups")
 	}
 
 	// ...resolve them
 	resolvedGroups, err := services.ResolveGroups(h.registry, groups...)
 	if err != nil {
-		return fmt.Errorf("failed to resolve groups: %v", err)
+		return errors.Wrap(err, "failed to resolve groups")
 	}
 
 	return components.SectionGroups(false, resolvedGroups).Render(c.Request().Context(), c.Response())
@@ -56,13 +56,13 @@ func (h *Handler) GetGroups(c echo.Context) error {
 func (h *Handler) DeleteGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", false)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get group ID from query parameter"))
 	}
 
 	slog.Info("Delete a group", "id", groupID)
 
 	if err = h.registry.Groups.Delete(groupID); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to delete group"))
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
@@ -72,10 +72,7 @@ func (h *Handler) DeleteGroup(c echo.Context) error {
 func (h *Handler) PostTurnOnGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", false)
 	if err != nil {
-		return fmt.Errorf(
-			"Failed to get group id from query parameter: %s",
-			err.Error(),
-		)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get group ID from query parameter"))
 	}
 
 	group, err := h.registry.Groups.Get(groupID)
@@ -83,17 +80,17 @@ func (h *Handler) PostTurnOnGroup(c echo.Context) error {
 		oob.OOBRenderPageHomeGroupError(c, groupID, []error{err})
 
 		if services.IsNotFoundError(err) {
-			return echo.NewHTTPError(http.StatusNotFound, err)
+			return echo.NewHTTPError(http.StatusNotFound, errors.Wrap(err, "group not found"))
 		}
 
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to get group"))
 	}
 
 	slog.Info("Turn on a group", "id", groupID, "devices", group.Devices)
 
 	devices, err := h.registry.Devices.List()
 	if err != nil {
-		return fmt.Errorf("Failed to list devices: %v", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to list devices"))
 	}
 
 	wg := &sync.WaitGroup{}
@@ -103,9 +100,9 @@ func (h *Handler) PostTurnOnGroup(c echo.Context) error {
 			if !slices.Contains(group.Devices, d.ID) {
 				if err := h.registry.DeviceControls.TurnOff(d.ID); err != nil {
 					if device, err2 := h.registry.Devices.Get(d.ID); err2 != nil {
-						errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", d.ID, err2))
+						errs = append(errs, errors.Wrap(err2, "failed to get device %d from the database", d.ID))
 					} else {
-						errs = append(errs, fmt.Errorf("Failed to turn off device \"%s\", which is not in this group: %v", device.Name, err))
+						errs = append(errs, errors.Wrap(err, "failed to turn off device \"%s\", which is not in this group", device.Name))
 					}
 				}
 
@@ -114,9 +111,9 @@ func (h *Handler) PostTurnOnGroup(c echo.Context) error {
 
 			if err := h.registry.DeviceControls.TurnOn(d.ID); err != nil {
 				if device, err2 := h.registry.Devices.Get(d.ID); err2 != nil {
-					errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", d.ID, err2))
+					errs = append(errs, errors.Wrap(err2, "failed to get device %d from the database", d.ID))
 				} else {
-					errs = append(errs, fmt.Errorf("Failed to turn on device \"%s\": %v", device.Name, err))
+					errs = append(errs, errors.Wrap(err, "failed to turn on device \"%s\"", device.Name))
 				}
 			}
 		})
@@ -131,10 +128,7 @@ func (h *Handler) PostTurnOnGroup(c echo.Context) error {
 func (h *Handler) PostTurnOffGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", false)
 	if err != nil {
-		return fmt.Errorf(
-			"Failed to get group id from query parameter: %s",
-			err.Error(),
-		)
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "failed to get group ID from query parameter"))
 	}
 
 	group, err := h.registry.Groups.Get(groupID)
@@ -142,17 +136,17 @@ func (h *Handler) PostTurnOffGroup(c echo.Context) error {
 		oob.OOBRenderPageHomeGroupError(c, groupID, []error{err})
 
 		if services.IsNotFoundError(err) {
-			return echo.NewHTTPError(http.StatusNotFound, err)
+			return echo.NewHTTPError(http.StatusNotFound, errors.Wrap(err, "group not found"))
 		}
 
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to get group"))
 	}
 
 	slog.Info("Turn off a group", "id", groupID, "devices", group.Devices)
 
 	devices, err := h.registry.Devices.List()
 	if err != nil {
-		return fmt.Errorf("Failed to list devices: %v", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "failed to list devices"))
 	}
 
 	wg := &sync.WaitGroup{}
@@ -161,9 +155,9 @@ func (h *Handler) PostTurnOffGroup(c echo.Context) error {
 		wg.Go(func() {
 			if err := h.registry.DeviceControls.TurnOff(d.ID); err != nil {
 				if device, err2 := h.registry.Devices.Get(d.ID); err2 != nil {
-					errs = append(errs, fmt.Errorf("Failed to get device %d from the database: %v", d.ID, err2))
+					errs = append(errs, errors.Wrap(err2, "failed to get device %d from the database", d.ID))
 				} else {
-					errs = append(errs, fmt.Errorf("Failed to turn off device \"%s\": %v", device.Name, err))
+					errs = append(errs, errors.Wrap(err, "failed to turn off device \"%s\"", device.Name))
 				}
 			}
 		})
