@@ -3,8 +3,8 @@
 ## Project
 
 - [x] Auto sort groups (alphabetical)
-- [ ] Think about separating the home handler into more handlers, one for devices and one for groups?
 - [x] Improve error handling and create an errors package
+- [ ] Think about separating the home handler into more handlers, one for devices and one for groups?
 
 ## Fixes
 
