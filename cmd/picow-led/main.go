@@ -30,39 +30,29 @@ func main() {
 func run() error {
 	err := parseFlags()
 	if err != nil {
-		return errors.Wrap(err, errors.CodeInvalidFlags, "Failed to parse flags", map[string]any{
-			"error": err,
-		})
+		return errors.Wrap(err, "failed to parse flags")
 	}
 
 	switch env.Args.Command {
 	case env.CommandServer:
 		err = initializeLogging()
 		if err != nil {
-			return errors.Wrap(err, errors.CodeInvalidLogFormat, "Failed to initialize logging", map[string]any{
-				"error": err,
-			})
+			return errors.Wrap(err, "failed to initialize logging")
 		}
 
 		r, err := initializeDatabase()
 		if err != nil {
-			return errors.Wrap(err, errors.CodeDatabaseConnection, "Failed to initialize database", map[string]any{
-				"error": err,
-			})
+			return errors.Wrap(err, "failed to initialize database")
 		}
 
 		err = initializeDevices(r)
 		if err != nil {
-			return errors.Wrap(err, errors.CodeSetupDevices, "Failed to initialize devices", map[string]any{
-				"error": err,
-			})
+			return errors.Wrap(err, "failed to initialize devices")
 		}
 
 		err = startServer(r)
 		if err != nil {
-			return errors.Wrap(err, errors.CodeServerStart, "Failed to start server", map[string]any{
-				"error": err,
-			})
+			return errors.Wrap(err, "failed to start server")
 		}
 	}
 
@@ -108,9 +98,7 @@ func parseFlags() error {
 	if len(os.Args) > 1 && os.Args[1] == "server" {
 		err := subCmd.Parse(os.Args[2:])
 		if err != nil {
-			return errors.Wrap(err, errors.CodeInvalidFlags, "Failed to parse server flags", map[string]any{
-				"error": err,
-			})
+			return errors.Wrap(err, "failed to parse server flags")
 		}
 
 		switch logFormat {
@@ -119,16 +107,12 @@ func parseFlags() error {
 		case "json":
 			env.Args.LogFormat = env.LogFormatJSON
 		default:
-			return errors.New(errors.CodeInvalidLogFormat, "Invalid log format", nil, map[string]any{
-				"format": logFormat,
-			})
+			return errors.Wrap(nil, "invalid log format: %s", logFormat)
 		}
 
 		err = verifyDatabasePath()
 		if err != nil {
-			return errors.Wrap(err, errors.CodeInvalidDatabasePath, "Database path validation failed", map[string]any{
-				"error": err,
-			})
+			return errors.Wrap(err, "database path validation failed")
 		}
 
 		env.Args.Command = env.CommandServer
@@ -140,7 +124,7 @@ func parseFlags() error {
 func verifyDatabasePath() error {
 	// Verify the database path
 	if env.Args.DatabasePath == "" {
-		return errors.ErrInvalidDatabasePath
+		return errors.Wrap(nil, "database path is required")
 	}
 
 	return nil
@@ -180,10 +164,7 @@ func initializeDatabase() (*services.Registry, error) {
 	sqlPath := fmt.Sprintf("%s", env.Args.DatabasePath)
 	db, err := sql.Open("sqlite3", sqlPath)
 	if err != nil {
-		return nil, errors.Wrap(err, errors.CodeDatabaseConnection, "Failed to open database connection", map[string]any{
-			"error": err,
-			"path":  sqlPath,
-		})
+		return nil, errors.Wrap(err, "failed to open database connection: %s", sqlPath)
 	}
 
 	// Configure connection pool to handle multiple connections
@@ -194,16 +175,12 @@ func initializeDatabase() (*services.Registry, error) {
 	// Ping the database to verify the connection
 	err = db.Ping()
 	if err != nil {
-		return nil, errors.Wrap(err, errors.CodeDatabasePing, "Failed to ping database", map[string]any{
-			"error": err,
-		})
+		return nil, errors.Wrap(err, "failed to ping database")
 	}
 
 	r, err := services.NewRegistry(db)
 	if err != nil {
-		return nil, errors.Wrap(err, errors.CodeDatabaseTables, "Failed to create tables", map[string]any{
-			"error": err,
-		})
+		return nil, errors.Wrap(err, "failed to create tables")
 	}
 
 	return r, nil
@@ -214,9 +191,7 @@ func initializeDevices(r *services.Registry) error {
 
 	devices, err := r.Devices.List()
 	if err != nil {
-		return errors.Wrap(err, errors.CodeSetupDevices, "Failed to list devices", map[string]any{
-			"error": err,
-		})
+		return errors.Wrap(err, "failed to list devices")
 	}
 
 	if len(devices) == 0 {
@@ -269,10 +244,7 @@ func startServer(r *services.Registry) error {
 	router(e, r)
 
 	if err := e.Start(env.Args.Addr); err != nil {
-		return errors.Wrap(err, errors.CodeServerStart, "Failed to start server", map[string]any{
-			"error": err,
-			"addr":  env.Args.Addr,
-		})
+		return errors.Wrap(err, "failed to start server: %s", env.Args.Addr)
 	}
 
 	return nil

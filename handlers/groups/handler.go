@@ -1,4 +1,4 @@
-package home
+package groups
 
 import (
 	"fmt"
@@ -25,15 +25,6 @@ func NewHandler(r *services.Registry) *Handler {
 }
 
 func (h *Handler) Register(e *echo.Echo) {
-	utils.Register(e, http.MethodGet, "", h.GetPage)
-
-	utils.Register(e, http.MethodGet,
-		"/htmx/home/devices", h.GetDevices)
-	utils.Register(e, http.MethodDelete,
-		"/htmx/home/devices/delete", h.DeleteDevice)
-	utils.Register(e, http.MethodPost,
-		"/htmx/home/devices/toggle-power", h.PostTogglePowerDevice)
-
 	utils.Register(e, http.MethodGet,
 		"/htmx/home/groups", h.GetGroups)
 	utils.Register(e, http.MethodDelete,
@@ -42,32 +33,6 @@ func (h *Handler) Register(e *echo.Echo) {
 		"/htmx/home/groups/turn-on", h.PostTurnOnGroup)
 	utils.Register(e, http.MethodPost,
 		"/htmx/home/groups/turn-off", h.PostTurnOffGroup)
-}
-
-func (h *Handler) GetPage(c echo.Context) error {
-	err := components.PageHome().Render(c.Request().Context(), c.Response())
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-
-	return nil
-}
-
-func (h *Handler) GetDevices(c echo.Context) error {
-	slog.Info("Render devices section for the home page")
-
-	// Get devices...
-	devices, err := h.registry.Devices.List()
-	if err != nil {
-		return fmt.Errorf("failed to list devices: %v", err)
-	}
-
-	rDevices, err := services.ResolveDevices(h.registry, devices...)
-	if err != nil {
-		return fmt.Errorf("failed to resolve devices: %v", err)
-	}
-
-	return components.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
 }
 
 func (h *Handler) GetGroups(c echo.Context) error {
@@ -88,22 +53,6 @@ func (h *Handler) GetGroups(c echo.Context) error {
 	return components.SectionGroups(false, resolvedGroups).Render(c.Request().Context(), c.Response())
 }
 
-func (h *Handler) DeleteDevice(c echo.Context) error {
-	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	slog.Info("Delete a device", "id", deviceID)
-
-	if err = h.registry.Devices.Delete(deviceID); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-
-	c.Response().Header().Set("HX-Trigger", "reloadDevices")
-	return nil
-}
-
 func (h *Handler) DeleteGroup(c echo.Context) error {
 	groupID, err := utils.QueryParamGroupID(c, "id", false)
 	if err != nil {
@@ -117,33 +66,6 @@ func (h *Handler) DeleteGroup(c echo.Context) error {
 	}
 
 	c.Response().Header().Set("HX-Trigger", "reloadGroups")
-	return nil
-}
-
-func (h *Handler) PostTogglePowerDevice(c echo.Context) error {
-	deviceID, err := utils.QueryParamDeviceID(c, "id", false)
-	if err != nil {
-		return fmt.Errorf("Failed to get device id from query parameter: %s", err.Error())
-	}
-
-	slog.Info("Toggle power for a device", "id", deviceID)
-
-	color, err := h.registry.DeviceControls.TogglePower(deviceID)
-	if err != nil {
-		err = fmt.Errorf("Failed to toggle power for device %d: %s", deviceID, err.Error())
-		oob.OOBRenderPageHomeDeviceError(c, deviceID, err)
-		oob.OOBRenderPageHomeDevicePowerButton(c, deviceID, color)
-
-		if services.IsNotFoundError(err) {
-			return echo.NewHTTPError(http.StatusNotFound, err)
-		}
-
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-
-	oob.OOBRenderPageHomeDeviceError(c, deviceID, nil)
-	oob.OOBRenderPageHomeDevicePowerButton(c, deviceID, color)
-
 	return nil
 }
 

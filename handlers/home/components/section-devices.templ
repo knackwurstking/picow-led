@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
+	"github.com/knackwurstking/picow-led/handlers/components/oob"
 	"github.com/knackwurstking/picow-led/models"
 )
 
@@ -49,11 +50,11 @@ templ SectionDevices_Device(device *models.ResolvedDevice) {
 						"hx-swap":    "beforeend",
 						"hx-trigger": "click",
 					})
-					@OOBDevicePowerButton(device.ID, device.CurrentColor, false)
+					@oob.OOBDevicePowerButton(device.ID, device.CurrentColor, false)
 				</div>
 			</div>
 			<div>
-				@OOBDeviceError(device.ID, nil, false)
+				@oob.OOBDeviceError(device.ID, nil, false)
 			</div>
 		</div>
 	</div>

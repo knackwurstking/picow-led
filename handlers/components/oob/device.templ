@@ -1,11 +1,12 @@
-package components
+package oob
 
 import (
+	"slices"
+	"strings"
+
 	"github.com/knackwurstking/picow-led/components"
 	"github.com/knackwurstking/picow-led/handlers/ids"
 	"github.com/knackwurstking/picow-led/models"
-	"slices"
-	"strings"
 )
 
 templ OOBDevicePowerButton(deviceID models.DeviceID, currentColor []uint8, oob bool) {
@@ -54,35 +55,6 @@ templ OOBDeviceError(deviceID models.DeviceID, err error, oob bool) {
 	>
 		<div class="card-body">
 			{ err.Error() }
-		</div>
-	</div>
-}
-
-templ OOBGroupError(groupID models.GroupID, err []error, oob bool) {
-	if len(err) == 0 {
-		<span
-			id={ ids.HomeSectionGroupsGroupError(groupID) }
-			class="device-error"
-			if oob {
-				hx-swap-oob="true"
-			}
-		></span>
-		{{ return }}
-	}
-	<div
-		id={ ids.HomeSectionGroupsGroupError(groupID) }
-		class="device-error card destructive compact"
-		if oob {
-			hx-swap-oob="true"
-		}
-	>
-		<div class="card-body">
-			for i, e := range err {
-				{ e.Error() }
-				if i < len(err)-1 {
-					<br/>
-				}
-			}
 		</div>
 	</div>
 }

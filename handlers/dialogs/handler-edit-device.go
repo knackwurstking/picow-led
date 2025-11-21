@@ -56,9 +56,7 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 func (h *Handler) PostEditDevice(c echo.Context) error {
 	device, err := h.parseEditDeviceForm(c)
 	if err != nil {
-		return errors.Wrap(err, errors.CodeInvalidAddress, "Failed to parse device form", map[string]any{
-			"error": err,
-		})
+		return errors.Wrap(err, "failed to parse device form")
 	}
 
 	if !device.Validate() {
@@ -100,9 +98,7 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 
 	device, err := h.parseEditDeviceForm(c)
 	if err != nil {
-		return errors.Wrap(err, errors.CodeInvalidAddress, "Failed to parse device form", map[string]any{
-			"error": err,
-		})
+		return errors.Wrap(err, "failed to parse device form")
 	}
 	device.ID = deviceID
 
@@ -144,10 +140,7 @@ func (h *Handler) parseEditDeviceForm(c echo.Context) (*models.Device, error) {
 
 	device, err := models.NewDevice(models.Addr(fmt.Sprintf("%s:%s", host, port)), name)
 	if err != nil {
-		return nil, errors.Wrap(err, errors.CodeInvalidAddress, "Invalid device address", map[string]any{
-			"host": host,
-			"port": port,
-		})
+		return nil, errors.Wrap(err, "invalid device address: %s:%s", host, port)
 	}
 
 	return device, nil
