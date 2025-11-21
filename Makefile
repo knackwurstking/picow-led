@@ -103,7 +103,7 @@ macos-restart-service:
 
 macos-print-service:
 	@echo "picow-led service information:"
-	@launchctl print gui/$$(id -u)/com.picow-led || echo "Service not loaded or running"
+	launchctl print gui/$$(id -u)/com.picow-led || echo "Service not loaded or running"
 
 macos-watch-service:
 	@echo "picow-led watch server logs @ \"$(APP_DATA)/picow-led.log\":"
@@ -114,3 +114,9 @@ macos-watch-service:
 		echo "Log file not found. Make sure the service is running or has been started."; \
 		echo "Log file path: $(APP_DATA)/picow-led.log"; \
 	fi
+
+macos-update: all
+	make macos-stop-service
+	make macos-install
+	make macos-start-service
+	make macos-watch-service
