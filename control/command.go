@@ -38,7 +38,7 @@ func RunCommand[T any](id RequestID, device *models.Device, req any, resp *Respo
 		return *new(T), fmt.Errorf("unmarshal response: %v", err)
 	}
 	if resp.Error != "" {
-		return *new(T), fmt.Errorf("device repond with an error: %s", resp.Error)
+		return *new(T), fmt.Errorf("device responded with error: %s", resp.Error)
 	}
 
 	return resp.Data, nil

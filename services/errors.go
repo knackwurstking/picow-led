@@ -49,7 +49,7 @@ func HandleSqlError(err error) error {
 	case errors.Is(err, sql.ErrNoRows):
 		return NewServiceError("not found", err)
 	default:
-		return NewServiceError("database operation failed", err)
+		return NewServiceError("database operation", err)
 	}
 }
 
@@ -73,7 +73,7 @@ func NewServiceError(operation string, err error) error {
 
 // Error implements the error interface for ServiceError
 func (e *ServiceError) Error() string {
-	return fmt.Sprintf("service operation '%s': %v", e.Operation, e.Err)
+	return fmt.Sprintf("%s: %v", e.Operation, e.Err)
 }
 
 // Unwrap returns the wrapped error
