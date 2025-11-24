@@ -12,6 +12,7 @@ import (
 	"github.com/knackwurstking/picow-led/env"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/knackwurstking/picow-led/utils"
+	"github.com/knackwurstking/ui"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/lmittmann/tint"
@@ -239,6 +240,7 @@ func startServer(r *services.Registry) error {
 		Format:           "${time_custom} ${method} ${status} ${uri} ${latency_human} ${remote_ip} ${error}\n",
 		CustomTimeFormat: "2006-01-02 15:04:05",
 	}))
+	e.Use(ui.EchoMiddlewareCache())
 
 	// Initialize routes
 	router(e, r)

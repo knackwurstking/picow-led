@@ -4,7 +4,7 @@ go 1.25.3
 
 require (
 	github.com/a-h/templ v0.3.960
-	github.com/knackwurstking/ui v1.1.2-0.20251106004228-06f7645576df
+	github.com/knackwurstking/ui v1.1.2-0.20251124081342-1c7991432be9
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/lmittmann/tint v1.1.2
 	github.com/mattn/go-sqlite3 v1.14.32
