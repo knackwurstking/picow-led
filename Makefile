@@ -38,8 +38,7 @@ test:
 clean:
 	@echo "Cleaning up..."
 	go clean
-	rm -rf bin
-	rm -rf $(TEST_DATABASE_PATH)
+	git clean -xfd
 
 define LAUNCHCTL_PLIST
 <?xml version="1.0" encoding="UTF-8"?>
