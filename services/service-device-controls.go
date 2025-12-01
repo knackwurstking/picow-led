@@ -410,7 +410,7 @@ func (p *DeviceControls) setInitialEntry(deviceID models.DeviceID) error {
 	}
 
 	color := make([]uint8, len(pins))
-	for i, _ := range pins {
+	for i := range pins {
 		color[i] = 255
 	}
 
