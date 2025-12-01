@@ -19,6 +19,9 @@
 - Use `//nolint` comments for intentional exceptions to linters
 - Follow the "don't repeat yourself" principle with reusable components
 
+## Commit Message Style
+- Always use semantic commit messages (e.g., feat:, fix:, docs:, style:, refactor:)
+
 ## Testing
 - Write unit tests for all business logic
 - Use table-driven tests where appropriate
