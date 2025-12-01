@@ -49,7 +49,7 @@ func (h *Handler) GetGroups(c echo.Context) error {
 		return utils.WrapError(err, "resolve groups")
 	}
 
-	return components.SectionGroups(false, resolvedGroups).Render(c.Request().Context(), c.Response())
+	return templates.SectionGroups(false, resolvedGroups).Render(c.Request().Context(), c.Response())
 }
 
 func (h *Handler) DeleteGroup(c echo.Context) error {

@@ -7,6 +7,7 @@ all: init build
 
 init:
 	@echo "Initializing project..."
+	templ generate
 	go mod tidy
 
 generate:

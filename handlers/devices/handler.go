@@ -44,7 +44,7 @@ func (h *Handler) GetDevices(c echo.Context) error {
 		return utils.WrapError(err, "resolve devices")
 	}
 
-	return components.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
+	return templates.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
 }
 
 func (h *Handler) DeleteDevice(c echo.Context) error {
