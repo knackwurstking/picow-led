@@ -1,4 +1,4 @@
 /bin
-/picow-led.db
-/services/picow-led.test.db
+picow-led.db
+picow-led.test.db
 .DS_Store

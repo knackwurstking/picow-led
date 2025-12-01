@@ -1,8 +1,7 @@
 BINARY_NAME = picow-led
-TEST_DATABASE_PATH = ./services/picow-led.test.db
 APP_DATA = $(HOME)/Library/Application Support/picow-led
-
 DATABASE_PATH = $(APP_DATA)/picow-led.db
+TEST_DATABASE_PATH = ./picow-led.test.db
 
 all: init build
 
@@ -24,7 +23,11 @@ run:
 	@echo "Running server without building..."
 	make init
 	make generate
-	go run ./cmd/$(BINARY_NAME) server -debug -log-format text -database-path $(APP_DATA)/picow-led.db -path-prefix /picow-led
+	go run ./cmd/$(BINARY_NAME) server \
+		-debug \
+		-log-format text \
+		-database-path $(TEST_DATABASE_PATH) \
+		-path-prefix /picow-led
 
 test:
 	@echo "Running tests..."
