@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/knackwurstking/picow-led/handlers/dialogs/components"
+	"github.com/knackwurstking/picow-led/handlers/dialogs/templates"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/knackwurstking/picow-led/utils"
@@ -36,12 +36,12 @@ func (h *Handler) GetEditGroup(c echo.Context) error {
 	}
 
 	if group != nil {
-		d := components.EditGroupDialog(group, devices, false, nil)
+		d := templates.EditGroupDialog(group, devices, false, nil)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render edit group dialog"))
 		}
 	} else {
-		d := components.NewGroupDialog(devices, nil, false, nil)
+		d := templates.NewGroupDialog(devices, nil, false, nil)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render new group dialog"))
 		}
@@ -129,13 +129,13 @@ func (h *Handler) reRenderGroupDialogWithError(c echo.Context, group *models.Gro
 	}
 
 	if group.ID == 0 {
-		d := components.NewGroupDialog(devices, group.Devices, true, err)
+		d := templates.NewGroupDialog(devices, group.Devices, true, err)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
 			slog.Warn("render edit group dialog with error", "error", err)
 			return
 		}
 	} else {
-		d := components.EditGroupDialog(group, devices, true, err)
+		d := templates.EditGroupDialog(group, devices, true, err)
 		if err := d.Render(c.Request().Context(), c.Response()); err != nil {
 			slog.Warn("render edit group dialog with error", "error", err)
 			return

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/knackwurstking/picow-led/handlers/dialogs/components"
+	"github.com/knackwurstking/picow-led/handlers/dialogs/templates"
 	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/knackwurstking/picow-led/utils"
@@ -35,14 +35,14 @@ func (h *Handler) GetEditDevice(c echo.Context) error {
 
 	if device != nil {
 		slog.Info("Device found, rendering edit dialog")
-		if err = components.EditDeviceDialog(device, false, nil).Render(
+		if err = templates.EditDeviceDialog(device, false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render edit device dialog"))
 		}
 	} else {
 		slog.Info("Device not found, rendering new device dialog")
-		if err = components.NewDeviceDialog(false, nil).Render(
+		if err = templates.NewDeviceDialog(false, nil).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render new device dialog"))
@@ -61,7 +61,7 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 	if !device.Validate() {
 		validationError := fmt.Errorf("device validation, invalid form data %#v", device)
 
-		if err := components.NewDeviceDialog(true, validationError).Render(
+		if err := templates.NewDeviceDialog(true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render device dialog"))
@@ -76,7 +76,7 @@ func (h *Handler) PostEditDevice(c echo.Context) error {
 	if _, err := h.registry.Devices.Add(device); err != nil {
 		databaseError := utils.WrapError(err, "add device %s", device.Name)
 
-		if err := components.NewDeviceDialog(true, databaseError).Render(
+		if err := templates.NewDeviceDialog(true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render device dialog"))
@@ -104,7 +104,7 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 	if !device.Validate() {
 		validationError := fmt.Errorf("device validation, invalid form data %#v", device)
 
-		if err := components.EditDeviceDialog(device, true, validationError).Render(
+		if err := templates.EditDeviceDialog(device, true, validationError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render device dialog"))
@@ -119,7 +119,7 @@ func (h *Handler) PutEditDevice(c echo.Context) error {
 	if err := h.registry.Devices.Update(device); err != nil {
 		databaseError := utils.WrapError(err, "update device %s", device.Name)
 
-		if err := components.EditDeviceDialog(device, true, databaseError).Render(
+		if err := templates.EditDeviceDialog(device, true, databaseError).Render(
 			c.Request().Context(), c.Response(),
 		); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, utils.WrapError(err, "render device dialog"))

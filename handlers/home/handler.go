@@ -6,8 +6,8 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/knackwurstking/picow-led/handlers/components/oob"
-	"github.com/knackwurstking/picow-led/handlers/home/components"
+	"github.com/knackwurstking/picow-led/components/oob"
+	"github.com/knackwurstking/picow-led/handlers/home/templates"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/knackwurstking/picow-led/utils"
 	"github.com/labstack/echo/v4"
@@ -28,7 +28,7 @@ func (h *Handler) Register(e *echo.Echo) {
 }
 
 func (h *Handler) GetPage(c echo.Context) error {
-	err := components.PageHome().Render(c.Request().Context(), c.Response())
+	err := templates.PageHome().Render(c.Request().Context(), c.Response())
 	if err != nil {
 		return utils.WrapError(err, "render home page")
 	}
@@ -50,7 +50,7 @@ func (h *Handler) GetDevices(c echo.Context) error {
 		return utils.WrapError(err, "resolve devices")
 	}
 
-	return components.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
+	return templates.SectionDevices(false, rDevices).Render(c.Request().Context(), c.Response())
 }
 
 func (h *Handler) GetGroups(c echo.Context) error {
@@ -68,7 +68,7 @@ func (h *Handler) GetGroups(c echo.Context) error {
 		return utils.WrapError(err, "resolve groups")
 	}
 
-	return components.SectionGroups(false, resolvedGroups).Render(c.Request().Context(), c.Response())
+	return templates.SectionGroups(false, resolvedGroups).Render(c.Request().Context(), c.Response())
 }
 
 func (h *Handler) DeleteDevice(c echo.Context) error {

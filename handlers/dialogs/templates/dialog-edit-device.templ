@@ -1,4 +1,4 @@
-package components
+package templates
 
 import (
 	"github.com/knackwurstking/picow-led/handlers/components"
@@ -26,9 +26,7 @@ templ EditDeviceDialog(device *models.Device, oob bool, err error) {
 		Error:             err,
 		AdditionalActions: editDeviceDialog_AdditionalActions(device.ID),
 	}) {
-		{{
-			address, port := device.GetAddrSplit()
-		}}
+		{{ address, port := device.GetAddrSplit() }}
 		@editDeviceDialogContent(address, strconv.Itoa(port), device.Name)
 	}
 }

@@ -1,14 +1,13 @@
-package components
+package templates
 
 import (
 	"github.com/knackwurstking/picow-led/handlers/ids"
-	"github.com/knackwurstking/picow-led/models"
 	"github.com/knackwurstking/picow-led/utils"
 	"github.com/knackwurstking/ui"
 	"net/http"
 )
 
-templ NewGroupDialog(devices []*models.Device, preselectedDeviceIDs []models.DeviceID, oob bool, err error) {
+templ NewDeviceDialog(oob bool, err error) {
 	{{
 		hxSwapOOB := ""
 		if oob {
@@ -16,13 +15,13 @@ templ NewGroupDialog(devices []*models.Device, preselectedDeviceIDs []models.Dev
 		}
 	}}
 	@ui.Dialog(ui.DialogProps{
-		ID:               ids.DialogNewGroup,
+		ID:               ids.DialogNewDevice,
 		Method:           http.MethodPost,
-		Href:             utils.HxUrlEditGroupDialog(nil),
+		Href:             utils.HxUrlEditDeviceDialog(nil),
 		SubmitButtonText: "Create",
 		HxSwapOOB:        hxSwapOOB,
 		Error:            err,
 	}) {
-		@editGroupDialogContent("", preselectedDeviceIDs, devices)
+		@editDeviceDialogContent("", "", "")
 	}
 }

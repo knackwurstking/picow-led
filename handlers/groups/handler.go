@@ -6,8 +6,8 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/knackwurstking/picow-led/handlers/components/oob"
-	"github.com/knackwurstking/picow-led/handlers/home/components"
+	"github.com/knackwurstking/picow-led/components/oob"
+	"github.com/knackwurstking/picow-led/handlers/home/templates"
 	"github.com/knackwurstking/picow-led/services"
 	"github.com/knackwurstking/picow-led/utils"
 	"github.com/labstack/echo/v4"
