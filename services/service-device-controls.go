@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"strings"
 	"sync"
 	"time"
 
@@ -192,7 +193,7 @@ func (p *DeviceControls) GetCurrentColor(deviceID models.DeviceID) ([]uint8, err
 	// Get the device control record
 	deviceControl, err := p.Get(device.ID)
 	if err != nil {
-		if !IsNotFoundError(err) {
+		if !strings.Contains(err.Error(), "no rows in result") {
 			return nil, NewServiceError("get device control for current color", err)
 		}
 
