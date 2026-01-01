@@ -3,3 +3,4 @@ picow-led.db
 picow-led.test.db
 .DS_Store
 *_templ.go
+*.vim
