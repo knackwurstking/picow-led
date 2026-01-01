@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"fmt"
 	"log/slog"
 	"slices"
@@ -51,6 +52,9 @@ func (p *DeviceControls) Get(deviceID models.DeviceID) (*models.DeviceControl, e
 	row := p.registry.db.QueryRow(query, deviceID)
 	deviceControl, err := ScanDeviceControl(row)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, NewNotFoundError(fmt.Sprintf("deviceID %d", deviceID))
+		}
 		return nil, NewServiceError("get device control", HandleSqlError(err))
 	}
 	return deviceControl, nil
