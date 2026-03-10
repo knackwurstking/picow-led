@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"os"
+	"path/filepath"
 
 	"github.com/knackwurstking/ui"
 	"github.com/labstack/echo/v4"
@@ -28,18 +29,8 @@ var (
 )
 
 func main() {
-	e := echo.New()
-
-	// Middleware
-	e.Use(middleware.RequestLogger())
-	e.Use(middleware.AddTrailingSlash())
-	e.Use(middleware.CORS())
-	e.Use(ui.EchoMiddlewareCache())
-
-	routes.Register(e)
-
-	// TODO: Open SQL database and pass it to the registry
-	db, err := sql.Open("sqlite3", env.DatabasePath)
+	// Open SQL database and pass it to the registry
+	db, err := sql.Open("sqlite3", filepath.Join(env.DBPath, "picow-led.sqlite"))
 	if err != nil {
 		log.Error("Failed to open database: %v", err)
 		os.Exit(ExitCodeDatabase)
@@ -54,6 +45,18 @@ func main() {
 		log.Error("Failed to initialize registry: %v", err)
 		os.Exit(ExitCodeRegistry)
 	}
+
+	// Start the server
+	e := echo.New()
+
+	// Middleware
+	e.Use(middleware.RequestLogger())
+	e.Use(middleware.AddTrailingSlash())
+	e.Use(middleware.CORS())
+	e.Use(ui.EchoMiddlewareCache())
+
+	// Register handlers
+	routes.Register(e, registry)
 
 	if err := e.Start(env.ServerAddress); err != nil {
 		log.Error("Failed to start server: %v", err)

@@ -4,10 +4,11 @@ import (
 	"github.com/knackwurstking/picow-led/internal/assets"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/handlers"
+	"github.com/knackwurstking/picow-led/internal/services"
 	"github.com/labstack/echo/v4"
 )
 
-func Register(e *echo.Echo) {
+func Register(e *echo.Echo, r *services.Registry) {
 	// Static Assets
 	assets.ServePublicFS(e)
 
@@ -28,6 +29,6 @@ func Register(e *echo.Echo) {
 	group = e.Group(env.Route("/htmx"))
 	{
 		// Register HTMX endpoints here
-		group.GET("/devices", handlers.HtmxDevices)
+		group.GET("/devices", handlers.HTMXDevices(r))
 	}
 }

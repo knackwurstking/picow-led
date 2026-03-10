@@ -13,6 +13,7 @@ const (
 )
 
 var (
+	DBPath           string = os.Getenv("DB_PATH")
 	ServerPathPrefix string = os.Getenv("SERVER_PATH_PREFIX")
 	ServerAddress    string = os.Getenv("SERVER_ADDRESS")
 	Verbose          bool   = os.Getenv("VERBOSE") == "true"
