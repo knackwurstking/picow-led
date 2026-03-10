@@ -3,15 +3,17 @@ package models
 import "fmt"
 
 type Device struct {
-	ID   ID     `json:"id"`
-	Addr string `json:"addr"`
-	Name string `json:"name"`
+	ID    ID      `json:"id"`
+	Addr  string  `json:"addr"`
+	Name  string  `json:"name"`
+	Color []uint8 `json:"color"`
 }
 
-func NewDevice(addr, name string) *Device {
+func NewDevice(addr, name string, color ...uint8) *Device {
 	return &Device{
-		Addr: addr,
-		Name: name,
+		Addr:  addr,
+		Name:  name,
+		Color: color,
 	}
 }
 
@@ -21,5 +23,7 @@ func (d *Device) Validate() error {
 	}
 	return nil
 }
+
+// TODO: Control methods here... "GetPins"
 
 var _ Model = (*Device)(nil)

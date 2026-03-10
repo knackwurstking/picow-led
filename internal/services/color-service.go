@@ -2,7 +2,8 @@ package services
 
 import (
 	"fmt"
-	"log/slog"
+
+	"github.com/knackwurstking/picow-led/internal/models"
 )
 
 type ColorService struct {
@@ -32,11 +33,9 @@ func (c *ColorService) CreateTable() error {
 	return nil
 }
 
-func (c *ColorService) Get(id models.ColorID) (*models.Color, error) {
-	slog.Debug("Get color with ID", "id", id)
-
+func (c *ColorService) Get(colorID models.ID) (*models.Color, error) {
 	query := `SELECT * FROM colors WHERE id = ?`
-	color, err := ScanColor(c.registry.db.QueryRow(query, id))
+	color, err := ScanColor(c.registry.db.QueryRow(query, colorID))
 	if err != nil {
 		return nil, NewServiceError("get color by ID", HandleSqlError(err))
 	}
@@ -45,18 +44,12 @@ func (c *ColorService) Get(id models.ColorID) (*models.Color, error) {
 }
 
 func (c *ColorService) List() ([]*models.Color, error) {
-	slog.Debug("Get all colors")
-
 	query := `SELECT * FROM colors`
 	rows, err := c.registry.db.Query(query)
 	if err != nil {
 		return nil, NewServiceError("list colors", HandleSqlError(err))
 	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			slog.Warn("close colors rows", "error", err)
-		}
-	}()
+	defer rows.Close()
 
 	var colors []*models.Color
 	for rows.Next() {
@@ -74,12 +67,10 @@ func (c *ColorService) List() ([]*models.Color, error) {
 	return colors, nil
 }
 
-func (c *ColorService) Add(color *models.Color) (models.ColorID, error) {
-	if !color.Validate() {
+func (c *ColorService) Add(color *models.Color) (models.ID, error) {
+	if color.Validate() != nil {
 		return 0, fmt.Errorf("%w: %v", ErrInvalidColor, "color validation failed")
 	}
-
-	slog.Debug("Adding a new color", "name", color.Name, "duty", color.Duty)
 
 	query := `INSERT INTO colors (name, duty) VALUES (?, ?)`
 	result, err := c.registry.db.Exec(query, color.Name, color.Duty)
@@ -92,13 +83,11 @@ func (c *ColorService) Add(color *models.Color) (models.ColorID, error) {
 		return 0, NewServiceError("get last inserted color ID", HandleSqlError(err))
 	}
 
-	return models.ColorID(id), nil
+	return models.ID(id), nil
 }
 
 func (c *ColorService) Update(color *models.Color) error {
-	slog.Debug("Updating color", "id", color.ID, "name", color.Name, "duty", color.Duty)
-
-	if !color.Validate() {
+	if color.Validate() != nil {
 		return fmt.Errorf("%w: %v", ErrInvalidColor, "color validation failed")
 	}
 
@@ -111,11 +100,9 @@ func (c *ColorService) Update(color *models.Color) error {
 	return nil
 }
 
-func (c *ColorService) Delete(id models.ColorID) error {
-	slog.Debug("Deleting color", "id", id)
-
+func (c *ColorService) Delete(colorID models.ID) error {
 	query := `DELETE FROM colors WHERE id = ?`
-	_, err := c.registry.db.Exec(query, id)
+	_, err := c.registry.db.Exec(query, colorID)
 	if err != nil {
 		return NewServiceError("delete color", HandleSqlError(err))
 	}

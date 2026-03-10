@@ -21,6 +21,7 @@ func (d *DeviceService) CreateTable() error {
 		id INTEGER NOT NULL,
 		addr TEXT UNIQUE NOT NULL,
 		name TEXT NOT NULL,
+		color TEXT NOT NULL,
 
 		PRIMARY KEY ("id" AUTOINCREMENT)
 	);`
@@ -125,7 +126,7 @@ func (d *DeviceService) Delete(deviceID models.ID) error {
 
 func ScanDevice(r Scannable) (*models.Device, error) {
 	device := &models.Device{}
-	err := r.Scan(&device.ID, &device.Addr, &device.Name)
+	err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.Color)
 	return device, err
 }
 
