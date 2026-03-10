@@ -90,7 +90,7 @@ func (p *DeviceService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
 	}
 
 	// Get the current color from the picow device
-	color, err := control.GetColor(device)
+	color, err := picow.GetColor(device)
 	if err != nil {
 		return nil, NewServiceError("get color from device", err)
 	}
@@ -113,7 +113,7 @@ func (p *DeviceService) GetVersion(deviceID models.ID) (string, error) {
 		return "", NewServiceError("get device for version", err)
 	}
 
-	version, err := control.GetVersion(device)
+	version, err := picow.GetVersion(device)
 	if err != nil {
 		return "", NewServiceError("get version from control layer", err)
 	}
@@ -121,13 +121,13 @@ func (p *DeviceService) GetVersion(deviceID models.ID) (string, error) {
 	return version, nil
 }
 
-func (p *DeviceService) GetDiskUsage(deviceID models.ID) (*control.DiskUsage, error) {
+func (p *DeviceService) GetDiskUsage(deviceID models.ID) (*picow.DiskUsage, error) {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return nil, NewServiceError("get device for disk usage", err)
 	}
 
-	diskUsage, err := control.GetDiskUsage(device)
+	diskUsage, err := picow.GetDiskUsage(device)
 	if err != nil {
 		return nil, NewServiceError("get disk usage from control layer", err)
 	}
@@ -141,7 +141,7 @@ func (p *DeviceService) GetTemperature(deviceID models.ID) (float64, error) {
 		return 0, NewServiceError("get device for temperature", err)
 	}
 
-	temperature, err := control.GetTemperature(device)
+	temperature, err := picow.GetTemperature(device)
 	if err != nil {
 		return 0, NewServiceError("get temperature from control layer", err)
 	}
@@ -156,7 +156,7 @@ func (p *DeviceService) TogglePower(deviceID models.ID) ([]uint8, error) {
 	}
 
 	var newColor []uint8
-	currentColor, err := control.GetColor(device)
+	currentColor, err := picow.GetColor(device)
 	if err != nil {
 		return nil, NewServiceError("get current color for power toggle", err)
 	}
@@ -183,7 +183,7 @@ func (p *DeviceService) TogglePower(deviceID models.ID) ([]uint8, error) {
 		}
 	}
 
-	if err = control.SetColor(device, newColor...); err != nil {
+	if err = picow.SetColor(device, newColor...); err != nil {
 		return nil, NewServiceError("set color for power toggle", err)
 	}
 
@@ -212,7 +212,7 @@ func (p *DeviceService) SetCurrentColor(deviceID models.ID, color []uint8) error
 		}
 	}
 
-	if err := control.SetColor(device, color...); err != nil {
+	if err := picow.SetColor(device, color...); err != nil {
 		return NewServiceError("set color in control layer", err)
 	}
 
@@ -241,7 +241,7 @@ func (p *DeviceService) TurnOn(deviceID models.ID) error {
 		}
 	}
 
-	if err := control.SetColor(device, deviceControl.Color...); err != nil {
+	if err := picow.SetColor(device, deviceControl.Color...); err != nil {
 		return NewServiceError("set color in control layer for turn on", err)
 	}
 
@@ -255,14 +255,14 @@ func (p *DeviceService) TurnOff(deviceID models.ID) error {
 	}
 
 	// Get the current color from the device
-	currentColor, err := control.GetColor(device)
+	currentColor, err := picow.GetColor(device)
 	if err != nil {
 		return NewServiceError("get current color for turn off", err)
 	}
 
 	// Set the color to zero (turn off)
 	color := make([]uint8, len(currentColor))
-	if err := control.SetColor(device, color...); err != nil {
+	if err := picow.SetColor(device, color...); err != nil {
 		return NewServiceError("set color in control layer for turn off", err)
 	}
 
