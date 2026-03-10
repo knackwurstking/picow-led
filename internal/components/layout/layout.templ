@@ -1,0 +1,30 @@
+package layout
+
+type Props struct {
+	Lang  string
+	Title string
+}
+
+templ Layout(props ...Props) {
+	{{
+		prop := Props{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+	}}
+	<!DOCTYPE html>
+	<html
+		if prop.Lang != "" {
+			lang={ prop.Lang }
+		}
+	>
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ prop.Title }</title>
+		</head>
+		<body>
+			{ children... }
+		</body>
+	</html>
+}
