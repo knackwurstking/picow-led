@@ -1,0 +1,7 @@
+{
+  "componentsDir": "internal/components",
+  "utilsDir": "internal/utils",
+  "moduleName": "github.com/knackwurstking/picow-led",
+  "jsDir": "internal/assets/public/js",
+  "jsPublicPath": "/internal/assets/public/js"
+}

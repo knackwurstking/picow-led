@@ -1,49 +1,101 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+	--breakpoint-3xl: 1600px;
+	--breakpoint-4xl: 2000px;
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+}
 
 :root {
-  --gruvbox-bg-light: 251 241 226;
-  --gruvbox-bg-dark: 40 40 40;
-  --gruvbox-fg-light: 60 56 54;
-  --gruvbox-fg-dark: 235 219 178;
-  --gruvbox-primary: 250 189 47;
-  --gruvbox-primary-dim: 215 153 33;
-  --gruvbox-secondary: 142 192 124;
-  --gruvbox-secondary-dim: 107 142 74;
-  --gruvbox-muted: 146 131 116;
-  --gruvbox-muted-dim: 124 111 100;
-  --gruvbox-red: 204 36 29;
-  --gruvbox-red-dim: 157 0 6;
-  --gruvbox-green: 184 187 38;
-  --gruvbox-green-dim: 121 116 14;
-  --gruvbox-yellow: 250 189 47;
-  --gruvbox-yellow-dim: 181 118 20;
-  --gruvbox-blue: 69 133 136;
-  --gruvbox-blue-dim: 7 102 120;
-  --gruvbox-purple: 177 98 134;
-  --gruvbox-purple-dim: 142 64 125;
-  --gruvbox-aqua: 104 157 106;
-  --gruvbox-aqua-dim: 66 123 88;
-  --gruvbox-gray: 146 131 116;
-  --gruvbox-gray-dim: 124 111 100;
+	--radius: 0.65rem;
+	/* Gruvbox Light Colors */
+	--background: #f9f5d7;
+	--foreground: #282828;
+	--card: #f2e5bc;
+	--card-foreground: #282828;
+	--popover: #f2e5bc;
+	--popover-foreground: #282828;
+	--primary: #7c6f64;
+	--primary-foreground: #f9f5d7;
+	--secondary: #d5c4a1;
+	--secondary-foreground: #282828;
+	--muted: #d5c4a1;
+	--muted-foreground: #7c6f64;
+	--accent: #cc241d;
+	--accent-foreground: #282828;
+	--destructive: #9d0006;
+	--border: #d5c4a1;
+	--input: #d5c4a1;
+	--ring: #7c6f64;
 }
 
-html {
-  color-scheme: light dark;
+.dark {
+	/* Gruvbox Dark Colors */
+	--background: #282828;
+	--foreground: #ebdbb2;
+	--card: #3c3836;
+	--card-foreground: #ebdbb2;
+	--popover: #3c3836;
+	--popover-foreground: #ebdbb2;
+	--primary: #bdae93;
+	--primary-foreground: #282828;
+	--secondary: #504945;
+	--secondary-foreground: #ebdbb2;
+	--muted: #504945;
+	--muted-foreground: #a89984;
+	--accent: #fe8019;
+	--accent-foreground: #282828;
+	--destructive: #cc241d;
+	--border: #504945;
+	--input: #504945;
+	--ring: #bdae93;
 }
 
-body {
-  background-color: rgb(var(--gruvbox-bg));
-  color: rgb(var(--gruvbox-fg));
-}
+@layer base {
+	* {
+		@apply border-border;
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-muted-foreground) transparent;
+	}
 
-html[data-theme="light"] {
-  --gruvbox-bg: var(--gruvbox-bg-light);
-  --gruvbox-fg: var(--gruvbox-fg-light);
-}
+	*::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
 
-html[data-theme="dark"] {
-  --gruvbox-bg: var(--gruvbox-bg-dark);
-  --gruvbox-fg: var(--gruvbox-fg-dark);
+	*::-webkit-scrollbar-thumb {
+		background: var(--color-muted-foreground);
+		border-radius: 4px;
+	}
+
+	*::-webkit-scrollbar-thumb:hover {
+		background: var(--color-foreground);
+	}
+
+	body {
+		@apply bg-background text-foreground;
+	}
 }

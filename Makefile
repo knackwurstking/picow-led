@@ -13,4 +13,4 @@ generate: install-tailwind
 	@npx tailwindcss -i ./internal/assets/public/css/input.css -o ./internal/assets/public/css/output.css --minify
 
 run: generate
-	@gow run .
+	@gow -e=go,js,css -r run .
