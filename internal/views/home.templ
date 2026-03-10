@@ -1,14 +1,59 @@
 package views
 
-import "github.com/knackwurstking/picow-led/internal/components/layout"
+import (
+	"github.com/knackwurstking/picow-led/internal/components/layout"
+	"github.com/knackwurstking/picow-led/internal/components/tabs"
+)
+
+const (
+	IDTabsNav     = "tabs-nav"
+	IDTabsContent = "tabs-content"
+)
 
 templ HomePage() {
 	@layout.Layout(layout.Props{
+		Class: "px-4",
 		Lang:  "de",
 		Title: "PicoW LED",
 	}) {
-		<main class="w-screen h-screen flex items-center justify-center">
-			<p>Im Aufbau</p>
-		</main>
+		// TODO: Add tab navigation "devices", "groups"
+		@tabs.Tabs(tabs.Props{
+			ID: IDTabsNav,
+		}) {
+			@tabs.List(tabs.ListProps{
+				Class: "w-full",
+			}) {
+				@tabs.Trigger(tabs.TriggerProps{
+					Value: "devices",
+				}) {
+					Geräte
+				}
+				@tabs.Trigger(tabs.TriggerProps{
+					Value: "groups",
+				}) {
+					Gruppen
+				}
+				@tabs.Trigger(tabs.TriggerProps{
+					Value: "scenes",
+					Attributes: templ.Attributes{
+						"disabled": true,
+					},
+				}) {
+					Szenen
+				}
+			}
+			<main id={ IDTabsContent }>
+				@tabs.Content(tabs.ContentProps{
+					Value: "devices",
+				}) {
+					// ...
+				}
+				@tabs.Content(tabs.ContentProps{
+					Value: "groups",
+				}) {
+					// ...
+				}
+			</main>
+		}
 	}
 }

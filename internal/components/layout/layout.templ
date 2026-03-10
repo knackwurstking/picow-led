@@ -1,9 +1,12 @@
 package layout
 
-import "github.com/knackwurstking/ui"
-import "github.com/knackwurstking/picow-led/internal/env"
+import (
+	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/ui"
+)
 
 type Props struct {
+	Class string
 	Lang  string
 	Title string
 }
@@ -28,7 +31,7 @@ templ Layout(props ...Props) {
 			@styles()
 			@scripts()
 		</head>
-		<body>
+		<body class={ prop.Class }>
 			{ children... }
 		</body>
 	</html>
@@ -40,4 +43,5 @@ templ styles() {
 
 templ scripts() {
 	<script src={ ui.AssetURL("", env.Route("js/main.js")) }></script>
+	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/tabs.min.js")) }></script>
 }
