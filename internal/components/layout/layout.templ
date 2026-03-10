@@ -1,5 +1,8 @@
 package layout
 
+import "github.com/knackwurstking/ui"
+import "github.com/knackwurstking/picow-led/internal/env"
+
 type Props struct {
 	Lang  string
 	Title string
@@ -22,9 +25,14 @@ templ Layout(props ...Props) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{ prop.Title }</title>
+			@styles()
 		</head>
 		<body>
 			{ children... }
 		</body>
 	</html>
+}
+
+templ styles() {
+	<link rel="stylesheet" href={ ui.AssetURL("", env.Route("css/output.css")) }/>
 }

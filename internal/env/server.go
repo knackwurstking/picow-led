@@ -2,6 +2,7 @@ package env
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/knackwurstking/ui"
 )
@@ -38,5 +39,5 @@ func NewLogger(name string) *ui.Logger {
 }
 
 func Route(path string) string {
-	return ServerPathPrefix + path
+	return filepath.Join(ServerPathPrefix + path)
 }
