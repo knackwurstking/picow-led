@@ -3,6 +3,7 @@ package views
 import (
 	"github.com/knackwurstking/picow-led/internal/components/layout"
 	"github.com/knackwurstking/picow-led/internal/components/tabs"
+	"github.com/knackwurstking/picow-led/internal/env"
 )
 
 const (
@@ -16,7 +17,6 @@ templ HomePage() {
 		Lang:  "de",
 		Title: "PicoW LED",
 	}) {
-		// TODO: Add tab navigation "devices", "groups"
 		@tabs.Tabs(tabs.Props{
 			ID: IDTabsNav,
 		}) {
@@ -46,12 +46,17 @@ templ HomePage() {
 				@tabs.Content(tabs.ContentProps{
 					Value: "devices",
 				}) {
-					// ...
+					<section
+						class="flex flex-col gap-4"
+						hx-get={ env.Route("/htmx/devices") }
+						hx-trigger="load"
+						hx-swap="innerHTML"
+					></section>
 				}
 				@tabs.Content(tabs.ContentProps{
 					Value: "groups",
 				}) {
-					// ...
+					// TODO: ...
 				}
 			</main>
 		}

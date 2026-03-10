@@ -1,0 +1,23 @@
+package htmx
+
+import "github.com/knackwurstking/picow-led/internal/models"
+
+type DevicesProps struct {
+	Data []*models.Device
+}
+
+templ Devices(props ...DevicesProps) {
+	{{
+		prop := DevicesProps{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+	}}
+	for _, d := range prop.Data {
+		@DeviceItem(d)
+	}
+}
+
+templ DeviceItem(d *models.Device) {
+	// TODO: ...
+}

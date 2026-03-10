@@ -23,4 +23,11 @@ func Register(e *echo.Echo) {
 		// Register UI endpoints here
 		group.GET("/", handlers.Home)
 	}
+
+	// HTMX Endpoints
+	group = e.Group(env.Route("/htmx"))
+	{
+		// Register HTMX endpoints here
+		group.GET("/devices", handlers.HtmxDevices)
+	}
 }
