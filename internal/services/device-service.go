@@ -2,12 +2,15 @@ package services
 
 import (
 	"fmt"
+	"sync"
 
-	"github.com/knackwurstking/picow-led/internal/models"
+	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
 type DeviceService struct {
 	registry *Registry
+
+	pinCache sync.Map
 }
 
 func NewDeviceService(r *Registry) *DeviceService {
@@ -111,12 +114,7 @@ func (d *DeviceService) Update(device *models.Device) error {
 }
 
 func (d *DeviceService) Delete(deviceID models.ID) error {
-	query := `DELETE FROM device_controls WHERE device_id = ?`
-	if err := d.registry.DeviceControl.Delete(deviceID); err != nil {
-		return NewServiceError("delete device controls", HandleSqlError(err))
-	}
-
-	query = `DELETE FROM devices WHERE id = ?`
+	query := `DELETE FROM devices WHERE id = ?`
 	if _, err := d.registry.db.Exec(query, deviceID); err != nil {
 		return NewServiceError("delete device", HandleSqlError(err))
 	}

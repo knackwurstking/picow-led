@@ -1,87 +1,16 @@
 package services
 
 import (
-	"database/sql"
-	"fmt"
 	"slices"
 	"strings"
-	"sync"
 
-	"github.com/knackwurstking/picow-led/internal/models"
+	"github.com/knackwurstking/picow-led/pkg/models"
+	"github.com/knackwurstking/picow-led/pkg/picow"
 )
 
-type DeviceControlService struct {
-	registry *Registry
-
-	// Cache for device pins
-	pinCache sync.Map
-}
-
-func NewDeviceControlService(registry *Registry) *DeviceControlService {
-	return &DeviceControlService{
-		registry: registry,
-	}
-}
-
-// TODO: Remove this table... Make this type an extension of the *Device type for control specific methods
-func (p *DeviceControlService) CreateTable() error {
-	query := `CREATE TABLE IF NOT EXISTS device_controls (
-		device_id INTEGER NOT NULL,
-		color TEXT NOT NULL,
-
-		PRIMARY KEY ("device_id")
-	);`
-	_, err := p.registry.db.Exec(query)
-	if err != nil {
-		return NewServiceError("create device controls table", err)
-	}
-	return nil
-}
-
-func (p *DeviceControlService) Get(deviceID models.ID) (*models.DeviceControl, error) {
-	query := `SELECT * FROM device_controls WHERE device_id = ?`
-	row := p.registry.db.QueryRow(query, deviceID)
-	deviceControl, err := ScanDeviceControl(row)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, NewNotFoundError(fmt.Sprintf("deviceID %d", deviceID))
-		}
-		return nil, NewServiceError("get device control", HandleSqlError(err))
-	}
-	return deviceControl, nil
-}
-
-func (p *DeviceControlService) List() ([]*models.DeviceControl, error) {
-	query := `SELECT * FROM device_controls`
-	rows, err := p.registry.db.Query(query)
-	if err != nil {
-		return nil, NewServiceError("list device controls", HandleSqlError(err))
-	}
-	defer rows.Close()
-
-	deviceControls := make([]*models.DeviceControl, 0)
-	for rows.Next() {
-		deviceControl, err := ScanDeviceControl(rows)
-		if err != nil {
-			return nil, NewServiceError("scan device control from rows", HandleSqlError(err))
-		}
-		deviceControls = append(deviceControls, deviceControl)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, NewServiceError("iterate device control rows", err)
-	}
-
-	return deviceControls, nil
-}
-
-func (p *DeviceControlService) Add(deviceControl *models.DeviceControl) (models.ID, error) {
-	if deviceControl.Validate() != nil {
-		return 0, fmt.Errorf("%w: %v", ErrInvalidDeviceSetup, "device control validation failed")
-	}
-
-	query := `INSERT INTO device_controls (device_id, color) VALUES (?, ?)`
-	result, err := p.registry.db.Exec(query, deviceControl.DeviceID, deviceControl.Color)
+func (p *DeviceService) AddColor(deviceID models.ID, color ...uint8) (models.ID, error) {
+	query := `INSERT INTO devices (color) VALUES (?) WHERE id = ?`
+	result, err := p.registry.db.Exec(query, color, deviceID)
 	if err != nil {
 		return 0, NewServiceError("add device control", HandleSqlError(err))
 	}
@@ -94,13 +23,9 @@ func (p *DeviceControlService) Add(deviceControl *models.DeviceControl) (models.
 	return models.ID(id), nil
 }
 
-func (p *DeviceControlService) Update(deviceControl *models.DeviceControl) error {
-	if deviceControl.Validate() != nil {
-		return fmt.Errorf("%w: %v", ErrInvalidDeviceSetup, "device control validation failed")
-	}
-
-	query := `UPDATE device_controls SET color = ? WHERE device_id = ?`
-	_, err := p.registry.db.Exec(query, deviceControl.Color, deviceControl.DeviceID)
+func (p *DeviceService) UpdateColor(deviceID models.ID, color ...uint8) error {
+	query := `UPDATE devices SET color = ? WHERE id = ?`
+	_, err := p.registry.db.Exec(query, color, deviceID)
 	if err != nil {
 		return NewServiceError("update device control", HandleSqlError(err))
 	}
@@ -108,17 +33,16 @@ func (p *DeviceControlService) Update(deviceControl *models.DeviceControl) error
 	return nil
 }
 
-func (p *DeviceControlService) Delete(deviceID models.ID) error {
-	query := `DELETE FROM device_controls WHERE device_id = ?`
-	_, err := p.registry.db.Exec(query, deviceID)
-	if err != nil {
+func (p *DeviceService) DeleteColor(deviceID models.ID) error {
+	query := `INSERT INTO devices (color) VALUES (?) WHERE id = ?`
+	if _, err := p.registry.db.Exec(query, nil, deviceID); err != nil {
 		return NewServiceError("delete device control", HandleSqlError(err))
 	}
 
 	return nil
 }
 
-func (p *DeviceControlService) GetPins(deviceID models.ID) ([]uint8, error) {
+func (p *DeviceService) GetPins(deviceID models.ID) ([]uint8, error) {
 	// Check if we have a cached value
 	if cached, ok := p.pinCache.Load(deviceID); ok {
 		return cached.([]uint8), nil
@@ -130,7 +54,7 @@ func (p *DeviceControlService) GetPins(deviceID models.ID) ([]uint8, error) {
 		return nil, NewServiceError("get device for pins", err)
 	}
 
-	pins, err := control.GetPins(device)
+	pins, err := picow.GetPins(device)
 	if err != nil {
 		return nil, NewServiceError("get device pins from control layer", err)
 	}
@@ -141,7 +65,7 @@ func (p *DeviceControlService) GetPins(deviceID models.ID) ([]uint8, error) {
 	return pins, nil
 }
 
-func (p *DeviceControlService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
+func (p *DeviceService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
 	// Fetch device
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
@@ -155,7 +79,7 @@ func (p *DeviceControlService) GetCurrentColor(deviceID models.ID) ([]uint8, err
 			return nil, NewServiceError("get device control for current color", err)
 		}
 
-		if err = p.setInitialEntry(device.ID); err != nil {
+		if err = p.initDeviceColor(device.ID); err != nil {
 			return nil, NewServiceError("set initial entry for current color", err)
 		}
 
@@ -183,7 +107,7 @@ func (p *DeviceControlService) GetCurrentColor(deviceID models.ID) ([]uint8, err
 	return color, nil
 }
 
-func (p *DeviceControlService) GetVersion(deviceID models.ID) (string, error) {
+func (p *DeviceService) GetVersion(deviceID models.ID) (string, error) {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return "", NewServiceError("get device for version", err)
@@ -197,7 +121,7 @@ func (p *DeviceControlService) GetVersion(deviceID models.ID) (string, error) {
 	return version, nil
 }
 
-func (p *DeviceControlService) GetDiskUsage(deviceID models.ID) (*control.DiskUsage, error) {
+func (p *DeviceService) GetDiskUsage(deviceID models.ID) (*control.DiskUsage, error) {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return nil, NewServiceError("get device for disk usage", err)
@@ -211,7 +135,7 @@ func (p *DeviceControlService) GetDiskUsage(deviceID models.ID) (*control.DiskUs
 	return diskUsage, nil
 }
 
-func (p *DeviceControlService) GetTemperature(deviceID models.ID) (float64, error) {
+func (p *DeviceService) GetTemperature(deviceID models.ID) (float64, error) {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return 0, NewServiceError("get device for temperature", err)
@@ -225,7 +149,7 @@ func (p *DeviceControlService) GetTemperature(deviceID models.ID) (float64, erro
 	return temperature, nil
 }
 
-func (p *DeviceControlService) TogglePower(deviceID models.ID) ([]uint8, error) {
+func (p *DeviceService) TogglePower(deviceID models.ID) ([]uint8, error) {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return nil, NewServiceError("get device for power toggle", err)
@@ -266,7 +190,7 @@ func (p *DeviceControlService) TogglePower(deviceID models.ID) ([]uint8, error) 
 	return newColor, nil
 }
 
-func (p *DeviceControlService) SetCurrentColor(deviceID models.ID, color []uint8) error {
+func (p *DeviceService) SetCurrentColor(deviceID models.ID, color []uint8) error {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return NewServiceError("get device for setting current color", err)
@@ -276,7 +200,7 @@ func (p *DeviceControlService) SetCurrentColor(deviceID models.ID, color []uint8
 		deviceControl := models.NewDeviceControl(deviceID, color...)
 		if err = p.Update(deviceControl); err != nil {
 			if IsNotFoundError(err) {
-				if err = p.setInitialEntry(deviceID); err != nil {
+				if err = p.initDeviceColor(deviceID); err != nil {
 					return NewServiceError("set initial entry for setting current color", err)
 				}
 
@@ -297,7 +221,7 @@ func (p *DeviceControlService) SetCurrentColor(deviceID models.ID, color []uint8
 	return nil
 }
 
-func (p *DeviceControlService) TurnOn(deviceID models.ID) error {
+func (p *DeviceService) TurnOn(deviceID models.ID) error {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return NewServiceError("get device for turn on", err)
@@ -306,7 +230,7 @@ func (p *DeviceControlService) TurnOn(deviceID models.ID) error {
 	deviceControl, err := p.Get(deviceID)
 	if err != nil {
 		if IsNotFoundError(err) {
-			if err = p.setInitialEntry(deviceID); err != nil {
+			if err = p.initDeviceColor(deviceID); err != nil {
 				return NewServiceError("set initial entry for turn on", err)
 			}
 
@@ -326,7 +250,7 @@ func (p *DeviceControlService) TurnOn(deviceID models.ID) error {
 	return nil
 }
 
-func (p *DeviceControlService) TurnOff(deviceID models.ID) error {
+func (p *DeviceService) TurnOff(deviceID models.ID) error {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return NewServiceError("get device for turn off", err)
@@ -347,7 +271,7 @@ func (p *DeviceControlService) TurnOff(deviceID models.ID) error {
 	return nil
 }
 
-func (p *DeviceControlService) setInitialEntry(deviceID models.ID) error {
+func (p *DeviceService) initDeviceColor(deviceID models.ID) error {
 	// Get pins using the cached version
 	pins, err := p.GetPins(deviceID)
 	if err != nil {
@@ -359,21 +283,11 @@ func (p *DeviceControlService) setInitialEntry(deviceID models.ID) error {
 		color[i] = 255
 	}
 
-	data := models.NewDeviceControl(deviceID, color...)
-	if _, err := p.Add(data); err != nil {
+	device, err := p.Get(deviceID)
+	device.Color = color
+	if _, err := p.Add(device); err != nil {
 		return NewServiceError("add initial device control entry", err)
 	}
 
 	return nil
 }
-
-func ScanDeviceControl(scanner Scannable) (*models.Device, error) {
-	control := &models.Device{}
-	err := scanner.Scan(&control.ID, &control.Color)
-	if err != nil {
-		return nil, NewServiceError("scan device control", err)
-	}
-	return control, nil
-}
-
-var _ Service = (*DeviceControlService)(nil)

@@ -8,10 +8,9 @@ import (
 type Registry struct {
 	db *sql.DB
 
-	Device        *DeviceService
-	Color         *ColorService
-	Group         *GroupService
-	DeviceControl *DeviceControlService
+	Device *DeviceService
+	Color  *ColorService
+	Group  *GroupService
 }
 
 func NewRegistry(db *sql.DB) (*Registry, error) {
@@ -20,7 +19,6 @@ func NewRegistry(db *sql.DB) (*Registry, error) {
 	r.Device = NewDeviceService(r)
 	r.Color = NewColorService(r)
 	r.Group = NewGroupService(r)
-	r.DeviceControl = NewDeviceControlService(r)
 
 	if err := r.CreateTables(); err != nil {
 		return nil, fmt.Errorf("create tables: %w", err)
@@ -34,7 +32,6 @@ func (r *Registry) CreateTables() error {
 		r.Device,
 		r.Color,
 		r.Group,
-		r.DeviceControl,
 	}
 
 	var err error

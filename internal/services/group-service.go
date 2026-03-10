@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/knackwurstking/picow-led/internal/models"
+	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
 type GroupService struct {

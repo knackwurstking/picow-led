@@ -8,7 +8,7 @@ package htmx
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/knackwurstking/picow-led/internal/models"
+import "github.com/knackwurstking/picow-led/pkg/models"
 
 type DevicesProps struct {
 	Data []*models.Device
