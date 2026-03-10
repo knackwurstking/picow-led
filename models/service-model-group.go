@@ -1,0 +1,21 @@
+package models
+
+type Group struct {
+	ID        GroupID    `json:"id"`
+	Name      string     `json:"name"`
+	Devices   []DeviceID `json:"devices"`
+	CreatedAt string     `json:"created_at"`
+}
+
+func NewGroup(name string, devices []DeviceID) *Group {
+	return &Group{
+		Name:    name,
+		Devices: devices,
+	}
+}
+
+func (g *Group) Validate() bool {
+	return g.Name != ""
+}
+
+var _ ServiceModel = (*Group)(nil)

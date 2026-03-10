@@ -1,0 +1,75 @@
+package templates
+
+import (
+	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/handlers/ids"
+	"github.com/knackwurstking/picow-led/models"
+	"github.com/knackwurstking/picow-led/utils"
+	"github.com/knackwurstking/ui"
+	"net/http"
+	"slices"
+)
+
+templ EditGroupDialog(group *models.Group, devices []*models.Device, oob bool, err error) {
+	{{
+		hxSwapOOB := ""
+		if oob {
+			hxSwapOOB = "true"
+		}
+	}}
+	@ui.Dialog(ui.DialogProps{
+		ID:                ids.DialogEditGroup,
+		Method:            http.MethodPut,
+		Href:              utils.HxUrlEditGroupDialog(&group.ID),
+		SubmitButtonText:  "Edit",
+		HxSwapOOB:         hxSwapOOB,
+		Error:             err,
+		AdditionalActions: editGroupDialog_AdditionalActions(group.ID),
+	}) {
+		@editGroupDialogContent(group.Name, group.Devices, devices)
+	}
+}
+
+templ editGroupDialog_AdditionalActions(id models.GroupID) {
+	<button
+		class="destructive flex gap"
+		hx-delete={ utils.HxUrlDeleteGroup(id) }
+		hx-confirm="Are you sure you want to delete this group?"
+		hx-on:htmx:after-request="if (event.detail.successful) this.closest('dialog').close();"
+	>
+		<i class="bi bi-trash"></i>
+		Delete
+	</button>
+}
+
+templ editGroupDialogContent(name string, preselectedDeviceIDs []models.DeviceID, allDevices []*models.Device) {
+	@components.Input(components.InputProps{
+		ID:          "group-name",
+		Type:        "text",
+		Label:       "Name",
+		Description: "Enter a name for this group.",
+		Value:       name,
+		Required:    true,
+	})
+	<label for={ ids.DialogGroupDevices }>Select Devices</label>
+	<div
+		id={ ids.DialogGroupDevices }
+		class="flex flex-col gap"
+		hx-preserve="true"
+	>
+		for _, device := range allDevices {
+			<span class="ml flex items-center">
+				<input
+					type="checkbox"
+					id={ ids.DialogDeviceCheckbox(device.ID) }
+					name="devices"
+					value={ device.ID }
+					if slices.Contains(preselectedDeviceIDs, device.ID) {
+						checked
+					}
+				/>
+				<label for={ ids.DialogDeviceCheckbox(device.ID) }>{ device.Name }</label>
+			</span>
+		}
+	</div>
+}

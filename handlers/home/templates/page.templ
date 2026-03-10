@@ -1,0 +1,114 @@
+package templates
+
+import (
+	"github.com/knackwurstking/picow-led/components"
+	"github.com/knackwurstking/picow-led/env"
+	"github.com/knackwurstking/picow-led/handlers/ids"
+
+	"github.com/knackwurstking/ui"
+)
+
+templ PageHome() {
+	@components.Layout(
+		components.LayoutOptions{
+			PageTitle:      "PicoW LED",
+			AdditionalHead: additionalHead(),
+		},
+	) {
+		@section(ids.HomeSectionDevices) {
+			@SectionDevices(true, nil)
+		}
+		@section(ids.HomeSectionGroups) {
+			@SectionGroups(true, nil)
+		}
+	}
+}
+
+templ additionalHead() {
+	<link rel="stylesheet" href={ ui.AssetURL(env.Args.ServerPathPrefix, "/css/page-home.css") }/>
+	@pageScript(ids.HomeSectionDevices, ids.HomeSectionGroups)
+}
+
+templ section(id string) {
+	<details id={ id } ontoggle="event.currentTarget.scrollIntoView({behavior: 'smooth', block: 'start'})">
+		{ children... }
+	</details>
+}
+
+templ sectionSummary(title string) {
+	<summary class="flex gap justify-between">
+		<span>{ title }</span>
+	</summary>
+}
+
+templ sectionActions() {
+	<div class="w-full flex gap justify-end items-center">
+		{ children... }
+	</div>
+}
+
+templ sectionLoadingSpinner(id string, disabled bool) {
+	<div
+		id={ id }
+		class="spinner"
+		if disabled {
+			style="height: 100%; display: none;"
+		} else {
+			style="height: 100%;"
+		}
+	></div>
+}
+
+script enableSpinner(id string, event templ.JSExpression) {
+	var target = event.currentTarget.parentElement.querySelector(`#${id}`)
+	target.style.display = 'block'
+}
+
+script pageScript(deviceSectionID, groupSectionID string) {
+	// Keep details tag state (open/closed)
+	document.addEventListener("DOMContentLoaded", function () {
+		var allDetails = document.querySelectorAll("details");
+
+		allDetails.forEach(function (detail) {
+			if (!detail.id) return;
+
+			detail.addEventListener("toggle", function () {
+				if (detail.open) {
+					// Close all other detail tags
+					allDetails.forEach(function (detail2) {
+						if (!detail2.id || detail2.id === detail.id) return;
+
+						detail2.open = false;
+					});
+
+					triggerReload(detail.id);
+				}
+
+				localStorage.setItem(detail.id, detail.open.toString());
+			});
+
+			var savedState = localStorage.getItem(detail.id);
+			if (savedState !== null) {
+				detail.open = savedState === "true";
+			}
+		});
+
+		function triggerReload(id) {
+			if (id === deviceSectionID) {
+				console.debug(`[${new Date().toLocaleString()}] Triggering reload: Devices`);
+				document.body.dispatchEvent(new CustomEvent("reloadDevices"));
+			} else if (id === groupSectionID) {
+				console.debug(`[${new Date().toLocaleString()}] Triggering reload: Groups`);
+				document.body.dispatchEvent(new CustomEvent("reloadGroups"));
+			} else {
+				console.warn(`Unknown detail ID: ${id}`);
+			}
+		}
+
+		document.body.addEventListener("visible", function() {
+			document.querySelectorAll(`details[open]`).forEach(function(detail) {
+				triggerReload(detail.id);
+			});
+		});
+	});
+}
