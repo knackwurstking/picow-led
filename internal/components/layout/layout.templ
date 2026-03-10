@@ -26,6 +26,7 @@ templ Layout(props ...Props) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{ prop.Title }</title>
 			@styles()
+			@scripts()
 		</head>
 		<body>
 			{ children... }
@@ -35,4 +36,8 @@ templ Layout(props ...Props) {
 
 templ styles() {
 	<link rel="stylesheet" href={ ui.AssetURL("", env.Route("css/output.css")) }/>
+}
+
+templ scripts() {
+	<script src={ ui.AssetURL("", env.Route("js/main.js")) }></script>
 }

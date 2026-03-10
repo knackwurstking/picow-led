@@ -1,3 +1,49 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --gruvbox-bg-light: 251 241 226;
+  --gruvbox-bg-dark: 40 40 40;
+  --gruvbox-fg-light: 60 56 54;
+  --gruvbox-fg-dark: 235 219 178;
+  --gruvbox-primary: 250 189 47;
+  --gruvbox-primary-dim: 215 153 33;
+  --gruvbox-secondary: 142 192 124;
+  --gruvbox-secondary-dim: 107 142 74;
+  --gruvbox-muted: 146 131 116;
+  --gruvbox-muted-dim: 124 111 100;
+  --gruvbox-red: 204 36 29;
+  --gruvbox-red-dim: 157 0 6;
+  --gruvbox-green: 184 187 38;
+  --gruvbox-green-dim: 121 116 14;
+  --gruvbox-yellow: 250 189 47;
+  --gruvbox-yellow-dim: 181 118 20;
+  --gruvbox-blue: 69 133 136;
+  --gruvbox-blue-dim: 7 102 120;
+  --gruvbox-purple: 177 98 134;
+  --gruvbox-purple-dim: 142 64 125;
+  --gruvbox-aqua: 104 157 106;
+  --gruvbox-aqua-dim: 66 123 88;
+  --gruvbox-gray: 146 131 116;
+  --gruvbox-gray-dim: 124 111 100;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background-color: rgb(var(--gruvbox-bg));
+  color: rgb(var(--gruvbox-fg));
+}
+
+html[data-theme="light"] {
+  --gruvbox-bg: var(--gruvbox-bg-light);
+  --gruvbox-fg: var(--gruvbox-fg-light);
+}
+
+html[data-theme="dark"] {
+  --gruvbox-bg: var(--gruvbox-bg-dark);
+  --gruvbox-fg: var(--gruvbox-fg-dark);
+}
