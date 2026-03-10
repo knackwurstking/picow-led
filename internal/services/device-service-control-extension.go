@@ -197,15 +197,13 @@ func (p *DeviceService) SetCurrentColor(deviceID models.ID, color []uint8) error
 	}
 
 	if slices.Max(color) > 0 {
-		deviceControl := models.NewDeviceControl(deviceID, color...)
-		if err = p.Update(deviceControl); err != nil {
+		if err = p.UpdateColor(deviceID, color...); err != nil {
 			if IsNotFoundError(err) {
 				if err = p.initDeviceColor(deviceID); err != nil {
 					return NewServiceError("set initial entry for setting current color", err)
 				}
 
-				deviceControl := models.NewDeviceControl(deviceID, color...)
-				if err = p.Update(deviceControl); err != nil {
+				if err = p.UpdateColor(deviceID, color...); err != nil {
 					return NewServiceError("update device control after setting initial entry", err)
 				}
 			} else {
