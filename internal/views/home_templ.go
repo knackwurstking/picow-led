@@ -13,7 +13,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/icon"
 	"github.com/knackwurstking/picow-led/internal/components/layout"
 	"github.com/knackwurstking/picow-led/internal/components/tabs"
-	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/internal/views/dialogs"
 )
 
@@ -218,9 +218,9 @@ func HomePage() templ.Component {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var11 string
-					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(env.Route("/htmx/devices"))
+					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(urlb.Devices())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/home.templ`, Line: 58, Col: 41}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/home.templ`, Line: 58, Col: 29}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
@@ -265,7 +265,7 @@ func HomePage() templ.Component {
 						Size: button.SizeIcon,
 						Attributes: templ.Attributes{
 							"title":     "Gerät hinzufügen",
-							"hx-get":    env.Route("/htmx/dialogs/add-device"),
+							"hx-get":    urlb.AddDeviceDialog(),
 							"hx-target": "body",
 							"hx-swap":   "beforeend",
 						},

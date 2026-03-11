@@ -5,7 +5,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/icon"
 	"github.com/knackwurstking/picow-led/internal/components/layout"
 	"github.com/knackwurstking/picow-led/internal/components/tabs"
-	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/internal/views/dialogs"
 )
 
@@ -55,7 +55,7 @@ templ HomePage() {
 					<div
 						id={ IDDevicesList }
 						class="flex flex-col gap-4"
-						hx-get={ env.Route("/htmx/devices") }
+						hx-get={ urlb.Devices() }
 						hx-target={ "#" + IDDevicesList }
 						hx-trigger="load"
 						hx-swap="innerHTML"
@@ -65,7 +65,7 @@ templ HomePage() {
 							Size: button.SizeIcon,
 							Attributes: templ.Attributes{
 								"title":     "Gerät hinzufügen",
-								"hx-get":    env.Route("/htmx/dialogs/add-device"),
+								"hx-get":    urlb.AddDeviceDialog(),
 								"hx-target": "body",
 								"hx-swap":   "beforeend",
 							},
