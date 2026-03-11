@@ -1,0 +1,29 @@
+package dialogs
+
+type AddDeviceFormData struct {
+	Name string
+}
+
+type AddDeviceProps struct {
+	AddDeviceFormData
+	Open, OOB  bool
+	Attributes templ.Attributes
+}
+
+templ AddDevice(props ...AddDeviceProps) {
+	{{
+		prop := AddDeviceProps{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+
+		if prop.Attributes == nil {
+			prop.Attributes = templ.Attributes{}
+		}
+
+		if prop.OOB {
+			prop.Attributes["hx-oob-swap"] = "true"
+		}
+	}}
+	// TODO: ...
+}

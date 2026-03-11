@@ -26,3 +26,10 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 		return nil
 	}
 }
+
+func HTMXAddDeviceDialog(r *services.Registry) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// TODO: ...
+		return nil
+	}
+}

@@ -6,6 +6,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/layout"
 	"github.com/knackwurstking/picow-led/internal/components/tabs"
 	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/views/dialogs"
 )
 
 const (
@@ -60,13 +61,19 @@ templ HomePage() {
 						hx-swap="innerHTML"
 					></div>
 					<div class="w-full flex flex-row justify-end items-center">
-						// TODO: Add dialog: add device
 						@button.Button(button.Props{
 							Size: button.SizeIcon,
+							Attributes: templ.Attributes{
+								"title":     "Gerät hinzufügen",
+								"hx-get":    env.Route("/htmx/dialogs/add-device"),
+								"hx-target": "body",
+								"hx-swap":   "beforeend",
+							},
 						}) {
 							@icon.Plus()
 						}
 					</div>
+					@dialogs.AddDeviceDialog()
 				}
 				@tabs.Content(tabs.ContentProps{
 					Value: "groups",

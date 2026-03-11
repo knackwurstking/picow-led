@@ -30,5 +30,6 @@ func Register(e *echo.Echo, r *services.Registry) {
 	{
 		// Register HTMX endpoints here
 		group.GET("/devices", handlers.HTMXDevices(r))
+		group.GET("/dialogs/add-device", handlers.HTMXAddDeviceDialog(r))
 	}
 }
