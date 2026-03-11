@@ -47,4 +47,5 @@ templ scripts() {
 	<script src={ ui.AssetURL("", env.Route("js/main.js")) }></script>
 	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/tabs.min.js")) }></script>
 	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/dialog.min.js")) }></script>
+	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/label.min.js")) }></script>
 }
