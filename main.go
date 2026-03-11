@@ -50,7 +50,18 @@ func main() {
 	e := echo.New()
 
 	// Middleware
-	e.Use(middleware.RequestLogger())
+	requestLogger := env.NewLogger("request")
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogStatus:  true,
+		LogURI:     true,
+		LogLatency: true,
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			// Example:
+			//value, _ := c.Get("context-value").(int)
+			requestLogger.Info("%d %s %s", v.Status, v.URI, v.Latency)
+			return nil
+		},
+	}))
 	e.Use(middleware.AddTrailingSlash())
 	e.Use(middleware.CORS())
 	e.Use(ui.EchoMiddlewareCache())

@@ -1,6 +1,8 @@
 package views
 
 import (
+	"github.com/knackwurstking/picow-led/internal/components/button"
+	"github.com/knackwurstking/picow-led/internal/components/icon"
 	"github.com/knackwurstking/picow-led/internal/components/layout"
 	"github.com/knackwurstking/picow-led/internal/components/tabs"
 	"github.com/knackwurstking/picow-led/internal/env"
@@ -9,6 +11,7 @@ import (
 const (
 	IDTabsNav     = "tabs-nav"
 	IDTabsContent = "tabs-content"
+	IDDevicesList = "devices-list"
 )
 
 templ HomePage() {
@@ -44,14 +47,26 @@ templ HomePage() {
 			}
 			<main id={ IDTabsContent }>
 				@tabs.Content(tabs.ContentProps{
-					Value: "devices",
+					Class:    "space-y-4",
+					Value:    "devices",
+					IsActive: true,
 				}) {
-					<section
+					<div
+						id={ IDDevicesList }
 						class="flex flex-col gap-4"
 						hx-get={ env.Route("/htmx/devices") }
+						hx-target={ "#" + IDDevicesList }
 						hx-trigger="load"
 						hx-swap="innerHTML"
-					></section>
+					></div>
+					<div class="w-full flex flex-row justify-end items-center">
+						// TODO: Add dialog: add device
+						@button.Button(button.Props{
+							Size: button.SizeIcon,
+						}) {
+							@icon.Plus()
+						}
+					</div>
 				}
 				@tabs.Content(tabs.ContentProps{
 					Value: "groups",

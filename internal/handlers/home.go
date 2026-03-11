@@ -11,7 +11,7 @@ import (
 func Home(c echo.Context) error {
 	t := views.HomePage()
 	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("Failed to render template: %v", err))
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render template: %v", err))
 	}
 	return nil
 }

@@ -39,9 +39,11 @@ templ Layout(props ...Props) {
 
 templ styles() {
 	<link rel="stylesheet" href={ ui.AssetURL("", env.Route("css/output.css")) }/>
+	<link rel="stylesheet" href={ ui.AssetURL("", env.Route("css/layout.css")) }/>
 }
 
 templ scripts() {
+	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
 	<script src={ ui.AssetURL("", env.Route("js/main.js")) }></script>
 	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/tabs.min.js")) }></script>
 }
