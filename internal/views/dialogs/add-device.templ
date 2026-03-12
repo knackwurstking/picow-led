@@ -42,9 +42,6 @@ templ AddDevice(props ...AddDeviceProps) {
 				@dialog.Title() {
 					Neues Gerät hinzufügen
 				}
-				@dialog.Description() {
-					Um ein neues Gerät hinzuzufügen, stelle sicher, dass es eingeschaltet ist.
-				}
 			}
 			if len(prop.Errors) > 0 {
 				<div class="bg-red-100 text-red-800 p-2 rounded">
@@ -56,6 +53,7 @@ templ AddDevice(props ...AddDeviceProps) {
 				</div>
 			}
 			<form
+				class="space-y-4"
 				hx-post={ urlb.AddDeviceDialog() }
 				hx-trigger="submit"
 				enctype="multipart/form-data"
