@@ -28,19 +28,19 @@ func Register(e *echo.Echo, r *services.Registry) {
 	// HTMX Endpoints
 	group = e.Group(env.Route("/htmx"))
 	{ // Register HTMX endpoints here
-		subGroup := group.Group("/devices")
+		devicesGroup := group.Group("/devices")
 		{
-			group.GET("/", handlers.HTMXDevices(r))
+			devicesGroup.GET("/", handlers.HTMXDevices(r))
 		}
 
-		subGroup = group.Group("/dialogs")
+		dialogsGroup := group.Group("/dialogs")
 		{
-			subGroup.GET("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
-			subGroup.POST("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
+			dialogsGroup.GET("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
+			dialogsGroup.POST("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
 
-			subGroup.GET("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
-			subGroup.POST("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
-			subGroup.DELETE("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodDelete))
+			dialogsGroup.GET("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
+			dialogsGroup.POST("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
+			dialogsGroup.DELETE("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodDelete))
 		}
 
 	}

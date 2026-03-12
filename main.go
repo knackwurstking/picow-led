@@ -58,7 +58,12 @@ func main() {
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
 			// Example:
 			//value, _ := c.Get("context-value").(int)
+			if v.Error != nil {
+				requestLogger.Error("%v", v.Error)
+			}
+
 			requestLogger.Info("%d %s %s", v.Status, v.URI, v.Latency)
+
 			return nil
 		},
 	}))
