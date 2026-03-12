@@ -31,14 +31,23 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 }
 
 func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
-	renderDialog := func(open bool, formData dialogs.AddDeviceFormData, errs ...error) error {
+	renderDialog := func(c echo.Context, open bool, formData dialogs.AddDeviceFormData, errs ...error) error {
+		t := dialogs.AddDevice(dialogs.AddDeviceProps{
+			AddDeviceFormData: formData,
+			Open:              open,
+			OOB:               true,
+			Errors:            errs,
+		})
+		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render template: %v", err))
+		}
 		return nil
 	}
 
 	switch method {
 	case http.MethodGet:
 		return func(c echo.Context) error {
-			return renderDialog(true, dialogs.AddDeviceFormData{})
+			return renderDialog(c, true, dialogs.AddDeviceFormData{})
 		}
 	case http.MethodPost:
 		return func(c echo.Context) error {
@@ -55,7 +64,11 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 			}
 
 			open := len(errs) > 0
-			return renderDialog(open, dialogs.AddDeviceFormData{}, errs...)
+			formData := dialogs.AddDeviceFormData{
+				Name: name,
+				Addr: addr,
+			}
+			return renderDialog(c, open, formData, errs...)
 		}
 	}
 
