@@ -47,6 +47,8 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	switch method {
 	case http.MethodGet:
 		return func(c echo.Context) error {
+			// TODO: Trigger devices htmx reload "reload-devices"
+
 			return renderDialog(c, true, dialogs.AddDeviceFormData{})
 		}
 	case http.MethodPost:

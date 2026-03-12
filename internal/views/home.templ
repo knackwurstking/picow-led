@@ -57,7 +57,7 @@ templ HomePage() {
 						class="flex flex-col gap-4"
 						hx-get={ urlb.Devices() }
 						hx-target={ "#" + IDDevicesList }
-						hx-trigger="load"
+						hx-trigger="load, reload-devices from:body"
 						hx-swap="innerHTML"
 					></div>
 					<div class="w-full flex flex-row justify-end items-center">
