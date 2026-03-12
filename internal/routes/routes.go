@@ -35,9 +35,9 @@ func Register(e *echo.Echo, r *services.Registry) {
 			dialogsGroup.GET("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
 			dialogsGroup.POST("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
 
-			dialogsGroup.GET("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
-			dialogsGroup.POST("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
-			dialogsGroup.DELETE("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodDelete))
+			dialogsGroup.GET("/edit-device", handlers.HTMXEditDeviceDialog(r, http.MethodGet))
+			dialogsGroup.POST("/edit-device", handlers.HTMXEditDeviceDialog(r, http.MethodPost))
+			dialogsGroup.DELETE("/edit-device", handlers.HTMXEditDeviceDialog(r, http.MethodDelete))
 		}
 
 	}

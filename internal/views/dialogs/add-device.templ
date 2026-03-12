@@ -29,10 +29,11 @@ templ AddDevice(props ...AddDeviceProps) {
 		}
 
 		if prop.OOB {
-			prop.Attributes["hx-oob-swap"] = "true"
+			prop.Attributes["hx-swap-oob"] = "true"
 		}
 	}}
 	@dialog.Dialog(dialog.Props{
+		ID:               "add-device-dialog",
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,

@@ -93,7 +93,7 @@ func DeviceItem(d *models.Device) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"device-item bg-secondary text-secondary-foreground rounded p-4\"><div class=\"flex items-center gap-4\"><span class=\"w-full\"><div class=\"font-bold\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"device-item bg-secondary text-secondary-foreground rounded-lg p-4\"><div class=\"flex items-center gap-4\"><span class=\"w-full\"><div class=\"font-bold\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

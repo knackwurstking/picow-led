@@ -52,6 +52,7 @@ func main() {
 	// Middleware
 	requestLogger := env.NewLogger("request")
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogMethod:  true,
 		LogStatus:  true,
 		LogURI:     true,
 		LogLatency: true,
@@ -62,7 +63,7 @@ func main() {
 				requestLogger.Error("%v", v.Error)
 			}
 
-			requestLogger.Info("%d %s %s", v.Status, v.URI, v.Latency)
+			requestLogger.Info("%s %d %s %s", v.Method, v.Status, v.URI, v.Latency)
 
 			return nil
 		},

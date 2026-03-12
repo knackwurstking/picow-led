@@ -32,7 +32,7 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 
 func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	renderDialog := func(c echo.Context, open bool, formData dialogs.AddDeviceFormData, errs ...error) error {
-		c.Set("HX-Trigger", "reload-devices")
+		c.Response().Header().Set("HX-Trigger", "reload-devices")
 
 		t := dialogs.AddDevice(dialogs.AddDeviceProps{
 			AddDeviceFormData: formData,
@@ -95,7 +95,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 	}
 
 	renderDialog := func(c echo.Context, open bool, formData dialogs.EditDeviceFormData, errs ...error) error {
-		c.Set("HX-Trigger", "reload-devices")
+		c.Response().Header().Set("HX-Trigger", "reload-devices")
 
 		t := dialogs.EditDevice(dialogs.EditDeviceProps{
 			EditDeviceFormData: formData,
@@ -119,7 +119,18 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 				errs = append(errs, fmt.Errorf("invalid device ID: %v", err))
 			}
 
-			return renderDialog(c, true, dialogs.EditDeviceFormData{ID: id}, errs...)
+			// Get device from database
+			device, err := r.Device.Get(id)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("failed to retrieve device: %v", err))
+			}
+
+			formData := dialogs.EditDeviceFormData{
+				ID:   id,
+				Name: device.Name,
+				Addr: device.Addr,
+			}
+			return renderDialog(c, true, formData, errs...)
 		}
 
 	case http.MethodPost:

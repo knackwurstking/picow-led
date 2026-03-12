@@ -58,7 +58,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 		}
 
 		if prop.OOB {
-			prop.Attributes["hx-oob-swap"] = "true"
+			prop.Attributes["hx-swap-oob"] = "true"
 		}
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -108,7 +108,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Neues Gerät hinzufügen")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Gerät Bearbeiten")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -141,7 +141,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(urlb.EditDeviceDialog(prop.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/dialogs/edit-device.templ`, Line: 54, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/dialogs/edit-device.templ`, Line: 55, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -198,7 +198,8 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 						return nil
 					})
 					templ_7745c5c3_Err = button.Button(button.Props{
-						Type: button.TypeButton,
+						Variant: button.VariantDestructive,
+						Type:    button.TypeButton,
 						Attributes: templ.Attributes{
 							"hx-delete": urlb.EditDeviceDialog(prop.ID),
 							"title":     "Gerät löschen",
@@ -254,6 +255,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = dialog.Dialog(dialog.Props{
+			ID:               "edit-device-dialog",
 			DisableClickAway: true,
 			DisableESC:       true,
 			Open:             prop.Open,

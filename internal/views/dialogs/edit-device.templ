@@ -31,10 +31,11 @@ templ EditDevice(props ...EditDeviceProps) {
 		}
 
 		if prop.OOB {
-			prop.Attributes["hx-oob-swap"] = "true"
+			prop.Attributes["hx-swap-oob"] = "true"
 		}
 	}}
 	@dialog.Dialog(dialog.Props{
+		ID:               "edit-device-dialog",
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,
@@ -43,7 +44,7 @@ templ EditDevice(props ...EditDeviceProps) {
 		@dialog.Content() {
 			@dialog.Header() {
 				@dialog.Title() {
-					Neues Gerät hinzufügen
+					Gerät Bearbeiten
 				}
 			}
 			if len(prop.Errors) > 0 {
@@ -67,7 +68,8 @@ templ EditDevice(props ...EditDeviceProps) {
 				})
 				@dialog.Footer() {
 					@button.Button(button.Props{
-						Type: button.TypeButton,
+						Variant: button.VariantDestructive,
+						Type:    button.TypeButton,
 						Attributes: templ.Attributes{
 							"hx-delete": urlb.EditDeviceDialog(prop.ID),
 							"title":     "Gerät löschen",
