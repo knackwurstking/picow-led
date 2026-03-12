@@ -62,7 +62,7 @@ templ AddDevice(props ...AddDeviceProps) {
 				hx-trigger="submit"
 				enctype="multipart/form-data"
 			>
-				@formName()
+				@formName(prop.AddDeviceFormData.Name)
 				@dialog.Footer() {
 					@button.Button(button.Props{
 						Type: button.TypeSubmit,
@@ -75,7 +75,7 @@ templ AddDevice(props ...AddDeviceProps) {
 	}
 }
 
-templ formName() {
+templ formName(v string) {
 	{{ id := "name" }}
 	@form.Item() {
 		@form.Label(form.LabelProps{
@@ -88,6 +88,7 @@ templ formName() {
 			Name:     id,
 			Type:     input.TypeText,
 			Required: true,
+			Value:    v,
 		})
 	}
 }

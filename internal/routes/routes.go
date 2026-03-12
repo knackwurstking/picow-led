@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/knackwurstking/picow-led/internal/assets"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/handlers"
@@ -30,6 +32,7 @@ func Register(e *echo.Echo, r *services.Registry) {
 	{
 		// Register HTMX endpoints here
 		group.GET("/devices", handlers.HTMXDevices(r))
-		group.GET("/dialogs/add-device", handlers.HTMXAddDeviceDialog(r))
+		group.GET("/dialogs/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
+		group.POST("/dialogs/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
 	}
 }
