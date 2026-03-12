@@ -3,13 +3,11 @@ package dialogs
 import (
 	"github.com/knackwurstking/picow-led/internal/components/button"
 	"github.com/knackwurstking/picow-led/internal/components/dialog"
-	"github.com/knackwurstking/picow-led/internal/components/form"
-	"github.com/knackwurstking/picow-led/internal/components/input"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 )
 
 type AddDeviceFormData struct {
-	Name string
+	Name, Addr string
 }
 
 type AddDeviceProps struct {
@@ -62,7 +60,16 @@ templ AddDevice(props ...AddDeviceProps) {
 				hx-trigger="submit"
 				enctype="multipart/form-data"
 			>
-				@formName(prop.AddDeviceFormData.Name)
+				@formText(formProps{
+					ID:       "name",
+					Required: true,
+					Value:    prop.Name,
+				})
+				@formText(formProps{
+					ID:       "addr",
+					Required: true,
+					Value:    prop.Addr,
+				})
 				@dialog.Footer() {
 					@button.Button(button.Props{
 						Type: button.TypeSubmit,
@@ -72,23 +79,5 @@ templ AddDevice(props ...AddDeviceProps) {
 				}
 			</form>
 		}
-	}
-}
-
-templ formName(v string) {
-	{{ id := "name" }}
-	@form.Item() {
-		@form.Label(form.LabelProps{
-			For: id,
-		}) {
-			Name
-		}
-		@input.Input(input.Props{
-			ID:       id,
-			Name:     id,
-			Type:     input.TypeText,
-			Required: true,
-			Value:    v,
-		})
 	}
 }

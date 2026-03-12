@@ -41,10 +41,17 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 		}
 	case http.MethodPost:
 		return func(c echo.Context) error {
-			// TODO: Parse form data and close the dialog, or render with errors..
 			var errs []error
+
+			// Parse
 			name := strings.TrimSpace(c.FormValue("name"))
-			// ...
+			addr := strings.TrimSpace(c.FormValue("addr"))
+
+			// TODO: Vaidate
+			// For the "addr" field, we should check if the device exists and is reachable.
+
+			// TODO: Update database
+
 			return renderDialog(false, dialogs.AddDeviceFormData{}, errs...)
 		}
 	}

@@ -1,0 +1,29 @@
+package dialogs
+
+import (
+	"github.com/knackwurstking/picow-led/internal/components/form"
+	"github.com/knackwurstking/picow-led/internal/components/input"
+)
+
+type formProps struct {
+	ID       string
+	Required bool
+	Value    string
+}
+
+templ formText(props formProps) {
+	@form.Item() {
+		@form.Label(form.LabelProps{
+			For: props.ID,
+		}) {
+			Name
+		}
+		@input.Input(input.Props{
+			ID:       props.ID,
+			Name:     props.ID,
+			Type:     input.TypeText,
+			Required: props.Required,
+			Value:    props.Value,
+		})
+	}
+}
