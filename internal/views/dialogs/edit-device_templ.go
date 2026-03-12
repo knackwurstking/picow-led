@@ -201,8 +201,9 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 						Variant: button.VariantDestructive,
 						Type:    button.TypeButton,
 						Attributes: templ.Attributes{
-							"hx-delete": urlb.EditDeviceDialog(prop.ID),
-							"title":     "Gerät löschen",
+							"hx-delete":  urlb.EditDeviceDialog(prop.ID),
+							"hx-confirm": "Möchten Sie dieses Gerät wirklich löschen?",
+							"title":      "Gerät löschen",
 						},
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {

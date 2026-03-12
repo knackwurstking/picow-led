@@ -71,8 +71,9 @@ templ EditDevice(props ...EditDeviceProps) {
 						Variant: button.VariantDestructive,
 						Type:    button.TypeButton,
 						Attributes: templ.Attributes{
-							"hx-delete": urlb.EditDeviceDialog(prop.ID),
-							"title":     "Gerät löschen",
+							"hx-delete":  urlb.EditDeviceDialog(prop.ID),
+							"hx-confirm": "Möchten Sie dieses Gerät wirklich löschen?",
+							"title":      "Gerät löschen",
 						},
 					}) {
 						Löschen
