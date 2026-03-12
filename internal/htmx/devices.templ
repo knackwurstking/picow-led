@@ -1,6 +1,13 @@
 package htmx
 
-import "github.com/knackwurstking/picow-led/pkg/models"
+import (
+	"fmt"
+	"github.com/knackwurstking/picow-led/pkg/models"
+)
+
+const (
+	IDDeviceItem = "device-item-%d"
+)
 
 type DevicesProps struct {
 	Data []*models.Device
@@ -19,5 +26,8 @@ templ Devices(props ...DevicesProps) {
 }
 
 templ DeviceItem(d *models.Device) {
-	// TODO: ...
+	<div id={ fmt.Sprintf(IDDeviceItem, d.ID) } class="device-item bg-gray-100 p-4 rounded">
+		// TODO: Device name and address
+		// TODO: Device actions: Edit, Power Toggle
+	</div>
 }
