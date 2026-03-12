@@ -24,7 +24,7 @@ func (d *DeviceService) CreateTable() error {
 		id INTEGER NOT NULL,
 		addr TEXT UNIQUE NOT NULL,
 		name TEXT NOT NULL,
-		color TEXT NOT NULL,
+		color TEXT,
 
 		PRIMARY KEY ("id" AUTOINCREMENT)
 	);`
