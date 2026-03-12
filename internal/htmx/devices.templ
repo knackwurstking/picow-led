@@ -2,6 +2,9 @@ package htmx
 
 import (
 	"fmt"
+	"github.com/knackwurstking/picow-led/internal/components/button"
+	"github.com/knackwurstking/picow-led/internal/components/icon"
+	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
@@ -27,7 +30,21 @@ templ Devices(props ...DevicesProps) {
 
 templ DeviceItem(d *models.Device) {
 	<div id={ fmt.Sprintf(IDDeviceItem, d.ID) } class="device-item bg-gray-100 p-4 rounded">
-		// TODO: Device name and address
-		// TODO: Device actions: Edit, Power Toggle
+		<div class="flex items-center gap-4 mb-2">
+			<span class="w-full">
+				<div class="font-bold">{ d.Name }</div>
+				<div class="text-sm text-gray-600">{ d.Addr }</div>
+			</span>
+			<span class="w-fit">
+				@button.Button(button.Props{
+					Variant: button.VariantOutline,
+					Size:    button.SizeIcon,
+					Href:    urlb.EditDeviceDialog(d.ID),
+				}) {
+					@icon.Pen()
+				}
+				// TODO: Switch component for toggling device ON or OFF
+			</span>
+		</div>
 	</div>
 }
