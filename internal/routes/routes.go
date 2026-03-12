@@ -32,7 +32,13 @@ func Register(e *echo.Echo, r *services.Registry) {
 	{
 		// Register HTMX endpoints here
 		group.GET("/devices", handlers.HTMXDevices(r))
-		group.GET("/dialogs/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
-		group.POST("/dialogs/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
+		subGroup := group.Group("/dialogs")
+		{
+			subGroup.GET("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
+			subGroup.POST("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
+			subGroup.GET("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
+			subGroup.POST("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
+		}
+
 	}
 }
