@@ -1,3 +1,87 @@
 package dialogs
 
-// TODO: ...
+import (
+	"github.com/knackwurstking/picow-led/internal/components/button"
+	"github.com/knackwurstking/picow-led/internal/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/urlb"
+	"github.com/knackwurstking/picow-led/pkg/models"
+)
+
+type EditDeviceFormData struct {
+	ID         models.ID
+	Name, Addr string
+}
+
+type EditDeviceProps struct {
+	EditDeviceFormData
+	Open, OOB  bool
+	Attributes templ.Attributes
+	Errors     []error
+}
+
+templ EditDevice(props ...EditDeviceProps) {
+	{{
+		prop := EditDeviceProps{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+
+		if prop.Attributes == nil {
+			prop.Attributes = templ.Attributes{}
+		}
+
+		if prop.OOB {
+			prop.Attributes["hx-oob-swap"] = "true"
+		}
+	}}
+	@dialog.Dialog(dialog.Props{
+		DisableClickAway: true,
+		DisableESC:       true,
+		Open:             prop.Open,
+		Attributes:       prop.Attributes,
+	}) {
+		@dialog.Content() {
+			@dialog.Header() {
+				@dialog.Title() {
+					Neues Gerät hinzufügen
+				}
+			}
+			if len(prop.Errors) > 0 {
+				@renderErrors(prop.Errors...)
+			}
+			<form
+				class="space-y-4"
+				hx-post={ urlb.EditDeviceDialog(prop.ID) }
+				hx-trigger="submit"
+				enctype="multipart/form-data"
+			>
+				@formText(formProps{
+					ID:       "name",
+					Required: true,
+					Value:    prop.Name,
+				})
+				@formText(formProps{
+					ID:       "addr",
+					Required: true,
+					Value:    prop.Addr,
+				})
+				@dialog.Footer() {
+					@button.Button(button.Props{
+						Type: button.TypeButton,
+						Attributes: templ.Attributes{
+							"hx-delete": urlb.EditDeviceDialog(prop.ID),
+							"title":     "Gerät löschen",
+						},
+					}) {
+						Löschen
+					}
+					@button.Button(button.Props{
+						Type: button.TypeSubmit,
+					}) {
+						Hinzufügen
+					}
+				}
+			</form>
+		}
+	}
+}

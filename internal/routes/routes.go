@@ -16,28 +16,31 @@ func Register(e *echo.Echo, r *services.Registry) {
 
 	// API Endpoints
 	group := e.Group(env.Route("/api"))
-	{
-		// Register API endpoints here
+	{ // Register API endpoints here
 	}
 
 	// UI Endpoints
 	group = e.Group(env.Route(""))
-	{
-		// Register UI endpoints here
+	{ // Register UI endpoints here
 		group.GET("/", handlers.Home)
 	}
 
 	// HTMX Endpoints
 	group = e.Group(env.Route("/htmx"))
-	{
-		// Register HTMX endpoints here
-		group.GET("/devices", handlers.HTMXDevices(r))
-		subGroup := group.Group("/dialogs")
+	{ // Register HTMX endpoints here
+		subGroup := group.Group("/devices")
+		{
+			group.GET("/", handlers.HTMXDevices(r))
+		}
+
+		subGroup = group.Group("/dialogs")
 		{
 			subGroup.GET("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
 			subGroup.POST("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
+
 			subGroup.GET("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
 			subGroup.POST("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
+			subGroup.DELETE("/edit-device", handlers.HTMXAddDeviceDialog(r, http.MethodDelete))
 		}
 
 	}

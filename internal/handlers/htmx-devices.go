@@ -78,9 +78,80 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 }
 
 func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		// TODO: ...
+	parseForm := func(c echo.Context) (dialogs.EditDeviceFormData, []error) {
+		var errs []error
+		var formData dialogs.EditDeviceFormData
 
+		id, err := parseQueryID(c)
+		if err != nil {
+			errs = append(errs, err)
+		}
+
+		formData.Addr = strings.TrimSpace(c.FormValue("addr"))
+		formData.Name = strings.TrimSpace(c.FormValue("name"))
+		formData.ID = id
+
+		return formData, errs
+	}
+
+	renderDialog := func(c echo.Context, open bool, formData dialogs.EditDeviceFormData, errs ...error) error {
+		c.Set("HX-Trigger", "reload-devices")
+
+		t := dialogs.EditDevice(dialogs.EditDeviceProps{
+			EditDeviceFormData: formData,
+			Open:               open,
+			OOB:                true,
+			Errors:             errs,
+		})
+		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render template: %v", err))
+		}
 		return nil
 	}
+
+	switch method {
+	case http.MethodGet:
+		return func(c echo.Context) error {
+			var errs []error
+
+			id, err := parseQueryID(c)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("invalid device ID: %v", err))
+			}
+
+			return renderDialog(c, true, dialogs.EditDeviceFormData{ID: id}, errs...)
+		}
+
+	case http.MethodPost:
+		return func(c echo.Context) error {
+			formData, errs := parseForm(c)
+
+			if len(errs) == 0 {
+				device := models.NewDevice(formData.Addr, formData.Name)
+				device.ID = formData.ID
+				if err := r.Device.Update(device); err != nil {
+					errs = append(errs, fmt.Errorf("failed to update device: %v", err))
+				}
+			}
+
+			open := len(errs) > 0
+			return renderDialog(c, open, formData, errs...)
+		}
+
+	case http.MethodDelete:
+		return func(c echo.Context) error {
+			formData, errs := parseForm(c)
+
+			if len(errs) == 0 {
+				if err := r.Device.Delete(formData.ID); err != nil {
+					errs = append(errs, fmt.Errorf("failed to delete device: %v", err))
+				}
+			}
+
+			open := len(errs) > 0
+			return renderDialog(c, open, formData, errs...)
+		}
+	}
+
+	return nil
 }

@@ -1,0 +1,11 @@
+package dialogs
+
+templ renderErrors(errs ...error) {
+	<div class="bg-red-100 text-red-800 p-2 rounded">
+		<ul class="list-disc list-inside">
+			for _, err := range errs {
+				<li>{ err.Error() }</li>
+			}
+		</ul>
+	</div>
+}
