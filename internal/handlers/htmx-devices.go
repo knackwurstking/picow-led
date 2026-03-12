@@ -32,6 +32,8 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 
 func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	renderDialog := func(c echo.Context, open bool, formData dialogs.AddDeviceFormData, errs ...error) error {
+		c.Set("HX-Trigger", "reload-devices")
+
 		t := dialogs.AddDevice(dialogs.AddDeviceProps{
 			AddDeviceFormData: formData,
 			Open:              open,
@@ -47,8 +49,6 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	switch method {
 	case http.MethodGet:
 		return func(c echo.Context) error {
-			// TODO: Trigger devices htmx reload "reload-devices"
-
 			return renderDialog(c, true, dialogs.AddDeviceFormData{})
 		}
 	case http.MethodPost:
