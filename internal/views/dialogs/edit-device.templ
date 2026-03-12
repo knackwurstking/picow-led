@@ -60,11 +60,13 @@ templ EditDevice(props ...EditDeviceProps) {
 					ID:       "name",
 					Required: true,
 					Value:    prop.Name,
+					Title:    "Name",
 				})
 				@formText(formProps{
 					ID:       "addr",
 					Required: true,
 					Value:    prop.Addr,
+					Title:    "Server Adresse",
 				})
 				@dialog.Footer() {
 					@button.Button(button.Props{

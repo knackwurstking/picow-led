@@ -155,6 +155,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 					ID:       "name",
 					Required: true,
 					Value:    prop.Name,
+					Title:    "Name",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -163,6 +164,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 					ID:       "addr",
 					Required: true,
 					Value:    prop.Addr,
+					Title:    "Server Adresse",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
