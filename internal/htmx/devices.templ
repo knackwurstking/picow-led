@@ -29,17 +29,21 @@ templ Devices(props ...DevicesProps) {
 }
 
 templ DeviceItem(d *models.Device) {
-	<div id={ fmt.Sprintf(IDDeviceItem, d.ID) } class="device-item bg-gray-100 p-4 rounded">
-		<div class="flex items-center gap-4 mb-2">
+	<div id={ fmt.Sprintf(IDDeviceItem, d.ID) } class="device-item bg-secondary text-secondary-foreground rounded p-4">
+		<div class="flex items-center gap-4">
 			<span class="w-full">
 				<div class="font-bold">{ d.Name }</div>
-				<div class="text-sm text-gray-600">{ d.Addr }</div>
+				<div class="text-sm">{ d.Addr }</div>
 			</span>
 			<span class="w-fit">
 				@button.Button(button.Props{
 					Variant: button.VariantOutline,
 					Size:    button.SizeIcon,
-					Href:    urlb.EditDeviceDialog(d.ID),
+					Attributes: templ.Attributes{
+						"hx-get":    urlb.EditDeviceDialog(d.ID),
+						"hx-target": "body",
+						"hx-swap":   "beforeend",
+					},
 				}) {
 					@icon.Pen()
 				}
