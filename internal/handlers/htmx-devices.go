@@ -10,6 +10,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/htmx"
 	"github.com/knackwurstking/picow-led/internal/services"
 	"github.com/knackwurstking/picow-led/internal/views/dialogs"
+	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
 func HTMXDevices(r *services.Registry) echo.HandlerFunc {
@@ -43,16 +44,18 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			var errs []error
 
-			// Parse
+			// Parse form values
 			name := strings.TrimSpace(c.FormValue("name"))
 			addr := strings.TrimSpace(c.FormValue("addr"))
 
-			// TODO: Vaidate
-			// For the "addr" field, we should check if the device exists and is reachable.
+			// Add to database
+			device := models.NewDevice(addr, name)
+			if _, err := r.Device.Add(device); err != nil {
+				errs = append(errs, fmt.Errorf("failed to add device: %v", err))
+			}
 
-			// TODO: Update database
-
-			return renderDialog(false, dialogs.AddDeviceFormData{}, errs...)
+			open := len(errs) > 0
+			return renderDialog(open, dialogs.AddDeviceFormData{}, errs...)
 		}
 	}
 

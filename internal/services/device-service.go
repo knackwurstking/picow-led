@@ -81,8 +81,8 @@ func (d *DeviceService) List() ([]*models.Device, error) {
 }
 
 func (d *DeviceService) Add(device *models.Device) (models.ID, error) {
-	if device.Validate() != nil {
-		return 0, fmt.Errorf("%w: %v", ErrInvalidDevice, "device validation failed")
+	if err := device.Validate(); err != nil {
+		return 0, fmt.Errorf("%w: %v", ErrInvalidDevice, err)
 	}
 
 	query := `INSERT INTO devices (addr, name) VALUES (?, ?)`
@@ -100,8 +100,8 @@ func (d *DeviceService) Add(device *models.Device) (models.ID, error) {
 }
 
 func (d *DeviceService) Update(device *models.Device) error {
-	if device.Validate() != nil {
-		return fmt.Errorf("%w: %v", ErrInvalidDevice, "device validation failed")
+	if err := device.Validate(); err != nil {
+		return fmt.Errorf("%w: %v", ErrInvalidDevice, err)
 	}
 
 	query := `UPDATE devices SET addr = ?, name = ? WHERE id = ?`

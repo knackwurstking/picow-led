@@ -69,8 +69,8 @@ func (g *GroupService) List() ([]*models.Group, error) {
 }
 
 func (g *GroupService) Add(group *models.Group) (models.ID, error) {
-	if group.Validate() != nil {
-		return 0, fmt.Errorf("%w: %v", ErrInvalidGroup, "group validation failed")
+	if err := group.Validate(); err != nil {
+		return 0, fmt.Errorf("%w: %v", ErrInvalidGroup, err)
 	}
 
 	if err := g.validateDevices(group.Devices); err != nil {
@@ -97,8 +97,8 @@ func (g *GroupService) Add(group *models.Group) (models.ID, error) {
 }
 
 func (g *GroupService) Update(group *models.Group) error {
-	if group.Validate() != nil {
-		return fmt.Errorf("%w: %v", ErrInvalidGroup, "group validation failed")
+	if err := group.Validate(); err != nil {
+		return fmt.Errorf("%w: %v", ErrInvalidGroup, err)
 	}
 
 	if err := g.validateDevices(group.Devices); err != nil {

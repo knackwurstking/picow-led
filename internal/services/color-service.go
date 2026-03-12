@@ -68,8 +68,8 @@ func (c *ColorService) List() ([]*models.Color, error) {
 }
 
 func (c *ColorService) Add(color *models.Color) (models.ID, error) {
-	if color.Validate() != nil {
-		return 0, fmt.Errorf("%w: %v", ErrInvalidColor, "color validation failed")
+	if err := color.Validate(); err != nil {
+		return 0, fmt.Errorf("%w: %v", ErrInvalidColor, err)
 	}
 
 	query := `INSERT INTO colors (name, duty) VALUES (?, ?)`
@@ -87,8 +87,8 @@ func (c *ColorService) Add(color *models.Color) (models.ID, error) {
 }
 
 func (c *ColorService) Update(color *models.Color) error {
-	if color.Validate() != nil {
-		return fmt.Errorf("%w: %v", ErrInvalidColor, "color validation failed")
+	if err := color.Validate(); err != nil {
+		return fmt.Errorf("%w: %v", ErrInvalidColor, err)
 	}
 
 	query := `UPDATE colors SET name = ?, duty = ? WHERE id = ?`
