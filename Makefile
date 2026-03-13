@@ -14,3 +14,6 @@ generate: install-tailwind
 
 run: generate
 	@gow -e=go,js,css -r run .
+
+build: generate
+	@go build -v -o bin/picow-led .
