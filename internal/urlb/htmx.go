@@ -11,6 +11,10 @@ func Devices() string {
 	return env.Route("/htmx/devices")
 }
 
+func ToggleDevicePower(id models.ID) string {
+	return env.Route(fmt.Sprintf("/htmx/devices/toggle-power?id=%d", id))
+}
+
 func AddDeviceDialog() string {
 	return env.Route("/htmx/dialogs/add-device")
 }

@@ -12,12 +12,14 @@ import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/internal/components/button"
 	"github.com/knackwurstking/picow-led/internal/components/icon"
+	switchcomp "github.com/knackwurstking/picow-led/internal/components/switch"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
 const (
-	IDDeviceItem = "device-item-%d"
+	IDDeviceItem        = "device-item-%d"
+	IDPowerToggleSwitch = "power-toggle-switch"
 )
 
 type DevicesProps struct {
@@ -87,7 +89,7 @@ func DeviceItem(d *models.Device) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(IDDeviceItem, d.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/htmx/devices.templ`, Line: 32, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/htmx/devices.templ`, Line: 34, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -100,7 +102,7 @@ func DeviceItem(d *models.Device) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(d.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/htmx/devices.templ`, Line: 35, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/htmx/devices.templ`, Line: 37, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -113,13 +115,13 @@ func DeviceItem(d *models.Device) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(d.Addr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/htmx/devices.templ`, Line: 36, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/htmx/devices.templ`, Line: 38, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></span> <span class=\"w-fit\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></span> <span class=\"w-fit flex flex-row items-center justify-end gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -142,7 +144,7 @@ func DeviceItem(d *models.Device) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = button.Button(button.Props{
-			Variant: button.VariantOutline,
+			Variant: button.VariantGhost,
 			Size:    button.SizeIcon,
 			Attributes: templ.Attributes{
 				"hx-get":    urlb.EditDeviceDialog(d.ID),
@@ -150,6 +152,18 @@ func DeviceItem(d *models.Device) templ.Component {
 				"hx-swap":   "beforeend",
 			},
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = switchcomp.Switch(switchcomp.Props{
+			ID:   IDPowerToggleSwitch,
+			Name: IDPowerToggleSwitch,
+			Attributes: templ.Attributes{
+				"hx-post":    urlb.ToggleDevicePower(d.ID),
+				"hx-trigger": "change",
+				"hx-vals":    "js:{power_state: event.target.value}",
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

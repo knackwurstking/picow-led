@@ -29,6 +29,7 @@ func Register(e *echo.Echo, r *services.Registry) {
 	group = e.Group(env.Route("/htmx"))
 	{ // Register HTMX endpoints here
 		group.GET("/devices", handlers.HTMXDevices(r))
+		group.GET("/devices/toggle-power", handlers.HTMXToggleDevicePower(r))
 
 		dialogsGroup := group.Group("/dialogs")
 		{

@@ -30,6 +30,15 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 	}
 }
 
+func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// TODO: Form Value: "power_state"
+		// TODO: Query Param: "id"
+
+		return nil
+	}
+}
+
 func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	renderDialog := func(c echo.Context, open bool, formData dialogs.AddDeviceFormData, errs ...error) error {
 		c.Response().Header().Set("HX-Trigger", "reload-devices")

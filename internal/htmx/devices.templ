@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/internal/components/button"
 	"github.com/knackwurstking/picow-led/internal/components/icon"
+	switchcomp "github.com/knackwurstking/picow-led/internal/components/switch"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
 const (
-	IDDeviceItem = "device-item-%d"
+	IDDeviceItem        = "device-item-%d"
+	IDPowerToggleSwitch = "power-toggle-switch"
 )
 
 type DevicesProps struct {
@@ -35,9 +37,9 @@ templ DeviceItem(d *models.Device) {
 				<div class="font-bold">{ d.Name }</div>
 				<div class="text-sm">{ d.Addr }</div>
 			</span>
-			<span class="w-fit">
+			<span class="w-fit flex flex-row items-center justify-end gap-4">
 				@button.Button(button.Props{
-					Variant: button.VariantOutline,
+					Variant: button.VariantGhost,
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
 						"hx-get":    urlb.EditDeviceDialog(d.ID),
@@ -47,7 +49,15 @@ templ DeviceItem(d *models.Device) {
 				}) {
 					@icon.Pen()
 				}
-				// TODO: Switch component for toggling device ON or OFF
+				@switchcomp.Switch(switchcomp.Props{
+					ID:   IDPowerToggleSwitch,
+					Name: IDPowerToggleSwitch,
+					Attributes: templ.Attributes{
+						"hx-post":    urlb.ToggleDevicePower(d.ID),
+						"hx-trigger": "change",
+						"hx-vals":    "js:{power_state: event.target.value}",
+					},
+				})
 			</span>
 		</div>
 	</div>
