@@ -63,13 +63,17 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to retrieve device: %v", err))
 		}
+
 		var color []uint8
-		if powerState {
-			color = device.Color
+		if c, err := r.Device.GetColor(device.ID); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to get current color: %v", err))
 		} else {
-			pins, _ := r.Device.GetPins(device.ID)
-			for range pins {
-				color = append(color, 0)
+			if !powerState {
+				for range c {
+					color = append(color, 0)
+				}
+			} else {
+				color = c
 			}
 		}
 

@@ -2,11 +2,18 @@ package services
 
 import (
 	"slices"
-	"strings"
 
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/knackwurstking/picow-led/pkg/picow"
 )
+
+func (p *DeviceService) GetColor(deviceID models.ID) ([]uint8, error) {
+	query := `SELECT color FROM devices WHERE id = ?`
+	row := p.registry.db.QueryRow(query, deviceID)
+
+	var color []uint8
+	return color, row.Scan(&color)
+}
 
 func (p *DeviceService) AddColor(deviceID models.ID, color ...uint8) (models.ID, error) {
 	query := `INSERT INTO devices (color) VALUES (?) WHERE id = ?`
@@ -66,28 +73,10 @@ func (p *DeviceService) GetPins(deviceID models.ID) ([]uint8, error) {
 }
 
 func (p *DeviceService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
-	// Fetch device
-	device, err := p.registry.Device.Get(deviceID)
-	if err != nil {
-		return nil, NewServiceError("get device for current color", err)
-	}
-
 	// Get the device control record
-	deviceControl, err := p.Get(device.ID)
+	device, err := p.Get(deviceID)
 	if err != nil {
-		// TODO: Make sure this error handling is correct
-		if !strings.Contains(err.Error(), "no rows in result") {
-			return nil, NewServiceError("get device control for current color", err)
-		}
-
-		if err = p.initDeviceColor(device.ID); err != nil {
-			return nil, NewServiceError("set initial entry for current color", err)
-		}
-
-		deviceControl, err = p.Get(device.ID)
-		if err != nil {
-			return nil, NewServiceError("get device control after setting initial entry", err)
-		}
+		return nil, NewServiceError("get device control for current color", err)
 	}
 
 	// Get the current color from the picow device
@@ -99,8 +88,7 @@ func (p *DeviceService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
 	// Check if the color is different from the stored color and not 0
 	if slices.Max(color) > 0 {
 		// Update the device control object with the new color
-		deviceControl.Color = color
-		if err = p.Update(deviceControl); err != nil {
+		if err = p.UpdateColor(device.ID, color...); err != nil {
 			return nil, NewServiceError("update device control with new color", err)
 		}
 	}
@@ -283,8 +271,7 @@ func (p *DeviceService) initDeviceColor(deviceID models.ID) error {
 	}
 
 	device, err := p.Get(deviceID)
-	device.Color = color
-	if _, err := p.Add(device); err != nil {
+	if err := p.UpdateColor(device.ID, color...); err != nil {
 		return NewServiceError("add initial device control entry", err)
 	}
 
