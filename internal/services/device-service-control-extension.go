@@ -12,7 +12,21 @@ func (p *DeviceService) GetColor(deviceID models.ID) ([]uint8, error) {
 	row := p.registry.db.QueryRow(query, deviceID)
 
 	var color []uint8
-	return color, row.Scan(&color)
+	err := row.Scan(&color)
+	if err != nil {
+		return nil, NewServiceError("get device control color", HandleSqlError(err))
+	}
+
+	if len(color) == 0 {
+		err = p.initDeviceColor(deviceID)
+		if err != nil {
+			return nil, NewServiceError("initialize device control color", err)
+		}
+
+		return p.GetColor(deviceID) // Try again after initialization
+	}
+
+	return color, err
 }
 
 func (p *DeviceService) AddColor(deviceID models.ID, color ...uint8) (models.ID, error) {
