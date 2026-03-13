@@ -58,7 +58,7 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid device ID: %v", err))
 		}
 
-		log.Info("Toggling power state for device with ID %d to %#v", deviceID, powerState)
+		log.Debug("Toggling power state for device with ID %d to %#v", deviceID, powerState)
 
 		if _, err = r.Device.TogglePower(deviceID); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to toggle power state: %v", err))
