@@ -75,6 +75,7 @@ func (p *DeviceService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
 	// Get the device control record
 	deviceControl, err := p.Get(device.ID)
 	if err != nil {
+		// TODO: Make sure this error handling is correct
 		if !strings.Contains(err.Error(), "no rows in result") {
 			return nil, NewServiceError("get device control for current color", err)
 		}

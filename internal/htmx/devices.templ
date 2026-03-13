@@ -49,6 +49,15 @@ templ DeviceItem(d *models.Device) {
 				}) {
 					@icon.Pen()
 				}
+				{{
+					powered := false
+					for _, c := range d.Color {
+						if c > 0 {
+							powered = true
+							break
+						}
+					}
+				}}
 				@switchcomp.Switch(switchcomp.Props{
 					ID:   IDPowerToggleSwitch,
 					Name: IDPowerToggleSwitch,
@@ -57,6 +66,7 @@ templ DeviceItem(d *models.Device) {
 						"hx-trigger": "change",
 						"hx-vals":    "js:{power_state: event.target.value}",
 					},
+					Checked: powered,
 				})
 			</span>
 		</div>

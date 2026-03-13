@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/htmx"
 	"github.com/knackwurstking/picow-led/internal/services"
 	"github.com/knackwurstking/picow-led/internal/views/dialogs"
@@ -14,11 +16,26 @@ import (
 )
 
 func HTMXDevices(r *services.Registry) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXDevices")
+
 	return func(c echo.Context) error {
 		devices, err := r.Device.List()
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to retrieve devices: %v", err))
 		}
+
+		wg := sync.WaitGroup{}
+		for _, d := range devices {
+			wg.Go(func() {
+				if color, err := r.Device.GetCurrentColor(d.ID); err != nil {
+					// TODO: Pass errors to the frontend
+					log.Warn("failed to get current color for device %d: %v", d.ID, err)
+				} else {
+					d.Color = color
+				}
+			})
+		}
+		wg.Wait()
 
 		t := htmx.Devices(htmx.DevicesProps{
 			Data: devices,

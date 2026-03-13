@@ -155,6 +155,13 @@ func DeviceItem(d *models.Device) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		powered := false
+		for _, c := range d.Color {
+			if c > 0 {
+				powered = true
+				break
+			}
+		}
 		templ_7745c5c3_Err = switchcomp.Switch(switchcomp.Props{
 			ID:   IDPowerToggleSwitch,
 			Name: IDPowerToggleSwitch,
@@ -163,6 +170,7 @@ func DeviceItem(d *models.Device) templ.Component {
 				"hx-trigger": "change",
 				"hx-vals":    "js:{power_state: event.target.value}",
 			},
+			Checked: powered,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
