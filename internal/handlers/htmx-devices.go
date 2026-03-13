@@ -48,9 +48,18 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 }
 
 func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXToggleDevicePower")
+
 	return func(c echo.Context) error {
-		// TODO: Form Value: "power_state"
-		// TODO: Query Param: "id"
+		powerState := strings.TrimSpace(c.FormValue("power_state"))
+
+		deviceID, err := parseQueryID(c)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid device ID: %v", err))
+		}
+
+		// TODO: Toggle power state
+		log.Debug("Toggling power state for device with ID %d to %#v", deviceID, powerState)
 
 		return nil
 	}

@@ -19,7 +19,7 @@ import (
 
 const (
 	IDDeviceItem        = "device-item-%d"
-	IDPowerToggleSwitch = "power-toggle-switch"
+	IDPowerToggleSwitch = "power-toggle-switch-%d"
 )
 
 type DevicesProps struct {
@@ -162,13 +162,17 @@ func DeviceItem(d *models.Device) templ.Component {
 				break
 			}
 		}
+
+		id := fmt.Sprintf(IDPowerToggleSwitch, d.ID)
 		templ_7745c5c3_Err = switchcomp.Switch(switchcomp.Props{
-			ID:   IDPowerToggleSwitch,
-			Name: IDPowerToggleSwitch,
+			ID:   id,
+			Name: id,
 			Attributes: templ.Attributes{
 				"hx-post":    urlb.ToggleDevicePower(d.ID),
 				"hx-trigger": "change",
 				"hx-vals":    "js:{power_state: event.target.value}",
+				//"hx-on::response-error": fmt.Sprintf(`document.querySelector("#"+%d).checked = false`, d.ID),
+				"hx-on::response-error": `event.target.checked = false`,
 			},
 			Checked: powered,
 		}).Render(ctx, templ_7745c5c3_Buffer)
