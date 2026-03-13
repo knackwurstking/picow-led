@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -51,17 +52,31 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 	log := env.NewLogger("handlers.HTMXToggleDevicePower")
 
 	return func(c echo.Context) error {
-		powerState := strings.TrimSpace(c.FormValue("power_state"))
+		powerState, _ := strconv.ParseBool(strings.TrimSpace(c.FormValue("power_state")))
 
 		deviceID, err := parseQueryID(c)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid device ID: %v", err))
 		}
 
-		log.Debug("Toggling power state for device with ID %d to %#v", deviceID, powerState)
+		device, err := r.Device.Get(deviceID)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to retrieve device: %v", err))
+		}
+		var color []uint8
+		if powerState {
+			color = device.Color
+		} else {
+			pins, _ := r.Device.GetPins(device.ID)
+			for range pins {
+				color = append(color, 0)
+			}
+		}
 
-		if _, err = r.Device.TogglePower(deviceID); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to toggle power state: %v", err))
+		log.Debug("Toggling power state for device with %s to %s", device.Name, color)
+
+		if err = r.Device.SetCurrentColor(device.ID, color); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to set current color: %v", err))
 		}
 
 		return nil

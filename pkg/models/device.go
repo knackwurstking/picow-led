@@ -7,6 +7,7 @@ type Device struct {
 	Addr  string  `json:"addr"`
 	Name  string  `json:"name"`
 	Color []uint8 `json:"color"`
+	Pins  []uint8 `json:"pins,omitempty"`
 }
 
 func NewDevice(addr, name string, color ...uint8) *Device {

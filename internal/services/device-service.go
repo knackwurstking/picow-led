@@ -39,20 +39,22 @@ func (d *DeviceService) CreateTable() error {
 
 func (d *DeviceService) Get(deviceID models.ID) (*models.Device, error) {
 	query := `SELECT * FROM devices WHERE id = ?`
-	device, err := ScanDevice(d.registry.db.QueryRow(query, deviceID))
+	device, err := d.scanDevice(d.registry.db.QueryRow(query, deviceID))
 	if err != nil {
 		return nil, NewServiceError("get device by ID", HandleSqlError(err))
 	}
+	device.Pins, _ = d.GetPins(device.ID)
 
 	return device, nil
 }
 
 func (d *DeviceService) GetByAddr(addr string) (*models.Device, error) {
 	query := `SELECT * FROM devices WHERE addr = ?`
-	device, err := ScanDevice(d.registry.db.QueryRow(query, addr))
+	device, err := d.scanDevice(d.registry.db.QueryRow(query, addr))
 	if err != nil {
 		return nil, NewServiceError("get device by address", HandleSqlError(err))
 	}
+	device.Pins, _ = d.GetPins(device.ID)
 
 	return device, nil
 }
@@ -66,10 +68,11 @@ func (d *DeviceService) List() ([]*models.Device, error) {
 
 	var devices []*models.Device
 	for rows.Next() {
-		device, err := ScanDevice(rows)
+		device, err := d.scanDevice(rows)
 		if err != nil {
 			return nil, NewServiceError("scan device from rows", HandleSqlError(err))
 		}
+		device.Pins, _ = d.GetPins(device.ID)
 		devices = append(devices, device)
 	}
 
@@ -122,7 +125,7 @@ func (d *DeviceService) Delete(deviceID models.ID) error {
 	return nil
 }
 
-func ScanDevice(r Scannable) (*models.Device, error) {
+func (d *DeviceService) scanDevice(r Scannable) (*models.Device, error) {
 	device := &models.Device{}
 	err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.Color)
 	return device, err

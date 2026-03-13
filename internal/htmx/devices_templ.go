@@ -170,7 +170,7 @@ func DeviceItem(d *models.Device) templ.Component {
 			Attributes: templ.Attributes{
 				"hx-post":    urlb.ToggleDevicePower(d.ID),
 				"hx-trigger": "change",
-				"hx-vals":    "js:{power_state: event.target.value}",
+				"hx-vals":    "js:{power_state: event.target.checked}",
 				//"hx-on::response-error": fmt.Sprintf(`document.querySelector("#"+%d).checked = false`, d.ID),
 				"hx-on::response-error": `event.target.checked = false`,
 			},
