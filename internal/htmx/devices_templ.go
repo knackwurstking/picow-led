@@ -172,7 +172,7 @@ func DeviceItem(d *models.Device) templ.Component {
 				"hx-trigger": "change",
 				"hx-vals":    "js:{power_state: event.target.checked}",
 				//"hx-on::response-error": fmt.Sprintf(`document.querySelector("#"+%d).checked = false`, d.ID),
-				"hx-on::response-error": `event.target.checked = false`,
+				"hx-on::response-error": `event.target.checked = !event.target.checked`,
 			},
 			Checked: powered,
 		}).Render(ctx, templ_7745c5c3_Buffer)

@@ -68,7 +68,7 @@ templ DeviceItem(d *models.Device) {
 						"hx-trigger": "change",
 						"hx-vals":    "js:{power_state: event.target.checked}",
 						//"hx-on::response-error": fmt.Sprintf(`document.querySelector("#"+%d).checked = false`, d.ID),
-						"hx-on::response-error": `event.target.checked = false`,
+						"hx-on::response-error": `event.target.checked = !event.target.checked`,
 					},
 					Checked: powered,
 				})
