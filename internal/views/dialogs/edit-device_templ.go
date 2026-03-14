@@ -227,7 +227,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 							}()
 						}
 						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "Hinzufügen")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "Bearbeiten")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
