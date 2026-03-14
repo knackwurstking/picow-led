@@ -134,6 +134,7 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	return nil
 }
 
+// TODO: Add color to form data for get and post
 func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	parseForm := func(c echo.Context) (dialogs.EditDeviceFormData, []error) {
 		var errs []error

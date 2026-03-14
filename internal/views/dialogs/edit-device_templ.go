@@ -18,6 +18,9 @@ import (
 type EditDeviceFormData struct {
 	ID         models.ID
 	Name, Addr string
+
+	// Color should be a hexadecimal string representing the color in use, e.g. "#ff0000" for red
+	Color string
 }
 
 type EditDeviceProps struct {
@@ -141,7 +144,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(urlb.EditDeviceDialog(prop.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/dialogs/edit-device.templ`, Line: 55, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/dialogs/edit-device.templ`, Line: 58, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -165,6 +168,15 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 					Required: true,
 					Value:    prop.Addr,
 					Title:    "Server Adresse",
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = formColor(formProps{
+					ID:       "addr",
+					Required: false,
+					Value:    prop.Color,
+					Title:    "Farbe",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

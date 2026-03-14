@@ -10,6 +10,9 @@ import (
 type EditDeviceFormData struct {
 	ID         models.ID
 	Name, Addr string
+
+	// Color should be a hexadecimal string representing the color in use, e.g. "#ff0000" for red
+	Color string
 }
 
 type EditDeviceProps struct {
@@ -67,6 +70,12 @@ templ EditDevice(props ...EditDeviceProps) {
 					Required: true,
 					Value:    prop.Addr,
 					Title:    "Server Adresse",
+				})
+				@formColor(formProps{
+					ID:       "addr",
+					Required: false,
+					Value:    prop.Color,
+					Title:    "Farbe",
 				})
 				@dialog.Footer() {
 					@button.Button(button.Props{
