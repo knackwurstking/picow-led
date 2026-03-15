@@ -56,14 +56,25 @@ func main() {
 		LogStatus:  true,
 		LogURI:     true,
 		LogLatency: true,
+		LogError:   true,
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
 			// Example:
 			//value, _ := c.Get("context-value").(int)
 			if v.Error != nil {
-				requestLogger.Error("%v", v.Error)
+				if httpError, ok := v.Error.(*echo.HTTPError); ok {
+					requestLogger.Error("%v", httpError.Message)
+				} else {
+					requestLogger.Error("%v", v.Error)
+				}
 			}
 
-			requestLogger.Info("%s %d %s %s", v.Method, v.Status, v.URI, v.Latency)
+			if v.Status >= 500 {
+				requestLogger.Error("%s %d %s %s", v.Method, v.Status, v.URI, v.Latency)
+			} else if v.Status >= 400 {
+				requestLogger.Warn("%s %d %s %s", v.Method, v.Status, v.URI, v.Latency)
+			} else {
+				requestLogger.Info("%s %d %s %s", v.Method, v.Status, v.URI, v.Latency)
+			}
 
 			return nil
 		},

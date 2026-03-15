@@ -32,6 +32,7 @@ func (d *Device) Validate() error {
 	if d.Addr == "" {
 		return fmt.Errorf("device address cannot be empty")
 	}
+
 	// Check the device type
 	switch d.Type {
 	case DeviceTypeRGB:

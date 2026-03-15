@@ -118,7 +118,7 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 			addr := strings.TrimSpace(c.FormValue("addr"))
 
 			// Add to database
-			device := models.NewDevice(addr, name, models.DeviceTypeRGBW) // TODO: A form field is missing to select the device type
+			device := models.NewDevice(addr, name, models.DeviceTypeRGBW, 255, 255, 255, 255) // TODO: A form field is missing to select the device type
 			if _, err := r.Device.Add(device); err != nil {
 				errs = append(errs, fmt.Errorf("failed to add device: %v", err))
 			}
@@ -200,42 +200,51 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		return func(c echo.Context) error {
 			formData, errs := parseForm(c)
 
+			if formData.Color == "" {
+				switch formData.DeviceType {
+				case models.DeviceTypeRGB:
+					formData.Color = "#000000"
+				case models.DeviceTypeRGBW:
+					formData.Color = "#00000000"
+				case models.DeviceTypeRGBWW:
+					formData.Color = "#0000000000"
+				case models.DeviceTypeW:
+					formData.Color = "#00"
+				}
+			}
+
 			if len(errs) == 0 {
-				device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType)
+				color := models.NewColorFromHex("", formData.Color)
+
+				// Update the color for the device
+				if formData.DeviceType == models.DeviceTypeRGBW || formData.DeviceType == models.DeviceTypeRGBWW {
+					// TODO: Remove this if the edit device dialog has separate input fields for the W
+					minDuty := slices.Min(color.Duty)
+					maxDuty := slices.Max(color.Duty)
+					if minDuty == maxDuty {
+						// Add the W...
+						if formData.DeviceType == models.DeviceTypeRGBW {
+							color.Duty = append(color.Duty, 255)
+						} else if formData.DeviceType == models.DeviceTypeRGBWW {
+							color.Duty = append(color.Duty, 255, 255)
+						}
+					}
+				}
+
+				device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType, color.Duty...)
 				device.ID = formData.ID
 
 				if err := r.Device.Update(device); err != nil {
 					errs = append(errs, fmt.Errorf("failed to update device: %v", err))
-				} else if formData.Color != "" {
-					color := models.NewColorFromHex("", formData.Color)
+				}
 
-					// Update the color for the device
-					autoAddW := len(color.Duty) > 0 &&
-						(formData.DeviceType == models.DeviceTypeRGBW || formData.DeviceType == models.DeviceTypeRGBWW)
-					if autoAddW {
-						// TODO: Remove this if the edit device dialog has separate input fields for the W
-						minDuty := slices.Min(color.Duty)
-						maxDuty := slices.Max(color.Duty)
-						if minDuty == maxDuty {
-							// Add the W...
-							if formData.DeviceType == models.DeviceTypeRGBW {
-								color.Duty = append(color.Duty, 255)
-							} else if formData.DeviceType == models.DeviceTypeRGBWW {
-								color.Duty = append(color.Duty, 255, 255)
-							}
-						}
-					}
+				log.Debug(
+					"Updating color for device %d to %v [formData.Color: %v]",
+					device.ID, color.Duty, formData.Color,
+				)
 
-					if len(color.Duty) > 0 {
-						log.Debug(
-							"Updating color for device %d to %v [formData.Color: %v]",
-							device.ID, color.Duty, formData.Color,
-						)
-
-						if err = r.Device.UpdateColor(device.ID, color.Duty...); err != nil {
-							errs = append(errs, fmt.Errorf("failed to update device color: %v", err))
-						}
-					}
+				if err := r.Device.UpdateColor(device.ID, color.Duty...); err != nil {
+					errs = append(errs, fmt.Errorf("failed to update device color: %v", err))
 				}
 			}
 
