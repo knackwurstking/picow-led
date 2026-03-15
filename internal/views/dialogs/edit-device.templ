@@ -3,6 +3,7 @@ package dialogs
 import (
 	"github.com/knackwurstking/picow-led/internal/components/button"
 	"github.com/knackwurstking/picow-led/internal/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/components/form"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
@@ -13,6 +14,8 @@ type EditDeviceFormData struct {
 
 	// Color should be a hexadecimal string representing the color in use, e.g. "#ff0000" for red
 	Color string
+
+	DeviceType models.DeviceType
 }
 
 type EditDeviceProps struct {
@@ -71,6 +74,7 @@ templ EditDevice(props ...EditDeviceProps) {
 					Value:    prop.Addr,
 					Title:    "Server Adresse",
 				})
+				@deviceTypeSelect(prop.DeviceType)
 				@formColor(formProps{
 					ID:       "color",
 					Required: false,
@@ -97,5 +101,16 @@ templ EditDevice(props ...EditDeviceProps) {
 				}
 			</form>
 		}
+	}
+}
+
+templ deviceTypeSelect(deviceType models.DeviceType) {
+	@form.Item() {
+		@form.Label(form.LabelProps{
+			For: "device_type",
+		}) {
+			Gerätetyp
+		}
+		// TODO: templui selectbox component
 	}
 }

@@ -118,7 +118,7 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 			addr := strings.TrimSpace(c.FormValue("addr"))
 
 			// Add to database
-			device := models.NewDevice(addr, name)
+			device := models.NewDevice(addr, name, models.DeviceTypeRGBW) // TODO: A form field is missing to select the device type
 			if _, err := r.Device.Add(device); err != nil {
 				errs = append(errs, fmt.Errorf("failed to add device: %v", err))
 			}
@@ -200,7 +200,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			formData, errs := parseForm(c)
 
 			if len(errs) == 0 {
-				device := models.NewDevice(formData.Addr, formData.Name)
+				device := models.NewDevice(formData.Addr, formData.Name, models.DeviceTypeRGBW) // TODO: A form field is missing to select the device type
 				device.ID = formData.ID
 
 				if err := r.Device.Update(device); err != nil {
@@ -210,7 +210,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 
 					// Update the color for the device
 					if len(color.Duty) > 0 {
-						// TODO: Remove this after adding a range slider for the W in RGBW and implementing the device types, see TODO.md
+						// TODO: Remove this after adding a range slider for the W in RGBW and implementing the device types form field
 						minDuty := slices.Min(color.Duty)
 						maxDuty := slices.Max(color.Duty)
 						if minDuty == maxDuty {
