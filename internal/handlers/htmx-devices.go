@@ -78,7 +78,7 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 			}
 		}
 
-		log.Debug("Toggling power state for device with %s to %s", device.Name, color)
+		log.Debug("Toggling power state for device with %s to %v", device.Name, color)
 
 		if err = r.Device.SetCurrentColor(device.ID, color); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to set current color: %v", err))
