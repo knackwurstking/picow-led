@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -184,9 +185,10 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			}
 
 			formData := dialogs.EditDeviceFormData{
-				ID:   id,
-				Name: device.Name,
-				Addr: device.Addr,
+				ID:    id,
+				Name:  device.Name,
+				Addr:  device.Addr,
+				Color: models.NewColor("", device.Color...).DutyToHex(),
 			}
 			return renderDialog(c, true, formData, errs...)
 		}
@@ -203,6 +205,15 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 					errs = append(errs, fmt.Errorf("failed to update device: %v", err))
 				} else if formData.Color != "" {
 					color := models.NewColorFromHex("", formData.Color)
+
+					// TODO: Remove this after adding a range slider for the W in RGBW and implementing the device types, see TODO.md
+					minDuty := slices.Min(color.Duty)
+					maxDuty := slices.Max(color.Duty)
+					if minDuty == maxDuty {
+						// Add the W...
+						color.Duty = append(color.Duty, 255)
+					}
+
 					if err = r.Device.UpdateColor(device.ID, color.Duty...); err != nil {
 						errs = append(errs, fmt.Errorf("failed to update device color: %v", err))
 					}

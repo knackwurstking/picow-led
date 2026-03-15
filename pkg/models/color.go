@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Color struct {
 	ID   ID      `json:"id"`
@@ -38,6 +41,18 @@ func (c *Color) Validate() error {
 		return fmt.Errorf("duty cannot be empty")
 	}
 	return nil
+}
+
+func (c *Color) DutyToHex() string {
+	if len(c.Duty) == 0 {
+		return ""
+	}
+
+	hex := strings.Builder{}
+	for _, d := range c.Duty[0:3] {
+		fmt.Fprintf(&hex, "%02x", d)
+	}
+	return hex.String()
 }
 
 var _ Model = (*Color)(nil)
