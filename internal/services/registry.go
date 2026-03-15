@@ -9,7 +9,6 @@ type Registry struct {
 	db *sql.DB
 
 	Device *DeviceService
-	Color  *ColorService
 	Group  *GroupService
 }
 
@@ -17,7 +16,6 @@ func NewRegistry(db *sql.DB) (*Registry, error) {
 	r := &Registry{db: db}
 
 	r.Device = NewDeviceService(r)
-	r.Color = NewColorService(r)
 	r.Group = NewGroupService(r)
 
 	if err := r.CreateTables(); err != nil {
@@ -30,7 +28,6 @@ func NewRegistry(db *sql.DB) (*Registry, error) {
 func (r *Registry) CreateTables() error {
 	services := []Service{
 		r.Device,
-		r.Color,
 		r.Group,
 	}
 

@@ -4,6 +4,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/form"
 	"github.com/knackwurstking/picow-led/internal/components/input"
 	"github.com/knackwurstking/picow-led/internal/components/selectbox"
+	"github.com/knackwurstking/picow-led/internal/components/slider"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"slices"
 )
@@ -75,7 +76,17 @@ templ formDeviceTypeSelect(deviceType models.DeviceType) {
 	}
 }
 
-templ formColor(deviceType models.DeviceType, props formProps) {
+type formColorProps struct {
+	ID       string
+	Required bool
+	Title    string
+
+	ValueColor  string
+	ValueWhite  int
+	ValueWhite2 int
+}
+
+templ formColor(deviceType models.DeviceType, props formColorProps) {
 	@form.Item() {
 		@form.Label(form.LabelProps{
 			For: props.ID,
@@ -88,6 +99,11 @@ templ formColor(deviceType models.DeviceType, props formProps) {
 				models.DeviceTypeRGBW,
 				models.DeviceTypeRGBWW,
 			}
+			whiteSliderTypes := []models.DeviceType{
+				models.DeviceTypeRGBW,
+				models.DeviceTypeRGBWW,
+				models.DeviceTypeW,
+			}
 		}}
 		if slices.Contains(colorPickerTypes, deviceType) {
 			@input.Input(input.Props{
@@ -95,58 +111,36 @@ templ formColor(deviceType models.DeviceType, props formProps) {
 				Name:     props.ID,
 				Type:     input.TypeColor,
 				Required: props.Required,
-				Value:    props.Value,
+				Value:    props.ValueColor,
 			})
 		}
-		// TODO: Use Range sliders instead
-		switch deviceType {
-			case models.DeviceTypeRGBW:
-				@input.Input(input.Props{
-					ID:       props.ID + "-white",
-					Name:     props.ID + "-white",
-					Type:     input.TypeNumber,
-					Required: props.Required,
-					Value:    props.Value,
+		if slices.Contains(whiteSliderTypes, deviceType) {
+			@slider.Slider() {
+				@slider.Input(slider.InputProps{
+					ID:    props.ID + "-white",
+					Name:  props.ID + "-white",
+					Min:   0,
+					Max:   255,
+					Value: props.ValueWhite,
 					Attributes: templ.Attributes{
-						"min": 0,
-						"max": 255,
+						"required": props.Required,
 					},
 				})
-			case models.DeviceTypeRGBWW:
-				@input.Input(input.Props{
-					ID:       props.ID + "-white",
-					Name:     props.ID + "-white",
-					Type:     input.TypeNumber,
-					Required: props.Required,
-					Value:    props.Value,
+			}
+		}
+		if deviceType == models.DeviceTypeRGBWW {
+			@slider.Slider() {
+				@slider.Input(slider.InputProps{
+					ID:    props.ID + "-white2",
+					Name:  props.ID + "-white2",
+					Min:   0,
+					Max:   255,
+					Value: props.ValueWhite2,
 					Attributes: templ.Attributes{
-						"min": 0,
-						"max": 255,
+						"required": props.Required,
 					},
 				})
-				@input.Input(input.Props{
-					ID:       props.ID + "-white2",
-					Name:     props.ID + "-white2",
-					Type:     input.TypeNumber,
-					Required: props.Required,
-					Value:    props.Value,
-					Attributes: templ.Attributes{
-						"min": 0,
-						"max": 255,
-					},
-				})
-			case models.DeviceTypeW:
-				@input.Input(input.Props{
-					ID:       props.ID,
-					Name:     props.ID,
-					Type:     input.TypeNumber,
-					Required: props.Required,
-					Value:    props.Value,
-					Attributes: templ.Attributes{
-						"min": 0,
-						"max": 255,
-					},
-				})
+			}
 		}
 	}
 }

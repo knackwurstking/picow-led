@@ -37,24 +37,47 @@ func (d *Device) Validate() error {
 	switch d.Type {
 	case DeviceTypeRGB:
 		if len(d.Color) != 3 {
-			return fmt.Errorf("device color must have 3 components for RGB type")
+			d.Color = []uint8{255, 255, 255} // Default to white if not provided
 		}
 	case DeviceTypeRGBW:
 		if len(d.Color) != 4 {
-			return fmt.Errorf("device color must have 4 components for RGBW type")
+			d.Color = []uint8{255, 255, 255, 255} // Default to white with no white component
 		}
 	case DeviceTypeRGBWW:
 		if len(d.Color) != 5 {
-			return fmt.Errorf("device color must have 5 components for RGBWW type")
+			d.Color = []uint8{255, 255, 255, 255, 255} // Default to white with no white components
 		}
 	case DeviceTypeW:
 		if len(d.Color) != 1 {
-			return fmt.Errorf("device color must have 1 component for W type")
+			d.Color = []uint8{255} // Default to full white if not provided
 		}
 	default:
 		return fmt.Errorf("invalid device type: %s", d.Type)
 	}
 	return nil
+}
+
+func (d *Device) ToColor() *Color {
+	color := &Color{}
+
+	if d.Type == DeviceTypeW {
+		color.White = d.Color[0]
+		return color
+	}
+
+	if d.Type == DeviceTypeRGB || d.Type == DeviceTypeRGBW || d.Type == DeviceTypeRGBWW {
+		color.Color = [3]uint8{d.Color[0], d.Color[1], d.Color[2]}
+	}
+
+	switch d.Type {
+	case DeviceTypeRGBW:
+		color.White = d.Color[3]
+	case DeviceTypeRGBWW:
+		color.White = d.Color[3]
+		color.White2 = d.Color[4]
+	}
+
+	return color
 }
 
 var _ Model = (*Device)(nil)
