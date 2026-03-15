@@ -19,6 +19,9 @@ func NewColor(name string, duty ...uint8) *Color {
 }
 
 func NewColorFromHex(name, hex string) *Color {
+	// Remove leading '#' if present
+	hex = strings.TrimPrefix(hex, "#")
+
 	var duty []uint8
 	if len(hex) == 6 {
 		for i := 0; i < 6; i += 2 {
@@ -27,6 +30,7 @@ func NewColorFromHex(name, hex string) *Color {
 			duty = append(duty, d)
 		}
 	}
+
 	return &Color{
 		Name: name,
 		Duty: duty,
@@ -52,7 +56,7 @@ func (c *Color) DutyToHex() string {
 	for _, d := range c.Duty[0:3] {
 		fmt.Fprintf(&hex, "%02x", d)
 	}
-	return hex.String()
+	return "#" + hex.String()
 }
 
 var _ Model = (*Color)(nil)

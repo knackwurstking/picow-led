@@ -136,6 +136,8 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 }
 
 func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXEditDeviceDialog")
+
 	parseForm := func(c echo.Context) (dialogs.EditDeviceFormData, []error) {
 		var errs []error
 		var formData dialogs.EditDeviceFormData
@@ -206,16 +208,20 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 				} else if formData.Color != "" {
 					color := models.NewColorFromHex("", formData.Color)
 
-					// TODO: Remove this after adding a range slider for the W in RGBW and implementing the device types, see TODO.md
-					minDuty := slices.Min(color.Duty)
-					maxDuty := slices.Max(color.Duty)
-					if minDuty == maxDuty {
-						// Add the W...
-						color.Duty = append(color.Duty, 255)
-					}
+					// Update the color for the device
+					if len(color.Duty) > 0 {
+						// TODO: Remove this after adding a range slider for the W in RGBW and implementing the device types, see TODO.md
+						minDuty := slices.Min(color.Duty)
+						maxDuty := slices.Max(color.Duty)
+						if minDuty == maxDuty {
+							// Add the W...
+							color.Duty = append(color.Duty, 255)
+						}
 
-					if err = r.Device.UpdateColor(device.ID, color.Duty...); err != nil {
-						errs = append(errs, fmt.Errorf("failed to update device color: %v", err))
+						log.Debug("Updating color for device %d to %v [formData.Color: %v]", device.ID, color.Duty, formData.Color)
+						if err = r.Device.UpdateColor(device.ID, color.Duty...); err != nil {
+							errs = append(errs, fmt.Errorf("failed to update device color: %v", err))
+						}
 					}
 				}
 			}

@@ -177,7 +177,7 @@ func formColor(props formProps) templ.Component {
 				Name:     props.ID,
 				Type:     input.TypeColor,
 				Required: props.Required,
-				Value:    "#" + props.Value,
+				Value:    props.Value,
 			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
