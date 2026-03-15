@@ -24,13 +24,13 @@ func (d *DeviceService) CreateTable() error {
 		id INTEGER NOT NULL,
 		addr TEXT UNIQUE NOT NULL,
 		name TEXT NOT NULL,
+		type TEXT NOT NULL,
 		color TEXT,
 
 		PRIMARY KEY ("id" AUTOINCREMENT)
 	);`
 
-	_, err := d.registry.db.Exec(query)
-	if err != nil {
+	if _, err := d.registry.db.Exec(query); err != nil {
 		return NewServiceError("create devices table", err)
 	}
 
@@ -85,8 +85,8 @@ func (d *DeviceService) Add(device *models.Device) (models.ID, error) {
 		return 0, fmt.Errorf("%w: %v", ErrInvalidDevice, err)
 	}
 
-	query := `INSERT INTO devices (addr, name) VALUES (?, ?)`
-	result, err := d.registry.db.Exec(query, device.Addr, device.Name)
+	query := `INSERT INTO devices (addr, name, type) VALUES (?, ?, ?)`
+	result, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type)
 	if err != nil {
 		return 0, NewServiceError("add device", HandleSqlError(err))
 	}
@@ -104,8 +104,8 @@ func (d *DeviceService) Update(device *models.Device) error {
 		return fmt.Errorf("%w: %v", ErrInvalidDevice, err)
 	}
 
-	query := `UPDATE devices SET addr = ?, name = ? WHERE id = ?`
-	_, err := d.registry.db.Exec(query, device.Addr, device.Name, device.ID)
+	query := `UPDATE devices SET addr = ?, name = ?, type = ? WHERE id = ?`
+	_, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, device.ID)
 	if err != nil {
 		return NewServiceError("update device", HandleSqlError(err))
 	}
@@ -124,7 +124,7 @@ func (d *DeviceService) Delete(deviceID models.ID) error {
 
 func ScanDevice(r Scannable) (*models.Device, error) {
 	device := &models.Device{}
-	err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.Color)
+	err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.Type, &device.Color)
 	return device, err
 }
 
