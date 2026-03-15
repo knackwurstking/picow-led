@@ -10,10 +10,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/knackwurstking/picow-led/internal/components/dialogs"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/htmx"
 	"github.com/knackwurstking/picow-led/internal/services"
-	"github.com/knackwurstking/picow-led/internal/views/dialogs"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
