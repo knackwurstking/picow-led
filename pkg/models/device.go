@@ -24,6 +24,4 @@ func (d *Device) Validate() error {
 	return nil
 }
 
-// TODO: Control methods here... "GetPins"
-
 var _ Model = (*Device)(nil)
