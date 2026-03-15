@@ -15,7 +15,7 @@ type Device struct {
 	ID    ID         `json:"id"`
 	Addr  string     `json:"addr"`
 	Name  string     `json:"name"`
-	Color []uint8    `json:"color"`
+	Color []uint8    `json:"color"` // TODO: Rename to Duty
 	Type  DeviceType `json:"type"`
 }
 
