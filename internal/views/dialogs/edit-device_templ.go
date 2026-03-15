@@ -173,7 +173,7 @@ func EditDevice(props ...EditDeviceProps) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Err = formColor(formProps{
-					ID:       "addr",
+					ID:       "color",
 					Required: false,
 					Value:    prop.Color,
 					Title:    "Farbe",

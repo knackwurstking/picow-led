@@ -201,7 +201,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 
 				if err := r.Device.Update(device); err != nil {
 					errs = append(errs, fmt.Errorf("failed to update device: %v", err))
-				} else {
+				} else if formData.Color != "" {
 					color := models.NewColorFromHex("", formData.Color)
 					if err = r.Device.UpdateColor(device.ID, color.Duty...); err != nil {
 						errs = append(errs, fmt.Errorf("failed to update device color: %v", err))

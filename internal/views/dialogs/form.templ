@@ -30,5 +30,18 @@ templ formText(props formProps) {
 }
 
 templ formColor(props formProps) {
-	// TODO: Input element of type color, using the system color picker
+	@form.Item() {
+		@form.Label(form.LabelProps{
+			For: props.ID,
+		}) {
+			{ props.Title }
+		}
+		@input.Input(input.Props{
+			ID:       props.ID,
+			Name:     props.ID,
+			Type:     input.TypeColor,
+			Required: props.Required,
+			Value:    props.Value,
+		})
+	}
 }
