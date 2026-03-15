@@ -188,10 +188,11 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			}
 
 			formData := dialogs.EditDeviceFormData{
-				ID:    id,
-				Name:  device.Name,
-				Addr:  device.Addr,
-				Color: models.NewColor("", device.Color...).DutyToHex(),
+				ID:         id,
+				Name:       device.Name,
+				Addr:       device.Addr,
+				Color:      models.NewColor("", device.Color...).DutyToHex(),
+				DeviceType: device.Type,
 			}
 			return renderDialog(c, true, formData, errs...)
 		}
