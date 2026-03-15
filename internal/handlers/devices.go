@@ -89,6 +89,8 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 }
 
 func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXAddDeviceDialog")
+
 	parseForm := func(c echo.Context) (dialogs.AddDeviceFormData, []error) {
 		var errs []error
 		var formData dialogs.AddDeviceFormData
@@ -100,13 +102,13 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 
 		switch formData.DeviceType {
 		case models.DeviceTypeRGB:
-			formData.Color = "#000000"
+			formData.Color = "#FFFFFF"
 		case models.DeviceTypeRGBW:
-			formData.Color = "#00000000"
+			formData.Color = "#FFFFFFFF"
 		case models.DeviceTypeRGBWW:
-			formData.Color = "#0000000000"
+			formData.Color = "#FFFFFFFFFF"
 		case models.DeviceTypeW:
-			formData.Color = "#00"
+			formData.Color = "#FF"
 		}
 
 		return formData, errs
@@ -142,10 +144,16 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 			color := models.NewColorFromHex("", formData.Color)
 			device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType, color.Duty...)
 
-			_, err := r.Device.Add(device)
+			id, err := r.Device.Add(device)
 			if err != nil {
 				errs = append(errs, fmt.Errorf("failed to add device: %v", err))
 			}
+			device.ID = id
+
+			log.Debug(
+				"Add color for device %d to %v [formData.Color: %v]",
+				device.ID, color.Duty, formData.Color,
+			)
 
 			err = r.Device.UpdateColor(device.ID, color.Duty...)
 			if err != nil {
@@ -181,13 +189,13 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		if formData.Color == "" {
 			switch formData.DeviceType {
 			case models.DeviceTypeRGB:
-				formData.Color = "#000000"
+				formData.Color = "#FFFFFF"
 			case models.DeviceTypeRGBW:
-				formData.Color = "#00000000"
+				formData.Color = "#FFFFFFFF"
 			case models.DeviceTypeRGBWW:
-				formData.Color = "#0000000000"
+				formData.Color = "#FFFFFFFFFF"
 			case models.DeviceTypeW:
-				formData.Color = "#00"
+				formData.Color = "#FF"
 			}
 		}
 
@@ -232,6 +240,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 				Color:      models.NewColor("", device.Color...).DutyToHex(),
 				DeviceType: device.Type,
 			}
+			log.Debug("Editing device %d with formData %v", device.ID, formData)
 			return renderDialog(c, true, formData, errs...)
 		}
 
@@ -250,9 +259,9 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 					if minDuty == maxDuty {
 						// Add the W...
 						if formData.DeviceType == models.DeviceTypeRGBW {
-							color.Duty = append(color.Duty, 255)
+							color.Duty = append(color.Duty, maxDuty)
 						} else if formData.DeviceType == models.DeviceTypeRGBWW {
-							color.Duty = append(color.Duty, 255, 255)
+							color.Duty = append(color.Duty, maxDuty, maxDuty)
 						}
 					}
 				}
