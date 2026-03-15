@@ -23,8 +23,9 @@ func NewColorFromHex(name, hex string) *Color {
 	hex = strings.TrimPrefix(hex, "#")
 
 	var duty []uint8
-	if len(hex) == 6 {
-		for i := 0; i < 6; i += 2 {
+	// Check if hex length is even
+	if len(hex)%2 == 0 {
+		for i := 0; i < len(hex); i += 2 {
 			var d uint8
 			fmt.Sscanf(hex[i:i+2], "%02x", &d)
 			duty = append(duty, d)

@@ -75,7 +75,7 @@ templ EditDevice(props ...EditDeviceProps) {
 					Value:    prop.Addr,
 					Title:    "Server Adresse",
 				})
-				@deviceTypeSelect(prop.DeviceType)
+				@formDeviceTypeSelect(prop.DeviceType)
 				@formColor(formProps{
 					ID:       "color",
 					Required: false,
@@ -105,7 +105,7 @@ templ EditDevice(props ...EditDeviceProps) {
 	}
 }
 
-templ deviceTypeSelect(deviceType models.DeviceType) {
+templ formDeviceTypeSelect(deviceType models.DeviceType) {
 	@form.Item() {
 		@form.Label(form.LabelProps{
 			For: "device_type",

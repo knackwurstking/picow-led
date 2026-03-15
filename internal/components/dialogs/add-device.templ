@@ -4,10 +4,16 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/button"
 	"github.com/knackwurstking/picow-led/internal/components/dialog"
 	"github.com/knackwurstking/picow-led/internal/urlb"
+	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
 type AddDeviceFormData struct {
 	Name, Addr string
+
+	// Color should be a hexadecimal string representing the color in use, e.g. "#ff0000" for red
+	Color string
+
+	DeviceType models.DeviceType
 }
 
 type AddDeviceProps struct {
@@ -66,6 +72,7 @@ templ AddDevice(props ...AddDeviceProps) {
 					Value:    prop.Addr,
 					Title:    "Server Adresse",
 				})
+				@formDeviceTypeSelect(prop.DeviceType)
 				@dialog.Footer() {
 					@button.Button(button.Props{
 						Type: button.TypeSubmit,

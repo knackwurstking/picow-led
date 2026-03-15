@@ -89,6 +89,29 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 }
 
 func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
+	parseForm := func(c echo.Context) (dialogs.AddDeviceFormData, []error) {
+		var errs []error
+		var formData dialogs.AddDeviceFormData
+
+		formData.Addr = strings.TrimSpace(c.FormValue("addr"))
+		formData.Name = strings.TrimSpace(c.FormValue("name"))
+		formData.Color = strings.TrimSpace(c.FormValue("color"))
+		formData.DeviceType = models.DeviceType(strings.TrimSpace(c.FormValue("device_type")))
+
+		switch formData.DeviceType {
+		case models.DeviceTypeRGB:
+			formData.Color = "#000000"
+		case models.DeviceTypeRGBW:
+			formData.Color = "#00000000"
+		case models.DeviceTypeRGBWW:
+			formData.Color = "#0000000000"
+		case models.DeviceTypeW:
+			formData.Color = "#00"
+		}
+
+		return formData, errs
+	}
+
 	renderDialog := func(c echo.Context, open bool, formData dialogs.AddDeviceFormData, errs ...error) error {
 		c.Response().Header().Set("HX-Trigger", "reload-devices")
 
@@ -113,21 +136,23 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			var errs []error
 
-			// Parse form values
-			name := strings.TrimSpace(c.FormValue("name"))
-			addr := strings.TrimSpace(c.FormValue("addr"))
+			formData, errs := parseForm(c)
 
-			// Add to database
-			device := models.NewDevice(addr, name, models.DeviceTypeRGBW, 255, 255, 255, 255) // TODO: A form field is missing to select the device type
-			if _, err := r.Device.Add(device); err != nil {
+			// Add device to database and set its color
+			color := models.NewColorFromHex("", formData.Color)
+			device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType, color.Duty...)
+
+			_, err := r.Device.Add(device)
+			if err != nil {
 				errs = append(errs, fmt.Errorf("failed to add device: %v", err))
 			}
 
-			open := len(errs) > 0
-			formData := dialogs.AddDeviceFormData{
-				Name: name,
-				Addr: addr,
+			err = r.Device.UpdateColor(device.ID, color.Duty...)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("failed to set device color: %v", err))
 			}
+
+			open := len(errs) > 0
 			return renderDialog(c, open, formData, errs...)
 		}
 	}
@@ -152,6 +177,19 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
 		formData.Color = strings.TrimSpace(c.FormValue("color"))
 		formData.DeviceType = models.DeviceType(strings.TrimSpace(c.FormValue("device_type")))
+
+		if formData.Color == "" {
+			switch formData.DeviceType {
+			case models.DeviceTypeRGB:
+				formData.Color = "#000000"
+			case models.DeviceTypeRGBW:
+				formData.Color = "#00000000"
+			case models.DeviceTypeRGBWW:
+				formData.Color = "#0000000000"
+			case models.DeviceTypeW:
+				formData.Color = "#00"
+			}
+		}
 
 		return formData, errs
 	}
@@ -200,19 +238,6 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 	case http.MethodPost:
 		return func(c echo.Context) error {
 			formData, errs := parseForm(c)
-
-			if formData.Color == "" {
-				switch formData.DeviceType {
-				case models.DeviceTypeRGB:
-					formData.Color = "#000000"
-				case models.DeviceTypeRGBW:
-					formData.Color = "#00000000"
-				case models.DeviceTypeRGBWW:
-					formData.Color = "#0000000000"
-				case models.DeviceTypeW:
-					formData.Color = "#00"
-				}
-			}
 
 			if len(errs) == 0 {
 				color := models.NewColorFromHex("", formData.Color)

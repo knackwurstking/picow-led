@@ -62,9 +62,17 @@ func main() {
 			//value, _ := c.Get("context-value").(int)
 			if v.Error != nil {
 				if httpError, ok := v.Error.(*echo.HTTPError); ok {
-					requestLogger.Error("%v", httpError.Message)
+					if v.Status >= 500 {
+						requestLogger.Error("%v", httpError.Message)
+					} else {
+						requestLogger.Warn("%v", httpError.Message)
+					}
 				} else {
-					requestLogger.Error("%v", v.Error)
+					if v.Status >= 500 {
+						requestLogger.Error("%v", v.Error)
+					} else {
+						requestLogger.Warn("%v", v.Error)
+					}
 				}
 			}
 
