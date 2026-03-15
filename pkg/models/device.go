@@ -65,16 +65,20 @@ func (d *Device) ToColor() *Color {
 		return color
 	}
 
-	if d.Type == DeviceTypeRGB || d.Type == DeviceTypeRGBW || d.Type == DeviceTypeRGBWW {
+	if (d.Type == DeviceTypeRGB || d.Type == DeviceTypeRGBW || d.Type == DeviceTypeRGBWW) && len(d.Color) >= 3 {
 		color.Color = [3]uint8{d.Color[0], d.Color[1], d.Color[2]}
 	}
 
 	switch d.Type {
 	case DeviceTypeRGBW:
-		color.White = d.Color[3]
+		if len(d.Color) >= 4 {
+			color.White = d.Color[3]
+		}
 	case DeviceTypeRGBWW:
-		color.White = d.Color[3]
-		color.White2 = d.Color[4]
+		if len(d.Color) >= 5 {
+			color.White = d.Color[3]
+			color.White2 = d.Color[4]
+		}
 	}
 
 	return color

@@ -77,7 +77,7 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 			}
 		}
 
-		log.Debug("Toggling power state for device with %s to %v", device.Name, color)
+		log.Debug("Toggling power state for device with %s to %#v", device.Name, color)
 
 		if err = r.Device.SetCurrentColor(device.ID, color); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to set current color: %v", err))
@@ -88,6 +88,8 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 }
 
 func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXAddDeviceDialog")
+
 	parseForm := func(c echo.Context) (dialogs.AddDeviceFormData, []error) {
 		var errs []error
 		var formData dialogs.AddDeviceFormData
@@ -126,6 +128,8 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 
 			formData, errs := parseForm(c)
 
+			log.Debug("Adding device: %#v", formData)
+
 			// Add device to database and set its color
 			device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType)
 
@@ -144,6 +148,8 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 }
 
 func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXEditDeviceDialog")
+
 	parseForm := func(c echo.Context) (dialogs.EditDeviceFormData, []error) {
 		var errs []error
 		var formData dialogs.EditDeviceFormData
@@ -201,13 +207,14 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			}
 
 			color := device.ToColor()
+			log.Debug("Editing device with current color: %#v", color)
 
 			formData := dialogs.EditDeviceFormData{
 				ID:         id,
 				Name:       device.Name,
 				Addr:       device.Addr,
 				DeviceType: device.Type,
-				Color:      models.ColorToHex(color.Color),
+				Color:      "#" + models.ColorToHex(color.Color),
 				White:      color.White,
 				White2:     color.White2,
 			}
@@ -218,6 +225,8 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 	case http.MethodPost:
 		return func(c echo.Context) error {
 			formData, errs := parseForm(c)
+
+			log.Debug("Updating device: %#v", formData)
 
 			if len(errs) == 0 {
 				device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType)
@@ -240,6 +249,8 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 	case http.MethodDelete:
 		return func(c echo.Context) error {
 			formData, errs := parseForm(c)
+
+			log.Debug("Deleting device with ID %d", formData.ID)
 
 			if len(errs) == 0 {
 				if err := r.Device.Delete(formData.ID); err != nil {

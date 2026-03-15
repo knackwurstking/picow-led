@@ -85,8 +85,8 @@ func (d *DeviceService) Add(device *models.Device) (models.ID, error) {
 		return 0, fmt.Errorf("%w: %v", ErrInvalidDevice, err)
 	}
 
-	query := `INSERT INTO devices (addr, name, type) VALUES (?, ?, ?)`
-	result, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type)
+	query := `INSERT INTO devices (addr, name, type, color) VALUES (?, ?, ?, ?)`
+	result, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, device.Color)
 	if err != nil {
 		return 0, NewServiceError("add device", HandleSqlError(err))
 	}
