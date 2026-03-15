@@ -4,6 +4,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/button"
 	"github.com/knackwurstking/picow-led/internal/components/dialog"
 	"github.com/knackwurstking/picow-led/internal/components/form"
+	"github.com/knackwurstking/picow-led/internal/components/selectbox"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
@@ -111,6 +112,38 @@ templ deviceTypeSelect(deviceType models.DeviceType) {
 		}) {
 			Gerätetyp
 		}
-		// TODO: templui selectbox component
+		@selectbox.SelectBox() {
+			@selectbox.Trigger(selectbox.TriggerProps{
+				ID:   "device_type",
+				Name: "device_type",
+				Attributes: templ.Attributes{
+					"required": true,
+				},
+			}) {
+				@selectbox.Value(selectbox.ValueProps{
+					Placeholder: "Gerätetyp auswählen",
+				})
+			}
+			@selectbox.Content(selectbox.ContentProps{
+				NoSearch: true,
+			}) {
+				{{
+					deviceTypes := []models.DeviceType{
+						models.DeviceTypeRGB,
+						models.DeviceTypeRGBW,
+						models.DeviceTypeRGBWW,
+						models.DeviceTypeW,
+					}
+				}}
+				for _, t := range deviceTypes {
+					@selectbox.Item(selectbox.ItemProps{
+						Value:    string(t),
+						Selected: t == deviceType,
+					}) {
+						{  string(t) }
+					}
+				}
+			}
+		}
 	}
 }
