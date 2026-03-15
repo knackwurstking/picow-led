@@ -15,6 +15,21 @@ func NewColor(name string, duty ...uint8) *Color {
 	}
 }
 
+func NewColorFromHex(name, hex string) *Color {
+	var duty []uint8
+	if len(hex) == 6 {
+		for i := 0; i < 6; i += 2 {
+			var d uint8
+			fmt.Sscanf(hex[i:i+2], "%02x", &d)
+			duty = append(duty, d)
+		}
+	}
+	return &Color{
+		Name: name,
+		Duty: duty,
+	}
+}
+
 func (c *Color) Validate() error {
 	if c.Name == "" {
 		return fmt.Errorf("name cannot be empty")

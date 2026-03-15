@@ -148,6 +148,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		formData.Addr = strings.TrimSpace(c.FormValue("addr"))
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
 		formData.ID = id
+		formData.Color = strings.TrimSpace(c.FormValue("color"))
 
 		return formData, errs
 	}
@@ -198,8 +199,14 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			if len(errs) == 0 {
 				device := models.NewDevice(formData.Addr, formData.Name)
 				device.ID = formData.ID
+
 				if err := r.Device.Update(device); err != nil {
 					errs = append(errs, fmt.Errorf("failed to update device: %v", err))
+				} else {
+					color := models.NewColorFromHex("", formData.Color)
+					if err = r.Device.UpdateColor(device.ID, color.Duty...); err != nil {
+						errs = append(errs, fmt.Errorf("failed to update device color: %v", err))
+					}
 				}
 			}
 
