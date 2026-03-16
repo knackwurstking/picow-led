@@ -8,4 +8,6 @@
 
 > For now this has some kind of auto W handling for my RGBW devices, this needs to be removed later, see "htmx-devices.go" line 209
 
-- [ ] Fix the color range sliders, values not submitted?
+- [x] Fix the color range sliders, values not submitted?
+
+Also remove the zero value, min and max checks on the slider component props

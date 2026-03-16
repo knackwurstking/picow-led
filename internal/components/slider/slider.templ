@@ -64,15 +64,9 @@ templ Input(props ...InputProps) {
 		if p.Name != "" {
 			name={ p.Name }
 		}
-		if p.Value != 0 {
-			value={ fmt.Sprintf("%d", p.Value) }
-		}
-		if p.Min != 0 {
-			min={ fmt.Sprintf("%d", p.Min) }
-		}
-		if p.Max != 0 {
-			max={ fmt.Sprintf("%d", p.Max) }
-		}
+		value={ fmt.Sprintf("%d", p.Value) }
+		min={ fmt.Sprintf("%d", p.Min) }
+		max={ fmt.Sprintf("%d", p.Max) }
 		if p.Step != 0 {
 			step={ fmt.Sprintf("%d", p.Step) }
 		}

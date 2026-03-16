@@ -7,62 +7,6 @@ import (
 	"github.com/knackwurstking/picow-led/pkg/picow"
 )
 
-func (p *DeviceService) GetColor(deviceID models.ID) ([]uint8, error) {
-	query := `SELECT color FROM devices WHERE id = ?`
-	row := p.registry.db.QueryRow(query, deviceID)
-
-	var color []uint8
-	err := row.Scan(&color)
-	if err != nil {
-		return nil, NewServiceError("get device control color", HandleSqlError(err))
-	}
-
-	if len(color) == 0 {
-		err = p.initDeviceColor(deviceID)
-		if err != nil {
-			return nil, NewServiceError("initialize device control color", err)
-		}
-
-		return p.GetColor(deviceID) // Try again after initialization
-	}
-
-	return color, err
-}
-
-func (p *DeviceService) AddColor(deviceID models.ID, color ...uint8) (models.ID, error) {
-	query := `INSERT INTO devices (color) VALUES (?) WHERE id = ?`
-	result, err := p.registry.db.Exec(query, color, deviceID)
-	if err != nil {
-		return 0, NewServiceError("add device control", HandleSqlError(err))
-	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, NewServiceError("get last inserted device control ID", HandleSqlError(err))
-	}
-
-	return models.ID(id), nil
-}
-
-func (p *DeviceService) UpdateColor(deviceID models.ID, color ...uint8) error {
-	query := `UPDATE devices SET color = ? WHERE id = ?`
-	_, err := p.registry.db.Exec(query, color, deviceID)
-	if err != nil {
-		return NewServiceError("update device control", HandleSqlError(err))
-	}
-
-	return nil
-}
-
-func (p *DeviceService) DeleteColor(deviceID models.ID) error {
-	query := `INSERT INTO devices (color) VALUES (?) WHERE id = ?`
-	if _, err := p.registry.db.Exec(query, nil, deviceID); err != nil {
-		return NewServiceError("delete device control", HandleSqlError(err))
-	}
-
-	return nil
-}
-
 func (p *DeviceService) GetPins(deviceID models.ID) ([]uint8, error) {
 	// Check if we have a cached value
 	if cached, ok := p.pinCache.Load(deviceID); ok {
@@ -97,14 +41,6 @@ func (p *DeviceService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
 	color, err := picow.GetColor(device)
 	if err != nil {
 		return nil, NewServiceError("get color from device", err)
-	}
-
-	// Check if the color is different from the stored color and not 0
-	if slices.Max(color) > 0 {
-		// Update the device control object with the new color
-		if err = p.UpdateColor(device.ID, color...); err != nil {
-			return nil, NewServiceError("update device control with new color", err)
-		}
 	}
 
 	return color, nil
@@ -199,22 +135,6 @@ func (p *DeviceService) SetCurrentColor(deviceID models.ID, color []uint8) error
 		return NewServiceError("get device for setting current color", err)
 	}
 
-	if slices.Max(color) > 0 {
-		if err = p.UpdateColor(deviceID, color...); err != nil {
-			if IsNotFoundError(err) {
-				if err = p.initDeviceColor(deviceID); err != nil {
-					return NewServiceError("set initial entry for setting current color", err)
-				}
-
-				if err = p.UpdateColor(deviceID, color...); err != nil {
-					return NewServiceError("update device control after setting initial entry", err)
-				}
-			} else {
-				return NewServiceError("update device control for setting current color", err)
-			}
-		}
-	}
-
 	if err := picow.SetColor(device, color...); err != nil {
 		return NewServiceError("set color in control layer", err)
 	}
@@ -230,18 +150,7 @@ func (p *DeviceService) TurnOn(deviceID models.ID) error {
 
 	deviceControl, err := p.Get(deviceID)
 	if err != nil {
-		if IsNotFoundError(err) {
-			if err = p.initDeviceColor(deviceID); err != nil {
-				return NewServiceError("set initial entry for turn on", err)
-			}
-
-			deviceControl, err = p.Get(deviceID)
-			if err != nil {
-				return NewServiceError("get device control after setting initial entry for turn on", err)
-			}
-		} else {
-			return NewServiceError("get device control for turn on", err)
-		}
+		return NewServiceError("get device control for turn on", err)
 	}
 
 	if err := picow.SetColor(device, deviceControl.Color...); err != nil {
@@ -267,26 +176,6 @@ func (p *DeviceService) TurnOff(deviceID models.ID) error {
 	color := make([]uint8, len(currentColor))
 	if err := picow.SetColor(device, color...); err != nil {
 		return NewServiceError("set color in control layer for turn off", err)
-	}
-
-	return nil
-}
-
-func (p *DeviceService) initDeviceColor(deviceID models.ID) error {
-	// Get pins using the cached version
-	pins, err := p.GetPins(deviceID)
-	if err != nil {
-		return NewServiceError("get pins for initial entry", err)
-	}
-
-	color := make([]uint8, len(pins))
-	for i := range pins {
-		color[i] = 255
-	}
-
-	device, err := p.Get(deviceID)
-	if err := p.UpdateColor(device.ID, color...); err != nil {
-		return NewServiceError("add initial device control entry", err)
 	}
 
 	return nil

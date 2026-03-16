@@ -65,16 +65,12 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 		}
 
 		var color []uint8
-		if c, err := r.Device.GetColor(device.ID); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to get current color: %v", err))
-		} else {
-			if !powerState {
-				for range c {
-					color = append(color, 0)
-				}
-			} else {
-				color = c
+		if !powerState {
+			for range device.Color {
+				color = append(color, 0)
 			}
+		} else {
+			color = device.Color
 		}
 
 		log.Debug("Toggling power state for device with %s to %#v", device.Name, color)
@@ -205,6 +201,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			if err != nil {
 				errs = append(errs, fmt.Errorf("failed to retrieve device: %v", err))
 			}
+			log.Debug("Retrieved device: %#v", device)
 
 			color := device.ToColor()
 			log.Debug("Editing device with current color: %#v", color)
@@ -226,19 +223,19 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		return func(c echo.Context) error {
 			formData, errs := parseForm(c)
 
-			log.Debug("Updating device: %#v", formData)
-
 			if len(errs) == 0 {
 				device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType)
 				device.ID = formData.ID
 
+				color := models.HexToColor("", formData.Color)
+				color.White = formData.White
+				color.White2 = formData.White2
+				device.Color = color.GetDuty(device.Type)
+
+				log.Debug("Updating device with new data: %#v", device)
+
 				if err := r.Device.Update(device); err != nil {
 					errs = append(errs, fmt.Errorf("failed to update device: %v", err))
-				}
-
-				color := models.HexToColor("", formData.Color)
-				if err := r.Device.UpdateColor(device.ID, color.GetDuty(device.Type)...); err != nil {
-					errs = append(errs, fmt.Errorf("failed to update device color: %v", err))
 				}
 			}
 

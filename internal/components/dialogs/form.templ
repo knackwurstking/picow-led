@@ -121,6 +121,7 @@ templ formColor(deviceType models.DeviceType, props formColorProps) {
 					Name:  props.ID + "_white",
 					Min:   0,
 					Max:   255,
+					Step:  1,
 					Value: props.ValueWhite,
 					Attributes: templ.Attributes{
 						"required": props.Required,
@@ -135,6 +136,7 @@ templ formColor(deviceType models.DeviceType, props formColorProps) {
 					Name:  props.ID + "_white2",
 					Min:   0,
 					Max:   255,
+					Step:  1,
 					Value: props.ValueWhite2,
 					Attributes: templ.Attributes{
 						"required": props.Required,
