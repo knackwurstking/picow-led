@@ -1,0 +1,81 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle (App Icon Style) -->
+  <rect x="0" y="0" width="256" height="256" rx="48" fill="#00b359"/>
+  
+  <!-- Dark Background for the Pico W Silkscreen detail -->
+  <rect x="48" y="48" width="160" height="160" rx="20" fill="#e0e0e0"/>
+  
+  <!-- The Pico W Board (Black) -->
+  <rect x="68" y="68" width="120" height="94" rx="8" fill="#1a1a1a"/>
+  
+  <!-- The Pico W USB C Cutout (Grey detail) -->
+  <rect x="78" y="90" width="32" height="50" rx="4" fill="#d1d1d1"/>
+  <!-- USB C Inner detail -->
+  <path d="M86 105 h16 v20 h-16 z" fill="#1a1a1a"/>
+
+  <!-- The Pico W Ethernet Port Cutout (Grey detail) -->
+  <rect x="126" y="80" width="34" height="54" rx="4" fill="#d1d1d1"/>
+  <!-- Ethernet Jack detail -->
+  <rect x="132" y="86" width="22" height="42" rx="2" fill="#1a1a1a"/>
+  <path d="M136 90 h4 v12 h-4 z M146 90 h4 v12 h-4 z" fill="#d1d1d1"/>
+
+  <!-- LEDs (The Core of your Project) -->
+  <g fill="#ffd700">
+    <!-- LED 1 -->
+    <circle cx="96" cy="128" r="8"/>
+    <!-- LED 2 (Brighter) -->
+    <circle cx="130" cy="128" r="10"/>
+    <!-- LED 3 -->
+    <circle cx="164" cy="128" r="8"/>
+    
+    <!-- LED Glow Effect behind the board LEDs -->
+    <circle cx="130" cy="128" r="25" fill="#ffd700" opacity="0.4"/>
+  </g>
+
+  <!-- Pico W Pins (Top and Bottom) -->
+  <g fill="#c0c0c0">
+    <!-- Top Pins -->
+    <rect x="72" y="60" width="4" height="8"/>
+    <rect x="79" y="60" width="4" height="8"/>
+    <rect x="86" y="60" width="4" height="8"/>
+    <rect x="93" y="60" width="4" height="8"/>
+    <rect x="100" y="60" width="4" height="8"/>
+    <rect x="107" y="60" width="4" height="8"/>
+    <rect x="114" y="60" width="4" height="8"/>
+    <rect x="121" y="60" width="4" height="8"/>
+    <rect x="128" y="60" width="4" height="8"/>
+    <rect x="135" y="60" width="4" height="8"/>
+    <rect x="142" y="60" width="4" height="8"/>
+    <rect x="149" y="60" width="4" height="8"/>
+    <rect x="156" y="60" width="4" height="8"/>
+    <rect x="163" y="60" width="4" height="8"/>
+    <rect x="170" y="60" width="4" height="8"/>
+    <rect x="177" y="60" width="4" height="8"/>
+
+    <!-- Bottom Pins -->
+    <rect x="72" y="162" width="4" height="8"/>
+    <rect x="79" y="162" width="4" height="8"/>
+    <rect x="86" y="162" width="4" height="8"/>
+    <rect x="93" y="162" width="4" height="8"/>
+    <rect x="100" y="162" width="4" height="8"/>
+    <rect x="107" y="162" width="4" height="8"/>
+    <rect x="114" y="162" width="4" height="8"/>
+    <rect x="121" y="162" width="4" height="8"/>
+    <rect x="128" y="162" width="4" height="8"/>
+    <rect x="135" y="162" width="4" height="8"/>
+    <rect x="142" y="162" width="4" height="8"/>
+    <rect x="149" y="162" width="4" height="8"/>
+    <rect x="156" y="162" width="4" height="8"/>
+    <rect x="163" y="162" width="4" height="8"/>
+    <rect x="170" y="162" width="4" height="8"/>
+    <rect x="177" y="162" width="4" height="8"/>
+  </g>
+  
+  <!-- Text / Logo Tag (Optional, can be removed if you want a pure icon) -->
+  <text x="128" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="14" fill="#555" letter-spacing="2">PICO-W</text>
+  
+  <!-- Network/Wifi Signals (Floating around for App context) -->
+  <path d="M190 56 C182 56, 182 70, 190 70 C194 70, 194 62, 190 62 Z" fill="white" opacity="0.8"/>
+  <path d="M198 48 C185 48, 185 78, 198 78 C203 78, 203 64, 198 64 Z" fill="white" opacity="0.5"/>
+  <path d="M206 40 C190 40, 190 86, 206 86 C213 86, 213 58, 206 58 Z" fill="white" opacity="0.3"/>
+</svg>
