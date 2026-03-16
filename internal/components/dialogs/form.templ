@@ -117,8 +117,8 @@ templ formColor(deviceType models.DeviceType, props formColorProps) {
 		if slices.Contains(whiteSliderTypes, deviceType) {
 			@slider.Slider() {
 				@slider.Input(slider.InputProps{
-					ID:    props.ID + "-white",
-					Name:  props.ID + "-white",
+					ID:    props.ID + "_white",
+					Name:  props.ID + "_white",
 					Min:   0,
 					Max:   255,
 					Value: props.ValueWhite,
@@ -131,8 +131,8 @@ templ formColor(deviceType models.DeviceType, props formColorProps) {
 		if deviceType == models.DeviceTypeRGBWW {
 			@slider.Slider() {
 				@slider.Input(slider.InputProps{
-					ID:    props.ID + "-white2",
-					Name:  props.ID + "-white2",
+					ID:    props.ID + "_white2",
+					Name:  props.ID + "_white2",
 					Min:   0,
 					Max:   255,
 					Value: props.ValueWhite2,

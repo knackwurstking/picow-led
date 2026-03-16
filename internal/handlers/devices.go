@@ -166,10 +166,10 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 
 		formData.Color = strings.TrimSpace(c.FormValue("color"))
 
-		i, _ := strconv.Atoi(strings.TrimSpace(c.FormValue("white")))
+		i, _ := strconv.Atoi(strings.TrimSpace(c.FormValue("color_white")))
 		formData.White = uint8(i)
 
-		i, _ = strconv.Atoi(strings.TrimSpace(c.FormValue("white2")))
+		i, _ = strconv.Atoi(strings.TrimSpace(c.FormValue("color_white2")))
 		formData.White2 = uint8(i)
 
 		return formData, errs
