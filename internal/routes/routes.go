@@ -23,7 +23,7 @@ func Register(e *echo.Echo, r *services.Registry) {
 	group = e.Group(env.Route(""))
 	{ // Register UI endpoints here
 		group.GET("/", handlers.Home)
-		group.GET("/device", handlers.Device(r))
+		group.GET("/device", handlers.Device(r, http.MethodGet))
 	}
 
 	// HTMX Endpoints
