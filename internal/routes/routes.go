@@ -40,6 +40,5 @@ func Register(e *echo.Echo, r *services.Registry) {
 			dialogsGroup.POST("/edit-device", handlers.HTMXEditDeviceDialog(r, http.MethodPost))
 			dialogsGroup.DELETE("/edit-device", handlers.HTMXEditDeviceDialog(r, http.MethodDelete))
 		}
-
 	}
 }
