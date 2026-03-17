@@ -57,7 +57,7 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 
 		deviceID, err := utils.ParseQueryID(c)
 		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid device ID: %v", err))
+			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
 		}
 
 		device, err := r.Device.Get(deviceID)
@@ -153,7 +153,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 
 		id, err := utils.ParseQueryID(c)
 		if err != nil {
-			errs = append(errs, err)
+			errs = append(errs, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
 		}
 		formData.ID = id
 
@@ -194,7 +194,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 
 			id, err := utils.ParseQueryID(c)
 			if err != nil {
-				errs = append(errs, fmt.Errorf("invalid device ID: %v", err))
+				errs = append(errs, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
 			}
 
 			// Get device from database

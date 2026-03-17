@@ -33,7 +33,7 @@ func Device(r *services.Registry, method string) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			id, err := utils.ParseQueryID(c)
 			if err != nil {
-				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("Invalid device ID: %w", err))
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
 			}
 
 			device, err := r.Device.Get(id)
