@@ -33,7 +33,12 @@ templ Devices(props ...DevicesProps) {
 templ DeviceItem(d *models.Device) {
 	<div id={ fmt.Sprintf(IDDeviceItem, d.ID) } class="device-item bg-secondary text-secondary-foreground rounded-lg p-4">
 		<div class="flex items-center gap-4">
-			<span class="w-full">
+			<span
+				class="w-full cursor-pointer"
+				hx-get={ urlb.PageDevice() }
+				hx-trigger="click"
+				hx-swap="none"
+			>
 				<div class="font-bold">{ d.Name }</div>
 				<div class="text-sm">{ d.Addr }</div>
 			</span>
