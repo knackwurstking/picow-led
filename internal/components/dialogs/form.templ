@@ -3,6 +3,7 @@ package dialogs
 import (
 	"github.com/knackwurstking/picow-led/internal/components/form"
 	"github.com/knackwurstking/picow-led/internal/components/input"
+	"github.com/knackwurstking/picow-led/internal/components/label"
 	"github.com/knackwurstking/picow-led/internal/components/selectbox"
 	"github.com/knackwurstking/picow-led/internal/components/slider"
 	"github.com/knackwurstking/picow-led/pkg/models"
@@ -115,10 +116,19 @@ templ formColor(deviceType models.DeviceType, props formColorProps) {
 			})
 		}
 		if slices.Contains(whiteSliderTypes, deviceType) {
+			{{ id := props.ID + "_white" }}
 			@slider.Slider() {
+				<div class="flex justify-between mb-1">
+					@label.Label() {
+						{ "Weiß" }
+					}
+					@slider.Value(slider.ValueProps{
+						For: id,
+					})
+				</div>
 				@slider.Input(slider.InputProps{
-					ID:    props.ID + "_white",
-					Name:  props.ID + "_white",
+					ID:    id,
+					Name:  id,
 					Min:   0,
 					Max:   255,
 					Step:  1,
@@ -130,10 +140,19 @@ templ formColor(deviceType models.DeviceType, props formColorProps) {
 			}
 		}
 		if deviceType == models.DeviceTypeRGBWW {
+			{{ id := props.ID + "_white2" }}
 			@slider.Slider() {
+				<div class="flex justify-between mb-1">
+					@label.Label() {
+						{ "Weiß 2" }
+					}
+					@slider.Value(slider.ValueProps{
+						For: id,
+					})
+				</div>
 				@slider.Input(slider.InputProps{
-					ID:    props.ID + "_white2",
-					Name:  props.ID + "_white2",
+					ID:    id,
+					Name:  id,
 					Min:   0,
 					Max:   255,
 					Step:  1,

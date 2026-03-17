@@ -1,4 +1,4 @@
-package handlers
+package utils
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func parseQueryID(c echo.Context) (models.ID, error) {
+func ParseQueryID(c echo.Context) (models.ID, error) {
 	idStr := c.QueryParam("id")
 	if idStr == "" {
 		return 0, fmt.Errorf("missing device ID")

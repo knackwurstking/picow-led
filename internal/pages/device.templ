@@ -1,14 +1,30 @@
 package pages
 
-import "github.com/knackwurstking/picow-led/internal/components/layout"
+import (
+	"github.com/knackwurstking/picow-led/internal/components/layout"
+	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/pkg/models"
+	"github.com/knackwurstking/ui"
+)
 
-templ Device() {
+templ Device(device *models.Device) {
 	@layout.Layout(layout.Props{
 		Class: "px-4",
 		Lang:  "de",
 		Title: "PicoW LED",
 	}) {
-		// TODO: ...
-		<p>Device Kontrolle</p>
+		@colorPicker()
+		@whiteSlider()
+		@brightnessSlider()
+		<script defer src={ ui.AssetURL("", env.Route("/js/device.js")) }></script>
 	}
+}
+
+templ colorPicker() {
+}
+
+templ whiteSlider() {
+}
+
+templ brightnessSlider() {
 }

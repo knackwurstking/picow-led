@@ -13,6 +13,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/dialogs"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
+	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
@@ -54,7 +55,7 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		powerState, _ := strconv.ParseBool(strings.TrimSpace(c.FormValue("power_state")))
 
-		deviceID, err := parseQueryID(c)
+		deviceID, err := utils.ParseQueryID(c)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid device ID: %v", err))
 		}
@@ -150,7 +151,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		var errs []error
 		var formData dialogs.EditDeviceFormData
 
-		id, err := parseQueryID(c)
+		id, err := utils.ParseQueryID(c)
 		if err != nil {
 			errs = append(errs, err)
 		}
@@ -191,7 +192,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		return func(c echo.Context) error {
 			var errs []error
 
-			id, err := parseQueryID(c)
+			id, err := utils.ParseQueryID(c)
 			if err != nil {
 				errs = append(errs, fmt.Errorf("invalid device ID: %v", err))
 			}

@@ -1,11 +1,16 @@
 package urlb
 
-import "github.com/knackwurstking/picow-led/internal/env"
+import (
+	"fmt"
+
+	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/pkg/models"
+)
 
 func PageHome() string {
 	return env.Route("/")
 }
 
-func PageDevice() string {
-	return env.Route("/device")
+func PageDevice(deviceID models.ID) string {
+	return env.Route(fmt.Sprintf("/device?id=%d", deviceID))
 }
