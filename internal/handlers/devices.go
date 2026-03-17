@@ -9,9 +9,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/knackwurstking/picow-led/internal/components"
 	"github.com/knackwurstking/picow-led/internal/components/dialogs"
 	"github.com/knackwurstking/picow-led/internal/env"
-	"github.com/knackwurstking/picow-led/internal/htmx"
 	"github.com/knackwurstking/picow-led/internal/services"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
@@ -38,7 +38,7 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 		}
 		wg.Wait()
 
-		t := htmx.Devices(htmx.DevicesProps{
+		t := components.Devices(components.DevicesProps{
 			Data: devices,
 		})
 		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
