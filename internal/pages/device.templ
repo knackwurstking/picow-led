@@ -1,20 +1,37 @@
 package pages
 
 import (
+	"github.com/knackwurstking/picow-led/internal/components/label"
 	"github.com/knackwurstking/picow-led/internal/components/layout"
+	"github.com/knackwurstking/picow-led/internal/components/slider"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/knackwurstking/ui"
+	"slices"
 )
 
-templ Device(device *models.Device) {
+var (
+	//colorPickerTypes = []models.DeviceType{
+	//	models.DeviceTypeRGB,
+	//	models.DeviceTypeRGBW,
+	//	models.DeviceTypeRGBWW,
+	//}
+	whiteSliderTypes = []models.DeviceType{
+		models.DeviceTypeRGBW,
+		models.DeviceTypeRGBWW,
+		models.DeviceTypeW,
+	}
+)
+
+templ Device(d *models.Device) {
 	@layout.Layout(layout.Props{
 		Class: "px-4",
 		Lang:  "de",
 		Title: "PicoW LED",
 	}) {
+		{{ color := d.ToColor() }}
 		@colorPicker()
-		@whiteSlider()
+		@whiteSlider(d, color)
 		@brightnessSlider()
 		<script defer src={ ui.AssetURL("", env.Route("/js/device.js")) }></script>
 	}
@@ -23,7 +40,55 @@ templ Device(device *models.Device) {
 templ colorPicker() {
 }
 
-templ whiteSlider() {
+templ whiteSlider(d *models.Device, c *models.Color) {
+	if slices.Contains(whiteSliderTypes, d.Type) {
+		{{ id := "white-slider" }}
+		@slider.Slider() {
+			<div class="flex justify-between mb-1">
+				@label.Label() {
+					{ "Weiß" }
+				}
+				@slider.Value(slider.ValueProps{
+					For: id,
+				})
+			</div>
+			@slider.Input(slider.InputProps{
+				ID:    id,
+				Name:  id,
+				Min:   0,
+				Max:   255,
+				Step:  1,
+				Value: int(c.White),
+				Attributes: templ.Attributes{
+					"required": true,
+				},
+			})
+		}
+	}
+	if d.Type == models.DeviceTypeRGBWW {
+		{{ id := "white-slider-2" }}
+		@slider.Slider() {
+			<div class="flex justify-between mb-1">
+				@label.Label() {
+					{ "Weiß 2" }
+				}
+				@slider.Value(slider.ValueProps{
+					For: id,
+				})
+			</div>
+			@slider.Input(slider.InputProps{
+				ID:    id,
+				Name:  id,
+				Min:   0,
+				Max:   255,
+				Step:  1,
+				Value: int(c.White2),
+				Attributes: templ.Attributes{
+					"required": true,
+				},
+			})
+		}
+	}
 }
 
 templ brightnessSlider() {
