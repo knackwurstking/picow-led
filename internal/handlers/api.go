@@ -14,14 +14,23 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 	switch method {
 	case http.MethodPost:
 		return func(c echo.Context) error {
-			device, err := getDeviceFromParamID(c, r)
-			if err != nil {
-				return err
+			device, eerr := getDeviceFromParamID(c, r)
+			if eerr != nil {
+				return eerr
 			}
 
-			// TODO: ...
+			color, err := utils.ParseQueryColor(c)
+			if err != nil && err != utils.ErrNotFound {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid color: %v", err))
+			} else if err == utils.ErrNotFound {
+				color = device.Color
+			}
 
-			return echo.NewHTTPError(501, "Not Implemented")
+			if err := r.Device.SetCurrentColor(device.ID, color); err != nil {
+				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("set device color: %v", err))
+			}
+
+			return nil
 		}
 	}
 
@@ -30,7 +39,7 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 
 func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		device, err := getDeviceFromParamID(c, r)
+		_, err := getDeviceFromParamID(c, r)
 		if err != nil {
 			return err
 		}
@@ -56,7 +65,7 @@ func APISetDeviceBrightness(r *services.Registry, method string) echo.HandlerFun
 func getDeviceFromParamID(c echo.Context, r *services.Registry) (*models.Device, *echo.HTTPError) {
 	id, err := utils.ParseParamID(c)
 	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, err)
+		return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v: %v", err, c.Param("id")))
 	}
 
 	device, err := r.Device.Get(id)
