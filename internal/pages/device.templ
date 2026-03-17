@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"fmt"
 	"github.com/knackwurstking/picow-led/internal/components/input"
 	"github.com/knackwurstking/picow-led/internal/components/label"
 	"github.com/knackwurstking/picow-led/internal/components/layout"
@@ -31,7 +32,6 @@ templ Device(d *models.Device) {
 		Title: "PicoW LED",
 	}) {
 		{{ color := d.ToColor() }}
-		// TODO: Submit on value change via WebSocket, live update the device
 		<div class="text-4xl flex justify-center items-center">{ d.Name }</div>
 		@colorPicker(d, color)
 		@whiteSlider(d, color)
@@ -54,6 +54,9 @@ templ colorPicker(d *models.Device, c *models.Color) {
 			Type:     input.TypeColor,
 			Required: true,
 			Value:    "#" + models.ColorToHex(c.Color),
+			Attributes: templ.Attributes{
+				"onchange": fmt.Sprintf(`changeDeviceColor("%s", event.target.value)`, d.Addr),
+			},
 		})
 	}
 }
@@ -80,6 +83,7 @@ templ whiteSlider(d *models.Device, c *models.Color) {
 				Value: int(c.White),
 				Attributes: templ.Attributes{
 					"required": true,
+					"onchange": fmt.Sprintf(`changeDeviceWhite("%s", event.target.value)`, d.Addr),
 				},
 			})
 		}
@@ -112,6 +116,7 @@ templ whiteSlider(d *models.Device, c *models.Color) {
 				Value: int(c.White2),
 				Attributes: templ.Attributes{
 					"required": true,
+					"onchange": fmt.Sprintf(`changeDeviceWhite2("%s", event.target.value)`, d.Addr),
 				},
 			})
 		}
