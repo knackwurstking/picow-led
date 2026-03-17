@@ -31,7 +31,8 @@ templ Device(d *models.Device) {
 		Title: "PicoW LED",
 	}) {
 		{{ color := d.ToColor() }}
-		// TODO: Submit on value change via WebSocket
+		// TODO: Submit on value change via WebSocket, live update the device
+		<div class="text-4xl flex justify-center items-center">{ d.Name }</div>
 		@colorPicker(d, color)
 		@whiteSlider(d, color)
 		@brightnessSlider()
@@ -42,12 +43,17 @@ templ Device(d *models.Device) {
 templ colorPicker(d *models.Device, c *models.Color) {
 	{{ id := "color-picker" }}
 	if slices.Contains(colorPickerTypes, d.Type) {
+		@label.Label(label.Props{
+			For: id,
+		}) {
+			Farbe
+		}
 		@input.Input(input.Props{
 			ID:       id,
 			Name:     id,
 			Type:     input.TypeColor,
 			Required: true,
-			Value:    models.ColorToHex(c.Color),
+			Value:    "#" + models.ColorToHex(c.Color),
 		})
 	}
 }
@@ -61,6 +67,7 @@ templ whiteSlider(d *models.Device, c *models.Color) {
 					{ "Weiß" }
 				}
 				@slider.Value(slider.ValueProps{
+					ID:  id + "-value",
 					For: id,
 				})
 			</div>
@@ -76,6 +83,13 @@ templ whiteSlider(d *models.Device, c *models.Color) {
 				},
 			})
 		}
+		<script>
+			// NOTE: This will initially set the slider value
+			var e = document.getElementById("{{ id }}-value");
+			if (e) {
+				e.textContent = "{{ c.White }}";
+			}
+		</script>
 	}
 	if d.Type == models.DeviceTypeRGBWW {
 		{{ id := "white-slider-2" }}
@@ -85,6 +99,7 @@ templ whiteSlider(d *models.Device, c *models.Color) {
 					{ "Weiß 2" }
 				}
 				@slider.Value(slider.ValueProps{
+					ID:  id + "-value",
 					For: id,
 				})
 			</div>
@@ -100,6 +115,13 @@ templ whiteSlider(d *models.Device, c *models.Color) {
 				},
 			})
 		}
+		<script>
+			// NOTE: This will initially set the slider value
+			var e = document.getElementById("{{ id }}-value");
+			if (e) {
+				e.textContent = "{{ c.White2 }}";
+			}
+		</script>
 	}
 }
 
