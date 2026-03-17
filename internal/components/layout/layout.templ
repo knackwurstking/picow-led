@@ -39,6 +39,7 @@ templ Layout(props ...Props) {
 }
 
 templ icons() {
+	<link rel="icon" href={ ui.AssetURL("", env.Route("/favicon.ico")) } sizes="any"/>
 	<link rel="icon" href={ ui.AssetURL("", env.Route("/favicon.svg")) } type="image/svg+xml"/>
 }
 
