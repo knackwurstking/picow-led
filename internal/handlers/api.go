@@ -38,16 +38,21 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 }
 
 func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		_, err := getDeviceFromParamID(c, r)
-		if err != nil {
-			return err
+	switch method {
+	case http.MethodPost:
+		return func(c echo.Context) error {
+			_, err := getDeviceFromParamID(c, r)
+			if err != nil {
+				return err
+			}
+
+			// TODO: ...
+
+			return echo.NewHTTPError(501, "Not Implemented")
 		}
-
-		// TODO: ...
-
-		return echo.NewHTTPError(501, "Not Implemented")
 	}
+
+	return nil
 }
 
 func APISetDeviceWhite2(r *services.Registry, method string) echo.HandlerFunc {
