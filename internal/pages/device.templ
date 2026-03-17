@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"github.com/knackwurstking/picow-led/internal/components/input"
 	"github.com/knackwurstking/picow-led/internal/components/label"
 	"github.com/knackwurstking/picow-led/internal/components/layout"
 	"github.com/knackwurstking/picow-led/internal/components/slider"
@@ -11,11 +12,11 @@ import (
 )
 
 var (
-	//colorPickerTypes = []models.DeviceType{
-	//	models.DeviceTypeRGB,
-	//	models.DeviceTypeRGBW,
-	//	models.DeviceTypeRGBWW,
-	//}
+	colorPickerTypes = []models.DeviceType{
+		models.DeviceTypeRGB,
+		models.DeviceTypeRGBW,
+		models.DeviceTypeRGBWW,
+	}
 	whiteSliderTypes = []models.DeviceType{
 		models.DeviceTypeRGBW,
 		models.DeviceTypeRGBWW,
@@ -25,19 +26,30 @@ var (
 
 templ Device(d *models.Device) {
 	@layout.Layout(layout.Props{
-		Class: "px-4",
+		Class: "px-4 space-y-4",
 		Lang:  "de",
 		Title: "PicoW LED",
 	}) {
 		{{ color := d.ToColor() }}
-		@colorPicker()
+		// TODO: Submit on value change via WebSocket
+		@colorPicker(d, color)
 		@whiteSlider(d, color)
 		@brightnessSlider()
 		<script defer src={ ui.AssetURL("", env.Route("/js/device.js")) }></script>
 	}
 }
 
-templ colorPicker() {
+templ colorPicker(d *models.Device, c *models.Color) {
+	{{ id := "color-picker" }}
+	if slices.Contains(colorPickerTypes, d.Type) {
+		@input.Input(input.Props{
+			ID:       id,
+			Name:     id,
+			Type:     input.TypeColor,
+			Required: true,
+			Value:    models.ColorToHex(c.Color),
+		})
+	}
 }
 
 templ whiteSlider(d *models.Device, c *models.Color) {
