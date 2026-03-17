@@ -11,6 +11,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func Home(c echo.Context) error {
+	t := pages.Home()
+	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render template: %v", err))
+	}
+	return nil
+}
+
 func Device(r *services.Registry, method string) echo.HandlerFunc {
 	render := func(c echo.Context, device *models.Device) error {
 		t := pages.Device(device)
