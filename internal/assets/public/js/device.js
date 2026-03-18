@@ -24,8 +24,26 @@ function changeDeviceColor(addr, deviceID, hex) {
 }
 
 function changeDeviceWhite(addr, value) {
-	// TODO: Change the device color via API call
 	console.debug(`Changing white for device with ${addr} to`, value);
+
+	query = new URLSearchParams({
+		white: value,
+	});
+	url = (SERVER_PATH_PREFIX || "") + `/api/devices/${addr}/white?${query.toString()}`;
+
+	fetch(url, { method: "POST" })
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			return response.json();
+		})
+		.then((data) => {
+			console.debug("Device white level changed successfully:", data);
+		})
+		.catch((error) => {
+			console.error("Error changing device white level:", error);
+		});
 }
 
 function changeDeviceWhite2(addr, value) {
