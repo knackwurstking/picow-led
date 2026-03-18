@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 type DeviceType string
 
@@ -54,6 +57,12 @@ func (d *Device) Validate() error {
 	default:
 		return fmt.Errorf("invalid device type: %s", d.Type)
 	}
+
+	// Check if duty values are not all zero
+	if slices.Max(d.Duty) == 0 {
+		return fmt.Errorf("device duty cannot be all zero or empty")
+	}
+
 	return nil
 }
 
