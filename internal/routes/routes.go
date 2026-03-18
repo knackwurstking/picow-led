@@ -14,11 +14,11 @@ func Register(e *echo.Echo, r *services.Registry) {
 	// Static Assets
 	assets.ServePublicFS(e)
 
-	// API Endpoints
-	group := e.Group(env.Route("/api"))
 	{ // Register API endpoints here
-		devicesGroup := group.Group("/devices/:id")
+		group := e.Group(env.Route("/api"))
 		{
+			devicesGroup := group.Group("/devices/:id")
+
 			devicesGroup.POST("/color", handlers.APISetDeviceColor(r, http.MethodPost))
 			devicesGroup.POST("/white", handlers.APISetDeviceWhite(r, http.MethodPost))
 			devicesGroup.POST("/white2", handlers.APISetDeviceWhite2(r, http.MethodPost))
@@ -28,21 +28,22 @@ func Register(e *echo.Echo, r *services.Registry) {
 		}
 	}
 
-	// UI Endpoints
-	group = e.Group(env.Route(""))
 	{ // Register UI endpoints here
+		group := e.Group(env.Route(""))
+
 		group.GET("/", handlers.Home)
 		group.GET("/device", handlers.Device(r, http.MethodGet))
 	}
 
-	// HTMX Endpoints
-	group = e.Group(env.Route("/htmx"))
 	{ // Register HTMX endpoints here
+		group := e.Group(env.Route("/htmx"))
+
 		group.GET("/devices", handlers.HTMXDevices(r))
 		group.POST("/devices/toggle-power", handlers.HTMXToggleDevicePower(r))
 
-		dialogsGroup := group.Group("/dialogs")
 		{
+			dialogsGroup := group.Group("/dialogs")
+
 			dialogsGroup.GET("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
 			dialogsGroup.POST("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
 
