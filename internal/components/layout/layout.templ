@@ -50,6 +50,9 @@ templ styles() {
 }
 
 templ scripts() {
+	<script>
+		var SERVER_PATH_PREFIX = "{{ env.ServerPathPrefix }}";
+	</script>
 	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
 	<script src={ ui.AssetURL("", env.Route("js/main.js")) }></script>
 	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/tabs.min.js")) }></script>

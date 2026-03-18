@@ -9,15 +9,15 @@ import (
 )
 
 func APISetDeviceColor(deviceID models.ID, color ...uint8) string {
-	colorStr := strings.Builder{}
+	colorStr := &strings.Builder{}
 	for i, c := range color {
 		if i > 0 {
 			colorStr.WriteString(",")
 		}
-		colorStr.WriteString(fmt.Sprintf("%d", c))
+		fmt.Fprintf(colorStr, "%d", c)
 	}
 
-	query := strings.Builder{}
+	query := &strings.Builder{}
 	if len(color) > 0 {
 		query.WriteString("?color=")
 		query.WriteString(colorStr.String())
@@ -32,19 +32,19 @@ func APISetDeviceWhite(deviceID models.ID, white uint8) string {
 }
 
 func APISetDeviceRGBW(deviceID models.ID, color []uint8, white uint8) string {
-	colorStr := strings.Builder{}
+	colorStr := &strings.Builder{}
 	for i, c := range color {
 		if i > 0 {
 			colorStr.WriteString(",")
 		}
-		colorStr.WriteString(fmt.Sprintf("%d", c))
+		fmt.Fprintf(colorStr, "%d", c)
 	}
 
-	query := strings.Builder{}
+	query := &strings.Builder{}
 	query.WriteString("?color=")
 	query.WriteString(colorStr.String())
 
-	query.WriteString(fmt.Sprintf("&white=%d", white))
+	fmt.Fprintf(query, "&white=%d", white)
 
 	return env.Route(fmt.Sprintf("/api/device/%d/color%s", deviceID, query.String()))
 }
