@@ -136,6 +136,10 @@ func (p *DeviceService) TogglePower(deviceID models.ID) ([]uint8, error) {
 }
 
 func (p *DeviceService) SetCurrentDuty(deviceID models.ID, duty []uint8) error {
+	if len(duty) == 0 {
+		return NewServiceError("duty array cannot be empty", nil)
+	}
+
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
 		return NewServiceError("get device for setting current duty", err)
@@ -147,9 +151,12 @@ func (p *DeviceService) SetCurrentDuty(deviceID models.ID, duty []uint8) error {
 		return NewServiceError("set duty in control layer", err)
 	}
 
-	device.Duty = duty
-	if err = p.Update(device); err != nil {
-		return NewServiceError("update device control duty in database", err)
+	// Store duty if bigger zero, else ignore
+	if slices.Max(duty) > 0 {
+		device.Duty = duty
+		if err = p.Update(device); err != nil {
+			return NewServiceError("update device control duty in database", err)
+		}
 	}
 
 	return nil
