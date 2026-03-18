@@ -213,13 +213,18 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			formData, errs := parseForm(c)
 
 			if len(errs) == 0 {
-				device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType)
-				device.ID = formData.ID
+				if device, err := r.Device.Get(formData.ID); err != nil {
+					errs = append(errs, fmt.Errorf("failed to retrieve device for update: %v", err))
+				} else {
+					device.Addr = formData.Addr
+					device.Name = formData.Name
+					device.Type = formData.DeviceType
 
-				log.Debug("Updating device with new data: %#v", device)
+					log.Debug("Updating device with new data: %#v", device)
 
-				if err := r.Device.Update(device); err != nil {
-					errs = append(errs, fmt.Errorf("failed to update device: %v", err))
+					if err = r.Device.Update(device); err != nil {
+						errs = append(errs, fmt.Errorf("failed to update device: %v", err))
+					}
 				}
 			}
 
