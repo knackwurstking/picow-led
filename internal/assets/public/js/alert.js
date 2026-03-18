@@ -7,10 +7,10 @@
 			mutations.forEach(mutation => {
 				mutation.addedNodes.forEach(node => {
 					if (node.nodeType === Node.ELEMENT_NODE && node.matches(`[data-alert]`)) {
-						// If the new node is an alert, set a timeout to remove it after 5 seconds
+						// If the new node is an alert, set a timeout to remove it on timeout
 						setTimeout(() => {
 							node.remove()
-						}, 5000)
+						}, 60000) // 60000 milliseconds = 60 seconds
 					}
 				})
 			})
@@ -24,6 +24,7 @@
 		alert.setAttribute("data-alert", "")
 		alert.setAttribute("data-alert-type", type)
 		alert.textContent = message
+		alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-red-500 text-red-100" // Tailwind classes for styling
 
 		// Add click handler to remove the alert on click
 		alert.addEventListener("click", () => {
