@@ -76,7 +76,7 @@ func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
 				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("set device color: %v", err))
 			}
 
-			return echo.NewHTTPError(501, "Not Implemented")
+			return nil
 		}
 	}
 
