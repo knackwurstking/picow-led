@@ -6,7 +6,7 @@ function changeDeviceColor(addr, deviceID, hex) {
 	query = new URLSearchParams({
 		color: hex,
 	});
-	url = (SERVER_PATH_PREFIX || "") + `/api/device/${deviceID}/color?${query.toString()}`;
+	url = (SERVER_PATH_PREFIX || "") + `/api/devices/${deviceID}/color?${query.toString()}`;
 
 	fetch(url, { method: "POST" })
 		.then((response) => {

@@ -23,13 +23,13 @@ func APISetDeviceColor(deviceID models.ID, color ...uint8) string {
 		v.Add("color", colorStr.String())
 	}
 
-	return env.Route(fmt.Sprintf("/api/device/%d/color%s", deviceID, v.Encode()))
+	return env.Route(fmt.Sprintf("/api/devices/%d/color%s", deviceID, v.Encode()))
 }
 
 func APISetDeviceWhite(deviceID models.ID, white uint8) string {
 	v := url.Values{}
 	v.Add("white", fmt.Sprintf("%d", white))
-	return env.Route(fmt.Sprintf("/api/device/%d/white%s", deviceID, v.Encode()))
+	return env.Route(fmt.Sprintf("/api/devices/%d/white%s", deviceID, v.Encode()))
 }
 
 func APISetDeviceRGBW(deviceID models.ID, color []uint8, white uint8) string {
@@ -48,5 +48,5 @@ func APISetDeviceRGBW(deviceID models.ID, color []uint8, white uint8) string {
 
 	v.Add("white", fmt.Sprintf("%d", white))
 
-	return env.Route(fmt.Sprintf("/api/device/%d/color%s", deviceID, v.Encode()))
+	return env.Route(fmt.Sprintf("/api/devices/%d/color%s", deviceID, v.Encode()))
 }
