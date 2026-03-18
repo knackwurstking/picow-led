@@ -41,7 +41,7 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 					fmt.Errorf("set device color: %v", err))
 			}
 
-			return echo.NewHTTPError(http.StatusNoContent)
+			return c.NoContent(http.StatusNoContent)
 		}
 	}
 
@@ -85,7 +85,7 @@ func APISetDeviceRGBW(r *services.Registry, method string) echo.HandlerFunc {
 					fmt.Errorf("set device color: %v", err))
 			}
 
-			return echo.NewHTTPError(http.StatusNoContent)
+			return c.NoContent(http.StatusNoContent)
 		}
 	}
 
@@ -120,7 +120,7 @@ func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
 					fmt.Errorf("set device color: %v", err))
 			}
 
-			return echo.NewHTTPError(http.StatusNoContent)
+			return c.NoContent(http.StatusNoContent)
 		}
 	}
 

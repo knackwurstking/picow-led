@@ -13,6 +13,10 @@ function changeDeviceColor(deviceID, hex) {
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
+			if (response.status === 204) {
+				// No content, return an empty object
+				return {};
+			}
 			return response.json();
 		})
 		.then((data) => {
@@ -36,13 +40,17 @@ function changeDeviceWhite(deviceID, value) {
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
+			if (response.status === 204) {
+				// No content, return an empty object
+				return {};
+			}
 			return response.json();
 		})
 		.then((data) => {
 			console.debug("Device white level changed successfully:", data);
 		})
 		.catch((error) => {
-			console.error("Error changing device white:", error);
+			console.error("Error changing device white level:", error);
 		});
 }
 

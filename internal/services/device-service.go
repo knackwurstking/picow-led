@@ -5,18 +5,22 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/pkg/models"
+	"github.com/knackwurstking/ui"
 )
 
 type DeviceService struct {
 	registry *Registry
 
 	pinCache sync.Map
+	log      *ui.Logger
 }
 
 func NewDeviceService(r *Registry) *DeviceService {
 	return &DeviceService{
 		registry: r,
+		log:      env.NewLogger("DeviceService"),
 	}
 }
 

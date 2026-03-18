@@ -24,6 +24,8 @@ func (p *DeviceService) GetPins(deviceID models.ID) ([]uint8, error) {
 		return nil, NewServiceError("get device pins from control layer", err)
 	}
 
+	p.log.Debug("Pins for device %s: %v", deviceID, pins)
+
 	// Cache the result
 	p.pinCache.Store(deviceID, pins)
 
@@ -42,6 +44,8 @@ func (p *DeviceService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
 	if err != nil {
 		return nil, NewServiceError("get color from device", err)
 	}
+
+	p.log.Debug("Current color for device %s: %v", deviceID, color)
 
 	return color, nil
 }
@@ -122,6 +126,8 @@ func (p *DeviceService) TogglePower(deviceID models.ID) ([]uint8, error) {
 		}
 	}
 
+	p.log.Debug("Toggling power for device %s: current color=%v, new color=%v", deviceID, currentColor, newColor)
+
 	if err = picow.SetColor(device, newColor...); err != nil {
 		return nil, NewServiceError("set color for power toggle", err)
 	}
@@ -135,8 +141,15 @@ func (p *DeviceService) SetCurrentColor(deviceID models.ID, color []uint8) error
 		return NewServiceError("get device for setting current color", err)
 	}
 
-	if err := picow.SetColor(device, color...); err != nil {
+	p.log.Debug("Setting current color for device %s: %v", deviceID, color)
+
+	if err = picow.SetColor(device, color...); err != nil {
 		return NewServiceError("set color in control layer", err)
+	}
+
+	device.Color = color
+	if err = p.Update(device); err != nil {
+		return NewServiceError("update device control color in database", err)
 	}
 
 	return nil
@@ -152,6 +165,8 @@ func (p *DeviceService) TurnOn(deviceID models.ID) error {
 	if err != nil {
 		return NewServiceError("get device control for turn on", err)
 	}
+
+	p.log.Debug("Turning on device %s with color %v", deviceID, deviceControl.Color)
 
 	if err := picow.SetColor(device, deviceControl.Color...); err != nil {
 		return NewServiceError("set color in control layer for turn on", err)
@@ -174,6 +189,9 @@ func (p *DeviceService) TurnOff(deviceID models.ID) error {
 
 	// Set the color to zero (turn off)
 	color := make([]uint8, len(currentColor))
+
+	p.log.Debug("Turning off device %s: current color=%v, new color=%v", deviceID, currentColor, color)
+
 	if err := picow.SetColor(device, color...); err != nil {
 		return NewServiceError("set color in control layer for turn off", err)
 	}
