@@ -33,18 +33,34 @@ func ParseQueryColor(c echo.Context) ([]uint8, error) {
 	}
 
 	var color []uint8
-	colorStrSplit := strings.Split(colorStr, ",")
-	for _, part := range colorStrSplit {
-		part = strings.TrimSpace(part)
-		if part == "" {
-			color = append(color, 0)
-			continue
-		}
-		c, err := strconv.ParseUint(part, 10, 8)
-		if err != nil {
+
+	// Need to check value type first, e.g: "255,255,255" or "#FFFFFF"
+	if strings.HasPrefix(colorStr, "#") {
+		colorStr = strings.TrimPrefix(colorStr, "#")
+		if len(colorStr) != 6 {
 			return nil, ErrInvalid
 		}
-		color = append(color, uint8(c))
+		for i := 0; i < 6; i += 2 {
+			c, err := strconv.ParseUint(colorStr[i:i+2], 16, 8)
+			if err != nil {
+				return nil, ErrInvalid
+			}
+			color = append(color, uint8(c))
+		}
+	} else {
+		colorStrSplit := strings.Split(colorStr, ",")
+		for _, part := range colorStrSplit {
+			part = strings.TrimSpace(part)
+			if part == "" {
+				color = append(color, 0)
+				continue
+			}
+			c, err := strconv.ParseUint(part, 10, 8)
+			if err != nil {
+				return nil, ErrInvalid
+			}
+			color = append(color, uint8(c))
+		}
 	}
 
 	return color, nil
