@@ -1,0 +1,81 @@
+package components
+
+import (
+	"context"
+	"github.com/knackwurstking/picow-led/internal/utils"
+)
+
+const (
+	InstanceKeyAlertContainer = "alertContainerInstance"
+)
+
+type AlertContainerProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+type AlertProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	For        string
+	Message    string
+}
+
+templ AlertContainer(props ...AlertContainerProps) {
+	{{
+		prop := AlertContainerProps{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+
+		// AlertContainer is designed to be a singleton within the application.
+		// If an ID is not provided, it generates a random one to ensure
+		// uniqueness. The ID is then stored in the context for any child
+		// components (like Alert) to reference when they need to display an
+		// alert.
+		if prop.ID == "" {
+			prop.ID = utils.RandomID()
+		}
+		ctx = context.WithValue(ctx, InstanceKeyAlertContainer, prop.ID)
+	}}
+	<div
+		if prop.ID != "" {
+			id={ prop.ID }
+		}
+		class={
+			"fixed bottom-0 right-0 p-4 max-w-screen",
+			prop.Class,
+		}
+		data-alert-container
+		{ prop.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+templ Alert(props ...AlertProps) {
+	{{
+		prop := AlertProps{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+
+		// Get the AlertContainer instance ID from the context.
+		var instanceID string
+		if prop.For != "" {
+			instanceID = prop.For
+		} else if v := ctx.Value(InstanceKeyAlertContainer); v != nil {
+			instanceID = v.(string)
+		} else {
+			panic("Alert component must be used within an AlertContainer. No AlertContainer instance found in context.")
+		}
+	}}
+	<script>
+	if (window.addAlert) {
+		// NOTE: window.addAlert(containerID, message, type = "info")
+		window.addAlert("{{ instanceID }}", `{{ prop.Message }}`, "error")
+	}
+	</script>
+}

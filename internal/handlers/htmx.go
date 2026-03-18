@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -21,26 +22,32 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 	log := env.NewLogger("handlers.HTMXDevices")
 
 	return func(c echo.Context) error {
+		var errs []error
+
 		devices, err := r.Device.List()
 		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to retrieve devices: %v", err))
+			message := fmt.Sprintf("failed to retrieve devices: %v", err)
+			log.Warn(message)
+			errs = append(errs, errors.New(message))
+		} else {
+			wg := sync.WaitGroup{}
+			for _, d := range devices {
+				wg.Go(func() {
+					if duty, err := r.Device.GetCurrentDuty(d.ID); err != nil {
+						message := fmt.Sprintf("failed to retrieve current duty for device %d: %v", d.ID, err)
+						log.Warn(message)
+						errs = append(errs, errors.New(message))
+					} else {
+						d.Duty = duty
+					}
+				})
+			}
+			wg.Wait()
 		}
-
-		wg := sync.WaitGroup{}
-		for _, d := range devices {
-			wg.Go(func() {
-				if duty, err := r.Device.GetCurrentDuty(d.ID); err != nil {
-					// TODO: Pass errors to the frontend
-					log.Warn("failed to get current color for device %d: %v", d.ID, err)
-				} else {
-					d.Duty = duty
-				}
-			})
-		}
-		wg.Wait()
 
 		t := components.Devices(components.DevicesProps{
-			Data: devices,
+			Data:   devices,
+			Errors: errs,
 		})
 		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render template: %v", err))

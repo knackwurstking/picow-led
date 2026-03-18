@@ -12,10 +12,12 @@ import (
 const (
 	IDDeviceItem        = "device-item-%d"
 	IDPowerToggleSwitch = "power-toggle-switch-%d"
+	IDAlertContainer    = "alert-container"
 )
 
 type DevicesProps struct {
-	Data []*models.Device
+	Data   []*models.Device
+	Errors []error
 }
 
 templ Devices(props ...DevicesProps) {
@@ -25,6 +27,14 @@ templ Devices(props ...DevicesProps) {
 			prop = props[0]
 		}
 	}}
+	// Render alerts if any
+	for _, err := range prop.Errors {
+		@Alert(AlertProps{
+			For:     IDAlertContainer,
+			Message: err.Error(),
+		})
+	}
+	// Render device items
 	for _, d := range prop.Data {
 		@DeviceItem(d)
 	}
