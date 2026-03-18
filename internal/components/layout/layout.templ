@@ -59,6 +59,8 @@ templ scripts() {
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
 	<script src={ ui.AssetURL("", env.Route("js/main.js")) }></script>
+	<script defer src={ ui.AssetURL("", env.Route("js/alert.js")) }></script>
+	// TemplUI components
 	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/tabs.min.js")) }></script>
 	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/dialog.min.js")) }></script>
 	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/label.min.js")) }></script>
