@@ -2,6 +2,7 @@ package urlb
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/knackwurstking/picow-led/internal/env"
@@ -9,42 +10,43 @@ import (
 )
 
 func APISetDeviceColor(deviceID models.ID, color ...uint8) string {
-	colorStr := &strings.Builder{}
-	for i, c := range color {
-		if i > 0 {
-			colorStr.WriteString(",")
-		}
-		fmt.Fprintf(colorStr, "%d", c)
-	}
+	v := url.Values{}
 
-	query := &strings.Builder{}
 	if len(color) > 0 {
-		query.WriteString("?color=")
-		query.WriteString(colorStr.String())
+		colorStr := &strings.Builder{}
+		for i, c := range color {
+			if i > 0 {
+				colorStr.WriteString(",")
+			}
+			fmt.Fprintf(colorStr, "%d", c)
+		}
+		v.Add("color", colorStr.String())
 	}
 
-	return env.Route(fmt.Sprintf("/api/device/%d/color%s", deviceID, query.String()))
+	return env.Route(fmt.Sprintf("/api/device/%d/color%s", deviceID, v.Encode()))
 }
 
 func APISetDeviceWhite(deviceID models.ID, white uint8) string {
-	query := fmt.Sprintf("?white=%d", white)
-	return env.Route(fmt.Sprintf("/api/device/%d/white%s", deviceID, query))
+	v := url.Values{}
+	v.Add("white", fmt.Sprintf("%d", white))
+	return env.Route(fmt.Sprintf("/api/device/%d/white%s", deviceID, v.Encode()))
 }
 
 func APISetDeviceRGBW(deviceID models.ID, color []uint8, white uint8) string {
-	colorStr := &strings.Builder{}
-	for i, c := range color {
-		if i > 0 {
-			colorStr.WriteString(",")
+	v := url.Values{}
+
+	if len(color) > 0 {
+		colorStr := &strings.Builder{}
+		for i, c := range color {
+			if i > 0 {
+				colorStr.WriteString(",")
+			}
+			fmt.Fprintf(colorStr, "%d", c)
 		}
-		fmt.Fprintf(colorStr, "%d", c)
+		v.Add("color", colorStr.String())
 	}
 
-	query := &strings.Builder{}
-	query.WriteString("?color=")
-	query.WriteString(colorStr.String())
+	v.Add("white", fmt.Sprintf("%d", white))
 
-	fmt.Fprintf(query, "&white=%d", white)
-
-	return env.Route(fmt.Sprintf("/api/device/%d/color%s", deviceID, query.String()))
+	return env.Route(fmt.Sprintf("/api/device/%d/color%s", deviceID, v.Encode()))
 }
