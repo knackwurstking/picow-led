@@ -22,7 +22,7 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 
 			if !strings.Contains(string(device.Type), "RGB") {
 				return echo.NewHTTPError(http.StatusBadRequest,
-					fmt.Errorf("device does not support RGBW: %v", device.Type))
+					fmt.Errorf("device does not support RGB: %v", device.Type))
 			}
 
 			color := device.ToColor()
@@ -41,7 +41,7 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 					fmt.Errorf("set device color: %v", err))
 			}
 
-			return nil
+			return echo.NewHTTPError(http.StatusNoContent)
 		}
 	}
 
@@ -85,7 +85,7 @@ func APISetDeviceRGBW(r *services.Registry, method string) echo.HandlerFunc {
 					fmt.Errorf("set device color: %v", err))
 			}
 
-			return nil
+			return echo.NewHTTPError(http.StatusNoContent)
 		}
 	}
 
@@ -101,7 +101,7 @@ func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
 				return eerr
 			}
 
-			if strings.Contains(string(device.Type), "W") {
+			if !strings.Contains(string(device.Type), "W") {
 				return echo.NewHTTPError(http.StatusBadRequest,
 					fmt.Errorf("device does not support white: %v", device.Type))
 			}
@@ -120,7 +120,7 @@ func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
 					fmt.Errorf("set device color: %v", err))
 			}
 
-			return nil
+			return echo.NewHTTPError(http.StatusNoContent)
 		}
 	}
 
