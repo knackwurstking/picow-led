@@ -57,7 +57,7 @@ templ DeviceItem(d *models.Device) {
 				}
 				{{
 					powered := false
-					for _, c := range d.Color {
+					for _, c := range d.Duty {
 						if c > 0 {
 							powered = true
 							break

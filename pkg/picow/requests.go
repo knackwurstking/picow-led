@@ -58,22 +58,22 @@ func NewSetPinsRequest(id RequestID, pins []uint8) *Request {
 	)
 }
 
-// NewGetColorRequest creates a new GET request for the "color" command.
-func NewGetColorRequest(id RequestID) *Request {
-	return NewRequest(id, TypeGet, "led", "color")
+// NewGetDutyRequest creates a new GET request for the "color" command.
+func NewGetDutyRequest(id RequestID) *Request {
+	return NewRequest(id, TypeGet, "led", "color") // NOTE: The microcontroller still is using "color" as the command name
 }
 
-// NewSetColorRequest creates a new SET request for the "color" command with the specified color values.
-func NewSetColorRequest(id RequestID, color []uint8) *Request {
+// NewSetDutyRequest creates a new SET request for the "color" command with the specified duty values.
+func NewSetDutyRequest(id RequestID, duty []uint8) *Request {
 	var args []string
-	for _, c := range color {
+	for _, c := range duty {
 		args = append(args, fmt.Sprintf("%d", c))
 	}
 	return NewRequest(
 		id,
 		TypeSet,
 		"led",
-		"color",
+		"color", // NOTE: The microcontroller still is using "color" as the command name
 		args...,
 	)
 }

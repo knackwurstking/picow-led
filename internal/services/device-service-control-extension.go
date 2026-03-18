@@ -32,22 +32,22 @@ func (p *DeviceService) GetPins(deviceID models.ID) ([]uint8, error) {
 	return pins, nil
 }
 
-func (p *DeviceService) GetCurrentColor(deviceID models.ID) ([]uint8, error) {
+func (p *DeviceService) GetCurrentDuty(deviceID models.ID) ([]uint8, error) {
 	// Get the device control record
 	device, err := p.Get(deviceID)
 	if err != nil {
-		return nil, NewServiceError("get device control for current color", err)
+		return nil, NewServiceError("get device control for current duty", err)
 	}
 
-	// Get the current color from the picow device
-	color, err := picow.GetColor(device)
+	// Get the current duty from the picow device
+	duty, err := picow.GetDuty(device)
 	if err != nil {
-		return nil, NewServiceError("get color from device", err)
+		return nil, NewServiceError("get duty from device", err)
 	}
 
-	p.log.Debug("Current color for device %d: %v", deviceID, color)
+	p.log.Debug("Current duty for device %d: %v", deviceID, duty)
 
-	return color, nil
+	return duty, nil
 }
 
 func (p *DeviceService) GetVersion(deviceID models.ID) (string, error) {
@@ -98,78 +98,73 @@ func (p *DeviceService) TogglePower(deviceID models.ID) ([]uint8, error) {
 		return nil, NewServiceError("get device for power toggle", err)
 	}
 
-	var newColor []uint8
-	currentColor, err := picow.GetColor(device)
+	var newDuty []uint8
+	currentDuty, err := picow.GetDuty(device)
 	if err != nil {
-		return nil, NewServiceError("get current color for power toggle", err)
+		return nil, NewServiceError("get current duty for power toggle", err)
 	}
 
-	if slices.Max(currentColor) > 0 { // Just get the color for turning OFF
-		newColor = make([]uint8, len(currentColor))
-		for i := range currentColor {
-			newColor[i] = 0
+	if slices.Max(currentDuty) > 0 { // Just get the duty for turning OFF
+		newDuty = make([]uint8, len(currentDuty))
+		for i := range currentDuty {
+			newDuty[i] = 0
 		}
-	} else { // Need to get the color for turning ON (dc = deviceControl)
-		if dc, _ := p.Get(device.ID); dc != nil && len(dc.Color) > 0 {
-			newColor = dc.Color // Get the color from the database
+	} else { // Need to get the duty for turning ON (dc = deviceControl)
+		if dc, _ := p.Get(device.ID); dc != nil && len(dc.Duty) > 0 {
+			newDuty = dc.Duty // Get the duty from the database
 		} else {
-			// Nope, no color in the database, get pins and set color to 255 for each pin
+			// Nope, no duty in the database, get pins and set duty to 255 for each pin
 			pins, err := p.GetPins(device.ID) // Use the cached version
 			if err != nil {
 				return nil, NewServiceError("get pins for power toggle", err)
 			}
 
-			newColor = make([]uint8, len(pins))
+			newDuty = make([]uint8, len(pins))
 			for i := range pins {
-				newColor[i] = 255
+				newDuty[i] = 255
 			}
 		}
 	}
 
-	p.log.Debug("Toggling power for device %d: current color=%v, new color=%v", deviceID, currentColor, newColor)
+	p.log.Debug("Toggling power for device %d: current duty=%v, new duty=%v", deviceID, currentDuty, newDuty)
 
-	if err = picow.SetColor(device, newColor...); err != nil {
-		return nil, NewServiceError("set color for power toggle", err)
+	if err = picow.SetDuty(device, newDuty...); err != nil {
+		return nil, NewServiceError("set duty for power toggle", err)
 	}
 
-	return newColor, nil
+	return newDuty, nil
 }
 
-func (p *DeviceService) SetCurrentColor(deviceID models.ID, color []uint8) error {
+func (p *DeviceService) SetCurrentDuty(deviceID models.ID, duty []uint8) error {
 	device, err := p.registry.Device.Get(deviceID)
 	if err != nil {
-		return NewServiceError("get device for setting current color", err)
+		return NewServiceError("get device for setting current duty", err)
 	}
 
-	p.log.Debug("Setting current color for device %d: %v", deviceID, color)
+	p.log.Debug("Setting current duty for device %d: %v", deviceID, duty)
 
-	if err = picow.SetColor(device, color...); err != nil {
-		return NewServiceError("set color in control layer", err)
+	if err = picow.SetDuty(device, duty...); err != nil {
+		return NewServiceError("set duty in control layer", err)
 	}
 
-	device.Color = color
+	device.Duty = duty
 	if err = p.Update(device); err != nil {
-		return NewServiceError("update device control color in database", err)
+		return NewServiceError("update device control duty in database", err)
 	}
 
 	return nil
 }
 
 func (p *DeviceService) TurnOn(deviceID models.ID) error {
-	device, err := p.registry.Device.Get(deviceID)
-	if err != nil {
-		return NewServiceError("get device for turn on", err)
-	}
-
-	deviceControl, err := p.Get(deviceID)
+	device, err := p.Get(deviceID)
 	if err != nil {
 		return NewServiceError("get device control for turn on", err)
 	}
 
-	p.log.Debug("Turning on device %d with color %v", deviceID, deviceControl.Color)
+	p.log.Debug("Turning on device %d with duty %v", deviceID, device.Duty)
 
-	if err := picow.SetColor(device, deviceControl.Color...); err != nil {
-		return NewServiceError("set color in control layer for turn on", err)
+	if err := picow.SetDuty(device, device.Duty...); err != nil {
+		return NewServiceError("set duty in control layer for turn on", err)
 	}
 
 	return nil
@@ -181,19 +176,19 @@ func (p *DeviceService) TurnOff(deviceID models.ID) error {
 		return NewServiceError("get device for turn off", err)
 	}
 
-	// Get the current color from the device
-	currentColor, err := picow.GetColor(device)
+	// Get the current duty from the device
+	currentDuty, err := picow.GetDuty(device)
 	if err != nil {
-		return NewServiceError("get current color for turn off", err)
+		return NewServiceError("get current duty for turn off", err)
 	}
 
-	// Set the color to zero (turn off)
-	color := make([]uint8, len(currentColor))
+	// Set the duty to zero (turn off)
+	duty := make([]uint8, len(currentDuty))
 
-	p.log.Debug("Turning off device %d: current color=%v, new color=%v", deviceID, currentColor, color)
+	p.log.Debug("Turning off device %d: current duty=%v, new duty=%v", deviceID, currentDuty, duty)
 
-	if err := picow.SetColor(device, color...); err != nil {
-		return NewServiceError("set color in control layer for turn off", err)
+	if err := picow.SetDuty(device, duty...); err != nil {
+		return NewServiceError("set duty in control layer for turn off", err)
 	}
 
 	return nil

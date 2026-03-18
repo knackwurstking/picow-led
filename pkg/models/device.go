@@ -12,19 +12,19 @@ const (
 )
 
 type Device struct {
-	ID    ID         `json:"id"`
-	Addr  string     `json:"addr"`
-	Name  string     `json:"name"`
-	Color []uint8    `json:"color"` // TODO: Rename to Duty
-	Type  DeviceType `json:"type"`
+	ID   ID         `json:"id"`
+	Addr string     `json:"addr"`
+	Name string     `json:"name"`
+	Duty []uint8    `json:"duty"`
+	Type DeviceType `json:"type"`
 }
 
-func NewDevice(addr, name string, t DeviceType, color ...uint8) *Device {
+func NewDevice(addr, name string, t DeviceType, duty ...uint8) *Device {
 	return &Device{
-		Addr:  addr,
-		Name:  name,
-		Color: color,
-		Type:  t,
+		Addr: addr,
+		Name: name,
+		Duty: duty,
+		Type: t,
 	}
 }
 
@@ -36,20 +36,20 @@ func (d *Device) Validate() error {
 	// Check the device type
 	switch d.Type {
 	case DeviceTypeRGB:
-		if len(d.Color) != 3 {
-			d.Color = []uint8{255, 255, 255} // Default to white if not provided
+		if len(d.Duty) != 3 {
+			d.Duty = []uint8{255, 255, 255} // Default to white if not provided
 		}
 	case DeviceTypeRGBW:
-		if len(d.Color) != 4 {
-			d.Color = []uint8{255, 255, 255, 255} // Default to white with no white component
+		if len(d.Duty) != 4 {
+			d.Duty = []uint8{255, 255, 255, 255} // Default to white with no white component
 		}
 	case DeviceTypeRGBWW:
-		if len(d.Color) != 5 {
-			d.Color = []uint8{255, 255, 255, 255, 255} // Default to white with no white components
+		if len(d.Duty) != 5 {
+			d.Duty = []uint8{255, 255, 255, 255, 255} // Default to white with no white components
 		}
 	case DeviceTypeW:
-		if len(d.Color) != 1 {
-			d.Color = []uint8{255} // Default to full white if not provided
+		if len(d.Duty) != 1 {
+			d.Duty = []uint8{255} // Default to full white if not provided
 		}
 	default:
 		return fmt.Errorf("invalid device type: %s", d.Type)
@@ -61,23 +61,23 @@ func (d *Device) ToColor() *Color {
 	color := &Color{}
 
 	if d.Type == DeviceTypeW {
-		color.White = d.Color[0]
+		color.White = d.Duty[0]
 		return color
 	}
 
-	if (d.Type == DeviceTypeRGB || d.Type == DeviceTypeRGBW || d.Type == DeviceTypeRGBWW) && len(d.Color) >= 3 {
-		color.Color = [3]uint8{d.Color[0], d.Color[1], d.Color[2]}
+	if (d.Type == DeviceTypeRGB || d.Type == DeviceTypeRGBW || d.Type == DeviceTypeRGBWW) && len(d.Duty) >= 3 {
+		color.Color = [3]uint8{d.Duty[0], d.Duty[1], d.Duty[2]}
 	}
 
 	switch d.Type {
 	case DeviceTypeRGBW:
-		if len(d.Color) >= 4 {
-			color.White = d.Color[3]
+		if len(d.Duty) >= 4 {
+			color.White = d.Duty[3]
 		}
 	case DeviceTypeRGBWW:
-		if len(d.Color) >= 5 {
-			color.White = d.Color[3]
-			color.White2 = d.Color[4]
+		if len(d.Duty) >= 5 {
+			color.White = d.Duty[3]
+			color.White2 = d.Duty[4]
 		}
 	}
 

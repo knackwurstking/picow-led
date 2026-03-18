@@ -75,25 +75,25 @@ func SetPinsWithID(id RequestID, device *models.Device, pins ...uint8) error {
 	return err
 }
 
-// GetColor retrieves the current color setting from the Picow device. Default Request ID will be used.
-func GetColor(device *models.Device) ([]uint8, error) {
-	return GetColorWithID(RequestIDDefault, device)
+// GetDuty retrieves the current duty setting from the Picow device. Default Request ID will be used.
+func GetDuty(device *models.Device) ([]uint8, error) {
+	return GetDutyWithID(RequestIDDefault, device)
 }
 
-// GetColorWithID retrieves the current color setting from the Picow device.
-func GetColorWithID(id RequestID, device *models.Device) ([]uint8, error) {
-	req := NewGetColorRequest(id)
+// GetDutyWithID retrieves the current duty setting from the Picow device.
+func GetDutyWithID(id RequestID, device *models.Device) ([]uint8, error) {
+	req := NewGetDutyRequest(id)
 	resp := &Response[[]uint8]{}
 	return RunCommand(id, device, req, resp)
 }
 
-// SetColor sets the color on the Picow device. Default request ID will be used.
-func SetColor(device *models.Device, duty ...uint8) error {
-	return SetColorWithID(RequestIDDefault, device, duty...)
+// SetDuty sets the duty on the Picow device. Default request ID will be used.
+func SetDuty(device *models.Device, duty ...uint8) error {
+	return SetDutyWithID(RequestIDDefault, device, duty...)
 }
 
-// SetColorWithID sets the color on the Picow device.
-func SetColorWithID(id RequestID, device *models.Device, duty ...uint8) error {
+// SetDutyWithID sets the duty on the Picow device.
+func SetDutyWithID(id RequestID, device *models.Device, duty ...uint8) error {
 	// Validate duty first
 	for _, d := range duty {
 		if d < MinDuty || d > MaxDuty {
@@ -101,7 +101,7 @@ func SetColorWithID(id RequestID, device *models.Device, duty ...uint8) error {
 		}
 	}
 
-	req := NewSetColorRequest(id, duty)
+	req := NewSetDutyRequest(id, duty)
 	resp := &Response[struct{}]{}
 	_, err := RunCommand(id, device, req, resp)
 	return err

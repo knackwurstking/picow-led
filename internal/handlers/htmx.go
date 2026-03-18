@@ -29,11 +29,11 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 		wg := sync.WaitGroup{}
 		for _, d := range devices {
 			wg.Go(func() {
-				if color, err := r.Device.GetCurrentColor(d.ID); err != nil {
+				if duty, err := r.Device.GetCurrentDuty(d.ID); err != nil {
 					// TODO: Pass errors to the frontend
 					log.Warn("failed to get current color for device %d: %v", d.ID, err)
 				} else {
-					d.Color = color
+					d.Duty = duty
 				}
 			})
 		}
@@ -65,18 +65,18 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to retrieve device: %v", err))
 		}
 
-		var color []uint8
+		var duty []uint8
 		if !powerState {
-			for range device.Color {
-				color = append(color, 0)
+			for range device.Duty {
+				duty = append(duty, 0)
 			}
 		} else {
-			color = device.Color
+			duty = device.Duty
 		}
 
-		log.Debug("Toggling power state for device with %s to %#v", device.Name, color)
+		log.Debug("Toggling power state for device with %s to %#v", device.Name, duty)
 
-		if err = r.Device.SetCurrentColor(device.ID, color); err != nil {
+		if err = r.Device.SetCurrentDuty(device.ID, duty); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to set current color: %v", err))
 		}
 

@@ -30,7 +30,7 @@ func (d *DeviceService) CreateTable() error {
 		addr TEXT UNIQUE NOT NULL,
 		name TEXT NOT NULL,
 		type TEXT NOT NULL,
-		color TEXT,
+		duty TEXT,
 
 		PRIMARY KEY ("id" AUTOINCREMENT)
 	);`
@@ -90,9 +90,9 @@ func (d *DeviceService) Add(device *models.Device) (models.ID, error) {
 		return 0, fmt.Errorf("%w: %v", ErrInvalidDevice, err)
 	}
 
-	colorString, _ := json.Marshal(device.Color)
-	query := `INSERT INTO devices (addr, name, type, color) VALUES (?, ?, ?, ?)`
-	result, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, colorString)
+	dutyString, _ := json.Marshal(device.Duty)
+	query := `INSERT INTO devices (addr, name, type, duty) VALUES (?, ?, ?, ?)`
+	result, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, dutyString)
 	if err != nil {
 		return 0, NewServiceError("add device", HandleSqlError(err))
 	}
@@ -110,9 +110,9 @@ func (d *DeviceService) Update(device *models.Device) error {
 		return fmt.Errorf("%w: %v", ErrInvalidDevice, err)
 	}
 
-	colorString, _ := json.Marshal(device.Color)
-	query := `UPDATE devices SET addr = ?, name = ?, type = ?, color = ? WHERE id = ?`
-	_, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, colorString, device.ID)
+	dutyString, _ := json.Marshal(device.Duty)
+	query := `UPDATE devices SET addr = ?, name = ?, type = ?, duty = ? WHERE id = ?`
+	_, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, dutyString, device.ID)
 	if err != nil {
 		return NewServiceError("update device", HandleSqlError(err))
 	}
@@ -131,9 +131,9 @@ func (d *DeviceService) Delete(deviceID models.ID) error {
 
 func ScanDevice(r Scannable) (*models.Device, error) {
 	device := &models.Device{}
-	var colorString string
-	err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.Type, &colorString)
-	json.Unmarshal([]byte(colorString), &device.Color)
+	var dutyString string
+	err := r.Scan(&device.ID, &device.Addr, &device.Name, &device.Type, &dutyString)
+	json.Unmarshal([]byte(dutyString), &device.Duty)
 	return device, err
 }
 

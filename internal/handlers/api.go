@@ -36,7 +36,7 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 				color.Color[2] = qColor[2]
 			}
 
-			if err := r.Device.SetCurrentColor(device.ID, color.GetDuty(device.Type)); err != nil {
+			if err := r.Device.SetCurrentDuty(device.ID, color.GetDuty(device.Type)); err != nil {
 				return echo.NewHTTPError(http.StatusInternalServerError,
 					fmt.Errorf("set device color: %v", err))
 			}
@@ -80,7 +80,7 @@ func APISetDeviceRGBW(r *services.Registry, method string) echo.HandlerFunc {
 				color.White = qWhite
 			}
 
-			if err := r.Device.SetCurrentColor(device.ID, color.GetDuty(device.Type)); err != nil {
+			if err := r.Device.SetCurrentDuty(device.ID, color.GetDuty(device.Type)); err != nil {
 				return echo.NewHTTPError(http.StatusInternalServerError,
 					fmt.Errorf("set device color: %v", err))
 			}
@@ -115,7 +115,7 @@ func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
 				color.White = white
 			}
 
-			if err := r.Device.SetCurrentColor(device.ID, color.GetDuty(device.Type)); err != nil {
+			if err := r.Device.SetCurrentDuty(device.ID, color.GetDuty(device.Type)); err != nil {
 				return echo.NewHTTPError(http.StatusInternalServerError,
 					fmt.Errorf("set device color: %v", err))
 			}
