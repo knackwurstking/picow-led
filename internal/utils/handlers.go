@@ -50,6 +50,34 @@ func ParseQueryColor(c echo.Context) ([]uint8, error) {
 	return color, nil
 }
 
+func ParseQueryWhite(c echo.Context) (uint8, error) {
+	whiteStr := c.QueryParam("white")
+	if whiteStr == "" {
+		return 0, ErrNotFound
+	}
+
+	white, err := strconv.ParseUint(whiteStr, 10, 8)
+	if err != nil {
+		return 0, ErrInvalid
+	}
+
+	return uint8(white), nil
+}
+
+func ParseQueryWhite2(c echo.Context) (uint8, error) {
+	whiteStr := c.QueryParam("white2")
+	if whiteStr == "" {
+		return 0, ErrNotFound
+	}
+
+	white, err := strconv.ParseUint(whiteStr, 10, 8)
+	if err != nil {
+		return 0, ErrInvalid
+	}
+
+	return uint8(white), nil
+}
+
 func ParseParamID(c echo.Context) (models.ID, error) {
 	idStr := c.Param("id")
 	if idStr == "" {

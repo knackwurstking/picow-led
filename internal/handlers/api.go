@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/knackwurstking/picow-led/internal/services"
 	"github.com/knackwurstking/picow-led/internal/utils"
@@ -10,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
+func APISetDeviceRGBW(r *services.Registry, method string) echo.HandlerFunc {
 	switch method {
 	case http.MethodPost:
 		return func(c echo.Context) error {
@@ -19,14 +20,27 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 				return eerr
 			}
 
-			color, err := utils.ParseQueryColor(c)
-			if err != nil && err != utils.ErrNotFound {
-				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid color: %v", err))
-			} else if err == utils.ErrNotFound {
-				color = device.Color
+			if !strings.Contains(string(device.Type), "RGB") && !strings.Contains(string(device.Type), "W") {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("device does not support RGBW: %v", device.Type))
 			}
 
-			if err := r.Device.SetCurrentColor(device.ID, color); err != nil {
+			color := device.ToColor()
+
+			if qColor, err := utils.ParseQueryColor(c); err != nil && err != utils.ErrNotFound {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v: color=%s", err, c.QueryParam("color")))
+			} else if err == nil {
+				color.Color[0] = qColor[0]
+				color.Color[1] = qColor[1]
+				color.Color[2] = qColor[2]
+			}
+
+			if qWhite, err := utils.ParseQueryWhite(c); err != nil && err != utils.ErrNotFound {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v white=%s", err, c.QueryParam("white")))
+			} else if err == nil {
+				color.White = qWhite
+			}
+
+			if err := r.Device.SetCurrentColor(device.ID, color.GetDuty(device.Type)); err != nil {
 				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("set device color: %v", err))
 			}
 
@@ -41,12 +55,26 @@ func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
 	switch method {
 	case http.MethodPost:
 		return func(c echo.Context) error {
-			_, err := getDeviceFromParamID(c, r)
-			if err != nil {
-				return err
+			device, eerr := getDeviceFromParamID(c, r)
+			if eerr != nil {
+				return eerr
 			}
 
-			// TODO: ...
+			if strings.Contains(string(device.Type), "W") {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("device does not support white: %v", device.Type))
+			}
+
+			color := device.ToColor()
+
+			if white, err := utils.ParseQueryWhite(c); err != nil && err != utils.ErrNotFound {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v: white: %s", err, c.QueryParam("white")))
+			} else if err == nil {
+				color.White = white
+			}
+
+			if err := r.Device.SetCurrentColor(device.ID, color.GetDuty(device.Type)); err != nil {
+				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("set device color: %v", err))
+			}
 
 			return echo.NewHTTPError(501, "Not Implemented")
 		}

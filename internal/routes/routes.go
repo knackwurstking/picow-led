@@ -19,7 +19,7 @@ func Register(e *echo.Echo, r *services.Registry) {
 	{ // Register API endpoints here
 		devicesGroup := group.Group("/devices/:id")
 		{
-			devicesGroup.POST("/color", handlers.APISetDeviceColor(r, http.MethodPost))
+			devicesGroup.POST("/rgbw", handlers.APISetDeviceRGBW(r, http.MethodPost))
 			devicesGroup.POST("/white", handlers.APISetDeviceWhite(r, http.MethodPost))
 			devicesGroup.POST("/white2", handlers.APISetDeviceWhite2(r, http.MethodPost))
 			devicesGroup.POST("/brightness", handlers.APISetDeviceBrightness(r, http.MethodPost))
