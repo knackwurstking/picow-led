@@ -55,7 +55,7 @@ templ colorPicker(d *models.Device, c *models.Color) {
 			Required: true,
 			Value:    "#" + models.ColorToHex(c.Color),
 			Attributes: templ.Attributes{
-				"onchange": fmt.Sprintf(`changeDeviceColor("%s", %d, event.target.value)`, d.Addr, d.ID),
+				"onchange": fmt.Sprintf(`changeDeviceColor(%d, event.target.value)`, d.ID),
 			},
 		})
 	}
@@ -83,7 +83,7 @@ templ whiteSlider(d *models.Device, c *models.Color) {
 				Value: int(c.White),
 				Attributes: templ.Attributes{
 					"required": true,
-					"onchange": fmt.Sprintf(`changeDeviceWhite("%s", event.target.value)`, d.Addr),
+					"onchange": fmt.Sprintf(`changeDeviceWhite(%d, event.target.value)`, d.ID),
 				},
 			})
 		}
@@ -116,7 +116,7 @@ templ whiteSlider(d *models.Device, c *models.Color) {
 				Value: int(c.White2),
 				Attributes: templ.Attributes{
 					"required": true,
-					"onchange": fmt.Sprintf(`changeDeviceWhite2("%s", event.target.value)`, d.Addr),
+					"onchange": fmt.Sprintf(`changeDeviceWhite2(%d, event.target.value)`, d.ID),
 				},
 			})
 		}

@@ -1,7 +1,7 @@
 // The SERVER_PATH_PREFIX is defined inside the "layout.templ" components script section
 
-function changeDeviceColor(addr, deviceID, hex) {
-	console.debug(`Changing color for device with ${addr} to`, hex);
+function changeDeviceColor(deviceID, hex) {
+	console.debug(`Changing color for device with ID ${deviceID} to`, hex);
 
 	query = new URLSearchParams({
 		color: hex,
@@ -23,13 +23,13 @@ function changeDeviceColor(addr, deviceID, hex) {
 		});
 }
 
-function changeDeviceWhite(addr, value) {
-	console.debug(`Changing white for device with ${addr} to`, value);
+function changeDeviceWhite(deviceID, value) {
+	console.debug(`Changing white for device with ID ${deviceID} to`, value);
 
 	query = new URLSearchParams({
 		white: value,
 	});
-	url = (SERVER_PATH_PREFIX || "") + `/api/devices/${addr}/white?${query.toString()}`;
+	url = (SERVER_PATH_PREFIX || "") + `/api/devices/${deviceID}/white?${query.toString()}`;
 
 	fetch(url, { method: "POST" })
 		.then((response) => {
@@ -42,11 +42,11 @@ function changeDeviceWhite(addr, value) {
 			console.debug("Device white level changed successfully:", data);
 		})
 		.catch((error) => {
-			console.error("Error changing device white level:", error);
+			console.error("Error changing device white:", error);
 		});
 }
 
-function changeDeviceWhite2(addr, value) {
+function changeDeviceWhite2(deviceID, value) {
 	// TODO: Change the device color via API call
-	console.debug(`Changing white2 for device with ${addr} to`, value);
+	console.debug(`Changing white2 for device with ID ${deviceID} to`, value);
 }
