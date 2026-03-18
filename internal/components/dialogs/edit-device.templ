@@ -11,10 +11,6 @@ type EditDeviceFormData struct {
 	ID         models.ID
 	Name, Addr string
 
-	// Color should be a hexadecimal string representing the color in use, e.g. "#ff0000" for red
-	Color         string
-	White, White2 uint8
-
 	DeviceType models.DeviceType
 }
 
@@ -75,14 +71,6 @@ templ EditDevice(props ...EditDeviceProps) {
 					Title:    "Server Adresse",
 				})
 				@formDeviceTypeSelect(prop.DeviceType)
-				@formColor(prop.DeviceType, formColorProps{
-					ID:          "color",
-					Required:    false,
-					Title:       "Farbe",
-					ValueColor:  prop.Color,
-					ValueWhite:  int(prop.White),
-					ValueWhite2: int(prop.White2),
-				})
 				@dialog.Footer() {
 					@button.Button(button.Props{
 						Variant: button.VariantDestructive,

@@ -93,7 +93,6 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 
 		formData.Addr = strings.TrimSpace(c.FormValue("addr"))
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
-		formData.Color = strings.TrimSpace(c.FormValue("color"))
 		formData.DeviceType = models.DeviceType(strings.TrimSpace(c.FormValue("device_type")))
 
 		return formData, errs
@@ -161,14 +160,6 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
 		formData.DeviceType = models.DeviceType(strings.TrimSpace(c.FormValue("device_type")))
 
-		formData.Color = strings.TrimSpace(c.FormValue("color"))
-
-		i, _ := strconv.Atoi(strings.TrimSpace(c.FormValue("color_white")))
-		formData.White = uint8(i)
-
-		i, _ = strconv.Atoi(strings.TrimSpace(c.FormValue("color_white2")))
-		formData.White2 = uint8(i)
-
 		return formData, errs
 	}
 
@@ -212,9 +203,6 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 				Name:       device.Name,
 				Addr:       device.Addr,
 				DeviceType: device.Type,
-				Color:      "#" + models.ColorToHex(color.Color),
-				White:      color.White,
-				White2:     color.White2,
 			}
 
 			return renderDialog(c, true, formData, errs...)
@@ -227,11 +215,6 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			if len(errs) == 0 {
 				device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType)
 				device.ID = formData.ID
-
-				color := models.HexToColor("", formData.Color)
-				color.White = formData.White
-				color.White2 = formData.White2
-				device.Color = color.GetDuty(device.Type)
 
 				log.Debug("Updating device with new data: %#v", device)
 

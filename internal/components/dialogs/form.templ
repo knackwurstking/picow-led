@@ -3,11 +3,8 @@ package dialogs
 import (
 	"github.com/knackwurstking/picow-led/internal/components/form"
 	"github.com/knackwurstking/picow-led/internal/components/input"
-	"github.com/knackwurstking/picow-led/internal/components/label"
 	"github.com/knackwurstking/picow-led/internal/components/selectbox"
-	"github.com/knackwurstking/picow-led/internal/components/slider"
 	"github.com/knackwurstking/picow-led/pkg/models"
-	"slices"
 )
 
 type formProps struct {
@@ -72,95 +69,6 @@ templ formDeviceTypeSelect(deviceType models.DeviceType) {
 						{  string(t) }
 					}
 				}
-			}
-		}
-	}
-}
-
-type formColorProps struct {
-	ID       string
-	Required bool
-	Title    string
-
-	ValueColor  string
-	ValueWhite  int
-	ValueWhite2 int
-}
-
-templ formColor(deviceType models.DeviceType, props formColorProps) {
-	@form.Item() {
-		@form.Label(form.LabelProps{
-			For: props.ID,
-		}) {
-			{ props.Title }
-		}
-		{{
-			colorPickerTypes := []models.DeviceType{
-				models.DeviceTypeRGB,
-				models.DeviceTypeRGBW,
-				models.DeviceTypeRGBWW,
-			}
-			whiteSliderTypes := []models.DeviceType{
-				models.DeviceTypeRGBW,
-				models.DeviceTypeRGBWW,
-				models.DeviceTypeW,
-			}
-		}}
-		if slices.Contains(colorPickerTypes, deviceType) {
-			@input.Input(input.Props{
-				ID:       props.ID,
-				Name:     props.ID,
-				Type:     input.TypeColor,
-				Required: props.Required,
-				Value:    props.ValueColor,
-			})
-		}
-		if slices.Contains(whiteSliderTypes, deviceType) {
-			{{ id := props.ID + "_white" }}
-			@slider.Slider() {
-				<div class="flex justify-between mb-1">
-					@label.Label() {
-						{ "Weiß" }
-					}
-					@slider.Value(slider.ValueProps{
-						For: id,
-					})
-				</div>
-				@slider.Input(slider.InputProps{
-					ID:    id,
-					Name:  id,
-					Min:   0,
-					Max:   255,
-					Step:  1,
-					Value: props.ValueWhite,
-					Attributes: templ.Attributes{
-						"required": props.Required,
-					},
-				})
-			}
-		}
-		if deviceType == models.DeviceTypeRGBWW {
-			{{ id := props.ID + "_white2" }}
-			@slider.Slider() {
-				<div class="flex justify-between mb-1">
-					@label.Label() {
-						{ "Weiß 2" }
-					}
-					@slider.Value(slider.ValueProps{
-						For: id,
-					})
-				</div>
-				@slider.Input(slider.InputProps{
-					ID:    id,
-					Name:  id,
-					Min:   0,
-					Max:   255,
-					Step:  1,
-					Value: props.ValueWhite2,
-					Attributes: templ.Attributes{
-						"required": props.Required,
-					},
-				})
 			}
 		}
 	}
