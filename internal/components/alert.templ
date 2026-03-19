@@ -21,15 +21,6 @@ type AlertContainerProps struct {
 	Attributes templ.Attributes
 }
 
-type AlertProps struct {
-	ID         string
-	Class      string
-	Attributes templ.Attributes
-	Level      AlertType
-	For        string
-	Message    string
-}
-
 templ AlertContainer(props ...AlertContainerProps) {
 	{{
 		prop := AlertContainerProps{}
@@ -62,27 +53,39 @@ templ AlertContainer(props ...AlertContainerProps) {
 	</div>
 }
 
-templ Alert(props ...AlertProps) {
-	{{
-		prop := AlertProps{}
-		if len(props) > 0 {
-			prop = props[0]
-		}
+script AddAlert(containerID string, level AlertType, message string) {
+	console.debug(`Adding alert to container ${containerID}: ${message} (${level})`)
 
-		// Get the AlertContainer instance ID from the context.
-		var instanceID string
-		if prop.For != "" {
-			instanceID = prop.For
-		} else if v := ctx.Value(InstanceKeyAlertContainer); v != nil {
-			instanceID = v.(string)
-		} else {
-			panic("Alert component must be used within an AlertContainer. No AlertContainer instance found in context.")
-		}
-	}}
-	<script>
-	if (window.addAlert) {
-		// NOTE: window.addAlert(containerID, message, type = "info")
-		window.addAlert("{{ instanceID }}", `{{ prop.Message }}`, {{ prop.Level }})
+	// Create a new alert element
+	var alert = document.createElement("div")
+	alert.setAttribute("data-alert", "")
+	alert.setAttribute("data-alert-level", level)
+	alert.textContent = message
+
+	switch (level) {
+		case "error":
+			alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-red-500 text-red-100"
+			break
+		case "warning":
+			alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-yellow-500 text-yellow-100"
+			break
+		case "info":
+			alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-blue-500 text-blue-100"
+			break
+		default:
+			alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-gray-500 text-gray-100"
 	}
-	</script>
+
+	// Add click handler to remove the alert on click
+	alert.addEventListener("click", () => {
+		alert.remove()
+	})
+
+	// Append the alert to the first alert container
+	var container = document.querySelector("#"+containerID)
+	if (container) {
+		container.appendChild(alert)
+	} else {
+		console.error(`Alert container with ID ${containerID} not found.`)
+	}
 }
