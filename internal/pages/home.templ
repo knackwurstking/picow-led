@@ -57,7 +57,7 @@ templ Home() {
 						class="flex flex-col gap-4"
 						hx-get={ urlb.Devices() }
 						hx-target={ "#" + IDDevicesList }
-						hx-trigger="load, reload-devices from:body"
+						hx-trigger="load, reload-devices from:body, visibilitychange[document.visibilityState === 'visible'] from:document"
 						hx-swap="innerHTML"
 					></div>
 					<div class="w-full flex flex-row justify-end items-center">
