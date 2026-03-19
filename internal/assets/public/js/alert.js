@@ -24,6 +24,8 @@
 		alert.setAttribute("data-alert", "")
 		alert.setAttribute("data-alert-type", type)
 		alert.textContent = message
+
+		// TODO: Set class names base on type
 		alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-red-500 text-red-100" // Tailwind classes for styling
 
 		// Add click handler to remove the alert on click

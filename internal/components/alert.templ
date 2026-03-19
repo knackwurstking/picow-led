@@ -7,7 +7,13 @@ import (
 
 const (
 	InstanceKeyAlertContainer = "alertContainerInstance"
+
+	AlertTypeInfo    AlertType = "info"
+	AlertTypeWarning AlertType = "warning"
+	AlertTypeError   AlertType = "error"
 )
+
+type AlertType string
 
 type AlertContainerProps struct {
 	ID         string
@@ -19,6 +25,7 @@ type AlertProps struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
+	Level      AlertType
 	For        string
 	Message    string
 }
@@ -75,7 +82,7 @@ templ Alert(props ...AlertProps) {
 	<script>
 	if (window.addAlert) {
 		// NOTE: window.addAlert(containerID, message, type = "info")
-		window.addAlert("{{ instanceID }}", `{{ prop.Message }}`, "error")
+		window.addAlert("{{ instanceID }}", `{{ prop.Message }}`, `{{ prop.Level }}`)
 	}
 	</script>
 }
