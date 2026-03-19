@@ -52,37 +52,46 @@ templ Home() {
 					Value:    "devices",
 					IsActive: true,
 				}) {
-					<div
-						id={ IDDevicesList }
-						class="flex flex-col gap-4"
-						hx-get={ urlb.Devices() }
-						hx-target={ "#" + IDDevicesList }
-						hx-trigger="load, reload-devices from:body, visibilitychange[document.visibilityState === 'visible'] from:document"
-						hx-swap="innerHTML"
-						hx-on::before-request="console.debug('Loading devices via HTMX...')"
-					></div>
-					<div class="w-full flex flex-row justify-end items-center">
-						@button.Button(button.Props{
-							Size: button.SizeIcon,
-							Attributes: templ.Attributes{
-								"title":     "Gerät hinzufügen",
-								"hx-get":    urlb.AddDeviceDialog(),
-								"hx-target": "body",
-								"hx-swap":   "beforeend",
-							},
-						}) {
-							@icon.Plus()
-						}
-					</div>
-					@dialogs.AddDevice()
-					@dialogs.EditDevice()
+					@devicesContent()
 				}
 				@tabs.Content(tabs.ContentProps{
+					Class: "space-y-4",
 					Value: "groups",
 				}) {
-					// TODO: ...
+					@groupsContent()
 				}
 			</main>
 		}
 	}
+}
+
+templ devicesContent() {
+	<div
+		id={ IDDevicesList }
+		class="flex flex-col gap-4"
+		hx-get={ urlb.Devices() }
+		hx-target={ "#" + IDDevicesList }
+		hx-trigger="load, reload-devices from:body, visibilitychange[document.visibilityState === 'visible'] from:document"
+		hx-swap="innerHTML"
+		hx-on::before-request="console.debug('Loading devices via HTMX...')"
+	></div>
+	<div class="w-full flex flex-row justify-end items-center">
+		@button.Button(button.Props{
+			Size: button.SizeIcon,
+			Attributes: templ.Attributes{
+				"title":     "Gerät hinzufügen",
+				"hx-get":    urlb.AddDeviceDialog(),
+				"hx-target": "body",
+				"hx-swap":   "beforeend",
+			},
+		}) {
+			@icon.Plus()
+		}
+	</div>
+	@dialogs.AddDevice()
+	@dialogs.EditDevice()
+}
+
+templ groupsContent() {
+	// TODO: ...
 }
