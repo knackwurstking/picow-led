@@ -37,8 +37,7 @@ func APISetDeviceColor(r *services.Registry, method string) echo.HandlerFunc {
 			}
 
 			if err := r.Device.SetCurrentDuty(device.ID, color.GetDuty(device.Type)); err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError,
-					fmt.Errorf("set device color: %v", err))
+				return handleServiceError(err, "set device color")
 			}
 
 			return c.NoContent(http.StatusNoContent)
@@ -81,8 +80,7 @@ func APISetDeviceRGBW(r *services.Registry, method string) echo.HandlerFunc {
 			}
 
 			if err := r.Device.SetCurrentDuty(device.ID, color.GetDuty(device.Type)); err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError,
-					fmt.Errorf("set device color: %v", err))
+				return handleServiceError(err, "set device color")
 			}
 
 			return c.NoContent(http.StatusNoContent)
@@ -116,8 +114,7 @@ func APISetDeviceWhite(r *services.Registry, method string) echo.HandlerFunc {
 			}
 
 			if err := r.Device.SetCurrentDuty(device.ID, color.GetDuty(device.Type)); err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError,
-					fmt.Errorf("set device color: %v", err))
+				return handleServiceError(err, "set device color")
 			}
 
 			return c.NoContent(http.StatusNoContent)
@@ -148,8 +145,7 @@ func getDeviceFromParamID(c echo.Context, r *services.Registry) (*models.Device,
 
 	device, err := r.Device.Get(id)
 	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusNotFound,
-			fmt.Errorf("device not found: %v", err))
+		return nil, handleServiceError(err, "get device by ID")
 	}
 
 	return device, nil
