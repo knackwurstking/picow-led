@@ -27,13 +27,6 @@ templ Devices(props ...DevicesProps) {
 			prop = props[0]
 		}
 	}}
-	// TODO: Test Alerts, remove later ...
-	@AddAlert(IDAlertContainer, AlertTypeInfo, "This is a test alert.")
-	@AddAlert(
-		IDAlertContainer,
-		AlertTypeWarning,
-		"And another test alert. This time it's a bit longer to test text wrapping in the alert component. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-	)
 	// Render alerts if any
 	for _, err := range prop.Errors {
 		@AddAlert(IDAlertContainer, AlertTypeError, err.Error())
