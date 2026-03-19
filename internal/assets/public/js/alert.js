@@ -19,6 +19,8 @@
 
 	// Global add alert function
 	window.addAlert = function(containerID, message, type = "info") {
+		console.debug(`Adding alert to container ${containerID}: ${message} (${type})`)
+
 		// Create a new alert element
 		const alert = document.createElement("div")
 		alert.setAttribute("data-alert", "")
@@ -26,8 +28,8 @@
 		alert.textContent = message
 
 		switch (type) {
-			case "success":
-				alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-green-500 text-green-100"
+			case "error":
+				alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-red-500 text-red-100"
 				break
 			case "warning":
 				alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-yellow-500 text-yellow-100"
