@@ -43,7 +43,7 @@ templ AlertContainer(props ...AlertContainerProps) {
 			id={ prop.ID }
 		}
 		class={
-			"fixed bottom-0 right-0 p-4 max-w-screen",
+			"fixed bottom-0 right-0 px-4 py-2 max-w-screen overflow-y-auto max-h-screen",
 			prop.Class,
 		}
 		data-alert-container
@@ -64,16 +64,16 @@ script AddAlert(containerID string, level AlertType, message string) {
 
 	switch (level) {
 		case "error":
-			alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-red-500 text-red-100"
+			alert.className = "px-4 py-2 rounded my-2 cursor-pointer transition-opacity duration-300 bg-red-500 text-red-100"
 			break
 		case "warning":
-			alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-yellow-500 text-yellow-100"
+			alert.className = "px-4 py-2 rounded my-2 cursor-pointer transition-opacity duration-300 bg-yellow-500 text-yellow-100"
 			break
 		case "info":
-			alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-blue-500 text-blue-100"
+			alert.className = "px-4 py-2 rounded my-2 cursor-pointer transition-opacity duration-300 bg-blue-500 text-blue-100"
 			break
 		default:
-			alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-gray-500 text-gray-100"
+			alert.className = "px-4 py-2 rounded my-2 cursor-pointer transition-opacity duration-300 bg-gray-500 text-gray-100"
 	}
 
 	// Add click handler to remove the alert on click
