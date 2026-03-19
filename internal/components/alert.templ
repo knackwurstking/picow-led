@@ -82,7 +82,7 @@ templ Alert(props ...AlertProps) {
 	<script>
 	if (window.addAlert) {
 		// NOTE: window.addAlert(containerID, message, type = "info")
-		window.addAlert("{{ instanceID }}", `{{ prop.Message }}`, `{{ prop.Level }}`)
+		window.addAlert("{{ instanceID }}", `{{ prop.Message }}`, {{ prop.Level }})
 	}
 	</script>
 }
