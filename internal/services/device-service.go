@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"sync"
@@ -36,7 +37,7 @@ func (d *DeviceService) CreateTable() error {
 	);`
 
 	if _, err := d.registry.db.Exec(query); err != nil {
-		return NewServiceError("create devices table", err)
+		return fmt.Errorf("create devices table: %w", err)
 	}
 
 	return nil
@@ -46,7 +47,10 @@ func (d *DeviceService) Get(deviceID models.ID) (*models.Device, error) {
 	query := `SELECT * FROM devices WHERE id = ?`
 	device, err := ScanDevice(d.registry.db.QueryRow(query, deviceID))
 	if err != nil {
-		return nil, NewServiceError("get device by ID", HandleSqlError(err))
+		if err == sql.ErrNoRows {
+			return nil, ErrorNotFound
+		}
+		return nil, fmt.Errorf("get device by ID: %w", err)
 	}
 
 	return device, nil
@@ -56,7 +60,10 @@ func (d *DeviceService) GetByAddr(addr string) (*models.Device, error) {
 	query := `SELECT * FROM devices WHERE addr = ?`
 	device, err := ScanDevice(d.registry.db.QueryRow(query, addr))
 	if err != nil {
-		return nil, NewServiceError("get device by address", HandleSqlError(err))
+		if err == sql.ErrNoRows {
+			return nil, ErrorNotFound
+		}
+		return nil, fmt.Errorf("get device by address: %w", err)
 	}
 
 	return device, nil
@@ -65,7 +72,10 @@ func (d *DeviceService) GetByAddr(addr string) (*models.Device, error) {
 func (d *DeviceService) List() ([]*models.Device, error) {
 	rows, err := d.registry.db.Query(`SELECT * FROM devices`)
 	if err != nil {
-		return nil, NewServiceError("list devices", HandleSqlError(err))
+		if err == sql.ErrNoRows {
+			return []*models.Device{}, nil
+		}
+		return nil, fmt.Errorf("list devices: %w", err)
 	}
 	defer rows.Close()
 
@@ -73,13 +83,13 @@ func (d *DeviceService) List() ([]*models.Device, error) {
 	for rows.Next() {
 		device, err := ScanDevice(rows)
 		if err != nil {
-			return nil, NewServiceError("scan device from rows", HandleSqlError(err))
+			return nil, fmt.Errorf("scan device from rows: %w", err)
 		}
 		devices = append(devices, device)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, NewServiceError("iterate device rows", err)
+		return nil, fmt.Errorf("iterate device rows: %w", err)
 	}
 
 	return devices, nil
@@ -87,19 +97,19 @@ func (d *DeviceService) List() ([]*models.Device, error) {
 
 func (d *DeviceService) Add(device *models.Device) (models.ID, error) {
 	if err := device.Validate(); err != nil {
-		return 0, fmt.Errorf("%w: %v", ErrInvalidDevice, err)
+		return 0, ErrorValidation
 	}
 
 	dutyString, _ := json.Marshal(device.Duty)
 	query := `INSERT INTO devices (addr, name, type, duty) VALUES (?, ?, ?, ?)`
 	result, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, dutyString)
 	if err != nil {
-		return 0, NewServiceError("add device", HandleSqlError(err))
+		return 0, fmt.Errorf("add device: %w", err)
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, NewServiceError("get last inserted device ID", HandleSqlError(err))
+		return 0, fmt.Errorf("get last inserted device ID: %w", err)
 	}
 
 	return models.ID(id), nil
@@ -107,14 +117,16 @@ func (d *DeviceService) Add(device *models.Device) (models.ID, error) {
 
 func (d *DeviceService) Update(device *models.Device) error {
 	if err := device.Validate(); err != nil {
-		return fmt.Errorf("%w: %v", ErrInvalidDevice, err)
+		return ErrorValidation
 	}
 
 	dutyString, _ := json.Marshal(device.Duty)
 	query := `UPDATE devices SET addr = ?, name = ?, type = ?, duty = ? WHERE id = ?`
-	_, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, dutyString, device.ID)
-	if err != nil {
-		return NewServiceError("update device", HandleSqlError(err))
+	if r, err := d.registry.db.Exec(query, device.Addr, device.Name, device.Type, dutyString, device.ID); err != nil {
+		if i, _ := r.RowsAffected(); i == 0 {
+			return ErrorNotFound
+		}
+		return fmt.Errorf("update device: %w", err)
 	}
 
 	return nil
@@ -122,8 +134,11 @@ func (d *DeviceService) Update(device *models.Device) error {
 
 func (d *DeviceService) Delete(deviceID models.ID) error {
 	query := `DELETE FROM devices WHERE id = ?`
-	if _, err := d.registry.db.Exec(query, deviceID); err != nil {
-		return NewServiceError("delete device", HandleSqlError(err))
+	if r, err := d.registry.db.Exec(query, deviceID); err != nil {
+		if i, _ := r.RowsAffected(); i == 0 {
+			return nil
+		}
+		return fmt.Errorf("delete device: %w", err)
 	}
 
 	return nil
