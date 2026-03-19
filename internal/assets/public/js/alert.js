@@ -25,8 +25,19 @@
 		alert.setAttribute("data-alert-type", type)
 		alert.textContent = message
 
-		// TODO: Set class names base on type
-		alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-red-500 text-red-100" // Tailwind classes for styling
+		switch (type) {
+			case "success":
+				alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-green-500 text-green-100"
+				break
+			case "warning":
+				alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-yellow-500 text-yellow-100"
+				break
+			case "info":
+				alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-blue-500 text-blue-100"
+				break
+			default:
+				alert.className = "px-4 py-2 rounded mb-2 cursor-pointer transition-opacity duration-300 bg-gray-500 text-gray-100"
+		}
 
 		// Add click handler to remove the alert on click
 		alert.addEventListener("click", () => {
