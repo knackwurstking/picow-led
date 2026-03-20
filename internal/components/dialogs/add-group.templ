@@ -1,0 +1,74 @@
+package dialogs
+
+import (
+	"github.com/knackwurstking/picow-led/internal/components/button"
+	"github.com/knackwurstking/picow-led/internal/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/urlb"
+)
+
+type AddGroupFormData struct {
+	Name string
+}
+
+type AddGroupProps struct {
+	AddGroupFormData
+	Open, OOB  bool
+	Attributes templ.Attributes
+	Errors     []error
+}
+
+templ AddGroup(props ...AddGroupProps) {
+	{{
+		prop := AddGroupProps{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+
+		if prop.Attributes == nil {
+			prop.Attributes = templ.Attributes{}
+		}
+
+		if prop.OOB {
+			prop.Attributes["hx-swap-oob"] = "true"
+		}
+	}}
+	@dialog.Dialog(dialog.Props{
+		ID:               "add-group-dialog",
+		DisableClickAway: true,
+		DisableESC:       true,
+		Open:             prop.Open,
+		Attributes:       prop.Attributes,
+	}) {
+		@dialog.Content() {
+			@dialog.Header() {
+				@dialog.Title() {
+					Neue Gruppe hinzufügen
+				}
+			}
+			if len(prop.Errors) > 0 {
+				@renderErrors(prop.Errors...)
+			}
+			<form
+				class="space-y-4"
+				hx-post={ urlb.AddGroupDialog() }
+				hx-trigger="submit"
+				enctype="multipart/form-data"
+			>
+				@formText(formProps{
+					ID:       "name",
+					Required: true,
+					Value:    prop.Name,
+					Title:    "Name",
+				})
+				// TODO: Add device selection, (SelectBox, multiple)
+				@dialog.Footer() {
+					@button.Button(button.Props{
+						Type: button.TypeSubmit,
+					}) {
+						Hinzufügen
+					}
+				}
+			</form>
+		}
+	}
+}

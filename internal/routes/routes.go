@@ -41,15 +41,23 @@ func Register(e *echo.Echo, r *services.Registry) {
 		group.GET("/devices", handlers.HTMXDevices(r))
 		group.POST("/devices/toggle-power", handlers.HTMXToggleDevicePower(r))
 
+		group.GET("/groups", handlers.HTMXGroups(r))
+
 		{
 			dialogsGroup := group.Group("/dialogs")
 
+			// Add Device
 			dialogsGroup.GET("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodGet))
 			dialogsGroup.POST("/add-device", handlers.HTMXAddDeviceDialog(r, http.MethodPost))
 
+			// Edit Device
 			dialogsGroup.GET("/edit-device", handlers.HTMXEditDeviceDialog(r, http.MethodGet))
 			dialogsGroup.POST("/edit-device", handlers.HTMXEditDeviceDialog(r, http.MethodPost))
 			dialogsGroup.DELETE("/edit-device", handlers.HTMXEditDeviceDialog(r, http.MethodDelete))
+
+			// Add Group
+			dialogsGroup.GET("/add-group", handlers.HTMXAddGroupDialog(r, http.MethodGet))
+			dialogsGroup.POST("/add-group", handlers.HTMXAddGroupDialog(r, http.MethodPost))
 		}
 	}
 }
