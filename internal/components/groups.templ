@@ -1,0 +1,29 @@
+package components
+
+import "github.com/knackwurstking/picow-led/pkg/models"
+
+type GroupsProps struct {
+	Data   []*models.Group
+	Errors []error
+}
+
+templ Groups(props ...GroupsProps) {
+	{{
+		prop := GroupsProps{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+	}}
+	// Render alerts if any
+	for _, err := range prop.Errors {
+		@AddAlert(IDAlertContainer, AlertTypeError, err.Error())
+	}
+	// Render group items
+	for _, group := range prop.Data {
+		@GroupItem(group)
+	}
+}
+
+templ GroupItem(g *models.Group) {
+	// TODO: ...
+}
