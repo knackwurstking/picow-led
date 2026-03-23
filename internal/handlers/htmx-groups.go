@@ -29,6 +29,7 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
 
 		// TODO: SelectBox input for devices inside this group missing
+		formData.Devices = []*models.Device{} // TODO: Get devices from form data "devices"
 
 		return
 	}
@@ -61,7 +62,7 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 
 			group := &models.Group{
 				Name:    formData.Name,
-				Devices: []models.ID{}, // TODO: Get selected devices from form data
+				Devices: formData.SelectedDevices, // TODO: Get selected devices from form data
 			}
 
 			// Add group to registry group database
