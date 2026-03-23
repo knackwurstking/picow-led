@@ -8,10 +8,6 @@ import (
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
-const (
-	IDGroupItem = "group-item-%d"
-)
-
 type GroupsProps struct {
 	Data   []*models.Group
 	Errors []error
@@ -34,9 +30,8 @@ templ Groups(props ...GroupsProps) {
 	}
 }
 
-// TODO: ...
 templ GroupItem(g *models.Group) {
-	<div id={ fmt.Sprintf(IDGroupItem, g.ID) } class="group-item bg-secondary text-secondary-foreground rounded-lg p-4">
+	<div id={ fmt.Sprintf(env.IDGroupItem, g.ID) } class="group-item bg-secondary text-secondary-foreground rounded-lg p-4">
 		<div class="flex items-center justify-between gap-4">
 			<span class="w-fit">
 				@button.Button(button.Props{
