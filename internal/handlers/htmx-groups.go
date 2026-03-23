@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/knackwurstking/picow-led/internal/components/dialogs"
@@ -28,8 +29,16 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 	parse := func(c echo.Context) (formData dialogs.AddGroupFormData, errs []error) {
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
 
-		// TODO: SelectBox input for devices inside this group missing
-		formData.Devices = []*models.Device{} // TODO: Get devices from form data "devices"
+		deviceIDs := strings.Split(c.FormValue("devices"), ",")
+		for _, idString := range deviceIDs {
+			id, _ := strconv.Atoi(idString)
+			if d, err := r.Device.Get(models.ID(id)); err != nil {
+				errs = append(errs, fmt.Errorf("failed to get device with ID %d: %w", id, err))
+				continue
+			} else {
+				formData.SelectedDevices = append(formData.SelectedDevices, d.ID)
+			}
+		}
 
 		return
 	}
