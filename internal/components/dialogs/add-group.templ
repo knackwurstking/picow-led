@@ -10,8 +10,8 @@ import (
 type AddGroupFormData struct {
 	Name string
 
-	Devices            []*models.Device
-	PreSelectedDevices []models.ID
+	Devices         []*models.Device
+	SelectedDevices []models.ID
 }
 
 type AddGroupProps struct {
@@ -64,7 +64,7 @@ templ AddGroup(props ...AddGroupProps) {
 					Value:    prop.Name,
 					Title:    "Name",
 				})
-				@formDevices(prop.PreSelectedDevices, prop.Devices...)
+				@formDevices(prop.SelectedDevices, prop.Devices...)
 				@dialog.Footer() {
 					@button.Button(button.Props{
 						Type: button.TypeSubmit,
