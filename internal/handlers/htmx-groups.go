@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/knackwurstking/picow-led/internal/components"
 	"github.com/knackwurstking/picow-led/internal/components/dialogs"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
@@ -14,12 +15,25 @@ import (
 )
 
 func HTMXGroups(r *services.Registry) echo.HandlerFunc {
-	//log := env.NewLogger("handlers.HTMXGroups")
-
 	return func(c echo.Context) error {
-		// TODO: ...
+		var errs []error
 
-		return echo.NewHTTPError(http.StatusNotImplemented, "not implemented yet")
+		groups, err := r.Group.List()
+		if err != nil {
+			errs = append(errs, fmt.Errorf("failed to list groups: %w", err))
+		}
+
+		t := components.Groups(components.GroupsProps{
+			Data:   groups,
+			Errors: errs,
+		})
+
+		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError,
+				fmt.Errorf("failed to render template: %w", err))
+		}
+
+		return nil
 	}
 }
 
