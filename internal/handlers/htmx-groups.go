@@ -50,7 +50,16 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 	switch method {
 	case http.MethodGet:
 		return func(c echo.Context) error {
-			return render(c, true, dialogs.AddGroupFormData{})
+			var errs []error
+
+			devices, err := r.Device.List()
+			if err != nil {
+				errs = append(errs, fmt.Errorf("failed to list devices: %w", err))
+			}
+
+			return render(c, true, dialogs.AddGroupFormData{
+				Devices: devices,
+			}, errs...)
 		}
 	case http.MethodPost:
 		return func(c echo.Context) error {

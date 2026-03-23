@@ -1,10 +1,12 @@
 package dialogs
 
 import (
+	"fmt"
 	"github.com/knackwurstking/picow-led/internal/components/form"
 	"github.com/knackwurstking/picow-led/internal/components/input"
 	"github.com/knackwurstking/picow-led/internal/components/selectbox"
 	"github.com/knackwurstking/picow-led/pkg/models"
+	"slices"
 )
 
 type formProps struct {
@@ -75,5 +77,38 @@ templ formDeviceTypeSelect(deviceType models.DeviceType) {
 }
 
 templ formDevices(preSelect []models.ID, devices ...*models.Device) {
-	// TODO: Select devices (SelectBox, mutiltiple)
+	@form.Item() {
+		@form.Label(form.LabelProps{
+			For: "devices",
+		}) {
+			Geräte
+		}
+		@selectbox.SelectBox(selectbox.Props{
+			Multiple: true,
+		}) {
+			@selectbox.Trigger(selectbox.TriggerProps{
+				ID:   "devices",
+				Name: "devices",
+				Attributes: templ.Attributes{
+					"required": true,
+				},
+				Multiple: true,
+			}) {
+				@selectbox.Value(selectbox.ValueProps{
+					Placeholder: "Geräte auswählen",
+					Multiple:    true,
+				})
+			}
+			@selectbox.Content() {
+				for _, d := range devices {
+					@selectbox.Item(selectbox.ItemProps{
+						Value:    fmt.Sprintf("%d", d.ID),
+						Selected: slices.Contains(preSelect, d.ID),
+					}) {
+						{ d.Name }
+					}
+				}
+			}
+		}
+	}
 }
