@@ -36,7 +36,7 @@ templ Layout(props ...Props) {
 		<body class={ prop.Class }>
 			{ children... }
 			@components.AlertContainer(components.AlertContainerProps{
-				ID: components.IDAlertContainer,
+				ID: env.IDAlertContainer,
 			})
 		</body>
 	</html>
