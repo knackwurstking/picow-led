@@ -61,19 +61,6 @@ templ GroupItem(g *models.Group) {
 					Variant: button.VariantGhost,
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
-						//"hx-post":   urlb.PowerGroup(g.ID, true), // TODO: Power Group Endpoint
-						"hx-target": "body",
-						"hx-swap":   "beforeend",
-					},
-				}) {
-					@icon.Power(icon.Props{
-						Class: "text-green-500",
-					})
-				}
-				@button.Button(button.Props{
-					Variant: button.VariantGhost,
-					Size:    button.SizeIcon,
-					Attributes: templ.Attributes{
 						//"hx-post":   urlb.PowerGroup(g.ID, false), // TODO: Power Group Endpoint
 						"hx-target": "body",
 						"hx-swap":   "beforeend",
@@ -81,6 +68,19 @@ templ GroupItem(g *models.Group) {
 				}) {
 					@icon.PowerOff(icon.Props{
 						Class: "text-red-500",
+					})
+				}
+				@button.Button(button.Props{
+					Variant: button.VariantGhost,
+					Size:    button.SizeIcon,
+					Attributes: templ.Attributes{
+						//"hx-post":   urlb.PowerGroup(g.ID, true), // TODO: Power Group Endpoint
+						"hx-target": "body",
+						"hx-swap":   "beforeend",
+					},
+				}) {
+					@icon.Power(icon.Props{
+						Class: "text-green-500",
 					})
 				}
 			</span>

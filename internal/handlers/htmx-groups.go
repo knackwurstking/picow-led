@@ -94,7 +94,7 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 
 			group := &models.Group{
 				Name:    formData.Name,
-				Devices: formData.SelectedDevices, // TODO: Get selected devices from form data
+				Devices: formData.SelectedDevices,
 			}
 
 			// Add group to registry group database
@@ -110,3 +110,5 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 
 	return nil
 }
+
+// TODO: EditGroupDialog, PowerGroup
