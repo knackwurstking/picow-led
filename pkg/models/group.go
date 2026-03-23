@@ -19,6 +19,12 @@ func (g *Group) Validate() error {
 	if g.Name == "" {
 		return fmt.Errorf("group name cannot be empty")
 	}
+
+	// Check devices, empty group not allowed
+	if len(g.Devices) == 0 {
+		return fmt.Errorf("group must contain at least one device")
+	}
+
 	return nil
 }
 
