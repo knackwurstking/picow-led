@@ -244,12 +244,12 @@ func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 			}
 
 			if err := r.Group.Delete(id); err != nil {
-				log.Error("failed to delete group: %v", err)
-				errs := []error{fmt.Errorf("failed to delete group: %w", err)}
-				return render(c, false, dialogs.EditGroupFormData{ID: id}, errs...)
+				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to delete group: %w", err))
 			}
 
-			return render(c, false, dialogs.EditGroupFormData{ID: id})
+			c.Request().Header.Set("HX-Trigger", "reload-groups")
+
+			return render(c, false, dialogs.EditGroupFormData{}) // Close dialog
 		}
 	}
 
