@@ -68,9 +68,21 @@ templ EditGroup(props ...EditGroupProps) {
 				@formDevices(prop.SelectedDevices, prop.Devices...)
 				@dialog.Footer() {
 					@button.Button(button.Props{
+						Variant: button.VariantDestructive,
+						Type:    button.TypeButton,
+						Attributes: templ.Attributes{
+							"hx-delete":  urlb.EditGroupDialog(prop.ID),
+							"hx-swap":    "none",
+							"hx-confirm": "Möchten Sie diese Gruppe wirklich löschen?",
+							"title":      "Gruppe löschen",
+						},
+					}) {
+						Löschen
+					}
+					@button.Button(button.Props{
 						Type: button.TypeSubmit,
 					}) {
-						Hinzufügen
+						Bearbeiten
 					}
 				}
 			</form>

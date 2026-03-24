@@ -153,6 +153,8 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 }
 
 func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXEditGroupDialog")
+
 	parseForm := func(c echo.Context) (formData dialogs.EditGroupFormData, errs []error) {
 		id, err := utils.ParseQueryID(c)
 		if err != nil {
@@ -220,15 +222,34 @@ func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 				return render(c, true, formData, errs...)
 			}
 
-			// TODO: ...
+			group := &models.Group{
+				ID:      formData.ID,
+				Name:    formData.Name,
+				Devices: formData.SelectedDevices,
+			}
 
-			return echo.NewHTTPError(http.StatusNotImplemented, "not implemented")
+			if err := r.Group.Update(group); err != nil {
+				log.Error("failed to update group: %v", err)
+				errs = append(errs, fmt.Errorf("failed to update group: %w", err))
+				return render(c, true, formData, errs...)
+			}
+
+			return render(c, false, formData, errs...)
 		}
 	case http.MethodDelete:
 		return func(c echo.Context) error {
-			// TODO: ...
+			id, err := utils.ParseQueryID(c)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid group ID: %v", err))
+			}
 
-			return echo.NewHTTPError(http.StatusNotImplemented, "not implemented")
+			if err := r.Group.Delete(id); err != nil {
+				log.Error("failed to delete group: %v", err)
+				errs := []error{fmt.Errorf("failed to delete group: %w", err)}
+				return render(c, false, dialogs.EditGroupFormData{ID: id}, errs...)
+			}
+
+			return render(c, false, dialogs.EditGroupFormData{ID: id})
 		}
 	}
 
