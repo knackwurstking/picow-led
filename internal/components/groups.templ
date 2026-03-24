@@ -63,6 +63,7 @@ templ GroupItem(g *models.Group) {
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
 						"hx-post": urlb.PowerGroup(g.ID, urlb.PowerModeOff),
+						"hx-swap": "none",
 					},
 				}) {
 					@icon.PowerOff(icon.Props{
@@ -74,6 +75,7 @@ templ GroupItem(g *models.Group) {
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
 						"hx-post": urlb.PowerGroup(g.ID, urlb.PowerModeOn),
+						"hx-swap": "none",
 					},
 				}) {
 					@icon.Power(icon.Props{

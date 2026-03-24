@@ -61,6 +61,8 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 	log := env.NewLogger("handlers.HTMXToggleDevicePower")
 
 	return func(c echo.Context) error {
+		var errs []error
+
 		powerState, _ := strconv.ParseBool(strings.TrimSpace(c.FormValue("power_state")))
 
 		deviceID, err := utils.ParseQueryID(c)
@@ -68,24 +70,31 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
 		}
 
-		device, err := r.Device.Get(deviceID)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to retrieve device: %v", err))
-		}
-
-		var duty []uint8
-		if !powerState {
-			for range device.Duty {
-				duty = append(duty, 0)
-			}
+		if device, err := r.Device.Get(deviceID); err != nil {
+			errs = append(errs, fmt.Errorf("failed to retrieve device: %w", err))
 		} else {
-			duty = device.Duty
+			var duty []uint8
+			if !powerState {
+				for range device.Duty {
+					duty = append(duty, 0)
+				}
+			} else {
+				duty = device.Duty
+			}
+
+			log.Debug("Toggling power state for device with %s to %#v", device.Name, duty)
+
+			if err = r.Device.SetCurrentDuty(device.ID, duty); err != nil {
+				errs = append(errs, fmt.Errorf("failed to toggle power for device %d: %w", device.ID, err))
+			}
 		}
 
-		log.Debug("Toggling power state for device with %s to %#v", device.Name, duty)
-
-		if err = r.Device.SetCurrentDuty(device.ID, duty); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to set current color: %v", err))
+		// Handle errors (e.g. Render error messages)
+		for _, err := range errs {
+			t := components.OOBAddAlert(env.IDAlertContainer, components.AlertTypeError, err.Error())
+			if err = t.Render(c.Request().Context(), c.Response()); err != nil {
+				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render error alert: %w", err))
+			}
 		}
 
 		return nil

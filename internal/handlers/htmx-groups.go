@@ -56,8 +56,6 @@ func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
 			wg := &sync.WaitGroup{}
 			for _, id := range group.Devices {
 				wg.Go(func() {
-					defer wg.Done()
-
 					switch mode {
 					case "on":
 						if err := r.Device.TurnOn(id); err != nil {
@@ -73,11 +71,6 @@ func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
 				})
 			}
 			wg.Wait()
-		}
-
-		// TODO: Testing error handling
-		if len(errs) == 0 {
-			errs = append(errs, fmt.Errorf("this is a test error message"))
 		}
 
 		// Handle errors (e.g. Render error messages)
