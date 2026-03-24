@@ -22,7 +22,10 @@ func Devices() string {
 func ToggleDevicePower(id models.ID) string {
 	u := url.URL{}
 	u.Path = env.Route("/htmx/devices/toggle-power")
-	u.Query().Set("id", fmt.Sprintf("%d", id))
+
+	q := u.Query()
+	q.Set("id", fmt.Sprintf("%d", id))
+	u.RawQuery = q.Encode()
 
 	return u.String()
 }
@@ -34,7 +37,10 @@ func AddDeviceDialog() string {
 func EditDeviceDialog(id models.ID) string {
 	u := url.URL{}
 	u.Path = env.Route("/htmx/dialogs/edit-device")
-	u.Query().Set("id", fmt.Sprintf("%d", id))
+
+	q := u.Query()
+	q.Set("id", fmt.Sprintf("%d", id))
+	u.RawQuery = q.Encode()
 
 	return u.String()
 }
@@ -46,8 +52,11 @@ func Groups() string {
 func PowerGroup(id models.ID, mode PowerMode) string {
 	u := url.URL{}
 	u.Path = env.Route("/htmx/groups/power")
-	u.Query().Set("id", fmt.Sprintf("%d", id))
-	u.Query().Set("mode", string(mode))
+
+	q := u.Query()
+	q.Set("id", fmt.Sprintf("%d", id))
+	q.Set("mode", string(mode))
+	u.RawQuery = q.Encode()
 
 	return u.String()
 }
@@ -59,7 +68,10 @@ func AddGroupDialog() string {
 func EditGroupDialog(groupID models.ID) string {
 	u := url.URL{}
 	u.Path = env.Route("/htmx/dialogs/edit-group")
-	u.Query().Set("id", fmt.Sprintf("%d", groupID))
+
+	q := u.Query()
+	q.Set("id", fmt.Sprintf("%d", groupID))
+	u.RawQuery = q.Encode()
 
 	return u.String()
 }
