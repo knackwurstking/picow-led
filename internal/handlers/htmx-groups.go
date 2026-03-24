@@ -39,8 +39,6 @@ func HTMXGroups(r *services.Registry) echo.HandlerFunc {
 }
 
 func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
-	log := env.NewLogger("handlers.HTMXPowerGroup")
-
 	return func(c echo.Context) error {
 		mode := c.QueryParam("mode")
 
