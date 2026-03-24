@@ -146,11 +146,11 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 			// Add device to database and set its color
 			device := models.NewDevice(formData.Addr, formData.Name, formData.DeviceType)
 
-			id, err := r.Device.Add(device)
-			if err != nil {
+			if id, err := r.Device.Add(device); err != nil {
 				errs = append(errs, fmt.Errorf("failed to add device: %v", err))
+			} else {
+				device.ID = id
 			}
-			device.ID = id
 
 			open := len(errs) > 0
 			return renderDialog(c, open, formData, errs...)
@@ -202,24 +202,28 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 
 			id, err := utils.ParseQueryID(c)
 			if err != nil {
-				errs = append(errs, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
 			}
-
-			// Get device from database
-			device, err := r.Device.Get(id)
-			if err != nil {
-				errs = append(errs, fmt.Errorf("failed to retrieve device: %v", err))
-			}
-			log.Debug("Retrieved device: %#v", device)
-
-			color := device.ToColor()
-			log.Debug("Editing device with current color: %#v", color)
 
 			formData := dialogs.EditDeviceFormData{
 				ID:         id,
-				Name:       device.Name,
-				Addr:       device.Addr,
-				DeviceType: device.Type,
+				Name:       "",
+				Addr:       "",
+				DeviceType: "",
+			}
+
+			// Get device from database
+			if device, err := r.Device.Get(id); err != nil {
+				errs = append(errs, fmt.Errorf("failed to retrieve device: %v", err))
+			} else {
+				log.Debug("Retrieved device: %#v", device)
+
+				color := device.ToColor()
+				log.Debug("Editing device with current color: %#v", color)
+
+				formData.Name = device.Name
+				formData.Addr = device.Addr
+				formData.DeviceType = device.Type
 			}
 
 			return renderDialog(c, true, formData, errs...)
@@ -228,25 +232,25 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 	case http.MethodPost:
 		return func(c echo.Context) error {
 			formData, errs := parseForm(c)
+			if len(errs) > 0 {
+				return renderDialog(c, true, formData, errs...)
+			}
 
-			if len(errs) == 0 {
-				if device, err := r.Device.Get(formData.ID); err != nil {
-					errs = append(errs, fmt.Errorf("failed to retrieve device for update: %v", err))
-				} else {
-					device.Addr = formData.Addr
-					device.Name = formData.Name
-					device.Type = formData.DeviceType
+			if device, err := r.Device.Get(formData.ID); err != nil {
+				errs = append(errs, fmt.Errorf("failed to retrieve device for update: %v", err))
+			} else {
+				device.Addr = formData.Addr
+				device.Name = formData.Name
+				device.Type = formData.DeviceType
 
-					log.Debug("Updating device with new data: %#v", device)
+				log.Debug("Updating device with new data: %#v", device)
 
-					if err = r.Device.Update(device); err != nil {
-						errs = append(errs, fmt.Errorf("failed to update device: %v", err))
-					}
+				if err = r.Device.Update(device); err != nil {
+					errs = append(errs, fmt.Errorf("failed to update device: %v", err))
 				}
 			}
 
-			open := len(errs) > 0
-			return renderDialog(c, open, formData, errs...)
+			return renderDialog(c, len(errs) > 0, formData, errs...)
 		}
 
 	case http.MethodDelete:

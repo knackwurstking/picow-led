@@ -11,6 +11,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/dialogs"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
+	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/labstack/echo/v4"
 )
@@ -160,15 +161,63 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 }
 
 func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
+	parseForm := func(c echo.Context) (dialogs.EditGroupFormData, []error) {
+		var errs []error
+		var formData dialogs.EditGroupFormData
+
+		// TODO: ...
+
+		return formData, errs
+	}
+
+	render := func(c echo.Context, open bool, formData dialogs.EditGroupFormData, errs ...error) error {
+		t := dialogs.EditGroup(dialogs.EditGroupProps{
+			EditGroupFormData: formData,
+			Open:              open,
+			OOB:               true,
+			Errors:            errs,
+		})
+		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "failed to render template").SetInternal(err)
+		}
+		return nil
+	}
+
 	switch method {
 	case http.MethodGet:
 		return func(c echo.Context) error {
-			// TODO: ...
+			var errs []error
 
-			return echo.NewHTTPError(http.StatusNotImplemented, "not implemented")
+			id, err := utils.ParseQueryID(c)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid group ID: %v", err))
+			}
+
+			formData := dialogs.EditGroupFormData{
+				ID: id,
+			}
+
+			if group, err := r.Group.Get(models.ID(id)); err != nil {
+				errs = append(errs, fmt.Errorf("failed to get group: %w", err))
+			} else {
+				if devices, err := r.Device.List(); err != nil {
+					errs = append(errs, fmt.Errorf("failed to list devices: %w", err))
+				} else {
+					formData.Name = group.Name
+					formData.Devices = devices
+					formData.SelectedDevices = group.Devices
+				}
+			}
+
+			return render(c, true, formData, errs...)
 		}
 	case http.MethodPost:
 		return func(c echo.Context) error {
+			formData, errs := parseForm(c)
+			if len(errs) > 0 {
+				return render(c, true, formData, errs...)
+			}
+
 			// TODO: ...
 
 			return echo.NewHTTPError(http.StatusNotImplemented, "not implemented")

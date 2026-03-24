@@ -1,6 +1,11 @@
 package dialogs
 
-import "github.com/knackwurstking/picow-led/pkg/models"
+import (
+	"github.com/knackwurstking/picow-led/internal/components/button"
+	"github.com/knackwurstking/picow-led/internal/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/urlb"
+	"github.com/knackwurstking/picow-led/pkg/models"
+)
 
 type EditGroupFormData struct {
 	ID   models.ID
@@ -32,5 +37,43 @@ templ EditGroup(props ...EditGroupProps) {
 			prop.Attributes["hx-swap-oob"] = "true"
 		}
 	}}
-	// TODO: Edit group dialog and do not forget the delete group button
+	@dialog.Dialog(dialog.Props{
+		ID:               "edit-group-dialog",
+		DisableClickAway: true,
+		DisableESC:       true,
+		Open:             prop.Open,
+		Attributes:       prop.Attributes,
+	}) {
+		@dialog.Content() {
+			@dialog.Header() {
+				@dialog.Title() {
+					Gruppe Bearbeiten 
+				}
+			}
+			if len(prop.Errors) > 0 {
+				@renderErrors(prop.Errors...)
+			}
+			<form
+				class="space-y-4"
+				hx-post={ urlb.EditGroupDialog(prop.ID) }
+				hx-trigger="submit"
+				enctype="multipart/form-data"
+			>
+				@formText(formProps{
+					ID:       "name",
+					Required: true,
+					Value:    prop.Name,
+					Title:    "Name",
+				})
+				@formDevices(prop.SelectedDevices, prop.Devices...)
+				@dialog.Footer() {
+					@button.Button(button.Props{
+						Type: button.TypeSubmit,
+					}) {
+						Hinzufügen
+					}
+				}
+			</form>
+		}
+	}
 }
