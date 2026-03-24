@@ -89,3 +89,9 @@ script AddAlert(containerID string, level AlertType, message string) {
 		console.error(`Alert container with ID ${containerID} not found.`)
 	}
 }
+
+templ OOBAddAlert(containerID string, level AlertType, message string) {
+	<span hx-swap-oob="beforeend:body">
+		@AddAlert(containerID, level, message)
+	</span>
+}

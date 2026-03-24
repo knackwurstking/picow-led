@@ -42,7 +42,7 @@ func Register(e *echo.Echo, r *services.Registry) {
 		group.POST("/devices/toggle-power", handlers.HTMXToggleDevicePower(r))
 
 		group.GET("/groups", handlers.HTMXGroups(r))
-		group.POST("/groups/power", handlers.HTMXGroups(r))
+		group.POST("/groups/power", handlers.HTMXPowerGroup(r))
 
 		{
 			dialogsGroup := group.Group("/dialogs")

@@ -38,8 +38,9 @@ func HTMXGroups(r *services.Registry) echo.HandlerFunc {
 	}
 }
 
-// TODO: Render OOB error messages
 func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXPowerGroup")
+
 	return func(c echo.Context) error {
 		mode := c.QueryParam("mode")
 
@@ -49,35 +50,44 @@ func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid group ID: %v", err))
 		}
 
-		group, err := r.Group.Get(models.ID(groupID))
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to get group: %v", err))
-		}
-
 		var errs []error
-		wg := &sync.WaitGroup{}
-		for _, id := range group.Devices {
-			wg.Go(func() {
-				defer wg.Done()
 
-				switch mode {
-				case "on":
-					if err := r.Device.TurnOn(id); err != nil {
-						errs = append(errs, fmt.Errorf("failed to toggle power for device %d: %w", id, err))
+		if group, err := r.Group.Get(models.ID(groupID)); err != nil {
+			errs = append(errs, fmt.Errorf("failed to get group: %w", err))
+		} else {
+			wg := &sync.WaitGroup{}
+			for _, id := range group.Devices {
+				wg.Go(func() {
+					defer wg.Done()
+
+					switch mode {
+					case "on":
+						if err := r.Device.TurnOn(id); err != nil {
+							errs = append(errs, fmt.Errorf("failed to toggle power for device %d: %w", id, err))
+						}
+					case "off":
+						if err := r.Device.TurnOff(id); err != nil {
+							errs = append(errs, fmt.Errorf("failed to toggle power for device %d: %w", id, err))
+						}
+					default:
+						errs = append(errs, fmt.Errorf("invalid mode: %s", mode))
 					}
-				case "off":
-					if err := r.Device.TurnOff(id); err != nil {
-						errs = append(errs, fmt.Errorf("failed to toggle power for device %d: %w", id, err))
-					}
-				default:
-					errs = append(errs, fmt.Errorf("invalid mode: %s", mode))
-				}
-			})
+				})
+			}
+			wg.Wait()
 		}
-		wg.Wait()
 
-		if len(errs) > 0 {
-			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to toggle power for some devices: %v", errs))
+		// TODO: Testing error handling
+		if len(errs) == 0 {
+			errs = append(errs, fmt.Errorf("this is a test error message"))
+		}
+
+		// Handle errors (e.g. Render error messages)
+		for _, err := range errs {
+			t := components.OOBAddAlert(env.IDAlertContainer, components.AlertTypeError, err.Error())
+			if err = t.Render(c.Request().Context(), c.Response()); err != nil {
+				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render error alert: %w", err))
+			}
 		}
 
 		return nil
