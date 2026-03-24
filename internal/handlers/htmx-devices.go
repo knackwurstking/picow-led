@@ -163,13 +163,10 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	log := env.NewLogger("handlers.HTMXEditDeviceDialog")
 
-	parseForm := func(c echo.Context) (dialogs.EditDeviceFormData, []error) {
-		var errs []error
-		var formData dialogs.EditDeviceFormData
-
+	parseForm := func(c echo.Context) (formData dialogs.EditDeviceFormData, errs []error) {
 		id, err := utils.ParseQueryID(c)
 		if err != nil {
-			errs = append(errs, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
+			errs = append(errs, fmt.Errorf("invalid device ID: %w", err))
 		}
 		formData.ID = id
 
@@ -177,7 +174,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
 		formData.DeviceType = models.DeviceType(strings.TrimSpace(c.FormValue("device_type")))
 
-		return formData, errs
+		return
 	}
 
 	renderDialog := func(c echo.Context, open bool, formData dialogs.EditDeviceFormData, errs ...error) error {

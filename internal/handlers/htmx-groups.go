@@ -107,6 +107,7 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 	}
 
 	render := func(c echo.Context, open bool, formData dialogs.AddGroupFormData, errs ...error) error {
+		formData.Devices, _ = r.Device.List()
 		t := dialogs.AddGroup(dialogs.AddGroupProps{
 			AddGroupFormData: formData,
 			Open:             open,
@@ -122,16 +123,7 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 	switch method {
 	case http.MethodGet:
 		return func(c echo.Context) error {
-			var errs []error
-
-			devices, err := r.Device.List()
-			if err != nil {
-				errs = append(errs, fmt.Errorf("failed to list devices: %w", err))
-			}
-
-			return render(c, true, dialogs.AddGroupFormData{
-				Devices: devices,
-			}, errs...)
+			return render(c, true, dialogs.AddGroupFormData{})
 		}
 	case http.MethodPost:
 		return func(c echo.Context) error {
@@ -161,16 +153,31 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 }
 
 func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
-	parseForm := func(c echo.Context) (dialogs.EditGroupFormData, []error) {
-		var errs []error
-		var formData dialogs.EditGroupFormData
+	parseForm := func(c echo.Context) (formData dialogs.EditGroupFormData, errs []error) {
+		id, err := utils.ParseQueryID(c)
+		if err != nil {
+			errs = append(errs, fmt.Errorf("invalid group ID: %w", err))
+		}
+		formData.ID = id
 
-		// TODO: ...
+		formData.Name = strings.TrimSpace(c.FormValue("name"))
 
-		return formData, errs
+		deviceIDs := strings.Split(c.FormValue("devices"), ",")
+		for _, idString := range deviceIDs {
+			id, _ := strconv.Atoi(idString)
+			if d, err := r.Device.Get(models.ID(id)); err != nil {
+				errs = append(errs, fmt.Errorf("failed to get device with ID %d: %w", id, err))
+				continue
+			} else {
+				formData.SelectedDevices = append(formData.SelectedDevices, d.ID)
+			}
+		}
+
+		return
 	}
 
 	render := func(c echo.Context, open bool, formData dialogs.EditGroupFormData, errs ...error) error {
+		formData.Devices, _ = r.Device.List()
 		t := dialogs.EditGroup(dialogs.EditGroupProps{
 			EditGroupFormData: formData,
 			Open:              open,
@@ -200,13 +207,8 @@ func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 			if group, err := r.Group.Get(models.ID(id)); err != nil {
 				errs = append(errs, fmt.Errorf("failed to get group: %w", err))
 			} else {
-				if devices, err := r.Device.List(); err != nil {
-					errs = append(errs, fmt.Errorf("failed to list devices: %w", err))
-				} else {
-					formData.Name = group.Name
-					formData.Devices = devices
-					formData.SelectedDevices = group.Devices
-				}
+				formData.Name = group.Name
+				formData.SelectedDevices = group.Devices
 			}
 
 			return render(c, true, formData, errs...)
