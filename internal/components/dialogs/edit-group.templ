@@ -1,0 +1,36 @@
+package dialogs
+
+import "github.com/knackwurstking/picow-led/pkg/models"
+
+type EditGroupFormData struct {
+	ID   models.ID
+	Name string
+
+	Devices         []*models.Device
+	SelectedDevices []models.ID
+}
+
+type EditGroupProps struct {
+	EditGroupFormData
+	Open, OOB  bool
+	Attributes templ.Attributes
+	Errors     []error
+}
+
+templ EditGroup(props ...EditGroupProps) {
+	{{
+		prop := EditGroupProps{}
+		if len(props) > 0 {
+			prop = props[0]
+		}
+
+		if prop.Attributes == nil {
+			prop.Attributes = templ.Attributes{}
+		}
+
+		if prop.OOB {
+			prop.Attributes["hx-swap-oob"] = "true"
+		}
+	}}
+	// TODO: Edit group dialog and do not forget the delete group button
+}
