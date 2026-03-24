@@ -159,9 +159,26 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 }
 
 func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		// TODO: ....
+	switch method {
+	case http.MethodGet:
+		return func(c echo.Context) error {
+			// TODO: ...
 
-		return echo.NewHTTPError(http.StatusNotImplemented, "not implemented yet")
+			return echo.NewHTTPError(http.StatusNotImplemented, "not implemented")
+		}
+	case http.MethodPost:
+		return func(c echo.Context) error {
+			// TODO: ...
+
+			return echo.NewHTTPError(http.StatusNotImplemented, "not implemented")
+		}
+	case http.MethodDelete:
+		return func(c echo.Context) error {
+			// TODO: ...
+
+			return echo.NewHTTPError(http.StatusNotImplemented, "not implemented")
+		}
 	}
+
+	return nil
 }
