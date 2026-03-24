@@ -41,9 +41,9 @@ func HTMXGroups(r *services.Registry) echo.HandlerFunc {
 // TODO: Render OOB error messages
 func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		mode := c.FormValue("mode")
+		mode := c.QueryParam("mode")
 
-		groupIDStr := c.FormValue("group")
+		groupIDStr := c.QueryParam("id")
 		groupID, err := strconv.Atoi(groupIDStr)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid group ID: %v", err))

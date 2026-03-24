@@ -5,6 +5,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/button"
 	"github.com/knackwurstking/picow-led/internal/components/icon"
 	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
@@ -49,7 +50,7 @@ templ GroupItem(g *models.Group) {
 					Variant: button.VariantGhost,
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
-						//"hx-get":    urlb.EditGroupDialog(g.ID), // TODO: Edit Group Dialog
+						"hx-get":    urlb.EditGroupDialog(g.ID),
 						"hx-target": "body",
 						"hx-swap":   "beforeend",
 					},
@@ -61,7 +62,7 @@ templ GroupItem(g *models.Group) {
 					Variant: button.VariantGhost,
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
-						//"hx-post":   urlb.PowerGroup(g.ID, false), // TODO: Power Group Endpoint
+						"hx-post":   urlb.PowerGroup(g.ID, urlb.PowerModeOff),
 						"hx-target": "body",
 						"hx-swap":   "beforeend",
 					},
@@ -74,7 +75,7 @@ templ GroupItem(g *models.Group) {
 					Variant: button.VariantGhost,
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
-						//"hx-post":   urlb.PowerGroup(g.ID, true), // TODO: Power Group Endpoint
+						"hx-post":   urlb.PowerGroup(g.ID, urlb.PowerModeOn),
 						"hx-target": "body",
 						"hx-swap":   "beforeend",
 					},
