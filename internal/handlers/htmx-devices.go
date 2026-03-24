@@ -251,6 +251,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		}
 
 	case http.MethodDelete:
+		// TODO: Update this handler, just like the group handler
 		return func(c echo.Context) error {
 			formData, errs := parseForm(c)
 
