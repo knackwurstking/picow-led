@@ -42,6 +42,7 @@ func Register(e *echo.Echo, r *services.Registry) {
 		group.POST("/devices/toggle-power", handlers.HTMXToggleDevicePower(r))
 
 		group.GET("/groups", handlers.HTMXGroups(r))
+		group.POST("/groups/power", handlers.HTMXGroups(r))
 
 		{
 			dialogsGroup := group.Group("/dialogs")
@@ -58,6 +59,11 @@ func Register(e *echo.Echo, r *services.Registry) {
 			// Add Group
 			dialogsGroup.GET("/add-group", handlers.HTMXAddGroupDialog(r, http.MethodGet))
 			dialogsGroup.POST("/add-group", handlers.HTMXAddGroupDialog(r, http.MethodPost))
+
+			// Edit Group
+			dialogsGroup.GET("/edit-group", handlers.HTMXEditGroupDialog(r, http.MethodGet))
+			dialogsGroup.POST("/edit-group", handlers.HTMXEditGroupDialog(r, http.MethodPost))
+			dialogsGroup.DELETE("/edit-group", handlers.HTMXEditGroupDialog(r, http.MethodDelete))
 		}
 	}
 }
