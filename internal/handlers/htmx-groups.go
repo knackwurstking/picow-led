@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/knackwurstking/picow-led/internal/components"
 	"github.com/knackwurstking/picow-led/internal/components/dialogs"
@@ -31,6 +32,52 @@ func HTMXGroups(r *services.Registry) echo.HandlerFunc {
 		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError,
 				fmt.Errorf("failed to render template: %w", err))
+		}
+
+		return nil
+	}
+}
+
+// TODO: Render OOB error messages
+func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		mode := c.FormValue("mode")
+
+		groupIDStr := c.FormValue("group")
+		groupID, err := strconv.Atoi(groupIDStr)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid group ID: %v", err))
+		}
+
+		group, err := r.Group.Get(models.ID(groupID))
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to get group: %v", err))
+		}
+
+		var errs []error
+		wg := &sync.WaitGroup{}
+		for _, id := range group.Devices {
+			wg.Go(func() {
+				defer wg.Done()
+
+				switch mode {
+				case "on":
+					if err := r.Device.TurnOn(id); err != nil {
+						errs = append(errs, fmt.Errorf("failed to toggle power for device %d: %w", id, err))
+					}
+				case "off":
+					if err := r.Device.TurnOff(id); err != nil {
+						errs = append(errs, fmt.Errorf("failed to toggle power for device %d: %w", id, err))
+					}
+				default:
+					errs = append(errs, fmt.Errorf("invalid mode: %s", mode))
+				}
+			})
+		}
+		wg.Wait()
+
+		if len(errs) > 0 {
+			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to toggle power for some devices: %v", errs))
 		}
 
 		return nil
@@ -111,4 +158,10 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 	return nil
 }
 
-// TODO: EditGroupDialog, PowerGroup
+func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// TODO: ....
+
+		return echo.NewHTTPError(http.StatusNotImplemented, "not implemented yet")
+	}
+}
