@@ -1,29 +1,28 @@
 package dialogs
 
 import (
-	"github.com/knackwurstking/picow-led/internal/components/button"
-	"github.com/knackwurstking/picow-led/internal/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/templates/components/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/dialog"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
-type AddGroupFormData struct {
-	Name string
+type AddDeviceFormData struct {
+	Name, Addr string
 
-	Devices         []*models.Device
-	SelectedDevices []models.ID
+	DeviceType models.DeviceType
 }
 
-type AddGroupProps struct {
-	AddGroupFormData
+type AddDeviceProps struct {
+	AddDeviceFormData
 	Open, OOB  bool
 	Attributes templ.Attributes
 	Errors     []error
 }
 
-templ AddGroup(props ...AddGroupProps) {
+templ AddDevice(props ...AddDeviceProps) {
 	{{
-		prop := AddGroupProps{}
+		prop := AddDeviceProps{}
 		if len(props) > 0 {
 			prop = props[0]
 		}
@@ -37,7 +36,7 @@ templ AddGroup(props ...AddGroupProps) {
 		}
 	}}
 	@dialog.Dialog(dialog.Props{
-		ID:               "add-group-dialog",
+		ID:               "add-device-dialog",
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,
@@ -46,7 +45,7 @@ templ AddGroup(props ...AddGroupProps) {
 		@dialog.Content() {
 			@dialog.Header() {
 				@dialog.Title() {
-					Neue Gruppe hinzufügen
+					Neues Gerät hinzufügen
 				}
 			}
 			if len(prop.Errors) > 0 {
@@ -54,7 +53,7 @@ templ AddGroup(props ...AddGroupProps) {
 			}
 			<form
 				class="space-y-4"
-				hx-post={ urlb.AddGroupDialog() }
+				hx-post={ urlb.AddDeviceDialog() }
 				hx-trigger="submit"
 				enctype="multipart/form-data"
 			>
@@ -64,7 +63,13 @@ templ AddGroup(props ...AddGroupProps) {
 					Value:    prop.Name,
 					Title:    "Name",
 				})
-				@formDevices(prop.SelectedDevices, prop.Devices...)
+				@formText(formProps{
+					ID:       "addr",
+					Required: true,
+					Value:    prop.Addr,
+					Title:    "Server Adresse",
+				})
+				@formDeviceTypeSelect(prop.DeviceType)
 				@dialog.Footer() {
 					@button.Button(button.Props{
 						Type: button.TypeSubmit,

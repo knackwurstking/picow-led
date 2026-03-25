@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/knackwurstking/picow-led/internal/pages"
 	"github.com/knackwurstking/picow-led/internal/services"
+	"github.com/knackwurstking/picow-led/internal/templates/pages"
 	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/labstack/echo/v4"

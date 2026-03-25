@@ -1,29 +1,30 @@
 package dialogs
 
 import (
-	"github.com/knackwurstking/picow-led/internal/components/button"
-	"github.com/knackwurstking/picow-led/internal/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/templates/components/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/dialog"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
-type EditDeviceFormData struct {
-	ID         models.ID
-	Name, Addr string
+type EditGroupFormData struct {
+	ID   models.ID
+	Name string
 
-	DeviceType models.DeviceType
+	Devices         []*models.Device
+	SelectedDevices []models.ID
 }
 
-type EditDeviceProps struct {
-	EditDeviceFormData
+type EditGroupProps struct {
+	EditGroupFormData
 	Open, OOB  bool
 	Attributes templ.Attributes
 	Errors     []error
 }
 
-templ EditDevice(props ...EditDeviceProps) {
+templ EditGroup(props ...EditGroupProps) {
 	{{
-		prop := EditDeviceProps{}
+		prop := EditGroupProps{}
 		if len(props) > 0 {
 			prop = props[0]
 		}
@@ -37,7 +38,7 @@ templ EditDevice(props ...EditDeviceProps) {
 		}
 	}}
 	@dialog.Dialog(dialog.Props{
-		ID:               "edit-device-dialog",
+		ID:               "edit-group-dialog",
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,
@@ -46,7 +47,7 @@ templ EditDevice(props ...EditDeviceProps) {
 		@dialog.Content() {
 			@dialog.Header() {
 				@dialog.Title() {
-					Gerät Bearbeiten
+					Gruppe Bearbeiten 
 				}
 			}
 			if len(prop.Errors) > 0 {
@@ -54,7 +55,7 @@ templ EditDevice(props ...EditDeviceProps) {
 			}
 			<form
 				class="space-y-4"
-				hx-post={ urlb.EditDeviceDialog(prop.ID) }
+				hx-post={ urlb.EditGroupDialog(prop.ID) }
 				hx-trigger="submit"
 				enctype="multipart/form-data"
 			>
@@ -64,21 +65,17 @@ templ EditDevice(props ...EditDeviceProps) {
 					Value:    prop.Name,
 					Title:    "Name",
 				})
-				@formText(formProps{
-					ID:       "addr",
-					Required: true,
-					Value:    prop.Addr,
-					Title:    "Server Adresse",
-				})
-				@formDeviceTypeSelect(prop.DeviceType)
+				@formDevices(prop.SelectedDevices, prop.Devices...)
 				@dialog.Footer() {
 					@button.Button(button.Props{
 						Variant: button.VariantDestructive,
 						Type:    button.TypeButton,
 						Attributes: templ.Attributes{
-							"hx-delete":  urlb.EditDeviceDialog(prop.ID),
-							"hx-confirm": "Möchten Sie dieses Gerät wirklich löschen?",
-							"title":      "Gerät löschen",
+							"hx-delete":             urlb.EditGroupDialog(prop.ID),
+							"hx-swap":               "none",
+							"hx-confirm":            "Möchten Sie diese Gruppe wirklich löschen?",
+							"hx-on::response-error": "alert('Fehler beim Löschen der Gruppe: ' + event.detail.xhr.responseText)",
+							"title":                 "Gruppe löschen",
 						},
 					}) {
 						Löschen

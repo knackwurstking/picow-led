@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/knackwurstking/picow-led/internal/components"
-	"github.com/knackwurstking/picow-led/internal/components/dialogs"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
+	"github.com/knackwurstking/picow-led/internal/templates/components"
+	"github.com/knackwurstking/picow-led/internal/templates/components/dialogs"
 	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/labstack/echo/v4"

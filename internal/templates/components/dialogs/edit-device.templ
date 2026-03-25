@@ -1,28 +1,29 @@
 package dialogs
 
 import (
-	"github.com/knackwurstking/picow-led/internal/components/button"
-	"github.com/knackwurstking/picow-led/internal/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/templates/components/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/dialog"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
-type AddDeviceFormData struct {
+type EditDeviceFormData struct {
+	ID         models.ID
 	Name, Addr string
 
 	DeviceType models.DeviceType
 }
 
-type AddDeviceProps struct {
-	AddDeviceFormData
+type EditDeviceProps struct {
+	EditDeviceFormData
 	Open, OOB  bool
 	Attributes templ.Attributes
 	Errors     []error
 }
 
-templ AddDevice(props ...AddDeviceProps) {
+templ EditDevice(props ...EditDeviceProps) {
 	{{
-		prop := AddDeviceProps{}
+		prop := EditDeviceProps{}
 		if len(props) > 0 {
 			prop = props[0]
 		}
@@ -36,7 +37,7 @@ templ AddDevice(props ...AddDeviceProps) {
 		}
 	}}
 	@dialog.Dialog(dialog.Props{
-		ID:               "add-device-dialog",
+		ID:               "edit-device-dialog",
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,
@@ -45,7 +46,7 @@ templ AddDevice(props ...AddDeviceProps) {
 		@dialog.Content() {
 			@dialog.Header() {
 				@dialog.Title() {
-					Neues Gerät hinzufügen
+					Gerät Bearbeiten
 				}
 			}
 			if len(prop.Errors) > 0 {
@@ -53,7 +54,7 @@ templ AddDevice(props ...AddDeviceProps) {
 			}
 			<form
 				class="space-y-4"
-				hx-post={ urlb.AddDeviceDialog() }
+				hx-post={ urlb.EditDeviceDialog(prop.ID) }
 				hx-trigger="submit"
 				enctype="multipart/form-data"
 			>
@@ -72,9 +73,20 @@ templ AddDevice(props ...AddDeviceProps) {
 				@formDeviceTypeSelect(prop.DeviceType)
 				@dialog.Footer() {
 					@button.Button(button.Props{
+						Variant: button.VariantDestructive,
+						Type:    button.TypeButton,
+						Attributes: templ.Attributes{
+							"hx-delete":  urlb.EditDeviceDialog(prop.ID),
+							"hx-confirm": "Möchten Sie dieses Gerät wirklich löschen?",
+							"title":      "Gerät löschen",
+						},
+					}) {
+						Löschen
+					}
+					@button.Button(button.Props{
 						Type: button.TypeSubmit,
 					}) {
-						Hinzufügen
+						Bearbeiten
 					}
 				}
 			</form>

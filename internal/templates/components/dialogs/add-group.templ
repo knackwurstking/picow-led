@@ -1,30 +1,29 @@
 package dialogs
 
 import (
-	"github.com/knackwurstking/picow-led/internal/components/button"
-	"github.com/knackwurstking/picow-led/internal/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/templates/components/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/dialog"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
 
-type EditGroupFormData struct {
-	ID   models.ID
+type AddGroupFormData struct {
 	Name string
 
 	Devices         []*models.Device
 	SelectedDevices []models.ID
 }
 
-type EditGroupProps struct {
-	EditGroupFormData
+type AddGroupProps struct {
+	AddGroupFormData
 	Open, OOB  bool
 	Attributes templ.Attributes
 	Errors     []error
 }
 
-templ EditGroup(props ...EditGroupProps) {
+templ AddGroup(props ...AddGroupProps) {
 	{{
-		prop := EditGroupProps{}
+		prop := AddGroupProps{}
 		if len(props) > 0 {
 			prop = props[0]
 		}
@@ -38,7 +37,7 @@ templ EditGroup(props ...EditGroupProps) {
 		}
 	}}
 	@dialog.Dialog(dialog.Props{
-		ID:               "edit-group-dialog",
+		ID:               "add-group-dialog",
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,
@@ -47,7 +46,7 @@ templ EditGroup(props ...EditGroupProps) {
 		@dialog.Content() {
 			@dialog.Header() {
 				@dialog.Title() {
-					Gruppe Bearbeiten 
+					Neue Gruppe hinzufügen
 				}
 			}
 			if len(prop.Errors) > 0 {
@@ -55,7 +54,7 @@ templ EditGroup(props ...EditGroupProps) {
 			}
 			<form
 				class="space-y-4"
-				hx-post={ urlb.EditGroupDialog(prop.ID) }
+				hx-post={ urlb.AddGroupDialog() }
 				hx-trigger="submit"
 				enctype="multipart/form-data"
 			>
@@ -68,22 +67,9 @@ templ EditGroup(props ...EditGroupProps) {
 				@formDevices(prop.SelectedDevices, prop.Devices...)
 				@dialog.Footer() {
 					@button.Button(button.Props{
-						Variant: button.VariantDestructive,
-						Type:    button.TypeButton,
-						Attributes: templ.Attributes{
-							"hx-delete":             urlb.EditGroupDialog(prop.ID),
-							"hx-swap":               "none",
-							"hx-confirm":            "Möchten Sie diese Gruppe wirklich löschen?",
-							"hx-on::response-error": "alert('Fehler beim Löschen der Gruppe: ' + event.detail.xhr.responseText)",
-							"title":                 "Gruppe löschen",
-						},
-					}) {
-						Löschen
-					}
-					@button.Button(button.Props{
 						Type: button.TypeSubmit,
 					}) {
-						Bearbeiten
+						Hinzufügen
 					}
 				}
 			</form>
