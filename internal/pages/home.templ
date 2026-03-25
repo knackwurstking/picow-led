@@ -6,15 +6,8 @@ import (
 	"github.com/knackwurstking/picow-led/internal/components/icon"
 	"github.com/knackwurstking/picow-led/internal/components/layout"
 	"github.com/knackwurstking/picow-led/internal/components/tabs"
+	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/urlb"
-)
-
-const (
-	IDTabsNav     = "tabs-nav"
-	IDTabsContent = "tabs-content"
-	IDDevicesList = "devices-list"
-
-	IDGroupsList = "groups-list"
 )
 
 templ Home() {
@@ -24,7 +17,7 @@ templ Home() {
 		Title: "PicoW LED",
 	}) {
 		@tabs.Tabs(tabs.Props{
-			ID: IDTabsNav,
+			ID: env.IDTabsNav,
 		}) {
 			@tabs.List(tabs.ListProps{
 				Class: "w-full",
@@ -48,7 +41,7 @@ templ Home() {
 					Szenen
 				}
 			}
-			<main id={ IDTabsContent } class="p-4">
+			<main id={ env.IDTabsContent } class="p-4">
 				@tabs.Content(tabs.ContentProps{
 					Class:    "space-y-4",
 					Value:    "devices",
@@ -63,18 +56,18 @@ templ Home() {
 					@groupsContent()
 				}
 			</main>
-			@saveActiveTab(IDTabsNav)
-			@loadHomeTabs(IDTabsNav)
+			@saveActiveTab(env.IDTabsNav)
+			@loadHomeTabs(env.IDTabsNav)
 		}
 	}
 }
 
 templ devicesContent() {
 	<div
-		id={ IDDevicesList }
+		id={ env.IDDevicesList }
 		class="flex flex-col gap-4"
 		hx-get={ urlb.Devices() }
-		hx-target={ "#" + IDDevicesList }
+		hx-target={ "#" + env.IDDevicesList }
 		hx-trigger="load, reload-devices from:body, visibilitychange[document.visibilityState === 'visible'] from:document"
 		hx-swap="innerHTML"
 		hx-on::before-request="console.debug('Loading devices via HTMX...')"
@@ -98,10 +91,10 @@ templ devicesContent() {
 
 templ groupsContent() {
 	<div
-		id={ IDGroupsList }
+		id={ env.IDGroupsList }
 		class="flex flex-col gap-4"
 		hx-get={ urlb.Groups() }
-		hx-target={ "#" + IDGroupsList }
+		hx-target={ "#" + env.IDGroupsList }
 		hx-trigger="load, reload-groups from:body, visibilitychange[document.visibilityState === 'visible'] from:document"
 		hx-swap="innerHTML"
 		hx-on::before-request="console.debug('Loading groups via HTMX...')"
