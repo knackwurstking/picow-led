@@ -263,7 +263,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 
 			c.Request().Header.Set("HX-Trigger", "reload-devices")
 
-			return nil
+			return renderDialog(c, false, dialogs.EditDeviceFormData{}) // Close dialog
 		}
 	}
 
