@@ -56,7 +56,6 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 	}
 }
 
-// TODO: Render OOB error messages
 func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 	log := env.NewLogger("handlers.HTMXToggleDevicePower")
 
