@@ -63,6 +63,8 @@ templ Home() {
 					@groupsContent()
 				}
 			</main>
+			@saveActiveTab(IDTabsNav)
+			@loadHomeTabs(IDTabsNav)
 		}
 	}
 }
@@ -124,4 +126,26 @@ templ homeContentActions() {
 	<div class="w-full flex flex-row justify-end items-center">
 		{ children... }
 	</div>
+}
+
+script loadHomeTabs(tabsID string) {
+	// Get active tab from localStorage§
+	var lastActiveTab = localStorage.getItem("home-tabs-active");
+
+	var tabs = document.querySelectorAll(`#${tabsID} [data-tui-tabs-trigger]`);
+	for (var tab of tabs) {
+		if (lastActiveTab && tab.dataset.tuiTabsValue === lastActiveTab) {
+			console.debug("Setting active tab to", lastActiveTab);
+			tab.dataset.tuiTabsState = "active";
+		}
+	}
+}
+
+script saveActiveTab(tabsID string) {
+	var tabs = document.querySelectorAll(`#${tabsID} [data-tui-tabs-trigger]`);
+	for (var tab of tabs) {
+		tab.addEventListener("click", function () {
+			localStorage.setItem("home-tabs-active", this.dataset.tuiTabsValue);
+		});
+	}
 }

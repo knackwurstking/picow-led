@@ -2,4 +2,4 @@
 
 ## Features
 
-- [ ] Home Page: Store and restore active tab (devices, groups, scenes)
+- [x] Home Page: Store and restore active tab (devices, groups, scenes)
