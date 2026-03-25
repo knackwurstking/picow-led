@@ -251,20 +251,19 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 		}
 
 	case http.MethodDelete:
-		// TODO: Update this handler, just like the group handler
 		return func(c echo.Context) error {
-			formData, errs := parseForm(c)
-
-			log.Debug("Deleting device with ID %d", formData.ID)
-
-			if len(errs) == 0 {
-				if err := r.Device.Delete(formData.ID); err != nil {
-					errs = append(errs, fmt.Errorf("failed to delete device: %v", err))
-				}
+			id, err := utils.ParseQueryID(c)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("%v: %s", err, c.QueryParam("id")))
 			}
 
-			open := len(errs) > 0
-			return renderDialog(c, open, formData, errs...)
+			if err := r.Device.Delete(id); err != nil {
+				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to delete device: %v", err))
+			}
+
+			c.Request().Header.Set("HX-Trigger", "reload-devices")
+
+			return nil
 		}
 	}
 
