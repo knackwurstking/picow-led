@@ -130,7 +130,7 @@ templ homeContentActions() {
 }
 
 script loadHomeTabs(tabsID string) {
-	// Get active tab from localStorage§
+	// Get active tab from localStorage
 	var lastActiveTab = localStorage.getItem("home-tabs-active");
 
 	var tabs = document.querySelectorAll(`#${tabsID} [data-tui-tabs-trigger]`);
