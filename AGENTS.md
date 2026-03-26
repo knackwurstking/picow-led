@@ -12,6 +12,7 @@ This is a **Pico W LED Controller web application** built with Go, SQLite, and m
 - **Templating Engine**: Templ UI - Go native HTML templating with components
 - **Frontend CSS**: Tailwind 4.2.2 - Utility-first CSS framework
 - **Build System**: Makefile with npm/tailwind integration
+- **Frontend JavaScript**: HTMX for dynamic interactions, custom JS components
 
 ### Directory Structure
 ```
@@ -272,6 +273,17 @@ make build
 - Check that all asset generation completed successfully with `make generate`
 
 ## Future Enhancements (from TODO.md)
-- Home Page: Store and restore active tab (devices, groups, scenes) - ✓ COMPLETED
-- Consider adding: Scene management, scheduling, API documentation, rate limiting
+- [ ] Add pins configuration section above device page color selection
+- [x] Home Page: Store and restore active tab (devices, groups, scenes)
+- [ ] Device pages: paddings, margins, and more
+
+### Additional Future Enhancements to Consider:
+- Scene management for predefined lighting configurations
+- Scheduling system for automated device control
+- API documentation and OpenAPI/Swagger integration
+- Rate limiting for API endpoints
+- Enhanced error handling and user feedback mechanisms
+- Internationalization (i18n) support for multi-language UI
+- User authentication and authorization
+- Audit logging for device state changes
 
