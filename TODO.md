@@ -7,4 +7,4 @@
 
 ## Style
 
-- [ ] Device pages: paddings, margins, and more
+- [x] Device pages: paddings, margins, and more
