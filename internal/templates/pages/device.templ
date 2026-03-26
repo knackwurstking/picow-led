@@ -27,15 +27,20 @@ var (
 
 templ Device(d *models.Device) {
 	@layout.Layout(layout.Props{
-		Class: "px-4 space-y-4",
+		Class: "px-4 md:px-8 py-6",
 		Lang:  "de",
 		Title: "PicoW LED",
 	}) {
 		{{ color := d.ToColor() }}
-		<div class="text-4xl flex justify-center items-center">{ d.Name }</div>
-		@colorPicker(d, color)
-		@whiteSlider(d, color)
-		@brightnessSlider()
+		<div class="text-4xl flex justify-center items-center mb-8">{ d.Name }</div>
+		<section class="space-y-6 mb-8">
+			<h2 class="text-xl font-semibold text-left">Farbeinstellungen</h2>
+			@colorPicker(d, color)
+			@whiteSlider(d, color)
+		</section>
+		<div class="space-y-6">
+			@brightnessSlider()
+		</div>
 		<script defer src={ ui.AssetURL("", env.Route("/js/device.js")) }></script>
 	}
 }
