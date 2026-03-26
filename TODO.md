@@ -2,5 +2,9 @@
 
 ## Features
 
-- [ ] Need to add pins input to the device add/edit dialog for configuring the GPIO pins used by the device
+- [ ] Add pins configuration section above device page color selection
 - [x] Home Page: Store and restore active tab (devices, groups, scenes)
+
+## Style
+
+- [ ] Device pages: paddings, margins, and more
