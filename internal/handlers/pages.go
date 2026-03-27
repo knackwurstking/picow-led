@@ -21,7 +21,7 @@ func Home(c echo.Context) error {
 
 func Device(r *services.Registry, method string) echo.HandlerFunc {
 	render := func(c echo.Context, device *models.Device) error {
-		t := pages.Device(device)
+		t := pages.Device(device) // TODO: Get and pass pins, or use a separate HTMX endpoint for that?
 		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("Failed to render page: %w", err))
 		}

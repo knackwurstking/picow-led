@@ -27,13 +27,14 @@ var (
 	}
 )
 
-templ Device(d *models.Device) {
+templ Device(d *models.Device, pins ...uint8) {
 	@layout.Layout(layout.Props{
 		Class: "px-4 md:px-8 py-6",
 		Lang:  "de",
 		Title: "PicoW LED",
 	}) {
 		<div class="text-4xl flex justify-center items-center mb-8">{ d.Name }</div>
+		// TODO: Pass pins here...
 		@DevicePins(d)
 		@DeviceColorControl(d)
 		<script defer src={ ui.AssetURL("", env.Route("/js/device.js")) }></script>
@@ -41,21 +42,27 @@ templ Device(d *models.Device) {
 }
 
 // TODO: Need to submit changes to the server
-templ DevicePins(d *models.Device) {
+templ DevicePins(d *models.Device, pins ...uint8) {
 	@components.Section() {
 		<div class="text-xl font-semibold text-left">Geräte Pins für { d.Type }</div>
 		<div class="flex flex-row flex-wrap gap-4">
-			for _, pin := range []string{"R", "G", "B", "W"} {
+			for i, pin := range []string{"R", "G", "B", "W"} {
 				@form.Item(form.ItemProps{
 					Class: "flex-1 min-w-[120px]",
 				}) {
 					@form.Label() {
 						{ pin }
 					}
+					{{
+						value := ""
+						if i < len(pins) {
+							value = fmt.Sprintf("%d", pins[i])
+						}
+					}}
 					@input.Input(input.Props{
 						Type:     input.TypeNumber,
 						Required: true,
-						Value:    "0",
+						Value:    value,
 						Attributes: templ.Attributes{
 							"min": 0,
 							"max": 40,
