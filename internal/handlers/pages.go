@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
+	"github.com/knackwurstking/picow-led/internal/templates/components"
 	"github.com/knackwurstking/picow-led/internal/templates/pages"
 	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
@@ -20,8 +22,22 @@ func Home(c echo.Context) error {
 }
 
 func Device(r *services.Registry, method string) echo.HandlerFunc {
+	log := env.NewLogger("handlers.Device")
+
 	render := func(c echo.Context, device *models.Device) error {
-		pins, _ := r.Device.GetPins(device.ID)
+		pins, err := r.Device.GetPins(device.ID)
+		if err != nil {
+			defer func() {
+				// Render OOB alert message
+				t := components.AddAlert(
+					env.IDAlertContainer, components.AlertTypeError,
+					fmt.Sprintf("Failed to load device pins: %s", err),
+				)
+				if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+					log.Error("Failed to render alert: %v", err)
+				}
+			}()
+		}
 		t := pages.Device(device, pins...)
 		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("Failed to render page: %w", err))
