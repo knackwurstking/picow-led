@@ -38,6 +38,7 @@ func Device(r *services.Registry, method string) echo.HandlerFunc {
 				}
 			}()
 		}
+
 		t := pages.Device(device, pins...)
 		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("Failed to render page: %w", err))
