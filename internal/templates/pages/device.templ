@@ -37,6 +37,7 @@ templ Device(d *models.Device, pins ...uint8) {
 		// TODO: Pass pins here...
 		@DevicePins(d)
 		@DeviceColorControl(d)
+		@DeviceBrightnessControl(d)
 		<script defer src={ ui.AssetURL("", env.Route("/js/device.js")) }></script>
 	}
 }
@@ -81,6 +82,9 @@ templ DeviceColorControl(d *models.Device) {
 		@colorPicker(d, color)
 		@whiteSlider(d, color)
 	}
+}
+
+templ DeviceBrightnessControl(d *models.Device) {
 	@components.Section() {
 		<div class="text-xl font-semibold text-left">Helligkeit</div>
 		@brightnessSlider()
