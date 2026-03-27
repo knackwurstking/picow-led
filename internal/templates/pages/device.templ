@@ -41,6 +41,7 @@ templ Device(d *models.Device, pins ...uint8) {
 	}
 }
 
+// TODO: Find a way to submit changes, for now the inputs are rendered readonly
 templ DevicePins(d *models.Device, pins ...uint8) {
 	@components.Section() {
 		<div class="text-xl font-semibold text-left">Geräte Pins für { d.Type }</div>
@@ -60,8 +61,8 @@ templ DevicePins(d *models.Device, pins ...uint8) {
 					}}
 					@input.Input(input.Props{
 						Type:     input.TypeNumber,
-						Required: true,
 						Value:    value,
+						Readonly: true,
 						Attributes: templ.Attributes{
 							"min": 0,
 							"max": 40,
