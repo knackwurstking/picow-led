@@ -44,6 +44,8 @@ func Register(e *echo.Echo, r *services.Registry) {
 		group.GET("/groups", handlers.HTMXGroups(r))
 		group.POST("/groups/power", handlers.HTMXPowerGroup(r))
 
+		group.GET("/device/pins", handlers.HTMXDevicePins(r, http.MethodGet))
+
 		{
 			dialogsGroup := group.Group("/dialogs")
 
