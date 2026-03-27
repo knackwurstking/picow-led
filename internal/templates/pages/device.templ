@@ -34,15 +34,13 @@ templ Device(d *models.Device, pins ...uint8) {
 		Title: "PicoW LED",
 	}) {
 		<div class="text-4xl flex justify-center items-center mb-8">{ d.Name }</div>
-		// TODO: Pass pins here...
-		@DevicePins(d)
+		@DevicePins(d, pins...)
 		@DeviceColorControl(d)
 		@DeviceBrightnessControl(d)
 		<script defer src={ ui.AssetURL("", env.Route("/js/device.js")) }></script>
 	}
 }
 
-// TODO: Need to submit changes to the server
 templ DevicePins(d *models.Device, pins ...uint8) {
 	@components.Section() {
 		<div class="text-xl font-semibold text-left">Geräte Pins für { d.Type }</div>
