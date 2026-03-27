@@ -41,7 +41,8 @@ templ Device(d *models.Device, pins ...uint8) {
 	}
 }
 
-// TODO: Find a way to submit changes, for now the inputs are rendered readonly
+// TODO: Use HTMX (component) to allow changing pins here
+// Currently the pins are configured on the device directly
 templ DevicePins(d *models.Device, pins ...uint8) {
 	@components.Section() {
 		<div class="text-xl font-semibold text-left">Geräte Pins für { d.Type }</div>
