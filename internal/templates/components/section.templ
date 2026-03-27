@@ -1,0 +1,25 @@
+package components
+
+import "github.com/knackwurstking/picow-led/internal/utils"
+
+type SectionProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+templ Section(props ...SectionProps) {
+	{{ var p SectionProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<section
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge("space-y-6 mb-8", p.Class) }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</section>
+}
