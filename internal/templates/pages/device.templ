@@ -85,7 +85,9 @@ templ DeviceColorControl(d *models.Device) {
 }
 
 templ DeviceBrightnessControl(d *models.Device) {
-	@components.Section() {
+	@components.Section(components.SectionProps{
+		Class: "hidden",
+	}) {
 		<div class="text-xl font-semibold text-left">Helligkeit</div>
 		@brightnessSlider()
 	}
