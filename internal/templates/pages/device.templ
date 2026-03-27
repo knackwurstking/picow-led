@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/templates/components"
-	"github.com/knackwurstking/picow-led/internal/templates/components/form"
 	"github.com/knackwurstking/picow-led/internal/templates/components/input"
 	"github.com/knackwurstking/picow-led/internal/templates/components/label"
 	"github.com/knackwurstking/picow-led/internal/templates/components/layout"
@@ -46,32 +45,11 @@ templ Device(d *models.Device, pins ...uint8) {
 templ DevicePins(d *models.Device, pins ...uint8) {
 	@components.Section() {
 		<div class="text-xl font-semibold text-left">Geräte Pins für { d.Type }</div>
-		<div class="flex flex-row flex-wrap gap-4">
-			for i, pin := range []string{"R", "G", "B", "W"} {
-				@form.Item(form.ItemProps{
-					Class: "flex-1 min-w-[120px]",
-				}) {
-					@form.Label() {
-						{ pin }
-					}
-					{{
-						value := ""
-						if i < len(pins) {
-							value = fmt.Sprintf("%d", pins[i])
-						}
-					}}
-					@input.Input(input.Props{
-						Type:     input.TypeNumber,
-						Value:    value,
-						Readonly: true,
-						Attributes: templ.Attributes{
-							"min": 0,
-							"max": 40,
-						},
-					})
-				}
-			}
-		</div>
+		@components.DevicePins(components.DevicePinsProps{
+			DeviceType: d.Type,
+			Pins:       pins,
+			Readonly:   true,
+		})
 	}
 }
 
