@@ -69,7 +69,7 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 		}
 	case http.MethodPost:
 		return func(c echo.Context) error {
-			pins, err := parse(c)
+			_, err := parse(c)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusBadRequest,
 					fmt.Errorf("Invalid form data: %w", err))
