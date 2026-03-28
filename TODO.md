@@ -2,11 +2,11 @@
 
 ## Makefile
 
-- [ ] Add macos commands: "macos-install" and "macos-update"
+- [x] Add macos commands: "macos-install" and "macos-update"
 
 ## Features
 
-- [-] Add pins configuration section above device page color selection
+- [x] Add pins configuration section above device page color selection
 - [x] Home Page: Store and restore active tab (devices, groups, scenes)
 
 ## Style
