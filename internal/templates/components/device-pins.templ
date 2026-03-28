@@ -42,7 +42,7 @@ templ DevicePins(props ...DevicePinsProps) {
 			p.Class,
 		}
 		enctype="multipart/form-data"
-		hx-get={ urlb.DevicePins(p.DeviceID) }
+		hx-post={ urlb.DevicePins(p.DeviceID) }
 		hx-target={ "#" + p.ID }
 		hx-swap="outerHTML"
 		hx-trigger="submit"
