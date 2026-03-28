@@ -14,6 +14,17 @@ import (
 )
 
 func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
+	log := env.NewLogger("handlers.HTMXDevicePins")
+
+	parse := func(c echo.Context) (pins []uint8, err error) {
+		// TODO: Get input elements
+		form, _ := c.MultipartForm()
+		formParams, _ := c.FormParams()
+		log.Debug("Parsing device pins from form data: form=%#v, formParams=%#v", form, formParams)
+
+		return nil, fmt.Errorf("Not implemented")
+	}
+
 	render := func(c echo.Context, deviceID models.ID, deviceType models.DeviceType, pins ...uint8) error {
 		t := components.DevicePins(components.DevicePinsProps{
 			ID:         env.IDDevicePins,
@@ -58,6 +69,12 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 		}
 	case http.MethodPost:
 		return func(c echo.Context) error {
+			pins, err := parse(c)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest,
+					fmt.Errorf("Invalid form data: %w", err))
+			}
+
 			id, err := utils.ParseQueryID(c)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusBadRequest,
