@@ -104,11 +104,16 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 					fmt.Errorf("Failed to get device: %w", err))
 			}
 
-			// TODO: Parse form
+			// Parse form
+			pins, err := parse(c)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest,
+					fmt.Errorf("Invalid form data: %w", err))
+			}
 
 			// TODO: Update device pins
 
-			return render(c, device.ID, device.Type)
+			return render(c, device.ID, device.Type, pins...)
 		}
 	}
 
