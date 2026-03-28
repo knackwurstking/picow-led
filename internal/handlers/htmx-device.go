@@ -23,7 +23,7 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 		}
 		log.Debug("Parsing device pins from form data: formParams=%#v", formParams)
 
-		// TODO: Get input elements
+		// TODO: Get input elements `url.Values{"device-pins-pin":[]string{"0", "1", "2", "3"}, "id":[]string{"2"}}`
 
 		return nil, fmt.Errorf("Not implemented")
 	}
