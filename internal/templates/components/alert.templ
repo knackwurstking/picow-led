@@ -2,7 +2,11 @@ package components
 
 import (
 	"context"
+	"fmt"
+	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/utils"
+	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 const (
@@ -94,4 +98,31 @@ templ OOBAddAlert(containerID string, level AlertType, message string) {
 	<span hx-swap-oob="beforeend:body">
 		@AddAlert(containerID, level, message)
 	</span>
+}
+
+func RenderInfo(c echo.Context, message string) *echo.HTTPError {
+	t := AddAlert(env.IDAlertContainer, AlertTypeInfo, message)
+	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError,
+			fmt.Errorf("failed to render info alert: %w", err))
+	}
+	return nil
+}
+
+func RenderWarning(c echo.Context, message string) *echo.HTTPError {
+	t := AddAlert(env.IDAlertContainer, AlertTypeWarning, message)
+	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError,
+			fmt.Errorf("failed to render warning alert: %w", err))
+	}
+	return nil
+}
+
+func RenderError(c echo.Context, message string) *echo.HTTPError {
+	t := AddAlert(env.IDAlertContainer, AlertTypeError, message)
+	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError,
+			fmt.Errorf("failed to render error alert: %w", err))
+	}
+	return nil
 }

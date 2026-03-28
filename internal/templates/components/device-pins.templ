@@ -46,7 +46,6 @@ templ DevicePins(props ...DevicePinsProps) {
 		hx-target={ "#" + p.ID }
 		hx-swap="outerHTML"
 		hx-trigger="submit"
-		hx-on:response-error="alert('Fehler beim Laden der Pins:' + event.detail.xhr.responseText)"
 		{ p.Attributes... }
 	>
 		<div class="flex flex-row flex-wrap gap-4">

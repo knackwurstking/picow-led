@@ -38,7 +38,7 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 			}
 		}
 
-		log.Debug("Parsed pins from form: %#v", pins)
+		log.Debug("parsed pins from form: %#v", pins)
 		return
 	}
 
@@ -55,7 +55,7 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 
 		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError,
-				fmt.Errorf("Failed to render device pins: %w", err))
+				fmt.Errorf("failed to render device pins: %w", err))
 		}
 
 		return nil
@@ -67,51 +67,44 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 			id, err := utils.ParseQueryID(c)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusBadRequest,
-					fmt.Errorf("Invalid device ID: %w", err))
+					fmt.Errorf("invalid device ID: %w", err))
 			}
 
 			device, err := r.Device.Get(id)
 			if err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError,
-					fmt.Errorf("Failed to get device: %w", err))
+				return components.RenderError(c, fmt.Sprintf("Failed to get device: %v", err))
 			}
 
 			pins, err := r.Device.GetPins(device.ID)
 			if err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError,
-					fmt.Errorf("Failed to get device pins: %w", err))
+				return components.RenderError(c, fmt.Sprintf("Failed to get device pins: %v", err))
 			}
 
 			return render(c, device.ID, device.Type, pins...)
 		}
 	case http.MethodPost:
 		return func(c echo.Context) error {
-			_, err := parse(c)
-			if err != nil {
-				return echo.NewHTTPError(http.StatusBadRequest,
-					fmt.Errorf("Invalid form data: %w", err))
-			}
-
 			id, err := utils.ParseQueryID(c)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusBadRequest,
-					fmt.Errorf("Invalid device ID: %w", err))
+					fmt.Errorf("invalid device ID: %w", err))
 			}
 
 			device, err := r.Device.Get(id)
 			if err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError,
-					fmt.Errorf("Failed to get device: %w", err))
+				return components.RenderError(c, fmt.Sprintf("Failed to get device: %v", err))
 			}
 
 			// Parse form
 			pins, err := parse(c)
 			if err != nil {
-				return echo.NewHTTPError(http.StatusBadRequest,
-					fmt.Errorf("Invalid form data: %w", err))
+				return components.RenderError(c, fmt.Sprintf("Invalid form data: %v", err))
 			}
 
-			// TODO: Update device pins
+			// Update device pins
+			if err = r.Device.SetPins(device.ID, pins); err != nil {
+				return components.RenderError(c, fmt.Sprintf("Failed to set device pins: %v", err))
+			}
 
 			return render(c, device.ID, device.Type, pins...)
 		}

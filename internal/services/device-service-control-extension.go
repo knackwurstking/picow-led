@@ -154,6 +154,31 @@ func (p *DeviceService) TogglePower(deviceID models.ID) ([]uint8, error) {
 	return newDuty, nil
 }
 
+func (p *DeviceService) SetPins(deviceID models.ID, pins []uint8) error {
+	if len(pins) == 0 {
+		return ErrorValidation
+	}
+
+	device, err := p.registry.Device.Get(deviceID)
+	if err != nil {
+		if err == ErrorNotFound {
+			return err
+		}
+		return fmt.Errorf("get device for set pins: %w", err)
+	}
+
+	p.log.Debug("Setting pins for device %d: %v", deviceID, pins)
+
+	if err = picow.SetPins(device, pins...); err != nil {
+		return fmt.Errorf("set pins in control layer: %w", err)
+	}
+
+	// Cache the new pins
+	p.pinCache.Store(deviceID, pins)
+
+	return nil
+}
+
 func (p *DeviceService) SetCurrentDuty(deviceID models.ID, duty []uint8) error {
 	if len(duty) == 0 {
 		return fmt.Errorf("duty cannot be empty")
