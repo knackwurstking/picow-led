@@ -115,8 +115,6 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 	}
 
 	renderDialog := func(c echo.Context, open bool, formData dialogs.AddDeviceFormData, errs ...error) error {
-		c.Response().Header().Set("HX-Trigger", "reload-devices")
-
 		t := dialogs.AddDevice(dialogs.AddDeviceProps{
 			AddDeviceFormData: formData,
 			Open:              open,
@@ -151,6 +149,8 @@ func HTMXAddDeviceDialog(r *services.Registry, method string) echo.HandlerFunc {
 				device.ID = id
 			}
 
+			c.Response().Header().Set("HX-Trigger", "reload-devices")
+
 			open := len(errs) > 0
 			return renderDialog(c, open, formData, errs...)
 		}
@@ -177,8 +177,6 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 	}
 
 	renderDialog := func(c echo.Context, open bool, formData dialogs.EditDeviceFormData, errs ...error) error {
-		c.Response().Header().Set("HX-Trigger", "reload-devices")
-
 		t := dialogs.EditDevice(dialogs.EditDeviceProps{
 			EditDeviceFormData: formData,
 			Open:               open,
@@ -246,6 +244,8 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 				}
 			}
 
+			c.Response().Header().Set("HX-Trigger", "reload-devices")
+
 			return renderDialog(c, len(errs) > 0, formData, errs...)
 		}
 
@@ -260,7 +260,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to delete device: %v", err))
 			}
 
-			c.Request().Header.Set("HX-Trigger", "reload-devices")
+			c.Response().Header().Set("HX-Trigger", "reload-devices")
 
 			return renderDialog(c, false, dialogs.EditDeviceFormData{}) // Close dialog
 		}

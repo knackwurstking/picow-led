@@ -145,6 +145,8 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 				return render(c, true, formData, errs...)
 			}
 
+			c.Response().Header().Set("HX-Trigger", "reload-groups")
+
 			return render(c, false, formData, errs...) // Close dialog on success
 		}
 	}
@@ -234,20 +236,24 @@ func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 				return render(c, true, formData, errs...)
 			}
 
+			c.Response().Header().Set("HX-Trigger", "reload-groups")
+
 			return render(c, false, formData, errs...)
 		}
 	case http.MethodDelete:
 		return func(c echo.Context) error {
 			id, err := utils.ParseQueryID(c)
 			if err != nil {
-				return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid group ID: %v", err))
+				return echo.NewHTTPError(http.StatusBadRequest,
+					fmt.Errorf("invalid group ID: %v", err))
 			}
 
 			if err := r.Group.Delete(id); err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to delete group: %w", err))
+				return echo.NewHTTPError(http.StatusInternalServerError,
+					fmt.Errorf("failed to delete group: %w", err))
 			}
 
-			c.Request().Header.Set("HX-Trigger", "reload-groups")
+			c.Response().Header().Set("HX-Trigger", "reload-groups")
 
 			return render(c, false, dialogs.EditGroupFormData{}) // Close dialog
 		}
