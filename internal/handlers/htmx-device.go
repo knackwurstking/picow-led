@@ -3,6 +3,8 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/knackwurstking/picow-led/internal/env"
@@ -17,15 +19,27 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 	log := env.NewLogger("handlers.HTMXDevicePins")
 
 	parse := func(c echo.Context) (pins []uint8, err error) {
-		formParams, err := c.FormParams()
+		var formParams url.Values
+		formParams, err = c.FormParams()
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse form data: %w", err)
+			return
 		}
-		log.Debug("Parsing device pins from form data: formParams=%#v", formParams)
 
-		// TODO: Get input elements `url.Values{"device-pins-pin":[]string{"0", "1", "2", "3"}, "id":[]string{"2"}}`
+		// NOTE:`url.Values{"device-pins-pin":[]string{"0", "1", "2", "3"}, "id":[]string{"2"}}`
+		if pinsValue, ok := formParams["device-pins-pin"]; ok {
+			for _, pinStr := range pinsValue {
+				var p uint64
+				p, err = strconv.ParseUint(pinStr, 10, 8)
+				if err != nil {
+					return
+				}
 
-		return nil, fmt.Errorf("Not implemented")
+				pins = append(pins, uint8(p))
+			}
+		}
+
+		log.Debug("Parsed pins from form: %#v", pins)
+		return
 	}
 
 	render := func(c echo.Context, deviceID models.ID, deviceType models.DeviceType, pins ...uint8) error {
