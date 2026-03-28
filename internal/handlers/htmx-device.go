@@ -17,10 +17,13 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 	log := env.NewLogger("handlers.HTMXDevicePins")
 
 	parse := func(c echo.Context) (pins []uint8, err error) {
+		formParams, err := c.FormParams()
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse form data: %w", err)
+		}
+		log.Debug("Parsing device pins from form data: formParams=%#v", formParams)
+
 		// TODO: Get input elements
-		form, _ := c.MultipartForm()
-		formParams, _ := c.FormParams()
-		log.Debug("Parsing device pins from form data: form=%#v, formParams=%#v", form, formParams)
 
 		return nil, fmt.Errorf("Not implemented")
 	}

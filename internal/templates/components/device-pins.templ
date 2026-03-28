@@ -63,7 +63,7 @@ templ DevicePins(props ...DevicePinsProps) {
 							value = fmt.Sprintf("%d", p.Pins[i])
 						}
 					}}
-					{{ id := fmt.Sprintf("%s-pin-%d", p.ID, i) }}
+					{{ id := fmt.Sprintf("%s-pin", p.ID) }}
 					@input.Input(input.Props{
 						ID:       id,
 						Name:     id,
