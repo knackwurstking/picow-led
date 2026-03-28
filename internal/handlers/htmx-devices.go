@@ -257,7 +257,8 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			}
 
 			if err := r.Device.Delete(id); err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to delete device: %v", err))
+				return components.RenderError(c,
+					fmt.Sprintf("Failed to delete device: %v", err))
 			}
 
 			c.Response().Header().Set("HX-Trigger", "reload-devices")

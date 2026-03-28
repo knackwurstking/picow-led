@@ -249,8 +249,8 @@ func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 			}
 
 			if err := r.Group.Delete(id); err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError,
-					fmt.Errorf("failed to delete group: %w", err))
+				return components.RenderError(c,
+					fmt.Sprintf("Failed to delete group with ID %d: %v", id, err))
 			}
 
 			c.Response().Header().Set("HX-Trigger", "reload-groups")
