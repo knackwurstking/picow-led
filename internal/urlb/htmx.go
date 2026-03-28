@@ -15,6 +15,10 @@ const (
 	PowerModeOff PowerMode = "off"
 )
 
+// -----------------------------------------------------------------------------
+// Devices
+// -----------------------------------------------------------------------------
+
 func Devices() string {
 	return env.Route("/htmx/devices")
 }
@@ -45,6 +49,10 @@ func EditDeviceDialog(id models.ID) string {
 	return u.String()
 }
 
+// -----------------------------------------------------------------------------
+// Groups
+// -----------------------------------------------------------------------------
+
 func Groups() string {
 	return env.Route("/htmx/groups")
 }
@@ -71,6 +79,26 @@ func EditGroupDialog(groupID models.ID) string {
 
 	q := u.Query()
 	q.Set("id", fmt.Sprintf("%d", groupID))
+	u.RawQuery = q.Encode()
+
+	return u.String()
+}
+
+// -----------------------------------------------------------------------------
+// Device
+// -----------------------------------------------------------------------------
+
+// DevicePins returns the URL for fetching the pins of a device with the given ID and pins.
+// The pins are included as query parameters in the URL, only used in POST requests.
+func DevicePins(id models.ID, pins ...uint8) string {
+	u := url.URL{}
+	u.Path = env.Route("/htmx/device/pins")
+
+	q := u.Query()
+	q.Set("id", fmt.Sprintf("%d", id))
+	for _, pin := range pins {
+		q.Add("pin", fmt.Sprintf("%d", pin))
+	}
 	u.RawQuery = q.Encode()
 
 	return u.String()

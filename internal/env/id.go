@@ -16,4 +16,7 @@ const (
 	// Home: Groups Tab
 	IDGroupsList = "groups-list"
 	IDGroupItem  = "group-item-%d"
+
+	// Device
+	IDDevicePins = "device-pins"
 )

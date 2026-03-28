@@ -46,9 +46,16 @@ templ DevicePins(d *models.Device, pins ...uint8) {
 	@components.Section() {
 		<div class="text-xl font-semibold text-left">Geräte Pins für { d.Type }</div>
 		@components.DevicePins(components.DevicePinsProps{
+			ID:         env.IDDevicePins,
 			DeviceType: d.Type,
 			Pins:       pins,
 			Readonly:   true,
+			// TODO: Get pins via HTMX, trigger on load, swap outerHTML
+			//Attributes: templ.Attributes{
+			//	"hx-get":    env.Route(fmt.Sprintf("/device/%d/pins", d.ID)),
+			//	"hx-target": "#device-pins",
+			//	"hx-swap":   "outerHTML",
+			//},
 		})
 	}
 }
