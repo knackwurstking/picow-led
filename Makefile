@@ -1,4 +1,4 @@
-.PHONY: init generate install-tailwind macos-install macos-update
+.PHONY: all init generate install-tailwind macos-install macos-update
 
 BINARY_NAME := picow-led
 BIN_DIR := ./bin
@@ -8,6 +8,8 @@ SERVICE_FILE := $(HOME)/Library/LaunchAgents/com.$(BINARY_NAME).plist
 
 APP_DATA := $(HOME)/Library/Application Support/$(BINARY_NAME)
 LOG_FILE := $(APP_DATA)/$(BINARY_NAME).log
+
+all: generate init build
 
 generate: install-tailwind
 	@templ generate
