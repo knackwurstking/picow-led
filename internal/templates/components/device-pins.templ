@@ -2,8 +2,11 @@ package components
 
 import (
 	"fmt"
+	"github.com/knackwurstking/picow-led/internal/templates/components/button"
 	"github.com/knackwurstking/picow-led/internal/templates/components/form"
 	"github.com/knackwurstking/picow-led/internal/templates/components/input"
+	"github.com/knackwurstking/picow-led/internal/urlb"
+	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"strings"
 )
@@ -13,6 +16,7 @@ type DevicePinsProps struct {
 	Class      string
 	Attributes templ.Attributes
 
+	DeviceID   models.ID
 	DeviceType models.DeviceType
 	Pins       []uint8
 	Readonly   bool
@@ -24,40 +28,62 @@ templ DevicePins(props ...DevicePinsProps) {
 		if len(props) > 0 {
 			p = props[0]
 		}
+
+		if p.ID == "" {
+			p.ID = utils.RandomID()
+		}
 	}}
-	<div
+	<form
 		if p.ID != "" {
 			id={ p.ID }
 		}
 		class={
-			"flex flex-row flex-wrap gap-4",
+			"space-y-4",
 			p.Class,
 		}
+		enctype="multipart/form-data"
+		hx-get={ urlb.DevicePins(p.DeviceID) }
+		hx-target={ "#" + p.ID }
+		hx-swap="outerHTML"
+		hx-trigger="submit"
+		hx-on:response-error="alert('Fehler beim Laden der Pins:' + event.detail.xhr.responseText)"
 		{ p.Attributes... }
 	>
-		for i, pin := range strings.Split(string(p.DeviceType), "") {
-			@form.Item(form.ItemProps{
-				Class: "flex-1 min-w-[120px]",
-			}) {
-				@form.Label() {
-					{ pin }
-				}
-				{{
-					value := ""
-					if i < len(p.Pins) {
-						value = fmt.Sprintf("%d", p.Pins[i])
+		<div class="flex flex-row flex-wrap gap-4">
+			for i, pin := range strings.Split(string(p.DeviceType), "") {
+				@form.Item(form.ItemProps{
+					Class: "flex-1 min-w-[120px]",
+				}) {
+					@form.Label() {
+						{ pin }
 					}
-				}}
-				@input.Input(input.Props{
-					Type:     input.TypeNumber,
-					Value:    value,
-					Readonly: p.Readonly,
-					Attributes: templ.Attributes{
-						"min": 0,
-						"max": 40,
-					},
-				})
+					{{
+						value := ""
+						if i < len(p.Pins) {
+							value = fmt.Sprintf("%d", p.Pins[i])
+						}
+					}}
+					{{ id := fmt.Sprintf("%s-pin-%d", p.ID, i) }}
+					@input.Input(input.Props{
+						ID:       id,
+						Name:     id,
+						Type:     input.TypeNumber,
+						Value:    value,
+						Readonly: p.Readonly,
+						Attributes: templ.Attributes{
+							"min": 0,
+							"max": 40,
+						},
+					})
+				}
 			}
-		}
-	</div>
+		</div>
+		<div class="flex justify-end">
+			@button.Button(button.Props{
+				Type: button.TypeSubmit,
+			}) {
+				Aktualisieren
+			}
+		</div>
+	</form>
 }

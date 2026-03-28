@@ -40,22 +40,14 @@ templ Device(d *models.Device, pins ...uint8) {
 	}
 }
 
-// TODO: Use HTMX (component) to allow changing pins here
-// Currently the pins are configured on the device directly
 templ DevicePins(d *models.Device, pins ...uint8) {
 	@components.Section() {
 		<div class="text-xl font-semibold text-left">Geräte Pins für { d.Type }</div>
 		@components.DevicePins(components.DevicePinsProps{
 			ID:         env.IDDevicePins,
+			DeviceID:   d.ID,
 			DeviceType: d.Type,
 			Pins:       pins,
-			Readonly:   true,
-			// TODO: Get pins via HTMX, trigger on load, swap outerHTML
-			//Attributes: templ.Attributes{
-			//	"hx-get":    env.Route(fmt.Sprintf("/device/%d/pins", d.ID)),
-			//	"hx-target": "#device-pins",
-			//	"hx-swap":   "outerHTML",
-			//},
 		})
 	}
 }

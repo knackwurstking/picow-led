@@ -14,9 +14,10 @@ import (
 )
 
 func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
-	render := func(c echo.Context, deviceType models.DeviceType, pins ...uint8) error {
+	render := func(c echo.Context, deviceID models.ID, deviceType models.DeviceType, pins ...uint8) error {
 		t := components.DevicePins(components.DevicePinsProps{
 			ID:         env.IDDevicePins,
+			DeviceID:   deviceID,
 			DeviceType: deviceType,
 			Pins:       pins,
 			Attributes: templ.Attributes{
@@ -53,7 +54,27 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 					fmt.Errorf("Failed to get device pins: %w", err))
 			}
 
-			return render(c, device.Type, pins...)
+			return render(c, device.ID, device.Type, pins...)
+		}
+	case http.MethodPost:
+		return func(c echo.Context) error {
+			id, err := utils.ParseQueryID(c)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest,
+					fmt.Errorf("Invalid device ID: %w", err))
+			}
+
+			device, err := r.Device.Get(id)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusInternalServerError,
+					fmt.Errorf("Failed to get device: %w", err))
+			}
+
+			// TODO: Parse form
+
+			// TODO: Update device pins
+
+			return render(c, device.ID, device.Type)
 		}
 	}
 

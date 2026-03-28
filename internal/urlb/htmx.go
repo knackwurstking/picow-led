@@ -89,16 +89,12 @@ func EditGroupDialog(groupID models.ID) string {
 // -----------------------------------------------------------------------------
 
 // DevicePins returns the URL for fetching the pins of a device with the given ID and pins.
-// The pins are included as query parameters in the URL, only used in POST requests.
-func DevicePins(id models.ID, pins ...uint8) string {
+func DevicePins(id models.ID) string {
 	u := url.URL{}
 	u.Path = env.Route("/htmx/device/pins")
 
 	q := u.Query()
 	q.Set("id", fmt.Sprintf("%d", id))
-	for _, pin := range pins {
-		q.Add("pin", fmt.Sprintf("%d", pin))
-	}
 	u.RawQuery = q.Encode()
 
 	return u.String()
