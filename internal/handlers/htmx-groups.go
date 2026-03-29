@@ -82,6 +82,8 @@ func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
 			}
 		}
 
+		c.Response().Header().Set("HX-Trigger", "reload-devices")
+
 		return nil
 	}
 }
