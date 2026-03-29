@@ -59,28 +59,30 @@ templ GroupItem(g *models.Group) {
 				}
 				// Power Buttons (On/Off)
 				@button.Button(button.Props{
+					Class:   "text-red-500 hover:text-red-500/90 disabled:text-red-500/50",
 					Variant: button.VariantGhost,
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
-						"hx-post": urlb.PowerGroup(g.ID, urlb.PowerModeOff),
-						"hx-swap": "none",
+						"hx-post":               urlb.PowerGroup(g.ID, urlb.PowerModeOff),
+						"hx-swap":               "none",
+						"hx-on::before-request": `this.setAttribute("disabled", "")`,
+						"hx-on::after-request":  `this.removeAttribute("disabled")`,
 					},
 				}) {
-					@icon.PowerOff(icon.Props{
-						Class: "text-red-500",
-					})
+					@icon.PowerOff()
 				}
 				@button.Button(button.Props{
+					Class:   "text-green-500 hover:text-green-500/90 disabled:text-green-500/50",
 					Variant: button.VariantGhost,
 					Size:    button.SizeIcon,
 					Attributes: templ.Attributes{
-						"hx-post": urlb.PowerGroup(g.ID, urlb.PowerModeOn),
-						"hx-swap": "none",
+						"hx-post":               urlb.PowerGroup(g.ID, urlb.PowerModeOn),
+						"hx-swap":               "none",
+						"hx-on::before-request": `this.setAttribute("disabled", "")`,
+						"hx-on::after-request":  `this.removeAttribute("disabled")`,
 					},
 				}) {
-					@icon.Power(icon.Props{
-						Class: "text-green-500",
-					})
+					@icon.Power()
 				}
 			</span>
 		</div>
