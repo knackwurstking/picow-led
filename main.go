@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -12,6 +14,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/routes"
 	"github.com/knackwurstking/picow-led/internal/services"
+	"github.com/knackwurstking/picow-led/pkg/version"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -29,6 +32,8 @@ var (
 )
 
 func main() {
+	parseFlags()
+
 	// Open SQL database and pass it to the registry
 	db, err := sql.Open("sqlite3", filepath.Join(env.DBPath, "picow-led.sqlite"))
 	if err != nil {
@@ -97,5 +102,18 @@ func main() {
 	if err := e.Start(env.ServerAddress); err != nil {
 		log.Error("Failed to start server: %v", err)
 		os.Exit(ExitCodeServerStart)
+	}
+}
+
+func parseFlags() {
+	var v bool
+
+	flag.BoolVar(&v, "version", v, "Print version information and exit")
+
+	flag.Parse()
+
+	if v {
+		fmt.Fprintf(os.Stdout, "picow-led %s\n", version.Get())
+		os.Exit(ExitCodeSuccess)
 	}
 }
