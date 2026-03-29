@@ -7,7 +7,6 @@ A web-based control panel for Raspberry Pi Pico W LED projects.
 - Device management with color control
 - Group organization for multiple devices
 - Scene presets for quick configurations
-- Real-time status updates
 
 ## Installation
 
