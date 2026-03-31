@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v0.1.1 (2025-03-30)
+
+### Changed
+
+- Restructure all templ files
+- Improve templates structure
+
+### Fixed
+
+- Alert issues, some alerts are not properly rendered, now all alerts rendered OOB
+
+### Added
+
+- Add api documentation
+- Add initial README
+
 ## v0.1.0 (2025-03-29)
 
 ### Added
