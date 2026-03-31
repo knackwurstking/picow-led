@@ -89,14 +89,6 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 			}
 		}
 
-		if len(errs) == 0 {
-			// TODO: Add 3 test errors to test error handling in this handler
-			errs = append(errs,
-				errors.New("Test error 1: This is a test error message."),
-				errors.New("Test error 2: Something went wrong while toggling power."),
-				errors.New("Test error 3: Unable to update device state."))
-		}
-
 		// Handle errors (e.g. Render error messages)
 		for _, err := range errs {
 			if err := alert.RenderError(c, err.Error()); err != nil {
