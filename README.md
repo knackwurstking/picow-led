@@ -87,6 +87,7 @@ go run .     # Run development server
     ```
 
 - [ ] Add Scenes management
+- [ ] Improve templates structure
 
 ## License
 
