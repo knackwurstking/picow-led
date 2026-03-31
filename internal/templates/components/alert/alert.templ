@@ -1,4 +1,4 @@
-package components
+package alert
 
 import (
 	"context"
@@ -57,7 +57,7 @@ templ AlertContainer(props ...AlertContainerProps) {
 	</div>
 }
 
-script AddAlert(containerID string, level AlertType, message string) {
+script AddAlertScript(containerID string, level AlertType, message string) {
 	console.debug(`Adding alert to container ${containerID}: ${message} (${level})`)
 
 	// Create a new alert element
@@ -96,12 +96,12 @@ script AddAlert(containerID string, level AlertType, message string) {
 
 templ OOBAddAlert(containerID string, level AlertType, message string) {
 	<span hx-swap-oob="beforeend:body">
-		@AddAlert(containerID, level, message)
+		@AddAlertScript(containerID, level, message)
 	</span>
 }
 
 func RenderInfo(c echo.Context, message string) *echo.HTTPError {
-	t := AddAlert(env.IDAlertContainer, AlertTypeInfo, message)
+	t := OOBAddAlert(env.IDAlertContainer, AlertTypeInfo, message)
 	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError,
 			fmt.Errorf("failed to render info alert: %w", err))
@@ -110,7 +110,7 @@ func RenderInfo(c echo.Context, message string) *echo.HTTPError {
 }
 
 func RenderWarning(c echo.Context, message string) *echo.HTTPError {
-	t := AddAlert(env.IDAlertContainer, AlertTypeWarning, message)
+	t := OOBAddAlert(env.IDAlertContainer, AlertTypeWarning, message)
 	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError,
 			fmt.Errorf("failed to render warning alert: %w", err))
@@ -119,7 +119,7 @@ func RenderWarning(c echo.Context, message string) *echo.HTTPError {
 }
 
 func RenderError(c echo.Context, message string) *echo.HTTPError {
-	t := AddAlert(env.IDAlertContainer, AlertTypeError, message)
+	t := OOBAddAlert(env.IDAlertContainer, AlertTypeError, message)
 	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError,
 			fmt.Errorf("failed to render error alert: %w", err))

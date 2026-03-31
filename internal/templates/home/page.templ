@@ -1,4 +1,4 @@
-package pages
+package home
 
 import (
 	"github.com/knackwurstking/picow-led/internal/env"
@@ -10,7 +10,7 @@ import (
 	"github.com/knackwurstking/picow-led/internal/urlb"
 )
 
-templ Home() {
+templ Page() {
 	@layout.Layout(layout.Props{
 		Class: "px-4",
 		Lang:  "de",
@@ -47,13 +47,13 @@ templ Home() {
 					Value:    "devices",
 					IsActive: true,
 				}) {
-					@devicesContent()
+					@devicesTabContent()
 				}
 				@tabs.Content(tabs.ContentProps{
 					Class: "space-y-4",
 					Value: "groups",
 				}) {
-					@groupsContent()
+					@groupsTabContent()
 				}
 			</main>
 			@saveActiveTab(env.IDTabsNav)
@@ -62,7 +62,7 @@ templ Home() {
 	}
 }
 
-templ devicesContent() {
+templ devicesTabContent() {
 	<div
 		id={ env.IDDevicesList }
 		class="flex flex-col gap-4"
@@ -72,7 +72,7 @@ templ devicesContent() {
 		hx-swap="innerHTML"
 		hx-on::before-request="console.debug('Loading devices via HTMX...')"
 	></div>
-	@homeContentActions() {
+	@tabsContentActions() {
 		@button.Button(button.Props{
 			Size: button.SizeIcon,
 			Attributes: templ.Attributes{
@@ -89,7 +89,7 @@ templ devicesContent() {
 	@dialogs.EditDevice()
 }
 
-templ groupsContent() {
+templ groupsTabContent() {
 	<div
 		id={ env.IDGroupsList }
 		class="flex flex-col gap-4"
@@ -99,7 +99,7 @@ templ groupsContent() {
 		hx-swap="innerHTML"
 		hx-on::before-request="console.debug('Loading groups via HTMX...')"
 	></div>
-	@homeContentActions() {
+	@tabsContentActions() {
 		@button.Button(button.Props{
 			Size: button.SizeIcon,
 			Attributes: templ.Attributes{
@@ -116,7 +116,7 @@ templ groupsContent() {
 	@dialogs.EditGroup()
 }
 
-templ homeContentActions() {
+templ tabsContentActions() {
 	<div class="w-full flex flex-row justify-end items-center">
 		{ children... }
 	</div>

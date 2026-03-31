@@ -1,8 +1,9 @@
-package components
+package home 
 
 import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
 	"github.com/knackwurstking/picow-led/internal/templates/components/button"
 	"github.com/knackwurstking/picow-led/internal/templates/components/icon"
 	switchcomp "github.com/knackwurstking/picow-led/internal/templates/components/switch"
@@ -24,7 +25,7 @@ templ Devices(props ...DevicesProps) {
 	}}
 	// Render alerts if any
 	for _, err := range prop.Errors {
-		@AddAlert(env.IDAlertContainer, AlertTypeError, err.Error())
+		@alert.AddAlertScript(env.IDAlertContainer, alert.AlertTypeError, err.Error())
 	}
 	// Render device items
 	for _, d := range prop.Data {

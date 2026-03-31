@@ -9,8 +9,9 @@ import (
 
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
-	"github.com/knackwurstking/picow-led/internal/templates/components"
+	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
 	"github.com/knackwurstking/picow-led/internal/templates/components/dialogs"
+	"github.com/knackwurstking/picow-led/internal/templates/home"
 	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/labstack/echo/v4"
@@ -25,7 +26,7 @@ func HTMXGroups(r *services.Registry) echo.HandlerFunc {
 			errs = append(errs, fmt.Errorf("failed to list groups: %w", err))
 		}
 
-		t := components.Groups(components.GroupsProps{
+		t := home.Groups(home.GroupsProps{
 			Data:   groups,
 			Errors: errs,
 		})
@@ -76,9 +77,8 @@ func HTMXPowerGroup(r *services.Registry) echo.HandlerFunc {
 
 		// Handle errors (e.g. Render error messages)
 		for _, err := range errs {
-			t := components.OOBAddAlert(env.IDAlertContainer, components.AlertTypeError, err.Error())
-			if err = t.Render(c.Request().Context(), c.Response()); err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render error alert: %w", err))
+			if err := alert.RenderError(c, err.Error()); err != nil {
+				return err
 			}
 		}
 
@@ -94,8 +94,8 @@ func HTMXAddGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 	parse := func(c echo.Context) (formData dialogs.AddGroupFormData, errs []error) {
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
 
-		deviceIDs := strings.Split(c.FormValue("devices"), ",")
-		for _, idString := range deviceIDs {
+		deviceIDs := strings.SplitSeq(c.FormValue("devices"), ",")
+		for idString := range deviceIDs {
 			id, _ := strconv.Atoi(idString)
 			if d, err := r.Device.Get(models.ID(id)); err != nil {
 				errs = append(errs, fmt.Errorf("failed to get device with ID %d: %w", id, err))
@@ -168,8 +168,8 @@ func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 
 		formData.Name = strings.TrimSpace(c.FormValue("name"))
 
-		deviceIDs := strings.Split(c.FormValue("devices"), ",")
-		for _, idString := range deviceIDs {
+		deviceIDs := strings.SplitSeq(c.FormValue("devices"), ",")
+		for idString := range deviceIDs {
 			id, _ := strconv.Atoi(idString)
 			if d, err := r.Device.Get(models.ID(id)); err != nil {
 				errs = append(errs, fmt.Errorf("failed to get device with ID %d: %w", id, err))
@@ -251,7 +251,7 @@ func HTMXEditGroupDialog(r *services.Registry, method string) echo.HandlerFunc {
 			}
 
 			if err := r.Group.Delete(id); err != nil {
-				return components.RenderError(c,
+				return alert.RenderError(c,
 					fmt.Sprintf("Failed to delete group with ID %d: %v", id, err))
 			}
 

@@ -2,7 +2,7 @@ package layout
 
 import (
 	"github.com/knackwurstking/picow-led/internal/env"
-	"github.com/knackwurstking/picow-led/internal/templates/components"
+	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
 	"github.com/knackwurstking/ui"
 )
 
@@ -35,7 +35,7 @@ templ Layout(props ...Props) {
 		</head>
 		<body class={ prop.Class }>
 			{ children... }
-			@components.AlertContainer(components.AlertContainerProps{
+			@alert.AlertContainer(alert.AlertContainerProps{
 				ID: env.IDAlertContainer,
 			})
 		</body>

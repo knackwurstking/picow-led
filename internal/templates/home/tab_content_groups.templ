@@ -1,8 +1,9 @@
-package components
+package home
 
 import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
 	"github.com/knackwurstking/picow-led/internal/templates/components/button"
 	"github.com/knackwurstking/picow-led/internal/templates/components/icon"
 	"github.com/knackwurstking/picow-led/internal/urlb"
@@ -23,7 +24,7 @@ templ Groups(props ...GroupsProps) {
 	}}
 	// Render alerts if any
 	for _, err := range prop.Errors {
-		@AddAlert(env.IDAlertContainer, AlertTypeError, err.Error())
+		@alert.AddAlertScript(env.IDAlertContainer, alert.AlertTypeError, err.Error())
 	}
 	// Render group items
 	for _, group := range prop.Data {

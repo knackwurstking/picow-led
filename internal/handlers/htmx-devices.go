@@ -12,8 +12,9 @@ import (
 
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
-	"github.com/knackwurstking/picow-led/internal/templates/components"
+	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
 	"github.com/knackwurstking/picow-led/internal/templates/components/dialogs"
+	"github.com/knackwurstking/picow-led/internal/templates/home"
 	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
@@ -27,7 +28,7 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 		devices, err := r.Device.List()
 		if err != nil {
 			message := fmt.Sprintf("failed to retrieve devices: %v", err)
-			log.Warn(message)
+			log.Warn("%s", message)
 			errs = append(errs, errors.New(message))
 		} else {
 			wg := sync.WaitGroup{}
@@ -35,7 +36,7 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 				wg.Go(func() {
 					if duty, err := r.Device.GetCurrentDuty(d.ID); err != nil {
 						message := fmt.Sprintf("failed to retrieve current duty for device %d: %v", d.ID, err)
-						log.Warn(message)
+						log.Warn("%s", message)
 						errs = append(errs, errors.New(message))
 					} else {
 						d.Duty = duty
@@ -45,7 +46,7 @@ func HTMXDevices(r *services.Registry) echo.HandlerFunc {
 			wg.Wait()
 		}
 
-		t := components.Devices(components.DevicesProps{
+		t := home.Devices(home.DevicesProps{
 			Data:   devices,
 			Errors: errs,
 		})
@@ -88,11 +89,18 @@ func HTMXToggleDevicePower(r *services.Registry) echo.HandlerFunc {
 			}
 		}
 
+		if len(errs) == 0 {
+			// TODO: Add 3 test errors to test error handling in this handler
+			errs = append(errs,
+				errors.New("Test error 1: This is a test error message."),
+				errors.New("Test error 2: Something went wrong while toggling power."),
+				errors.New("Test error 3: Unable to update device state."))
+		}
+
 		// Handle errors (e.g. Render error messages)
 		for _, err := range errs {
-			t := components.OOBAddAlert(env.IDAlertContainer, components.AlertTypeError, err.Error())
-			if err = t.Render(c.Request().Context(), c.Response()); err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render error alert: %w", err))
+			if err := alert.RenderError(c, err.Error()); err != nil {
+				return err
 			}
 		}
 
@@ -257,7 +265,7 @@ func HTMXEditDeviceDialog(r *services.Registry, method string) echo.HandlerFunc 
 			}
 
 			if err := r.Device.Delete(id); err != nil {
-				return components.RenderError(c,
+				return alert.RenderError(c,
 					fmt.Sprintf("Failed to delete device: %v", err))
 			}
 

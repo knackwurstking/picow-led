@@ -9,7 +9,8 @@ import (
 	"github.com/a-h/templ"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
-	"github.com/knackwurstking/picow-led/internal/templates/components"
+	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
+	"github.com/knackwurstking/picow-led/internal/templates/device"
 	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/labstack/echo/v4"
@@ -43,7 +44,7 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 	}
 
 	render := func(c echo.Context, deviceID models.ID, deviceType models.DeviceType, pins ...uint8) error {
-		t := components.DevicePins(components.DevicePinsProps{
+		t := device.PinsForm(device.PinsFormProps{
 			ID:         env.IDDevicePins,
 			DeviceID:   deviceID,
 			DeviceType: deviceType,
@@ -72,12 +73,12 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 
 			device, err := r.Device.Get(id)
 			if err != nil {
-				return components.RenderError(c, fmt.Sprintf("Failed to get device: %v", err))
+				return alert.RenderError(c, fmt.Sprintf("Failed to get device: %v", err))
 			}
 
 			pins, err := r.Device.GetPins(device.ID)
 			if err != nil {
-				return components.RenderError(c, fmt.Sprintf("Failed to get device pins: %v", err))
+				return alert.RenderError(c, fmt.Sprintf("Failed to get device pins: %v", err))
 			}
 
 			return render(c, device.ID, device.Type, pins...)
@@ -92,18 +93,18 @@ func HTMXDevicePins(r *services.Registry, method string) echo.HandlerFunc {
 
 			device, err := r.Device.Get(id)
 			if err != nil {
-				return components.RenderError(c, fmt.Sprintf("Failed to get device: %v", err))
+				return alert.RenderError(c, fmt.Sprintf("Failed to get device: %v", err))
 			}
 
 			// Parse form
 			pins, err := parse(c)
 			if err != nil {
-				return components.RenderError(c, fmt.Sprintf("Invalid form data: %v", err))
+				return alert.RenderError(c, fmt.Sprintf("Invalid form data: %v", err))
 			}
 
 			// Update device pins
 			if err = r.Device.SetPins(device.ID, pins); err != nil {
-				return components.RenderError(c, fmt.Sprintf("Failed to set device pins: %v", err))
+				return alert.RenderError(c, fmt.Sprintf("Failed to set device pins: %v", err))
 			}
 
 			return render(c, device.ID, device.Type, pins...)

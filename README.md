@@ -60,8 +60,8 @@ go run .     # Run development server
 ## TODO
 
 - [x] Add API Documentation (see API.md template)
-- [ ] Switch to slog using a json logger for better structured logging
 
+- [ ] Switch to slog using a json logger for better structured logging
 - [ ] Find a way to monitor the performance by parsing logs
     ```json
     {
@@ -87,7 +87,7 @@ go run .     # Run development server
     ```
 
 - [ ] Add Scenes management
-- [ ] Improve templates structure
+- [x] Improve templates structure
 
 ## License
 

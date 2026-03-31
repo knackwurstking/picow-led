@@ -1,4 +1,4 @@
-package components
+package device
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-type DevicePinsProps struct {
+type PinsFormProps struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
@@ -22,9 +22,9 @@ type DevicePinsProps struct {
 	Readonly   bool
 }
 
-templ DevicePins(props ...DevicePinsProps) {
+templ PinsForm(props ...PinsFormProps) {
 	{{
-		p := DevicePinsProps{}
+		p := PinsFormProps{}
 		if len(props) > 0 {
 			p = props[0]
 		}

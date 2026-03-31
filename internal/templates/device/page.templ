@@ -1,12 +1,12 @@
-package pages
+package device
 
 import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/internal/env"
-	"github.com/knackwurstking/picow-led/internal/templates/components"
 	"github.com/knackwurstking/picow-led/internal/templates/components/input"
 	"github.com/knackwurstking/picow-led/internal/templates/components/label"
 	"github.com/knackwurstking/picow-led/internal/templates/components/layout"
+	"github.com/knackwurstking/picow-led/internal/templates/components/section"
 	"github.com/knackwurstking/picow-led/internal/templates/components/slider"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/knackwurstking/ui"
@@ -26,24 +26,24 @@ var (
 	}
 )
 
-templ Device(d *models.Device, pins ...uint8) {
+templ Page(d *models.Device, pins ...uint8) {
 	@layout.Layout(layout.Props{
 		Class: "px-4 md:px-8 py-6",
 		Lang:  "de",
 		Title: "PicoW LED",
 	}) {
 		<div class="text-4xl flex justify-center items-center mb-8">{ d.Name }</div>
-		@DevicePins(d, pins...)
-		@DeviceColorControl(d)
-		@DeviceBrightnessControl(d)
+		@PinsSection(d, pins...)
+		@ColorControlSection(d)
+		@BrightnessControlSection(d)
 		<script defer src={ ui.AssetURL("", env.Route("/js/device.js")) }></script>
 	}
 }
 
-templ DevicePins(d *models.Device, pins ...uint8) {
-	@components.Section() {
+templ PinsSection(d *models.Device, pins ...uint8) {
+	@section.Section() {
 		<div class="text-xl font-semibold text-left">Geräte Pins für { d.Type }</div>
-		@components.DevicePins(components.DevicePinsProps{
+		@PinsForm(PinsFormProps{
 			ID:         env.IDDevicePins,
 			DeviceID:   d.ID,
 			DeviceType: d.Type,
@@ -52,8 +52,8 @@ templ DevicePins(d *models.Device, pins ...uint8) {
 	}
 }
 
-templ DeviceColorControl(d *models.Device) {
-	@components.Section() {
+templ ColorControlSection(d *models.Device) {
+	@section.Section() {
 		<div class="text-xl font-semibold text-left">Farbeinstellungen</div>
 		{{ color := d.ToColor() }}
 		@colorPicker(d, color)
@@ -61,8 +61,8 @@ templ DeviceColorControl(d *models.Device) {
 	}
 }
 
-templ DeviceBrightnessControl(d *models.Device) {
-	@components.Section(components.SectionProps{
+templ BrightnessControlSection(d *models.Device) {
+	@section.Section(section.SectionProps{
 		Class: "hidden",
 	}) {
 		<div class="text-xl font-semibold text-left">Helligkeit</div>

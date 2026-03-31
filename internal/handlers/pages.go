@@ -6,15 +6,16 @@ import (
 
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/services"
-	"github.com/knackwurstking/picow-led/internal/templates/components"
-	"github.com/knackwurstking/picow-led/internal/templates/pages"
+	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
+	devicepage "github.com/knackwurstking/picow-led/internal/templates/device"
+	"github.com/knackwurstking/picow-led/internal/templates/home"
 	"github.com/knackwurstking/picow-led/internal/utils"
 	"github.com/knackwurstking/picow-led/pkg/models"
 	"github.com/labstack/echo/v4"
 )
 
 func Home(c echo.Context) error {
-	t := pages.Home()
+	t := home.Page()
 	if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to render template: %v", err))
 	}
@@ -28,18 +29,14 @@ func Device(r *services.Registry, method string) echo.HandlerFunc {
 		pins, err := r.Device.GetPins(device.ID)
 		if err != nil {
 			defer func() {
-				// Render OOB alert message
-				t := components.AddAlert(
-					env.IDAlertContainer, components.AlertTypeError,
-					fmt.Sprintf("Failed to load device pins: %s", err),
-				)
-				if err := t.Render(c.Request().Context(), c.Response()); err != nil {
-					log.Error("Failed to render alert: %v", err)
+				message := fmt.Sprintf("Failed to load device pins: %s", err)
+				if err := alert.RenderError(c, message); err != nil {
+					log.Error("Failed to render error alert: %v", err)
 				}
 			}()
 		}
 
-		t := pages.Device(device, pins...)
+		t := devicepage.Page(device, pins...)
 		if err := t.Render(c.Request().Context(), c.Response()); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("Failed to render page: %w", err))
 		}
