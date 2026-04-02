@@ -59,36 +59,13 @@ go run .     # Run development server
 
 ## TODO
 
-- [x] Add API Documentation (see API.md template) [v0.1.1]
-- [x] Improve templates structure [v0.1.1]
-
+### v0.2.0
 - [x] Upgrade from templui v1.6.0 to v1.9.4 [v0.2.0]
 
-- [ ] Switch to slog using a json logger for better structured logging [v0.3.0]
-- [ ] Find a way to monitor the performance by parsing logs [v0.3.0]
-  ```json
-  {
-    "time": "2026-03-31T09:23:50.290851+02:00",
-    "level": "INFO",
-    "source": {
-      "function": "github.com/labstack/echo/v4/middleware.RequestLogger.func1",
-      "file": "/Users/knackwurstking/go/pkg/mod/github.com/labstack/echo/v4@v4.15.1/middleware/request_logger.go",
-      "line": 280
-    },
-    "msg": "REQUEST",
-    "method": "GET",
-    "uri": "/css/output.css/",
-    "status": 200,
-    "latency": 78709,
-    "host": "localhost:50888",
-    "bytes_in": "",
-    "bytes_out": 4359,
-    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15",
-    "remote_ip": "::1",
-    "request_id": ""
-  }
-  ```
+### v0.3.0
+- [ ] Switch to slog using [https://github.com/lmittmann/tint] handler [v0.3.0]
 
+### v0.4.0
 - [ ] Add Scenes management [v0.4.0]
 
 ## License
