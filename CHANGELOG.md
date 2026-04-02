@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v0.2.1 (2025-04-02)
+
+### Fixed
+
+- Wrong pubic path in use for templui component (JS) scripts, fixed in utils/templui.go
+
 ## v0.2.0 (2025-04-02)
 
 - Upgrade templui from v1.6.0 to v1.9.4
