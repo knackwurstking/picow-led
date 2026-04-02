@@ -4,10 +4,11 @@ go 1.25.3
 
 require (
 	github.com/Oudwins/tailwind-merge-go v0.2.1
-	github.com/a-h/templ v0.3.977
+	github.com/a-h/templ v0.3.1001
 	github.com/knackwurstking/ui v1.1.2-0.20260310092816-ee77254cdb8d
 	github.com/labstack/echo/v4 v4.15.1
 	github.com/mattn/go-sqlite3 v1.14.34
+	github.com/templui/templui v1.9.4
 )
 
 require (

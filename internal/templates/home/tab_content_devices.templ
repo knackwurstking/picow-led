@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
-	"github.com/knackwurstking/picow-led/internal/templates/components/button"
-	"github.com/knackwurstking/picow-led/internal/templates/components/icon"
-	switchcomp "github.com/knackwurstking/picow-led/internal/templates/components/switch"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/dialog"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/icon"
+	switchcomp "github.com/knackwurstking/picow-led/internal/templates/components/templui/switch"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
@@ -47,16 +48,20 @@ templ DeviceItem(d *models.Device) {
 				}
 			</span>
 			<span class="w-fit flex flex-row items-center justify-end gap-4">
-				@button.Button(button.Props{
-					Variant: button.VariantGhost,
-					Size:    button.SizeIcon,
-					Attributes: templ.Attributes{
-						"hx-get":    urlb.EditDeviceDialog(d.ID),
-						"hx-target": "body",
-						"hx-swap":   "beforeend",
-					},
+				@dialog.Trigger(dialog.TriggerProps{
+					For: env.IDEditDeviceDialog,
 				}) {
-					@icon.Pen()
+					@button.Button(button.Props{
+						Variant: button.VariantGhost,
+						Size:    button.SizeIcon,
+						Attributes: templ.Attributes{
+							"hx-get":    urlb.EditDeviceDialog(d.ID),
+							"hx-target": "body",
+							"hx-swap":   "beforeend",
+						},
+					}) {
+						@icon.Pen()
+					}
 				}
 				{{
 					powered := false

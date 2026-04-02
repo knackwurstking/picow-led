@@ -61,8 +61,11 @@ go run .     # Run development server
 
 - [x] Add API Documentation (see API.md template) [v0.1.1]
 - [x] Improve templates structure [v0.1.1]
-- [ ] Switch to slog using a json logger for better structured logging [v0.2.0]
-- [ ] Find a way to monitor the performance by parsing logs [v0.2.0]
+
+- [x] Upgrade from templui v1.6.0 to v1.9.4 [v0.2.0]
+
+- [ ] Switch to slog using a json logger for better structured logging [v0.3.0]
+- [ ] Find a way to monitor the performance by parsing logs [v0.3.0]
   ```json
   {
     "time": "2026-03-31T09:23:50.290851+02:00",
@@ -85,7 +88,8 @@ go run .     # Run development server
     "request_id": ""
   }
   ```
-- [ ] Add Scenes management [v0.3.0]
+
+- [ ] Add Scenes management [v0.4.0]
 
 ## License
 

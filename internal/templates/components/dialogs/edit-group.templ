@@ -1,8 +1,9 @@
 package dialogs
 
 import (
-	"github.com/knackwurstking/picow-led/internal/templates/components/button"
-	"github.com/knackwurstking/picow-led/internal/templates/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/dialog"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
@@ -28,17 +29,13 @@ templ EditGroup(props ...EditGroupProps) {
 		if len(props) > 0 {
 			prop = props[0]
 		}
-
-		if prop.Attributes == nil {
-			prop.Attributes = templ.Attributes{}
-		}
-
-		if prop.OOB {
-			prop.Attributes["hx-swap-oob"] = "true"
-		}
 	}}
+	if prop.OOB {
+		@contentEditGroup(prop)
+		{{ return }}
+	}
 	@dialog.Dialog(dialog.Props{
-		ID:               "edit-group-dialog",
+		ID:               env.IDEditGroupDialog,
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,
@@ -50,42 +47,54 @@ templ EditGroup(props ...EditGroupProps) {
 					Gruppe Bearbeiten 
 				}
 			}
-			if len(prop.Errors) > 0 {
-				@renderErrors(prop.Errors...)
-			}
-			<form
-				class="space-y-4"
-				hx-post={ urlb.EditGroupDialog(prop.ID) }
-				hx-trigger="submit"
-				enctype="multipart/form-data"
-			>
-				@formText(formProps{
-					ID:       "name",
-					Required: true,
-					Value:    prop.Name,
-					Title:    "Name",
-				})
-				@formDevices(prop.SelectedDevices, prop.Devices...)
-				@dialog.Footer() {
-					@button.Button(button.Props{
-						Variant: button.VariantDestructive,
-						Type:    button.TypeButton,
-						Attributes: templ.Attributes{
-							"hx-delete":  urlb.EditGroupDialog(prop.ID),
-							"hx-swap":    "none",
-							"hx-confirm": "Möchten Sie diese Gruppe wirklich löschen?",
-							"title":      "Gruppe löschen",
-						},
-					}) {
-						Löschen
-					}
-					@button.Button(button.Props{
-						Type: button.TypeSubmit,
-					}) {
-						Bearbeiten
-					}
-				}
-			</form>
+			@contentEditGroup(prop)
 		}
 	}
+}
+
+templ contentEditGroup(prop EditGroupProps) {
+	{{
+		attr := templ.Attributes{}
+		if prop.OOB {
+			attr["hx-swap-oob"] = "true"
+		}
+	}}
+	<span id="edit-group-dialog-content" { attr... }>
+		if len(prop.Errors) > 0 {
+			@renderErrors(prop.Errors...)
+		}
+		<form
+			class="space-y-4"
+			hx-post={ urlb.EditGroupDialog(prop.ID) }
+			hx-trigger="submit"
+			enctype="multipart/form-data"
+		>
+			@formText(formProps{
+				ID:       "name",
+				Required: true,
+				Value:    prop.Name,
+				Title:    "Name",
+			})
+			@formDevices(prop.SelectedDevices, prop.Devices...)
+			@dialog.Footer() {
+				@button.Button(button.Props{
+					Variant: button.VariantDestructive,
+					Type:    button.TypeButton,
+					Attributes: templ.Attributes{
+						"hx-delete":  urlb.EditGroupDialog(prop.ID),
+						"hx-swap":    "none",
+						"hx-confirm": "Möchten Sie diese Gruppe wirklich löschen?",
+						"title":      "Gruppe löschen",
+					},
+				}) {
+					Löschen
+				}
+				@button.Button(button.Props{
+					Type: button.TypeSubmit,
+				}) {
+					Bearbeiten
+				}
+			}
+		</form>
+	</span>
 }

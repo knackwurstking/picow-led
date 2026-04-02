@@ -19,4 +19,10 @@ const (
 
 	// Device
 	IDDevicePins = "device-pins"
+
+	// Dialogs
+	IDAddDeviceDialog  = "add-device-dialog"
+	IDAddGroupDialog   = "add-group-dialog"
+	IDEditDeviceDialog = "edit-device-dialog"
+	IDEditGroupDialog  = "edit-group-dialog"
 )

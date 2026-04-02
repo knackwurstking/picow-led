@@ -3,6 +3,13 @@ package layout
 import (
 	"github.com/knackwurstking/picow-led/internal/env"
 	"github.com/knackwurstking/picow-led/internal/templates/components/alert"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/dialog"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/input"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/label"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/popover"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/selectbox"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/slider"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/tabs"
 	"github.com/knackwurstking/ui"
 )
 
@@ -61,11 +68,11 @@ templ scripts() {
 	<script src={ ui.AssetURL("", env.Route("js/main.js")) }></script>
 	<script defer src={ ui.AssetURL("", env.Route("js/alert.js")) }></script>
 	// TemplUI components
-	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/tabs.min.js")) }></script>
-	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/dialog.min.js")) }></script>
-	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/label.min.js")) }></script>
-	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/input.min.js")) }></script>
-	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/popover.min.js")) }></script>
-	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/selectbox.min.js")) }></script>
-	<script defer nonce={ templ.GetNonce(ctx) } src={ ui.AssetURL("", env.Route("/js/slider.min.js")) }></script>
+	@tabs.Script()
+	@dialog.Script()
+	@label.Script()
+	@input.Script()
+	@popover.Script()
+	@selectbox.Script()
+	@slider.Script()
 }

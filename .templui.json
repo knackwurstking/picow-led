@@ -1,7 +1,7 @@
 {
-  "componentsDir": "internal/components",
+  "componentsDir": "internal/templates/components/templui",
   "utilsDir": "internal/utils",
   "moduleName": "github.com/knackwurstking/picow-led",
-  "jsDir": "internal/assets/public/js",
-  "jsPublicPath": "/internal/assets/public/js"
+  "jsDir": "internal/assets/public/js/templui",
+  "jsPublicPath": "/js/templui"
 }

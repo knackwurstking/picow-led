@@ -2,11 +2,12 @@ package home
 
 import (
 	"github.com/knackwurstking/picow-led/internal/env"
-	"github.com/knackwurstking/picow-led/internal/templates/components/button"
 	"github.com/knackwurstking/picow-led/internal/templates/components/dialogs"
-	"github.com/knackwurstking/picow-led/internal/templates/components/icon"
 	"github.com/knackwurstking/picow-led/internal/templates/components/layout"
-	"github.com/knackwurstking/picow-led/internal/templates/components/tabs"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/dialog"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/icon"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/tabs"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 )
 
@@ -73,16 +74,20 @@ templ devicesTabContent() {
 		hx-on::before-request="console.debug('Loading devices via HTMX...')"
 	></div>
 	@tabsContentActions() {
-		@button.Button(button.Props{
-			Size: button.SizeIcon,
-			Attributes: templ.Attributes{
-				"title":     "Gerät hinzufügen",
-				"hx-get":    urlb.AddDeviceDialog(),
-				"hx-target": "body",
-				"hx-swap":   "beforeend",
-			},
+		@dialog.Trigger(dialog.TriggerProps{
+			For: env.IDAddDeviceDialog,
 		}) {
-			@icon.Plus()
+			@button.Button(button.Props{
+				Size: button.SizeIcon,
+				Attributes: templ.Attributes{
+					"title":     "Gerät hinzufügen",
+					"hx-get":    urlb.AddDeviceDialog(),
+					"hx-target": "body",
+					"hx-swap":   "beforeend",
+				},
+			}) {
+				@icon.Plus()
+			}
 		}
 	}
 	@dialogs.AddDevice()
@@ -100,16 +105,20 @@ templ groupsTabContent() {
 		hx-on::before-request="console.debug('Loading groups via HTMX...')"
 	></div>
 	@tabsContentActions() {
-		@button.Button(button.Props{
-			Size: button.SizeIcon,
-			Attributes: templ.Attributes{
-				"title":     "Gerät hinzufügen",
-				"hx-get":    urlb.AddGroupDialog(),
-				"hx-target": "body",
-				"hx-swap":   "beforeend",
-			},
+		@dialog.Trigger(dialog.TriggerProps{
+			For: env.IDAddGroupDialog,
 		}) {
-			@icon.Plus()
+			@button.Button(button.Props{
+				Size: button.SizeIcon,
+				Attributes: templ.Attributes{
+					"title":     "Gerät hinzufügen",
+					"hx-get":    urlb.AddGroupDialog(),
+					"hx-target": "body",
+					"hx-swap":   "beforeend",
+				},
+			}) {
+				@icon.Plus()
+			}
 		}
 	}
 	@dialogs.AddGroup()

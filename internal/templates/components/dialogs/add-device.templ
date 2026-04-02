@@ -1,8 +1,9 @@
 package dialogs
 
 import (
-	"github.com/knackwurstking/picow-led/internal/templates/components/button"
-	"github.com/knackwurstking/picow-led/internal/templates/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/dialog"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
@@ -26,17 +27,13 @@ templ AddDevice(props ...AddDeviceProps) {
 		if len(props) > 0 {
 			prop = props[0]
 		}
-
-		if prop.Attributes == nil {
-			prop.Attributes = templ.Attributes{}
-		}
-
-		if prop.OOB {
-			prop.Attributes["hx-swap-oob"] = "true"
-		}
 	}}
+	if prop.OOB {
+		@contentAddDevice(prop)
+		{{ return }}
+	}
 	@dialog.Dialog(dialog.Props{
-		ID:               "add-device-dialog",
+		ID:               env.IDAddDeviceDialog,
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,
@@ -48,36 +45,48 @@ templ AddDevice(props ...AddDeviceProps) {
 					Neues Gerät hinzufügen
 				}
 			}
-			if len(prop.Errors) > 0 {
-				@renderErrors(prop.Errors...)
-			}
-			<form
-				class="space-y-4"
-				hx-post={ urlb.AddDeviceDialog() }
-				hx-trigger="submit"
-				enctype="multipart/form-data"
-			>
-				@formText(formProps{
-					ID:       "name",
-					Required: true,
-					Value:    prop.Name,
-					Title:    "Name",
-				})
-				@formText(formProps{
-					ID:       "addr",
-					Required: true,
-					Value:    prop.Addr,
-					Title:    "Server Adresse",
-				})
-				@formDeviceTypeSelect(prop.DeviceType)
-				@dialog.Footer() {
-					@button.Button(button.Props{
-						Type: button.TypeSubmit,
-					}) {
-						Hinzufügen
-					}
-				}
-			</form>
+			@contentAddDevice(prop)
 		}
 	}
+}
+
+templ contentAddDevice(prop AddDeviceProps) {
+	{{
+		attr := templ.Attributes{}
+		if prop.OOB {
+			attr["hx-swap-oob"] = "true"
+		}
+	}}
+	<span id="add-device-dialog-content" { attr... }>
+		if len(prop.Errors) > 0 {
+			@renderErrors(prop.Errors...)
+		}
+		<form
+			class="space-y-4"
+			hx-post={ urlb.AddDeviceDialog() }
+			hx-trigger="submit"
+			enctype="multipart/form-data"
+		>
+			@formText(formProps{
+				ID:       "name",
+				Required: true,
+				Value:    prop.Name,
+				Title:    "Name",
+			})
+			@formText(formProps{
+				ID:       "addr",
+				Required: true,
+				Value:    prop.Addr,
+				Title:    "Server Adresse",
+			})
+			@formDeviceTypeSelect(prop.DeviceType)
+			@dialog.Footer() {
+				@button.Button(button.Props{
+					Type: button.TypeSubmit,
+				}) {
+					Hinzufügen
+				}
+			}
+		</form>
+	</span>
 }

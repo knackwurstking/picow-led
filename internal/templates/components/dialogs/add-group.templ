@@ -1,8 +1,9 @@
 package dialogs
 
 import (
-	"github.com/knackwurstking/picow-led/internal/templates/components/button"
-	"github.com/knackwurstking/picow-led/internal/templates/components/dialog"
+	"github.com/knackwurstking/picow-led/internal/env"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/button"
+	"github.com/knackwurstking/picow-led/internal/templates/components/templui/dialog"
 	"github.com/knackwurstking/picow-led/internal/urlb"
 	"github.com/knackwurstking/picow-led/pkg/models"
 )
@@ -27,17 +28,13 @@ templ AddGroup(props ...AddGroupProps) {
 		if len(props) > 0 {
 			prop = props[0]
 		}
-
-		if prop.Attributes == nil {
-			prop.Attributes = templ.Attributes{}
-		}
-
-		if prop.OOB {
-			prop.Attributes["hx-swap-oob"] = "true"
-		}
 	}}
+	if prop.OOB {
+		@contentAddGroup(prop)
+		{{ return }}
+	}
 	@dialog.Dialog(dialog.Props{
-		ID:               "add-group-dialog",
+		ID:               env.IDAddGroupDialog,
 		DisableClickAway: true,
 		DisableESC:       true,
 		Open:             prop.Open,
@@ -49,30 +46,42 @@ templ AddGroup(props ...AddGroupProps) {
 					Neue Gruppe hinzufügen
 				}
 			}
-			if len(prop.Errors) > 0 {
-				@renderErrors(prop.Errors...)
-			}
-			<form
-				class="space-y-4"
-				hx-post={ urlb.AddGroupDialog() }
-				hx-trigger="submit"
-				enctype="multipart/form-data"
-			>
-				@formText(formProps{
-					ID:       "name",
-					Required: true,
-					Value:    prop.Name,
-					Title:    "Name",
-				})
-				@formDevices(prop.SelectedDevices, prop.Devices...)
-				@dialog.Footer() {
-					@button.Button(button.Props{
-						Type: button.TypeSubmit,
-					}) {
-						Hinzufügen
-					}
-				}
-			</form>
+			@contentAddGroup(prop)
 		}
 	}
+}
+
+templ contentAddGroup(prop AddGroupProps) {
+	{{
+		attr := templ.Attributes{}
+		if prop.OOB {
+			attr["hx-swap-oob"] = "true"
+		}
+	}}
+	<span id="add-group-dialog-content" { attr... }>
+		if len(prop.Errors) > 0 {
+			@renderErrors(prop.Errors...)
+		}
+		<form
+			class="space-y-4"
+			hx-post={ urlb.AddGroupDialog() }
+			hx-trigger="submit"
+			enctype="multipart/form-data"
+		>
+			@formText(formProps{
+				ID:       "name",
+				Required: true,
+				Value:    prop.Name,
+				Title:    "Name",
+			})
+			@formDevices(prop.SelectedDevices, prop.Devices...)
+			@dialog.Footer() {
+				@button.Button(button.Props{
+					Type: button.TypeSubmit,
+				}) {
+					Hinzufügen
+				}
+			}
+		</form>
+	</span>
 }
